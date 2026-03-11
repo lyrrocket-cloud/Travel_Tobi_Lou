@@ -5,18 +5,35 @@ export async function GET() {
   try {
     const client = getSupabaseClient();
     
-    // 按创建时间降序和跟随人数降序排序
-    const { data, error } = await client
+    // 获取所有愿望
+    const { data: wishes, error: wishesError } = await client
       .from('wishes')
       .select('*')
       .order('created_at', { ascending: false })
       .order('followers_count', { ascending: false });
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (wishesError) {
+      return NextResponse.json({ error: wishesError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ wishes: data });
+    // 获取所有跟随记录
+    const { data: followers, error: followersError } = await client
+      .from('wish_followers')
+      .select('wish_id, follower_name');
+
+    if (followersError) {
+      return NextResponse.json({ error: followersError.message }, { status: 500 });
+    }
+
+    // 组装数据，为每个愿望添加跟随人列表
+    const wishesWithFollowers = wishes.map((wish) => ({
+      ...wish,
+      followers: followers
+        ?.filter((f) => f.wish_id === wish.id)
+        .map((f) => f.follower_name) || [],
+    }));
+
+    return NextResponse.json({ wishes: wishesWithFollowers });
   } catch (error) {
     console.error('Error fetching wishes:', error);
     return NextResponse.json({ error: 'Failed to fetch wishes' }, { status: 500 });

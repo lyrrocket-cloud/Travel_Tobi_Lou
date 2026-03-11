@@ -30,6 +30,7 @@ interface Wish {
   wisher_name: string;
   followers_count: number;
   created_at: string;
+  followers: string[];
 }
 
 const months = [
@@ -291,7 +292,7 @@ export default function Home() {
                   onClick={handleMakeWish}
                   disabled={isAnimating || !destination || !travelMonth || !wisherName}
                   size="lg"
-                  className="w-full h-12 gap-2 bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 transition-all duration-500"
+                  className="w-full h-12 gap-2 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 transition-all duration-500"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
@@ -421,12 +422,23 @@ export default function Home() {
                                 <span>{wish.wisher_name}</span>
                               </div>
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-[#FFFFFF]/50">
-                              <div className="flex items-center gap-1">
-                                <Heart className="w-4 h-4 text-[#CEA472]" />
-                                <span>{wish.followers_count} 人跟随</span>
-                              </div>
-                              <span>{formatDate(wish.created_at)}</span>
+                            <div className="text-[#FFFFFF]/50 text-sm">
+                              {wish.followers.length > 0 ? (
+                                <div className="flex flex-wrap items-center gap-1">
+                                  <Heart className="w-4 h-4 text-[#CEA472] mr-1" />
+                                  <span className="text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                  {wish.followers.map((name, idx) => (
+                                    <span key={idx} className="text-[#FFFFFF]/80">
+                                      {name}{idx < wish.followers.length - 1 ? '、' : ''}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1">
+                                  <Heart className="w-4 h-4 text-[#CEA472]" />
+                                  <span>暂无跟随</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
