@@ -167,6 +167,27 @@ export default function Home() {
     }
   };
 
+  const handleDeleteFollower = async (wishId: number, followerName: string) => {
+    if (!confirm(`确定要删除跟随人"${followerName}"吗？`)) return;
+
+    try {
+      const response = await fetch(`/api/wishes/${wishId}/followers/${encodeURIComponent(followerName)}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('删除成功！');
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '删除失败，请重试');
+      }
+    } catch (error) {
+      console.error('Failed to delete follower:', error);
+      alert('删除失败，请重试');
+    }
+  };
+
   const handleAdminLogin = () => {
     if (password === 'tobi7758258') {
       setIsAdminMode(true);
@@ -418,13 +439,23 @@ export default function Home() {
                             </div>
                             <div className="text-[#FFFFFF]/50 text-sm">
                               {wish.followers.length > 0 ? (
-                                <div className="flex flex-wrap items-center gap-1">
-                                  <Heart className="w-4 h-4 text-[#CEA472] mr-1" />
-                                  <span className="text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <div className="flex items-center gap-1">
+                                    <Heart className="w-4 h-4 text-[#CEA472]" />
+                                    <span className="text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                  </div>
                                   {wish.followers.map((name, idx) => (
-                                    <span key={idx} className="text-[#FFFFFF]/80">
-                                      {name}{idx < wish.followers.length - 1 ? '、' : ''}
-                                    </span>
+                                    <div key={idx} className="flex items-center gap-1 px-2 py-1 rounded bg-black/30 border border-[#CEA472]/20">
+                                      <span className="text-[#FFFFFF]/80 text-sm">{name}</span>
+                                      {isAdminMode && (
+                                        <button
+                                          onClick={() => handleDeleteFollower(wish.id, name)}
+                                          className="text-red-500 hover:text-red-400 transition-colors"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </button>
+                                      )}
+                                    </div>
                                   ))}
                                 </div>
                               ) : (
