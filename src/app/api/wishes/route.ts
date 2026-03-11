@@ -5,12 +5,12 @@ export async function GET() {
   try {
     const client = getSupabaseClient();
     
-    // 获取所有愿望
+    // 获取所有愿望，先按跟随人数降序，再按时间降序
     const { data: wishes, error: wishesError } = await client
       .from('wishes')
       .select('*')
-      .order('created_at', { ascending: false })
-      .order('followers_count', { ascending: false });
+      .order('followers_count', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (wishesError) {
       return NextResponse.json({ error: wishesError.message }, { status: 500 });
