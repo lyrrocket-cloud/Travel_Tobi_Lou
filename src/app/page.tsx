@@ -13,7 +13,15 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Coins, MapPin, Calendar, User, Heart, Sparkles, ChevronRight } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Star } from 'lucide-react';
 
 interface Wish {
   id: number;
@@ -38,6 +46,12 @@ export default function Home() {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // 管理相关状态
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [password, setPassword] = useState('');
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   useEffect(() => {
     if (activeTab === 'wish-pool') {
@@ -132,6 +146,37 @@ export default function Home() {
     }
   };
 
+  const handleDeleteWish = async (wishId: number) => {
+    if (!confirm('确定要删除这个愿望吗？')) return;
+
+    try {
+      const response = await fetch(`/api/wishes/${wishId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('删除成功！');
+        fetchWishes();
+      } else {
+        alert('删除失败，请重试');
+      }
+    } catch (error) {
+      console.error('Failed to delete wish:', error);
+      alert('删除失败，请重试');
+    }
+  };
+
+  const handleAdminLogin = () => {
+    if (password === 'tobi7758258') {
+      setIsAdminMode(true);
+      setShowPasswordDialog(false);
+      setPassword('');
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('zh-CN', {
@@ -149,7 +194,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Coins className="w-10 h-10 text-[#CEA472] animate-bounce" />
+            <Star className="w-10 h-10 text-[#CEA472] animate-pulse" />
             <h1 className="text-4xl font-bold text-[#CEA472]">
               旅行许愿池
             </h1>
@@ -167,7 +212,7 @@ export default function Home() {
               value="make-wish" 
               className="flex items-center gap-2 data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/50 hover:text-[#FFFFFF]/80"
             >
-              <Coins className="w-4 h-4" />
+              <Star className="w-4 h-4" />
               许愿
             </TabsTrigger>
             <TabsTrigger 
@@ -199,7 +244,7 @@ export default function Home() {
                     placeholder="例如：巴黎、东京、马尔代夫..."
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
-                    className="text-lg bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+                    className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
                     disabled={isAnimating}
                   />
                 </div>
@@ -210,15 +255,15 @@ export default function Home() {
                     期望出发月份
                   </Label>
                   <Select value={travelMonth} onValueChange={setTravelMonth} disabled={isAnimating}>
-                    <SelectTrigger className="text-lg bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]">
-                      <SelectValue placeholder="选择月份" className="text-[#FFFFFF]/40" />
+                    <SelectTrigger className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]">
+                      <SelectValue placeholder="选择月份" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
                       {months.map((month) => (
                         <SelectItem 
                           key={month} 
                           value={month} 
-                          className="text-lg text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
+                          className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
                         >
                           {month}
                         </SelectItem>
@@ -237,7 +282,7 @@ export default function Home() {
                     placeholder="请输入您的姓名"
                     value={wisherName}
                     onChange={(e) => setWisherName(e.target.value)}
-                    className="text-lg bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+                    className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
                     disabled={isAnimating}
                   />
                 </div>
@@ -246,23 +291,21 @@ export default function Home() {
                   onClick={handleMakeWish}
                   disabled={isAnimating || !destination || !travelMonth || !wisherName}
                   size="lg"
-                  className="w-full h-14 gap-2 bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 transition-all duration-500"
+                  className="w-full h-12 gap-2 bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 transition-all duration-500"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
-                      <div className="relative w-8 h-8">
+                      <div className="relative w-6 h-6">
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
                           <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
                         </div>
-                        <span className="absolute inset-0 flex items-center justify-center text-2xl">💰</span>
                       </div>
-                      <span>抛掷硬币中...</span>
+                      <span>许愿中...</span>
                     </div>
                   ) : (
                     <>
-                      <Coins className="w-5 h-5" />
-                      <span>抛下硬币，许下愿望</span>
-                      <ChevronRight className="w-4 h-4" />
+                      <Star className="w-5 h-5" />
+                      <span>许愿</span>
                     </>
                   )}
                 </Button>
@@ -280,7 +323,7 @@ export default function Home() {
                     >
                       <div className="absolute inset-2 rounded-full bg-gradient-to-br from-[#CEA472]/90 to-[#CEA472]/50" />
                       <div className="absolute inset-4 rounded-full bg-gradient-to-br from-[#CEA472] to-[#CEA472]/70 flex items-center justify-center">
-                        <span className="text-4xl">💰</span>
+                        <span className="text-4xl">💫</span>
                       </div>
                     </div>
                     {/* Ripple effects */}
@@ -295,7 +338,7 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <p className="text-2xl font-semibold text-[#CEA472]">正在抛掷硬币...</p>
+                      <p className="text-2xl font-semibold text-[#CEA472]">正在许愿...</p>
                       <p className="text-lg text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
                     </div>
                   )}
@@ -308,13 +351,35 @@ export default function Home() {
           <TabsContent value="wish-pool" className="space-y-6">
             <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl text-[#CEA472]">
-                  <Heart className="w-7 h-7" />
-                  许愿池
-                </CardTitle>
-                <p className="text-[#FFFFFF]/60">
-                  按时间最近和跟随人数排序
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-2xl text-[#CEA472]">
+                      <Heart className="w-7 h-7" />
+                      许愿池
+                    </CardTitle>
+                    <p className="text-[#FFFFFF]/60 mt-1">
+                      按时间最近和跟随人数排序
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      if (isAdminMode) {
+                        setIsAdminMode(false);
+                      } else {
+                        setShowPasswordDialog(true);
+                      }
+                    }}
+                    variant="outline"
+                    className={`flex items-center gap-2 border-[#CEA472]/30 ${
+                      isAdminMode 
+                        ? 'bg-[#CEA472]/20 text-[#CEA472]' 
+                        : 'text-[#CEA472] hover:bg-[#CEA472]/10'
+                    } hover:border-[#CEA472]/50 transition-all duration-500`}
+                  >
+                    <Settings className="w-4 h-4" />
+                    {isAdminMode ? '退出管理' : '管理'}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -324,7 +389,7 @@ export default function Home() {
                   </div>
                 ) : wishes.length === 0 ? (
                   <div className="text-center py-12">
-                    <Coins className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
+                    <Star className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
                     <p className="text-xl text-[#FFFFFF]/60">许愿池还是空的</p>
                     <p className="text-[#FFFFFF]/40 mt-2">成为第一个许愿的人吧！</p>
                   </div>
@@ -333,7 +398,7 @@ export default function Home() {
                     {wishes.map((wish, index) => (
                       <div
                         key={wish.id}
-                        className="group overflow-hidden p-6 rounded-lg border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm hover:border-[#CEA472]/50 hover:bg-black/60 transition-all duration-500 cursor-pointer"
+                        className="group overflow-hidden p-6 rounded-lg border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm hover:border-[#CEA472]/50 hover:bg-black/60 transition-all duration-500"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
@@ -364,14 +429,28 @@ export default function Home() {
                               <span>{formatDate(wish.created_at)}</span>
                             </div>
                           </div>
-                          <Button
-                            onClick={() => handleFollow(wish.id)}
-                            variant="outline"
-                            className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:border-[#CEA472]/50 transition-all duration-500"
-                          >
-                            <Heart className="w-4 h-4" />
-                            跟随
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            {!isAdminMode && (
+                              <Button
+                                onClick={() => handleFollow(wish.id)}
+                                variant="outline"
+                                className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:border-[#CEA472]/50 transition-all duration-500"
+                              >
+                                <Heart className="w-4 h-4" />
+                                跟随
+                              </Button>
+                            )}
+                            {isAdminMode && (
+                              <Button
+                                onClick={() => handleDeleteWish(wish.id)}
+                                variant="outline"
+                                className="flex items-center gap-2 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-500"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                删除
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -382,6 +461,59 @@ export default function Home() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Password Dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472]">管理员验证</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              请输入管理密码以进入管理模式
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              type="password"
+              placeholder="请输入密码"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleAdminLogin();
+                }
+              }}
+              className={`bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 ${
+                passwordError ? 'border-red-500' : ''
+              }`}
+            />
+            {passwordError && (
+              <p className="text-red-500 text-sm">密码错误，请重试</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowPasswordDialog(false);
+                setPassword('');
+                setPasswordError(false);
+              }}
+              variant="outline"
+              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleAdminLogin}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              确认
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
