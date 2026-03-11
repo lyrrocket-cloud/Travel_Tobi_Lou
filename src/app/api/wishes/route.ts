@@ -5,12 +5,10 @@ export async function GET() {
   try {
     const client = getSupabaseClient();
     
-    // 获取所有愿望，先按跟随人数降序，再按时间降序
+    // 获取所有愿望
     const { data: wishes, error: wishesError } = await client
       .from('wishes')
-      .select('*')
-      .order('followers_count', { ascending: false })
-      .order('created_at', { ascending: false });
+      .select('*');
 
     if (wishesError) {
       return NextResponse.json({ error: wishesError.message }, { status: 500 });
@@ -25,6 +23,24 @@ export async function GET() {
       return NextResponse.json({ error: followersError.message }, { status: 500 });
     }
 
+    // 月份映射
+    const monthMap: Record<string, number> = {
+      '一月': 1, '二月': 2, '三月': 3, '四月': 4, '五月': 5, '六月': 6,
+      '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
+    };
+
+    // 获取当前月份
+    const currentMonth = new Date().getMonth() + 1;
+
+    // 计算月份距离当前月份的差距
+    const getMonthDistance = (month: string) => {
+      const targetMonth = monthMap[month] || 0;
+      if (targetMonth >= currentMonth) {
+        return targetMonth - currentMonth;
+      }
+      return targetMonth + 12 - currentMonth;
+    };
+
     // 组装数据，为每个愿望添加跟随人列表
     const wishesWithFollowers = wishes.map((wish) => ({
       ...wish,
@@ -32,6 +48,16 @@ export async function GET() {
         ?.filter((f) => f.wish_id === wish.id)
         .map((f) => f.follower_name) || [],
     }));
+
+    // 排序：先按出发月份距离当前月份升序（最近的在前），再按跟随人数降序
+    wishesWithFollowers.sort((a, b) => {
+      const distanceA = getMonthDistance(a.travel_month);
+      const distanceB = getMonthDistance(b.travel_month);
+      if (distanceA !== distanceB) {
+        return distanceA - distanceB;
+      }
+      return b.followers_count - a.followers_count;
+    });
 
     return NextResponse.json({ wishes: wishesWithFollowers });
   } catch (error) {
