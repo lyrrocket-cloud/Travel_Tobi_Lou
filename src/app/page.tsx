@@ -228,13 +228,7 @@ export default function Home() {
           {/* Make Wish Tab */}
           <TabsContent value="make-wish" className="space-y-6">
             <Card className="max-w-2xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl text-[#CEA472]">
-                  <MapPin className="w-7 h-7" />
-                  许下你的旅行愿望
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF]">
                     <MapPin className="w-4 h-4 text-[#CEA472]" />
@@ -290,9 +284,9 @@ export default function Home() {
 
                 <Button
                   onClick={handleMakeWish}
-                  disabled={isAnimating || !destination || !travelMonth || !wisherName}
+                  disabled={isAnimating}
                   size="lg"
-                  className="w-full h-12 gap-2 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 border-0"
+                  className="w-full h-12 gap-2 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
