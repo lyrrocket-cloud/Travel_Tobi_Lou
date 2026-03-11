@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Star } from 'lucide-react';
+import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets } from 'lucide-react';
 
 interface Wish {
   id: number;
@@ -195,7 +195,7 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Star className="w-10 h-10 text-[#CEA472] animate-pulse" />
+            <Droplets className="w-10 h-10 text-[#CEA472] animate-pulse" />
             <h1 className="text-4xl font-bold text-[#CEA472]">
               旅行许愿池
             </h1>
@@ -213,7 +213,7 @@ export default function Home() {
               value="make-wish" 
               className="flex items-center gap-2 data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/50 hover:text-[#FFFFFF]/80"
             >
-              <Star className="w-4 h-4" />
+              <Droplets className="w-4 h-4" />
               许愿
             </TabsTrigger>
             <TabsTrigger 
@@ -292,7 +292,7 @@ export default function Home() {
                   onClick={handleMakeWish}
                   disabled={isAnimating || !destination || !travelMonth || !wisherName}
                   size="lg"
-                  className="w-full h-12 gap-2 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 transition-all duration-500"
+                  className="w-full h-12 gap-2 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 border-0"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
@@ -305,7 +305,7 @@ export default function Home() {
                     </div>
                   ) : (
                     <>
-                      <Star className="w-5 h-5" />
+                      <Droplets className="w-5 h-5" />
                       <span>许愿</span>
                     </>
                   )}
@@ -390,7 +390,7 @@ export default function Home() {
                   </div>
                 ) : wishes.length === 0 ? (
                   <div className="text-center py-12">
-                    <Star className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
+                    <Droplets className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
                     <p className="text-xl text-[#FFFFFF]/60">许愿池还是空的</p>
                     <p className="text-[#FFFFFF]/40 mt-2">成为第一个许愿的人吧！</p>
                   </div>
