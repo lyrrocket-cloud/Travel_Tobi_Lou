@@ -3,7 +3,7 @@ import { Inspector } from 'react-dev-inspector';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: '旅行许愿池',
+  title: '工具箱 | 旅行许愿池',
   description: '抛下硬币，许下心愿，让梦想照进现实',
   keywords: [
     '旅行许愿池',
