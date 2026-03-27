@@ -211,35 +211,47 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen" style={{
+      backgroundColor: '#0a0a0f',
+      backgroundImage: 'linear-gradient(rgba(10, 10, 15, 0.85), rgba(10, 10, 15, 0.85)), url(https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
+      <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Droplets className="w-10 h-10 text-[#CEA472] animate-pulse" />
-            <h1 className="text-4xl font-bold text-[#CEA472]">
-              旅行许愿池
-            </h1>
-            <Sparkles className="w-10 h-10 text-[#CEA472] animate-pulse" />
+        <div className="text-center mb-8">
+          <div className="flex flex-col items-center justify-center gap-4 mb-4">
+            {/* 图标容器 - 金色衬底 + 黑色线框 */}
+            <div 
+              className="w-20 h-20 flex items-center justify-center rounded-2xl"
+              style={{
+                backgroundColor: '#CEA472',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
+              }}
+            >
+              <Droplets className="w-10 h-10" style={{ color: '#0a0a0f' }} />
+            </div>
+            {/* 主标题 */}
+            <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行许愿池</h1>
           </div>
-          <p className="text-[#FFFFFF]/80 text-lg">
-            抛下硬币，许下心愿，让梦想照进现实
-          </p>
+          {/* 副标题 */}
+          <p className="text-[#FFFFFF] font-normal">抛下硬币，许下心愿，让梦想照进现实</p>
         </div>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-black/40 border border-[#CEA472]/10">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
             <TabsTrigger 
               value="make-wish" 
-              className="flex items-center gap-2 data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/50 hover:text-[#FFFFFF]/80"
+              className="flex items-center gap-2 data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
             >
               <Droplets className="w-4 h-4" />
               许愿
             </TabsTrigger>
             <TabsTrigger 
               value="wish-pool" 
-              className="flex items-center gap-2 data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/50 hover:text-[#FFFFFF]/80"
+              className="flex items-center gap-2 data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
             >
               <Heart className="w-4 h-4" />
               许愿池
@@ -307,7 +319,7 @@ export default function Home() {
                   onClick={handleMakeWish}
                   disabled={isAnimating}
                   size="lg"
-                  className="w-full h-12 gap-2 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 border-0 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+                  className="w-full h-12 gap-2 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
@@ -386,11 +398,11 @@ export default function Home() {
                       }
                     }}
                     variant="outline"
-                    className={`flex items-center gap-2 border-[#CEA472]/30 ${
+                    className={`flex items-center gap-2 border-[#CEA472]/40 ${
                       isAdminMode 
-                        ? 'bg-[#CEA472]/20 text-[#CEA472]' 
-                        : 'text-[#CEA472] hover:bg-[#CEA472]/10'
-                    } hover:border-[#CEA472]/50 transition-all duration-500`}
+                        ? 'bg-[#CEA472] text-[#0a0a0f] border-[#CEA472]' 
+                        : 'bg-black/40 text-[#CEA472]'
+                    } hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300`}
                   >
                     <Settings className="w-4 h-4" />
                     {isAdminMode ? '退出管理' : '管理'}
@@ -471,7 +483,7 @@ export default function Home() {
                               <Button
                                 onClick={() => handleFollow(wish.id)}
                                 variant="outline"
-                                className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:border-[#CEA472]/50 transition-all duration-500"
+                                className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
                               >
                                 <Heart className="w-4 h-4" />
                                 跟随
@@ -481,7 +493,7 @@ export default function Home() {
                               <Button
                                 onClick={() => handleDeleteWish(wish.id)}
                                 variant="outline"
-                                className="flex items-center gap-2 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-500"
+                                className="flex items-center gap-2 border-red-500/40 bg-black/40 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300"
                               >
                                 <Trash2 className="w-4 h-4" />
                                 删除
@@ -538,7 +550,7 @@ export default function Home() {
                 setPasswordError(false);
               }}
               variant="outline"
-              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
             >
               取消
             </Button>
