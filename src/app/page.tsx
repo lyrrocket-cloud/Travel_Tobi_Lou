@@ -213,7 +213,7 @@ export default function Home() {
   return (
     <div className="min-h-screen" style={{
       backgroundColor: '#0a0a0f',
-      backgroundImage: 'linear-gradient(rgba(10, 10, 15, 0.85), rgba(10, 10, 15, 0.85)), url(https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920)',
+      backgroundImage: 'linear-gradient(rgba(10, 10, 15, 0.75), rgba(10, 10, 15, 0.75)), url(/matterhorn-bg.jpg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
