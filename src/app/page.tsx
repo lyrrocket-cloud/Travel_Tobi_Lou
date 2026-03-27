@@ -230,7 +230,7 @@ export default function Home() {
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
             >
-              <Droplets className="w-10 h-10" style={{ color: '#0a0a0f' }} />
+              <Heart className="w-10 h-10" style={{ color: '#0a0a0f' }} />
             </div>
             {/* 主标题 */}
             <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行许愿池</h1>
