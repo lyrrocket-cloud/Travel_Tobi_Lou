@@ -330,13 +330,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen" style={{
-      backgroundColor: '#0a0a0f',
-      backgroundImage: 'linear-gradient(rgba(10, 10, 15, 0.75), rgba(10, 10, 15, 0.75)), url(/matterhorn-bg.jpg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    }}>
+    <div className="min-h-screen relative">
+      {/* 固定背景图片层 */}
+      <div 
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundColor: '#0a0a0f',
+          backgroundImage: 'linear-gradient(rgba(10, 10, 15, 0.75), rgba(10, 10, 15, 0.75)), url(/matterhorn-bg.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
       {/* 管理按钮 - 右上角 */}
       <div className="fixed top-4 right-4 z-50">
         <Button
