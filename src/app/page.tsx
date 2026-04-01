@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle } from 'lucide-react';
+import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle, Edit } from 'lucide-react';
 
 interface Wish {
   id: number;
@@ -64,6 +64,13 @@ export default function Home() {
   const [confirmWishId, setConfirmWishId] = useState<number | null>(null);
   const [confirmedDate, setConfirmedDate] = useState('');
   const [travelers, setTravelers] = useState('');
+  
+  // 编辑相关状态
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editWishId, setEditWishId] = useState<number | null>(null);
+  const [editDestination, setEditDestination] = useState('');
+  const [editTravelMonth, setEditTravelMonth] = useState('');
+  const [editWisherName, setEditWisherName] = useState('');
 
   useEffect(() => {
     if (activeTab === 'wish-pool') {
@@ -244,6 +251,48 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to confirm trip:', error);
       alert('确认失败，请重试');
+    }
+  };
+
+  const handleOpenEditDialog = (wish: Wish) => {
+    setEditWishId(wish.id);
+    setEditDestination(wish.destination);
+    setEditTravelMonth(wish.travel_month);
+    setEditWisherName(wish.wisher_name);
+    setShowEditDialog(true);
+  };
+
+  const handleEditWish = async () => {
+    if (!editWishId || !editDestination || !editTravelMonth || !editWisherName) {
+      alert('请填写所有必填项');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/wishes/${editWishId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          destination: editDestination, 
+          travelMonth: editTravelMonth, 
+          wisherName: editWisherName 
+        }),
+      });
+
+      if (response.ok) {
+        alert('编辑成功！');
+        setShowEditDialog(false);
+        setEditWishId(null);
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '编辑失败，请重试');
+      }
+    } catch (error) {
+      console.error('Failed to edit wish:', error);
+      alert('编辑失败，请重试');
     }
   };
 
@@ -552,38 +601,48 @@ export default function Home() {
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {/* 未成行且非管理模式：显示跟随和确定成行按钮 */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* 非管理模式：只显示跟随按钮 */}
                             {!wish.is_confirmed && !isAdminMode && (
+                              <Button
+                                onClick={() => handleFollow(wish.id)}
+                                variant="outline"
+                                className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                              >
+                                <Heart className="w-4 h-4" />
+                                跟随
+                              </Button>
+                            )}
+                            {/* 管理模式：显示编辑、确定成行、删除按钮 */}
+                            {isAdminMode && (
                               <>
                                 <Button
-                                  onClick={() => handleFollow(wish.id)}
+                                  onClick={() => handleOpenEditDialog(wish)}
                                   variant="outline"
                                   className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
                                 >
-                                  <Heart className="w-4 h-4" />
-                                  跟随
+                                  <Edit className="w-4 h-4" />
+                                  编辑
                                 </Button>
+                                {!wish.is_confirmed && (
+                                  <Button
+                                    onClick={() => handleOpenConfirmDialog(wish.id)}
+                                    variant="outline"
+                                    className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                  >
+                                    <CheckCircle className="w-4 h-4" />
+                                    确定成行
+                                  </Button>
+                                )}
                                 <Button
-                                  onClick={() => handleOpenConfirmDialog(wish.id)}
+                                  onClick={() => handleDeleteWish(wish.id)}
                                   variant="outline"
-                                  className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                  className="flex items-center gap-2 border-red-500/40 bg-black/40 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300"
                                 >
-                                  <CheckCircle className="w-4 h-4" />
-                                  确定成行
+                                  <Trash2 className="w-4 h-4" />
+                                  删除
                                 </Button>
                               </>
-                            )}
-                            {/* 管理模式：显示删除按钮 */}
-                            {isAdminMode && (
-                              <Button
-                                onClick={() => handleDeleteWish(wish.id)}
-                                variant="outline"
-                                className="flex items-center gap-2 border-red-500/40 bg-black/40 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                                删除
-                              </Button>
                             )}
                           </div>
                         </div>
@@ -704,6 +763,87 @@ export default function Home() {
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
               确认成行
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Wish Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
+              <Edit className="w-5 h-5" />
+              编辑愿望
+            </DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              修改愿望的相关信息
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#CEA472]" />
+                目的地
+              </Label>
+              <Input
+                placeholder="例如：巴黎、东京、马尔代夫..."
+                value={editDestination}
+                onChange={(e) => setEditDestination(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#CEA472]" />
+                期望出发月份
+              </Label>
+              <Select value={editTravelMonth} onValueChange={setEditTravelMonth}>
+                <SelectTrigger className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]">
+                  <SelectValue placeholder="选择月份" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
+                  {months.map((month) => (
+                    <SelectItem 
+                      key={month} 
+                      value={month} 
+                      className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
+                    >
+                      {month}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <User className="w-4 h-4 text-[#CEA472]" />
+                许愿人姓名
+              </Label>
+              <Input
+                placeholder="请输入许愿人姓名"
+                value={editWisherName}
+                onChange={(e) => setEditWisherName(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowEditDialog(false);
+                setEditWishId(null);
+              }}
+              variant="outline"
+              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleEditWish}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              保存
             </Button>
           </DialogFooter>
         </DialogContent>
