@@ -520,13 +520,13 @@ export default function Home() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               {wish.is_confirmed && (
-                                <CheckCircle className="w-5 h-5 text-[#CEA472]" />
+                                <CheckCircle className="w-4 h-4 text-[#CEA472]" />
                               )}
-                              <span className="text-2xl font-bold text-[#CEA472]">
+                              <span className="font-bold text-[#CEA472]">
                                 #{index + 1}
                               </span>
-                              <MapPin className="w-5 h-5 text-[#CEA472]" />
-                              <h3 className="text-xl font-bold text-[#FFFFFF]">
+                              <MapPin className="w-4 h-4 text-[#CEA472]" />
+                              <h3 className="font-bold text-[#FFFFFF]">
                                 {wish.destination}
                               </h3>
                               {wish.is_confirmed && (
