@@ -479,7 +479,7 @@ export default function Home() {
                 <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
                 
                 {/* 月份节点 */}
-                <div className="grid grid-cols-12 gap-2 relative">
+                <div className="grid grid-cols-12 gap-1 sm:gap-2 relative">
                   {monthsShort.map((month, idx) => {
                     const monthNum = idx + 1;
                     const confirmedTrips = wishes.filter(w => {
@@ -490,22 +490,22 @@ export default function Home() {
                     const hasTrips = confirmedTrips.length > 0;
                     
                     return (
-                      <div key={month} className="flex flex-col items-center">
+                      <div key={month} className="flex flex-col items-center min-w-0">
                         {/* 月份节点 */}
                         <div 
-                          className={`w-3 h-3 rounded-full relative z-10 transition-all duration-300 ${
+                          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
                             hasTrips 
                               ? 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50' 
                               : 'bg-[#CEA472]/30'
                           }`}
                         />
                         {/* 月份标签 */}
-                        <span className={`text-xs mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
+                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
                           {month}
                         </span>
-                        {/* 已成行旅行标注 */}
+                        {/* 已成行旅行标注 - 仅在sm及以上屏幕显示 */}
                         {hasTrips && (
-                          <div className="mt-2 space-y-1 w-full">
+                          <div className="hidden sm:block mt-2 space-y-1 w-full">
                             {confirmedTrips.map(trip => {
                               // 格式化日期，只显示月-日
                               const dateStr = trip.confirmed_date || '';
@@ -515,10 +515,10 @@ export default function Home() {
                               return (
                                 <div 
                                   key={trip.id}
-                                  className="text-xs text-[#FFFFFF] bg-[#CEA472]/20 px-2 py-1.5 rounded text-center"
+                                  className="text-xs text-[#FFFFFF] bg-[#CEA472]/20 px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center"
                                 >
-                                  <div className="font-semibold text-[#CEA472]">{trip.destination}</div>
-                                  <div className="text-[#FFFFFF]/60 text-[10px] mt-0.5">{shortDate}</div>
+                                  <div className="font-semibold text-[#CEA472] truncate text-[10px] sm:text-xs">{trip.destination}</div>
+                                  <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{shortDate}</div>
                                 </div>
                               );
                             })}
@@ -527,6 +527,29 @@ export default function Home() {
                       </div>
                     );
                   })}
+                </div>
+                
+                {/* 手机端：已确认旅行列表 */}
+                <div className="sm:hidden mt-4 space-y-2">
+                  {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
+                    .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
+                    .map(trip => {
+                      const dateStr = trip.confirmed_date || '';
+                      const dateParts = dateStr.split('-');
+                      const shortDate = dateParts.length >= 3 ? `${dateParts[1]}-${dateParts[2]}` : dateStr;
+                      
+                      return (
+                        <div 
+                          key={trip.id}
+                          className="flex items-center justify-between text-sm text-[#FFFFFF] bg-[#CEA472]/20 px-3 py-2 rounded"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#CEA472] font-semibold">{trip.destination}</span>
+                          </div>
+                          <span className="text-[#FFFFFF]/60 text-xs">{shortDate}</span>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </CardContent>
