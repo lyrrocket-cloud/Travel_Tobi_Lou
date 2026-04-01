@@ -56,7 +56,6 @@ export default function Home() {
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   
   // 管理相关状态
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -82,15 +81,6 @@ export default function Home() {
   const [editTripWishId, setEditTripWishId] = useState<number | null>(null);
   const [editTripDate, setEditTripDate] = useState('');
   const [editTripTravelers, setEditTripTravelers] = useState('');
-
-  // 实时时钟更新
-  useEffect(() => {
-    setCurrentTime(new Date());
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     if (activeTab === 'wish-pool') {
@@ -439,17 +429,6 @@ export default function Home() {
             </div>
             {/* 主标题 */}
             <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行许愿池</h1>
-            {/* 日期时钟 */}
-            {currentTime && (
-              <div className="text-[#CEA472]/80 text-sm">
-                {currentTime.toLocaleDateString('zh-CN', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'long'
-                })} {currentTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-              </div>
-            )}
           </div>
         </div>
 

@@ -44,10 +44,21 @@ export async function GET() {
     };
 
     // 判断是否已过期
-    // 逻辑：根据创建时间推断期望年份，如果当前已超过期望月份则过期
-    const isExpired = (wish: { travel_month: string; is_confirmed: number; created_at: string }) => {
-      if (wish.is_confirmed === 1) return false;
+    // 逻辑：
+    // 1. 已成行：如果出发日期已过，则过期
+    // 2. 未成行：根据创建时间推断期望年份，如果当前已超过期望月份则过期
+    const isExpired = (wish: { travel_month: string; is_confirmed: number; created_at: string; confirmed_date?: string }) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // 只比较日期，忽略时间
       
+      // 已成行：判断出发日期是否已过
+      if (wish.is_confirmed === 1 && wish.confirmed_date) {
+        const tripDate = new Date(wish.confirmed_date);
+        tripDate.setHours(0, 0, 0, 0);
+        return tripDate < today;
+      }
+      
+      // 未成行：根据期望月份判断
       const targetMonth = monthMap[wish.travel_month] || 0;
       if (targetMonth === 0) return false;
       
