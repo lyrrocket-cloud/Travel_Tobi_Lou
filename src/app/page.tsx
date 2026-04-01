@@ -74,6 +74,12 @@ export default function Home() {
   const [editDestination, setEditDestination] = useState('');
   const [editTravelMonth, setEditTravelMonth] = useState('');
   const [editWisherName, setEditWisherName] = useState('');
+  
+  // 编辑行程相关状态（已成行旅行）
+  const [showEditTripDialog, setShowEditTripDialog] = useState(false);
+  const [editTripWishId, setEditTripWishId] = useState<number | null>(null);
+  const [editTripDate, setEditTripDate] = useState('');
+  const [editTripTravelers, setEditTripTravelers] = useState('');
 
   useEffect(() => {
     if (activeTab === 'wish-pool') {
@@ -315,6 +321,48 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to edit wish:', error);
       alert('编辑失败，请重试');
+    }
+  };
+
+  // 打开编辑行程对话框
+  const handleOpenEditTripDialog = (wish: Wish) => {
+    setEditTripWishId(wish.id);
+    setEditTripDate(wish.confirmed_date || '');
+    setEditTripTravelers(wish.travelers || '');
+    setShowEditTripDialog(true);
+  };
+
+  // 更新已成行旅行的出发日期和出行人
+  const handleEditTrip = async () => {
+    if (!editTripWishId || !editTripDate || !editTripTravelers) {
+      alert('请填写所有必填项');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/wishes/${editTripWishId}/confirm`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          confirmedDate: editTripDate, 
+          travelers: editTripTravelers,
+        }),
+      });
+
+      if (response.ok) {
+        alert('更新成功！');
+        setShowEditTripDialog(false);
+        setEditTripWishId(null);
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '更新失败，请重试');
+      }
+    } catch (error) {
+      console.error('Failed to edit trip:', error);
+      alert('更新失败，请重试');
     }
   };
 
@@ -729,23 +777,36 @@ export default function Home() {
                             {/* 管理模式：显示编辑、确定成行、删除按钮 */}
                             {isAdminMode && (
                               <>
-                                <Button
-                                  onClick={() => handleOpenEditDialog(wish)}
-                                  variant="outline"
-                                  className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
-                                >
-                                  <Edit className="w-4 h-4" />
-                                  编辑
-                                </Button>
-                                {wish.is_confirmed !== 1 && (
+                                {wish.is_confirmed === 1 ? (
+                                  // 已成行：显示编辑行程按钮
                                   <Button
-                                    onClick={() => handleOpenConfirmDialog(wish.id)}
+                                    onClick={() => handleOpenEditTripDialog(wish)}
                                     variant="outline"
                                     className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
                                   >
-                                    <CheckCircle className="w-4 h-4" />
-                                    确定成行
+                                    <Edit className="w-4 h-4" />
+                                    编辑行程
                                   </Button>
+                                ) : (
+                                  // 未成行：显示编辑和确定成行按钮
+                                  <>
+                                    <Button
+                                      onClick={() => handleOpenEditDialog(wish)}
+                                      variant="outline"
+                                      className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                      编辑
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleOpenConfirmDialog(wish.id)}
+                                      variant="outline"
+                                      className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                    >
+                                      <CheckCircle className="w-4 h-4" />
+                                      确定成行
+                                    </Button>
+                                  </>
                                 )}
                                 <Button
                                   onClick={() => handleDeleteWish(wish.id)}
@@ -954,6 +1015,65 @@ export default function Home() {
             </Button>
             <Button
               onClick={handleEditWish}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Trip Dialog - 编辑已成行旅行 */}
+      <Dialog open={showEditTripDialog} onOpenChange={setShowEditTripDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
+              <Edit className="w-5 h-5" />
+              编辑行程
+            </DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              修改出发日期和出行人信息
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#CEA472]" />
+                出发日期
+              </Label>
+              <Input
+                type="date"
+                value={editTripDate}
+                onChange={(e) => setEditTripDate(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] focus:border-[#CEA472]/50"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <User className="w-4 h-4 text-[#CEA472]" />
+                出行人（多人用逗号分隔）
+              </Label>
+              <Input
+                placeholder="例如：张三、李四、王五"
+                value={editTripTravelers}
+                onChange={(e) => setEditTripTravelers(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowEditTripDialog(false);
+                setEditTripWishId(null);
+              }}
+              variant="outline"
+              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleEditTrip}
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
               保存
