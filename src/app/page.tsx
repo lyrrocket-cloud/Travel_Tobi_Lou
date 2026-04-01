@@ -499,6 +499,7 @@ export default function Home() {
                       return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
                     });
                     const hasTrips = confirmedTrips.length > 0;
+                    const hasExpiredTrips = confirmedTrips.some(trip => trip.is_expired === 1);
                     
                     return (
                       <div key={month} className="flex flex-col items-center min-w-0">
@@ -506,12 +507,14 @@ export default function Home() {
                         <div 
                           className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
                             hasTrips 
-                              ? 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50' 
+                              ? hasExpiredTrips 
+                                ? 'bg-gray-400 shadow-lg shadow-gray-400/30' 
+                                : 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50'
                               : 'bg-[#CEA472]/30'
                           }`}
                         />
                         {/* 月份标签 */}
-                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
+                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 ${hasTrips ? hasExpiredTrips ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
                           {month}
                         </span>
                         {/* 已成行旅行标注 - 仅在sm及以上屏幕显示 */}
@@ -522,13 +525,18 @@ export default function Home() {
                               const dateStr = trip.confirmed_date || '';
                               const dateParts = dateStr.split('-');
                               const shortDate = dateParts.length >= 3 ? `${dateParts[1]}-${dateParts[2]}` : dateStr;
+                              const isExpired = trip.is_expired === 1;
                               
                               return (
                                 <div 
                                   key={trip.id}
-                                  className="text-xs text-[#FFFFFF] bg-[#CEA472]/20 px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center"
+                                  className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center ${
+                                    isExpired 
+                                      ? 'text-[#FFFFFF]/60 bg-gray-500/20' 
+                                      : 'text-[#FFFFFF] bg-[#CEA472]/20'
+                                  }`}
                                 >
-                                  <div className="font-semibold text-[#CEA472] truncate text-[10px] sm:text-xs">{trip.destination}</div>
+                                  <div className={`font-semibold truncate text-[10px] sm:text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
                                   <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{shortDate}</div>
                                 </div>
                               );
@@ -548,14 +556,19 @@ export default function Home() {
                       const dateStr = trip.confirmed_date || '';
                       const dateParts = dateStr.split('-');
                       const shortDate = dateParts.length >= 3 ? `${dateParts[1]}-${dateParts[2]}` : dateStr;
+                      const isExpired = trip.is_expired === 1;
                       
                       return (
                         <div 
                           key={trip.id}
-                          className="flex items-center justify-between text-sm text-[#FFFFFF] bg-[#CEA472]/20 px-3 py-2 rounded"
+                          className={`flex items-center justify-between text-sm px-3 py-2 rounded ${
+                            isExpired 
+                              ? 'text-[#FFFFFF]/60 bg-gray-500/20' 
+                              : 'text-[#FFFFFF] bg-[#CEA472]/20'
+                          }`}
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-[#CEA472] font-semibold">{trip.destination}</span>
+                            <span className={`font-semibold ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</span>
                           </div>
                           <span className="text-[#FFFFFF]/60 text-xs">{shortDate}</span>
                         </div>
