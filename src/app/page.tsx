@@ -43,6 +43,8 @@ const months = [
   '七月', '八月', '九月', '十月', '十一月', '十二月'
 ];
 
+const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('make-wish');
   const [destination, setDestination] = useState('');
@@ -423,8 +425,8 @@ export default function Home() {
                 <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
                 
                 {/* 月份节点 */}
-                <div className="grid grid-cols-12 gap-1 relative">
-                  {months.map((month, idx) => {
+                <div className="grid grid-cols-12 gap-2 relative">
+                  {monthsShort.map((month, idx) => {
                     const monthNum = idx + 1;
                     const confirmedTrips = wishes.filter(w => {
                       if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
@@ -445,18 +447,19 @@ export default function Home() {
                         />
                         {/* 月份标签 */}
                         <span className={`text-xs mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
-                          {month.replace('月', '')}
+                          {month}
                         </span>
                         {/* 已成行旅行标注 */}
                         {hasTrips && (
-                          <div className="mt-2 space-y-1">
+                          <div className="mt-2 space-y-1 w-full">
                             {confirmedTrips.map(trip => (
                               <div 
                                 key={trip.id}
-                                className="text-xs text-[#FFFFFF]/80 bg-[#CEA472]/20 px-1.5 py-0.5 rounded text-center whitespace-nowrap"
-                                title={`${trip.destination} - ${trip.confirmed_date}`}
+                                className="text-xs text-[#FFFFFF] bg-[#CEA472]/20 px-2 py-1.5 rounded text-center"
                               >
-                                {trip.destination}
+                                <div className="font-semibold text-[#CEA472]">{trip.destination}</div>
+                                <div className="text-[#FFFFFF]/70 text-[10px] mt-0.5">{trip.travelers}</div>
+                                <div className="text-[#FFFFFF]/50 text-[10px]">{trip.confirmed_date}</div>
                               </div>
                             ))}
                           </div>
@@ -489,7 +492,7 @@ export default function Home() {
 
           {/* Make Wish Tab */}
           <TabsContent value="make-wish" className="space-y-6">
-            <Card className="max-w-2xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+            <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
               <CardContent className="space-y-6 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF]">
