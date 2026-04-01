@@ -26,6 +26,7 @@ import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, Ch
 interface Wish {
   id: number;
   destination: string;
+  travel_year: number;
   travel_month: string;
   wisher_name: string;
   followers_count: number;
@@ -44,11 +45,16 @@ const months = [
   '七月', '八月', '九月', '十月', '十一月', '十二月'
 ];
 
+// 生成年份选项（当前年份到当前年份+3年）
+const currentYear = new Date().getFullYear();
+const years = [currentYear, currentYear + 1, currentYear + 2, currentYear + 3];
+
 const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('make-wish');
   const [destination, setDestination] = useState('');
+  const [travelYear, setTravelYear] = useState<number>(currentYear);
   const [travelMonth, setTravelMonth] = useState('');
   const [wisherName, setWisherName] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -73,6 +79,7 @@ export default function Home() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editWishId, setEditWishId] = useState<number | null>(null);
   const [editDestination, setEditDestination] = useState('');
+  const [editTravelYear, setEditTravelYear] = useState<number>(currentYear);
   const [editTravelMonth, setEditTravelMonth] = useState('');
   const [editWisherName, setEditWisherName] = useState('');
   
@@ -121,7 +128,7 @@ export default function Home() {
   };
 
   const handleMakeWish = async () => {
-    if (!destination || !travelMonth || !wisherName) {
+    if (!destination || !travelYear || !travelMonth || !wisherName) {
       alert('请填写所有必填项');
       return;
     }
@@ -138,6 +145,7 @@ export default function Home() {
           },
           body: JSON.stringify({
             destination,
+            travelYear,
             travelMonth,
             wisherName,
           }),
@@ -149,6 +157,7 @@ export default function Home() {
           setAnimationComplete(true);
           setTimeout(() => {
             setDestination('');
+            setTravelYear(currentYear);
             setTravelMonth('');
             setWisherName('');
             setIsAnimating(false);
@@ -286,13 +295,14 @@ export default function Home() {
   const handleOpenEditDialog = (wish: Wish) => {
     setEditWishId(wish.id);
     setEditDestination(wish.destination);
+    setEditTravelYear(wish.travel_year || currentYear);
     setEditTravelMonth(wish.travel_month);
     setEditWisherName(wish.wisher_name);
     setShowEditDialog(true);
   };
 
   const handleEditWish = async () => {
-    if (!editWishId || !editDestination || !editTravelMonth || !editWisherName) {
+    if (!editWishId || !editDestination || !editTravelYear || !editTravelMonth || !editWisherName) {
       alert('请填写所有必填项');
       return;
     }
@@ -305,6 +315,7 @@ export default function Home() {
         },
         body: JSON.stringify({ 
           destination: editDestination, 
+          travelYear: editTravelYear, 
           travelMonth: editTravelMonth, 
           wisherName: editWisherName 
         }),
@@ -593,26 +604,44 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="month" className="flex items-center gap-2 text-[#FFFFFF]">
+                  <Label className="flex items-center gap-2 text-[#FFFFFF]">
                     <Calendar className="w-4 h-4 text-[#CEA472]" />
-                    期望出发月份
+                    希望出行年月
                   </Label>
-                  <Select value={travelMonth} onValueChange={setTravelMonth} disabled={isAnimating}>
-                    <SelectTrigger className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]">
-                      <SelectValue placeholder="选择月份" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
-                      {months.map((month) => (
-                        <SelectItem 
-                          key={month} 
-                          value={month} 
-                          className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
-                        >
-                          {month}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={travelYear.toString()} onValueChange={(v) => setTravelYear(parseInt(v))} disabled={isAnimating}>
+                      <SelectTrigger className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
+                        <SelectValue placeholder="选择年份" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
+                        {years.map((year) => (
+                          <SelectItem 
+                            key={year} 
+                            value={year.toString()} 
+                            className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
+                          >
+                            {year}年
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={travelMonth} onValueChange={setTravelMonth} disabled={isAnimating}>
+                      <SelectTrigger className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
+                        <SelectValue placeholder="选择月份" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
+                        {months.map((month) => (
+                          <SelectItem 
+                            key={month} 
+                            value={month} 
+                            className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
+                          >
+                            {month}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -755,7 +784,7 @@ export default function Home() {
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                    <span>{wish.travel_month}</span>
+                                    <span>{wish.travel_year}年{wish.travel_month}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className="w-4 h-4 text-[#CEA472]" />
@@ -1003,24 +1032,42 @@ export default function Home() {
             <div className="space-y-2">
               <Label className="text-[#FFFFFF] flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#CEA472]" />
-                期望出发月份
+                希望出行年月
               </Label>
-              <Select value={editTravelMonth} onValueChange={setEditTravelMonth}>
-                <SelectTrigger className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]">
-                  <SelectValue placeholder="选择月份" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
-                  {months.map((month) => (
-                    <SelectItem 
-                      key={month} 
-                      value={month} 
-                      className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
-                    >
-                      {month}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={editTravelYear.toString()} onValueChange={(v) => setEditTravelYear(parseInt(v))}>
+                  <SelectTrigger className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
+                    <SelectValue placeholder="选择年份" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
+                    {years.map((year) => (
+                      <SelectItem 
+                        key={year} 
+                        value={year.toString()} 
+                        className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
+                      >
+                        {year}年
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={editTravelMonth} onValueChange={setEditTravelMonth}>
+                  <SelectTrigger className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
+                    <SelectValue placeholder="选择月份" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
+                    {months.map((month) => (
+                      <SelectItem 
+                        key={month} 
+                        value={month} 
+                        className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
+                      >
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div className="space-y-2">
               <Label className="text-[#FFFFFF] flex items-center gap-2">

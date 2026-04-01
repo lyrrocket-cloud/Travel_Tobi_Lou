@@ -11,6 +11,7 @@ export const wishes = pgTable(
 	{
 		id: serial().notNull().primaryKey(),
 		destination: varchar("destination", { length: 255 }).notNull(),
+		travelYear: integer("travel_year").notNull(), // 期望出行年份
 		travelMonth: varchar("travel_month", { length: 20 }).notNull(),
 		wisherName: varchar("wisher_name", { length: 100 }).notNull(),
 		followersCount: integer("followers_count").notNull().default(0),

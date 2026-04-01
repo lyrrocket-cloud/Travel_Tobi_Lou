@@ -34,20 +34,11 @@ export async function GET() {
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
 
-    // 计算月份距离当前月份的差距
-    const getMonthDistance = (month: string) => {
-      const targetMonth = monthMap[month] || 0;
-      if (targetMonth >= currentMonth) {
-        return targetMonth - currentMonth;
-      }
-      return targetMonth + 12 - currentMonth;
-    };
-
     // 判断是否已过期
     // 逻辑：
     // 1. 已成行：如果出发日期已过，则过期
-    // 2. 未成行：根据创建时间推断期望年份，如果当前已超过期望月份则过期
-    const isExpired = (wish: { travel_month: string; is_confirmed: number; created_at: string; confirmed_date?: string }) => {
+    // 2. 未成行：根据期望年月判断是否已过期
+    const isExpired = (wish: { travel_year?: number; travel_month: string; is_confirmed: number; confirmed_date?: string }) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0); // 只比较日期，忽略时间
       
@@ -58,29 +49,25 @@ export async function GET() {
         return tripDate < today;
       }
       
-      // 未成行：根据期望月份判断
+      // 未成行：根据期望年月判断
+      const targetYear = wish.travel_year || currentYear;
       const targetMonth = monthMap[wish.travel_month] || 0;
       if (targetMonth === 0) return false;
       
-      // 根据创建时间推断期望年份
-      const createdDate = new Date(wish.created_at);
-      const createdMonth = createdDate.getMonth() + 1;
-      const createdYear = createdDate.getFullYear();
-      
-      // 如果创建月份 <= 期望月份，期望年份 = 创建年份
-      // 如果创建月份 > 期望月份，期望年份 = 创建年份 + 1
-      let expectedYear: number;
-      if (createdMonth <= targetMonth) {
-        expectedYear = createdYear;
-      } else {
-        expectedYear = createdYear + 1;
-      }
-      
       // 判断是否过期：当前年份 > 期望年份，或当前年份 = 期望年份且当前月份 > 期望月份
-      if (currentYear > expectedYear) return true;
-      if (currentYear === expectedYear && currentMonth > targetMonth) return true;
+      if (currentYear > targetYear) return true;
+      if (currentYear === targetYear && currentMonth > targetMonth) return true;
       
       return false;
+    };
+
+    // 计算期望年月距离当前年月的差距（用于排序）
+    const getYearMonthDistance = (travelYear: number | undefined, travelMonth: string) => {
+      const targetYear = travelYear || currentYear;
+      const targetMonth = monthMap[travelMonth] || 0;
+      
+      // 计算月份差距
+      return (targetYear - currentYear) * 12 + (targetMonth - currentMonth);
     };
 
     // 组装数据，为每个愿望添加跟随人列表和过期状态
@@ -95,7 +82,7 @@ export async function GET() {
     // 排序规则：
     // 1. 已过期的排在最后
     // 2. 已成行的按出发日期最近排序
-    // 3. 其它的按距离期望月份和跟随人数排序
+    // 3. 其它的按距离期望年月和跟随人数排序
     wishesWithFollowers.sort((a, b) => {
       // 已过期的排在最后
       if (a.is_expired !== b.is_expired) {
@@ -114,9 +101,9 @@ export async function GET() {
         return b.is_confirmed - a.is_confirmed;
       }
 
-      // 都未成行，按距离期望月份和跟随人数排序
-      const distanceA = getMonthDistance(a.travel_month);
-      const distanceB = getMonthDistance(b.travel_month);
+      // 都未成行，按距离期望年月和跟随人数排序
+      const distanceA = getYearMonthDistance(a.travel_year, a.travel_month);
+      const distanceB = getYearMonthDistance(b.travel_year, b.travel_month);
       if (distanceA !== distanceB) {
         return distanceA - distanceB;
       }
@@ -133,9 +120,9 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { destination, travelMonth, wisherName } = body;
+    const { destination, travelYear, travelMonth, wisherName } = body;
 
-    if (!destination || !travelMonth || !wisherName) {
+    if (!destination || !travelYear || !travelMonth || !wisherName) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -148,6 +135,7 @@ export async function POST(request: NextRequest) {
       .from('wishes')
       .insert({
         destination,
+        travel_year: travelYear,
         travel_month: travelMonth,
         wisher_name: wisherName,
         followers_count: 0,

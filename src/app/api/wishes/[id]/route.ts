@@ -8,9 +8,9 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { destination, travelMonth, wisherName } = body;
+    const { destination, travelYear, travelMonth, wisherName } = body;
 
-    if (!destination || !travelMonth || !wisherName) {
+    if (!destination || !travelYear || !travelMonth || !wisherName) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -23,6 +23,7 @@ export async function PUT(
       .from('wishes')
       .update({
         destination,
+        travel_year: travelYear,
         travel_month: travelMonth,
         wisher_name: wisherName,
       })
