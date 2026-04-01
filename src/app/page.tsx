@@ -688,10 +688,10 @@ export default function Home() {
                       <div
                         key={wish.id}
                         className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
-                          wish.is_confirmed === 1
-                            ? 'border-[#CEA472] bg-[#CEA472]/10' 
-                            : wish.is_expired === 1
-                              ? 'border-red-500/30 bg-red-500/5'
+                          wish.is_expired === 1
+                            ? 'border-gray-500/30 bg-gray-500/5'
+                            : wish.is_confirmed === 1
+                              ? 'border-[#CEA472] bg-[#CEA472]/10' 
                               : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
                         }`}
                       >
@@ -705,14 +705,13 @@ export default function Home() {
                               <h3 className="font-bold text-[#FFFFFF]">
                                 {wish.destination}
                               </h3>
-                              {wish.is_confirmed === 1 && (
+                              {wish.is_expired === 1 ? (
+                                <span className="px-2 py-0.5 text-xs bg-gray-500/50 text-gray-300 rounded-full font-semibold">
+                                  已过期
+                                </span>
+                              ) : wish.is_confirmed === 1 && (
                                 <span className="px-2 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold">
                                   已成行
-                                </span>
-                              )}
-                              {wish.is_expired === 1 && wish.is_confirmed !== 1 && (
-                                <span className="px-2 py-0.5 text-xs bg-red-500/80 text-white rounded-full font-semibold">
-                                  已过期
                                 </span>
                               )}
                             </div>
@@ -722,13 +721,13 @@ export default function Home() {
                               <div className="space-y-2">
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80">
                                   <div className="flex items-center gap-1">
-                                    <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                    <span className="text-[#CEA472] font-semibold">出发日期：{wish.confirmed_date}</span>
+                                    <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                    <span className={`font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出发日期：{wish.confirmed_date}</span>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[#FFFFFF]/80">
-                                  <User className="w-4 h-4 text-[#CEA472]" />
-                                  <span className="text-[#CEA472] font-semibold">出行人：{wish.travelers}</span>
+                                  <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                  <span className={`font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出行人：{wish.travelers}</span>
                                 </div>
                               </div>
                             ) : (
