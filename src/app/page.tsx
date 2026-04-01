@@ -401,7 +401,7 @@ export default function Home() {
                 </button>
                 <h3 className="text-[#CEA472] font-semibold flex items-center gap-2 min-w-[140px] justify-center">
                   <Calendar className="w-5 h-5" />
-                  {selectedYear} 年度足迹
+                  {selectedYear} 旅行计划
                 </h3>
                 <button
                   onClick={() => {
