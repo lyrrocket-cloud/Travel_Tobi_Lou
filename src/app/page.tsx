@@ -519,10 +519,7 @@ export default function Home() {
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              {wish.is_confirmed && (
-                                <CheckCircle className="w-4 h-4 text-[#CEA472]" />
-                              )}
-                              <span className="font-bold text-[#CEA472]">
+                              <span className="text-[#CEA472]">
                                 #{index + 1}
                               </span>
                               <MapPin className="w-4 h-4 text-[#CEA472]" />
