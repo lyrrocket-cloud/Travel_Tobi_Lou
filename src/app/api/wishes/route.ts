@@ -29,12 +29,12 @@ export async function GET() {
       '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
     };
 
-    // 获取当前月份和年份
+    // 获取当前时间
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
 
-    // 计算月份距离当前月份的差距（考虑是否已过期）
+    // 计算月份距离当前月份的差距
     const getMonthDistance = (month: string) => {
       const targetMonth = monthMap[month] || 0;
       if (targetMonth >= currentMonth) {
@@ -43,11 +43,33 @@ export async function GET() {
       return targetMonth + 12 - currentMonth;
     };
 
-    // 判断是否已过期（期望月份已过且未成行）
-    const isExpired = (wish: { travel_month: string; is_confirmed: number }) => {
+    // 判断是否已过期
+    // 逻辑：根据创建时间推断期望年份，如果当前已超过期望月份则过期
+    const isExpired = (wish: { travel_month: string; is_confirmed: number; created_at: string }) => {
       if (wish.is_confirmed === 1) return false;
+      
       const targetMonth = monthMap[wish.travel_month] || 0;
-      return targetMonth < currentMonth;
+      if (targetMonth === 0) return false;
+      
+      // 根据创建时间推断期望年份
+      const createdDate = new Date(wish.created_at);
+      const createdMonth = createdDate.getMonth() + 1;
+      const createdYear = createdDate.getFullYear();
+      
+      // 如果创建月份 <= 期望月份，期望年份 = 创建年份
+      // 如果创建月份 > 期望月份，期望年份 = 创建年份 + 1
+      let expectedYear: number;
+      if (createdMonth <= targetMonth) {
+        expectedYear = createdYear;
+      } else {
+        expectedYear = createdYear + 1;
+      }
+      
+      // 判断是否过期：当前年份 > 期望年份，或当前年份 = 期望年份且当前月份 > 期望月份
+      if (currentYear > expectedYear) return true;
+      if (currentYear === expectedYear && currentMonth > targetMonth) return true;
+      
+      return false;
     };
 
     // 组装数据，为每个愿望添加跟随人列表和过期状态
