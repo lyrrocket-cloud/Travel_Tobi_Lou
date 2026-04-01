@@ -784,7 +784,7 @@ export default function Home() {
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                    <span>{wish.travel_year}年{wish.travel_month}</span>
+                                    <span>{wish.travel_year}-{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className="w-4 h-4 text-[#CEA472]" />
