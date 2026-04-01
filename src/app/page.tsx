@@ -493,6 +493,13 @@ export default function Home() {
                 <div className="grid grid-cols-12 gap-1 sm:gap-2 relative">
                   {monthsShort.map((month, idx) => {
                     const monthNum = idx + 1;
+                    const now = new Date();
+                    const currentYear = now.getFullYear();
+                    const currentMonth = now.getMonth() + 1;
+                    
+                    // 判断月份是否已过：当前年份已过或当前年份中当前月份之后的月份
+                    const isPastMonth = selectedYear < currentYear || (selectedYear === currentYear && monthNum < currentMonth);
+                    
                     const confirmedTrips = wishes.filter(w => {
                       if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
                       const date = new Date(w.confirmed_date);
@@ -500,6 +507,7 @@ export default function Home() {
                     });
                     const hasTrips = confirmedTrips.length > 0;
                     const hasExpiredTrips = confirmedTrips.some(trip => trip.is_expired === 1);
+                    const showGray = isPastMonth || hasExpiredTrips;
                     
                     return (
                       <div key={month} className="flex flex-col items-center min-w-0">
@@ -507,14 +515,20 @@ export default function Home() {
                         <div 
                           className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
                             hasTrips 
-                              ? hasExpiredTrips 
+                              ? showGray
                                 ? 'bg-gray-400 shadow-lg shadow-gray-400/30' 
                                 : 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50'
-                              : 'bg-[#CEA472]/30'
+                              : isPastMonth
+                                ? 'bg-gray-400/30'
+                                : 'bg-[#CEA472]/30'
                           }`}
                         />
                         {/* 月份标签 */}
-                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 ${hasTrips ? hasExpiredTrips ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
+                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 ${
+                          hasTrips 
+                            ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold' 
+                            : isPastMonth ? 'text-gray-400/50' : 'text-[#FFFFFF]/40'
+                        }`}>
                           {month}
                         </span>
                         {/* 已成行旅行标注 - 仅在sm及以上屏幕显示 */}
