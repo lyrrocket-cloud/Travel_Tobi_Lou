@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets } from 'lucide-react';
+import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle } from 'lucide-react';
 
 interface Wish {
   id: number;
@@ -31,6 +31,11 @@ interface Wish {
   followers_count: number;
   created_at: string;
   followers: string[];
+  is_confirmed: number;
+  confirmed_date?: string;
+  travelers?: string;
+  is_pinned: number;
+  confirmed_at?: string;
 }
 
 const months = [
@@ -53,6 +58,12 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  
+  // 成行相关状态
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmWishId, setConfirmWishId] = useState<number | null>(null);
+  const [confirmedDate, setConfirmedDate] = useState('');
+  const [travelers, setTravelers] = useState('');
 
   useEffect(() => {
     if (activeTab === 'wish-pool') {
@@ -196,6 +207,43 @@ export default function Home() {
       setPasswordError(false);
     } else {
       setPasswordError(true);
+    }
+  };
+
+  const handleOpenConfirmDialog = (wishId: number) => {
+    setConfirmWishId(wishId);
+    setConfirmedDate('');
+    setTravelers('');
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmTrip = async () => {
+    if (!confirmWishId || !confirmedDate || !travelers) {
+      alert('请填写所有必填项');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/wishes/${confirmWishId}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ confirmedDate, travelers }),
+      });
+
+      if (response.ok) {
+        alert('成行确认成功！');
+        setShowConfirmDialog(false);
+        setConfirmWishId(null);
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '确认失败，请重试');
+      }
+    } catch (error) {
+      console.error('Failed to confirm trip:', error);
+      alert('确认失败，请重试');
     }
   };
 
@@ -426,11 +474,18 @@ export default function Home() {
                     {wishes.map((wish, index) => (
                       <div
                         key={wish.id}
-                        className="group overflow-hidden p-6 rounded-lg border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm hover:border-[#CEA472]/50 hover:bg-black/60 transition-all duration-500"
+                        className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
+                          wish.is_confirmed 
+                            ? 'border-[#CEA472] bg-[#CEA472]/10' 
+                            : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
+                        }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
+                              {wish.is_confirmed && (
+                                <CheckCircle className="w-5 h-5 text-[#CEA472]" />
+                              )}
                               <span className="text-2xl font-bold text-[#CEA472]">
                                 #{index + 1}
                               </span>
@@ -438,17 +493,40 @@ export default function Home() {
                               <h3 className="text-xl font-bold text-[#FFFFFF]">
                                 {wish.destination}
                               </h3>
+                              {wish.is_confirmed && (
+                                <span className="px-2 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold">
+                                  已成行
+                                </span>
+                              )}
                             </div>
-                            <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                <span>{wish.travel_month}</span>
+                            
+                            {/* 已成行显示具体信息 */}
+                            {wish.is_confirmed ? (
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-4 text-[#FFFFFF]/80">
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="w-4 h-4 text-[#CEA472]" />
+                                    <span className="text-[#CEA472] font-semibold">出发日期：{wish.confirmed_date}</span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 text-[#FFFFFF]/80">
+                                  <User className="w-4 h-4 text-[#CEA472]" />
+                                  <span className="text-[#CEA472] font-semibold">出行人：{wish.travelers}</span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <User className="w-4 h-4 text-[#CEA472]" />
-                                <span>{wish.wisher_name}</span>
+                            ) : (
+                              <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="w-4 h-4 text-[#CEA472]" />
+                                  <span>{wish.travel_month}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <User className="w-4 h-4 text-[#CEA472]" />
+                                  <span>{wish.wisher_name}</span>
+                                </div>
                               </div>
-                            </div>
+                            )}
+                            
                             <div className="text-[#FFFFFF]/50 text-sm">
                               {wish.followers.length > 0 ? (
                                 <div className="flex flex-wrap items-center gap-2">
@@ -479,16 +557,28 @@ export default function Home() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            {!isAdminMode && (
-                              <Button
-                                onClick={() => handleFollow(wish.id)}
-                                variant="outline"
-                                className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
-                              >
-                                <Heart className="w-4 h-4" />
-                                跟随
-                              </Button>
+                            {/* 未成行且非管理模式：显示跟随和确定成行按钮 */}
+                            {!wish.is_confirmed && !isAdminMode && (
+                              <>
+                                <Button
+                                  onClick={() => handleFollow(wish.id)}
+                                  variant="outline"
+                                  className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                >
+                                  <Heart className="w-4 h-4" />
+                                  跟随
+                                </Button>
+                                <Button
+                                  onClick={() => handleOpenConfirmDialog(wish.id)}
+                                  variant="outline"
+                                  className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                  确定成行
+                                </Button>
+                              </>
                             )}
+                            {/* 管理模式：显示删除按钮 */}
                             {isAdminMode && (
                               <Button
                                 onClick={() => handleDeleteWish(wish.id)}
@@ -559,6 +649,65 @@ export default function Home() {
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
               确认
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirm Trip Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
+              <CheckCircle className="w-5 h-5" />
+              确定成行
+            </DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              录入具体出行信息，确认后将置顶显示
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#CEA472]" />
+                出发日期
+              </Label>
+              <Input
+                type="date"
+                value={confirmedDate}
+                onChange={(e) => setConfirmedDate(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] focus:border-[#CEA472]/50"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <User className="w-4 h-4 text-[#CEA472]" />
+                出行人（多人用逗号分隔）
+              </Label>
+              <Input
+                placeholder="例如：张三、李四、王五"
+                value={travelers}
+                onChange={(e) => setTravelers(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowConfirmDialog(false);
+                setConfirmWishId(null);
+              }}
+              variant="outline"
+              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleConfirmTrip}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              确认成行
             </Button>
           </DialogFooter>
         </DialogContent>

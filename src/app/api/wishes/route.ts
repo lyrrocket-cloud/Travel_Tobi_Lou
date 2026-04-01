@@ -49,8 +49,12 @@ export async function GET() {
         .map((f) => f.follower_name) || [],
     }));
 
-    // 排序：先按出发月份距离当前月份升序（最近的在前），再按跟随人数降序
+    // 排序：先按置顶状态（已置顶在前），再按出发月份距离当前月份升序（最近的在前），再按跟随人数降序
     wishesWithFollowers.sort((a, b) => {
+      // 已成行的愿望置顶
+      if (a.is_pinned !== b.is_pinned) {
+        return b.is_pinned - a.is_pinned;
+      }
       const distanceA = getMonthDistance(a.travel_month);
       const distanceB = getMonthDistance(b.travel_month);
       if (distanceA !== distanceB) {
