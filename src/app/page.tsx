@@ -643,6 +643,66 @@ export default function Home() {
                 )}
               </CardContent>
             </Card>
+
+            {/* 年度时间轴 */}
+            {wishes.some(w => w.is_confirmed === 1) && (
+              <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  <h3 className="text-center text-[#CEA472] font-semibold mb-6 flex items-center justify-center gap-2">
+                    <Calendar className="w-5 h-5" />
+                    {new Date().getFullYear()} 年度足迹
+                  </h3>
+                  <div className="relative">
+                    {/* 时间轴主线 */}
+                    <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
+                    
+                    {/* 月份节点 */}
+                    <div className="grid grid-cols-12 gap-1 relative">
+                      {months.map((month, idx) => {
+                        const monthNum = idx + 1;
+                        const confirmedTrips = wishes.filter(w => {
+                          if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
+                          const date = new Date(w.confirmed_date);
+                          return date.getMonth() + 1 === monthNum;
+                        });
+                        const hasTrips = confirmedTrips.length > 0;
+                        
+                        return (
+                          <div key={month} className="flex flex-col items-center">
+                            {/* 月份节点 */}
+                            <div 
+                              className={`w-3 h-3 rounded-full relative z-10 transition-all duration-300 ${
+                                hasTrips 
+                                  ? 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50' 
+                                  : 'bg-[#CEA472]/30'
+                              }`}
+                            />
+                            {/* 月份标签 */}
+                            <span className={`text-xs mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
+                              {month.replace('月', '')}
+                            </span>
+                            {/* 已成行旅行标注 */}
+                            {hasTrips && (
+                              <div className="mt-2 space-y-1">
+                                {confirmedTrips.map(trip => (
+                                  <div 
+                                    key={trip.id}
+                                    className="text-xs text-[#FFFFFF]/80 bg-[#CEA472]/20 px-1.5 py-0.5 rounded text-center whitespace-nowrap"
+                                    title={`${trip.destination} - ${trip.confirmed_date}`}
+                                  >
+                                    {trip.destination}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
