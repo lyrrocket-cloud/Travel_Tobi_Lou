@@ -52,6 +52,7 @@ export default function Home() {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   
   // 管理相关状态
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -77,6 +78,25 @@ export default function Home() {
       fetchWishes();
     }
   }, [activeTab]);
+
+  // 初始加载愿望数据（用于时间轴显示）
+  useEffect(() => {
+    fetchWishes();
+  }, []);
+
+  // 当愿望数据加载后，设置选中的年份为最新有数据的年份
+  useEffect(() => {
+    if (wishes.length > 0) {
+      const years = [...new Set(
+        wishes
+          .filter(w => w.is_confirmed === 1 && w.confirmed_date)
+          .map(w => new Date(w.confirmed_date!).getFullYear())
+      )].sort((a, b) => b - a);
+      if (years.length > 0 && !years.includes(selectedYear)) {
+        setSelectedYear(years[0]);
+      }
+    }
+  }, [wishes]);
 
   const fetchWishes = async () => {
     setLoading(true);
@@ -355,6 +375,100 @@ export default function Home() {
             <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行许愿池</h1>
           </div>
         </div>
+
+        {/* 年度时间轴 */}
+        {wishes.some(w => w.is_confirmed === 1) && (
+          <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-8">
+            <CardContent className="pt-6">
+              {/* 年度切换 */}
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <button
+                  onClick={() => {
+                    const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
+                    const currentYearIndex = years.indexOf(selectedYear);
+                    if (currentYearIndex > 0) {
+                      setSelectedYear(years[currentYearIndex - 1]);
+                    }
+                  }}
+                  className="text-[#CEA472] hover:text-[#CEA472]/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y < selectedYear).length}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <h3 className="text-[#CEA472] font-semibold flex items-center gap-2 min-w-[140px] justify-center">
+                  <Calendar className="w-5 h-5" />
+                  {selectedYear} 年度足迹
+                </h3>
+                <button
+                  onClick={() => {
+                    const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
+                    const currentYearIndex = years.indexOf(selectedYear);
+                    if (currentYearIndex < years.length - 1) {
+                      setSelectedYear(years[currentYearIndex + 1]);
+                    }
+                  }}
+                  className="text-[#CEA472] hover:text-[#CEA472]/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y > selectedYear).length}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="relative">
+                {/* 时间轴主线 */}
+                <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
+                
+                {/* 月份节点 */}
+                <div className="grid grid-cols-12 gap-1 relative">
+                  {months.map((month, idx) => {
+                    const monthNum = idx + 1;
+                    const confirmedTrips = wishes.filter(w => {
+                      if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
+                      const date = new Date(w.confirmed_date);
+                      return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
+                    });
+                    const hasTrips = confirmedTrips.length > 0;
+                    
+                    return (
+                      <div key={month} className="flex flex-col items-center">
+                        {/* 月份节点 */}
+                        <div 
+                          className={`w-3 h-3 rounded-full relative z-10 transition-all duration-300 ${
+                            hasTrips 
+                              ? 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50' 
+                              : 'bg-[#CEA472]/30'
+                          }`}
+                        />
+                        {/* 月份标签 */}
+                        <span className={`text-xs mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
+                          {month.replace('月', '')}
+                        </span>
+                        {/* 已成行旅行标注 */}
+                        {hasTrips && (
+                          <div className="mt-2 space-y-1">
+                            {confirmedTrips.map(trip => (
+                              <div 
+                                key={trip.id}
+                                className="text-xs text-[#FFFFFF]/80 bg-[#CEA472]/20 px-1.5 py-0.5 rounded text-center whitespace-nowrap"
+                                title={`${trip.destination} - ${trip.confirmed_date}`}
+                              >
+                                {trip.destination}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
@@ -643,66 +757,6 @@ export default function Home() {
                 )}
               </CardContent>
             </Card>
-
-            {/* 年度时间轴 */}
-            {wishes.some(w => w.is_confirmed === 1) && (
-              <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <h3 className="text-center text-[#CEA472] font-semibold mb-6 flex items-center justify-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    {new Date().getFullYear()} 年度足迹
-                  </h3>
-                  <div className="relative">
-                    {/* 时间轴主线 */}
-                    <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
-                    
-                    {/* 月份节点 */}
-                    <div className="grid grid-cols-12 gap-1 relative">
-                      {months.map((month, idx) => {
-                        const monthNum = idx + 1;
-                        const confirmedTrips = wishes.filter(w => {
-                          if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
-                          const date = new Date(w.confirmed_date);
-                          return date.getMonth() + 1 === monthNum;
-                        });
-                        const hasTrips = confirmedTrips.length > 0;
-                        
-                        return (
-                          <div key={month} className="flex flex-col items-center">
-                            {/* 月份节点 */}
-                            <div 
-                              className={`w-3 h-3 rounded-full relative z-10 transition-all duration-300 ${
-                                hasTrips 
-                                  ? 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50' 
-                                  : 'bg-[#CEA472]/30'
-                              }`}
-                            />
-                            {/* 月份标签 */}
-                            <span className={`text-xs mt-2 ${hasTrips ? 'text-[#CEA472] font-semibold' : 'text-[#FFFFFF]/40'}`}>
-                              {month.replace('月', '')}
-                            </span>
-                            {/* 已成行旅行标注 */}
-                            {hasTrips && (
-                              <div className="mt-2 space-y-1">
-                                {confirmedTrips.map(trip => (
-                                  <div 
-                                    key={trip.id}
-                                    className="text-xs text-[#FFFFFF]/80 bg-[#CEA472]/20 px-1.5 py-0.5 rounded text-center whitespace-nowrap"
-                                    title={`${trip.destination} - ${trip.confirmed_date}`}
-                                  >
-                                    {trip.destination}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </TabsContent>
         </Tabs>
       </div>
