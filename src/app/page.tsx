@@ -505,16 +505,22 @@ export default function Home() {
                         {/* 已成行旅行标注 */}
                         {hasTrips && (
                           <div className="mt-2 space-y-1 w-full">
-                            {confirmedTrips.map(trip => (
-                              <div 
-                                key={trip.id}
-                                className="text-xs text-[#FFFFFF] bg-[#CEA472]/20 px-2 py-1.5 rounded text-center"
-                              >
-                                <div className="font-semibold text-[#CEA472]">{trip.destination}</div>
-                                <div className="text-[#FFFFFF]/70 text-[10px] mt-0.5">{trip.travelers}</div>
-                                <div className="text-[#FFFFFF]/50 text-[10px]">{trip.confirmed_date}</div>
-                              </div>
-                            ))}
+                            {confirmedTrips.map(trip => {
+                              // 格式化日期，只显示月-日
+                              const dateStr = trip.confirmed_date || '';
+                              const dateParts = dateStr.split('-');
+                              const shortDate = dateParts.length >= 3 ? `${dateParts[1]}-${dateParts[2]}` : dateStr;
+                              
+                              return (
+                                <div 
+                                  key={trip.id}
+                                  className="text-xs text-[#FFFFFF] bg-[#CEA472]/20 px-2 py-1.5 rounded text-center"
+                                >
+                                  <div className="font-semibold text-[#CEA472]">{trip.destination}</div>
+                                  <div className="text-[#FFFFFF]/60 text-[10px] mt-0.5">{shortDate}</div>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
