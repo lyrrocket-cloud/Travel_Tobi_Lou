@@ -29,10 +29,12 @@ export async function GET() {
       '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
     };
 
-    // 获取当前月份
-    const currentMonth = new Date().getMonth() + 1;
+    // 获取当前月份和年份
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
 
-    // 计算月份距离当前月份的差距
+    // 计算月份距离当前月份的差距（考虑是否已过期）
     const getMonthDistance = (month: string) => {
       const targetMonth = monthMap[month] || 0;
       if (targetMonth >= currentMonth) {
@@ -41,20 +43,45 @@ export async function GET() {
       return targetMonth + 12 - currentMonth;
     };
 
-    // 组装数据，为每个愿望添加跟随人列表
+    // 判断是否已过期（期望月份已过且未成行）
+    const isExpired = (wish: { travel_month: string; is_confirmed: number }) => {
+      if (wish.is_confirmed === 1) return false;
+      const targetMonth = monthMap[wish.travel_month] || 0;
+      return targetMonth < currentMonth;
+    };
+
+    // 组装数据，为每个愿望添加跟随人列表和过期状态
     const wishesWithFollowers = wishes.map((wish) => ({
       ...wish,
       followers: followers
         ?.filter((f) => f.wish_id === wish.id)
         .map((f) => f.follower_name) || [],
+      is_expired: isExpired(wish) ? 1 : 0,
     }));
 
-    // 排序：先按置顶状态（已置顶在前），再按出发月份距离当前月份升序（最近的在前），再按跟随人数降序
+    // 排序规则：
+    // 1. 已过期的排在最后
+    // 2. 已成行的按出发日期最近排序
+    // 3. 其它的按距离期望月份和跟随人数排序
     wishesWithFollowers.sort((a, b) => {
-      // 已成行的愿望置顶
-      if (a.is_pinned !== b.is_pinned) {
-        return b.is_pinned - a.is_pinned;
+      // 已过期的排在最后
+      if (a.is_expired !== b.is_expired) {
+        return a.is_expired - b.is_expired;
       }
+
+      // 已成行的愿望按出发日期排序
+      if (a.is_confirmed === 1 && b.is_confirmed === 1) {
+        const dateA = new Date(a.confirmed_date || '').getTime();
+        const dateB = new Date(b.confirmed_date || '').getTime();
+        return dateA - dateB;
+      }
+
+      // 一个已成行一个未成行，已成行的在前
+      if (a.is_confirmed !== b.is_confirmed) {
+        return b.is_confirmed - a.is_confirmed;
+      }
+
+      // 都未成行，按距离期望月份和跟随人数排序
       const distanceA = getMonthDistance(a.travel_month);
       const distanceB = getMonthDistance(b.travel_month);
       if (distanceA !== distanceB) {

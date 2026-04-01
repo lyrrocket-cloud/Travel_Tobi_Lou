@@ -36,6 +36,7 @@ interface Wish {
   travelers?: string;
   is_pinned: number;
   confirmed_at?: string;
+  is_expired?: number;
 }
 
 const months = [
@@ -689,7 +690,9 @@ export default function Home() {
                         className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
                           wish.is_confirmed === 1
                             ? 'border-[#CEA472] bg-[#CEA472]/10' 
-                            : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
+                            : wish.is_expired === 1
+                              ? 'border-red-500/30 bg-red-500/5'
+                              : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -705,6 +708,11 @@ export default function Home() {
                               {wish.is_confirmed === 1 && (
                                 <span className="px-2 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold">
                                   已成行
+                                </span>
+                              )}
+                              {wish.is_expired === 1 && wish.is_confirmed !== 1 && (
+                                <span className="px-2 py-0.5 text-xs bg-red-500/80 text-white rounded-full font-semibold">
+                                  已过期
                                 </span>
                               )}
                             </div>
