@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
@@ -315,6 +315,28 @@ export default function Home() {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
     }}>
+      {/* 管理按钮 - 右上角 */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          onClick={() => {
+            if (isAdminMode) {
+              setIsAdminMode(false);
+            } else {
+              setShowPasswordDialog(true);
+            }
+          }}
+          variant="outline"
+          size="icon"
+          className={`w-10 h-10 border-[#CEA472]/40 ${
+            isAdminMode 
+              ? 'bg-[#CEA472] text-[#0a0a0f] border-[#CEA472]' 
+              : 'bg-black/60 backdrop-blur-sm text-[#CEA472]'
+          } hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300`}
+        >
+          <Settings className="w-5 h-5" />
+        </Button>
+      </div>
+      
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -471,38 +493,7 @@ export default function Home() {
           {/* Wish Pool Tab */}
           <TabsContent value="wish-pool" className="space-y-6">
             <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2 text-2xl text-[#CEA472]">
-                      <Heart className="w-7 h-7" />
-                      许愿池
-                    </CardTitle>
-                    <p className="text-[#FFFFFF]/60 mt-1">
-                      按时间最近和跟随人数排序
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => {
-                      if (isAdminMode) {
-                        setIsAdminMode(false);
-                      } else {
-                        setShowPasswordDialog(true);
-                      }
-                    }}
-                    variant="outline"
-                    className={`flex items-center gap-2 border-[#CEA472]/40 ${
-                      isAdminMode 
-                        ? 'bg-[#CEA472] text-[#0a0a0f] border-[#CEA472]' 
-                        : 'bg-black/40 text-[#CEA472]'
-                    } hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300`}
-                  >
-                    <Settings className="w-4 h-4" />
-                    {isAdminMode ? '退出管理' : '管理'}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {loading ? (
                   <div className="text-center py-12">
                     <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#CEA472] border-t-transparent" />
