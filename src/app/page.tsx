@@ -283,8 +283,6 @@ export default function Home() {
             {/* 主标题 */}
             <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行许愿池</h1>
           </div>
-          {/* 副标题 */}
-          <p className="text-[#FFFFFF] font-normal">抛下硬币，许下心愿，让梦想照进现实</p>
         </div>
 
         {/* Tabs */}
@@ -292,16 +290,14 @@ export default function Home() {
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
             <TabsTrigger 
               value="make-wish" 
-              className="flex items-center gap-2 data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
             >
-              <Droplets className="w-4 h-4" />
-              许愿
+              抛硬币
             </TabsTrigger>
             <TabsTrigger 
               value="wish-pool" 
-              className="flex items-center gap-2 data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
             >
-              <Heart className="w-4 h-4" />
               许愿池
             </TabsTrigger>
           </TabsList>
