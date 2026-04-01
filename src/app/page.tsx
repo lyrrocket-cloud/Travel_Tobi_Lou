@@ -611,7 +611,7 @@ export default function Home() {
                   onClick={handleMakeWish}
                   disabled={isAnimating}
                   size="lg"
-                  className="w-full h-12 gap-2 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+                  className="w-full h-12 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
@@ -620,13 +620,10 @@ export default function Home() {
                           <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
                         </div>
                       </div>
-                      <span>许愿中...</span>
+                      <span>抛硬币中...</span>
                     </div>
                   ) : (
-                    <>
-                      <Droplets className="w-5 h-5" />
-                      <span>许愿</span>
-                    </>
+                    <span>抛硬币</span>
                   )}
                 </Button>
               </CardContent>
@@ -653,12 +650,12 @@ export default function Home() {
                   </div>
                   {animationComplete ? (
                     <div className="space-y-3">
-                      <div className="text-3xl font-bold text-[#CEA472] animate-bounce">✨ 许愿成功 ✨</div>
+                      <div className="text-3xl font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
                       <p className="text-lg text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <p className="text-2xl font-semibold text-[#CEA472]">正在许愿...</p>
+                      <p className="text-2xl font-semibold text-[#CEA472]">正在抛硬币...</p>
                       <p className="text-lg text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
                     </div>
                   )}
