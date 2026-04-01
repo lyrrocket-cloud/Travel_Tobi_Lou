@@ -511,7 +511,7 @@ export default function Home() {
                       <div
                         key={wish.id}
                         className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
-                          wish.is_confirmed 
+                          wish.is_confirmed === 1
                             ? 'border-[#CEA472] bg-[#CEA472]/10' 
                             : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
                         }`}
@@ -526,7 +526,7 @@ export default function Home() {
                               <h3 className="font-bold text-[#FFFFFF]">
                                 {wish.destination}
                               </h3>
-                              {wish.is_confirmed && (
+                              {wish.is_confirmed === 1 && (
                                 <span className="px-2 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold">
                                   已成行
                                 </span>
@@ -534,7 +534,7 @@ export default function Home() {
                             </div>
                             
                             {/* 已成行显示具体信息 */}
-                            {wish.is_confirmed ? (
+                            {wish.is_confirmed === 1 ? (
                               <div className="space-y-2">
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80">
                                   <div className="flex items-center gap-1">
@@ -548,50 +548,53 @@ export default function Home() {
                                 </div>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
-                                <div className="flex items-center gap-1">
-                                  <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                  <span>{wish.travel_month}</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <User className="w-4 h-4 text-[#CEA472]" />
-                                  <span>{wish.wisher_name}</span>
-                                </div>
-                              </div>
-                            )}
-                            
-                            <div className="text-[#FFFFFF]/50 text-sm">
-                              {wish.followers.length > 0 ? (
-                                <div className="flex flex-wrap items-center gap-2">
+                              <>
+                                <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
-                                    <Heart className="w-4 h-4 text-[#CEA472]" />
-                                    <span className="text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                    <Calendar className="w-4 h-4 text-[#CEA472]" />
+                                    <span>{wish.travel_month}</span>
                                   </div>
-                                  {wish.followers.map((name, idx) => (
-                                    <div key={idx} className="flex items-center gap-1 px-2 py-1 rounded bg-black/30 border border-[#CEA472]/20">
-                                      <span className="text-[#FFFFFF]/80 text-sm">{name}</span>
-                                      {isAdminMode && (
-                                        <button
-                                          onClick={() => handleDeleteFollower(wish.id, name)}
-                                          className="text-red-500 hover:text-red-400 transition-colors"
-                                        >
-                                          <Trash2 className="w-3 h-3" />
-                                        </button>
-                                      )}
+                                  <div className="flex items-center gap-1">
+                                    <User className="w-4 h-4 text-[#CEA472]" />
+                                    <span>{wish.wisher_name}</span>
+                                  </div>
+                                </div>
+                                
+                                {/* 未成行才显示跟随人信息 */}
+                                <div className="text-[#FFFFFF]/50 text-sm">
+                                  {wish.followers.length > 0 ? (
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <div className="flex items-center gap-1">
+                                        <Heart className="w-4 h-4 text-[#CEA472]" />
+                                        <span className="text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                      </div>
+                                      {wish.followers.map((name, idx) => (
+                                        <div key={idx} className="flex items-center gap-1 px-2 py-1 rounded bg-black/30 border border-[#CEA472]/20">
+                                          <span className="text-[#FFFFFF]/80 text-sm">{name}</span>
+                                          {isAdminMode && (
+                                            <button
+                                              onClick={() => handleDeleteFollower(wish.id, name)}
+                                              className="text-red-500 hover:text-red-400 transition-colors"
+                                            >
+                                              <Trash2 className="w-3 h-3" />
+                                            </button>
+                                          )}
+                                        </div>
+                                      ))}
                                     </div>
-                                  ))}
+                                  ) : (
+                                    <div className="flex items-center gap-1">
+                                      <Heart className="w-4 h-4 text-[#CEA472]" />
+                                      <span>暂无跟随</span>
+                                    </div>
+                                  )}
                                 </div>
-                              ) : (
-                                <div className="flex items-center gap-1">
-                                  <Heart className="w-4 h-4 text-[#CEA472]" />
-                                  <span>暂无跟随</span>
-                                </div>
-                              )}
-                            </div>
+                              </>
+                            )}
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
                             {/* 非管理模式：只显示跟随按钮 */}
-                            {!wish.is_confirmed && !isAdminMode && (
+                            {wish.is_confirmed !== 1 && !isAdminMode && (
                               <Button
                                 onClick={() => handleFollow(wish.id)}
                                 variant="outline"
@@ -612,7 +615,7 @@ export default function Home() {
                                   <Edit className="w-4 h-4" />
                                   编辑
                                 </Button>
-                                {!wish.is_confirmed && (
+                                {wish.is_confirmed !== 1 && (
                                   <Button
                                     onClick={() => handleOpenConfirmDialog(wish.id)}
                                     variant="outline"
