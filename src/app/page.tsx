@@ -1191,9 +1191,6 @@ export default function Home() {
               <Heart className="w-5 h-5" />
               跟随愿望
             </DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              请输入您的姓名以跟随该愿望
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -1215,7 +1212,7 @@ export default function Home() {
               onClick={handleConfirmFollow}
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
-              确认跟随
+              确认
             </Button>
             <Button
               onClick={() => {
