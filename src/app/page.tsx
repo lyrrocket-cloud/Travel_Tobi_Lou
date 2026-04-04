@@ -414,11 +414,12 @@ export default function Home() {
           }}
           variant="outline"
           size="icon"
-          className={`w-10 h-10 border-[#CEA472]/40 ${
-            isAdminMode 
-              ? 'bg-[#CEA472] text-[#0a0a0f] border-[#CEA472]' 
-              : 'bg-black/60 backdrop-blur-sm text-[#CEA472]'
-          } hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300`}
+          title={isAdminMode ? "退出管理模式" : "进入管理模式"}
+          className={`w-10 h-10 bg-black/40 border-[#CEA472]/30 ${
+            isAdminMode
+              ? 'bg-[#CEA472] text-[#0a0a0f] border-[#CEA472]'
+              : 'text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50'
+          } transition-all duration-300`}
         >
           <Settings className="w-5 h-5" />
         </Button>
@@ -457,7 +458,7 @@ export default function Home() {
                       setSelectedYear(years[currentYearIndex - 1]);
                     }
                   }}
-                  className="text-[#CEA472] hover:text-[#CEA472]/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                   disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y < selectedYear).length}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,7 +477,7 @@ export default function Home() {
                       setSelectedYear(years[currentYearIndex + 1]);
                     }
                   }}
-                  className="text-[#CEA472] hover:text-[#CEA472]/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                   disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y > selectedYear).length}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -597,15 +598,15 @@ export default function Home() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
-            <TabsTrigger 
-              value="make-wish" 
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            <TabsTrigger
+              value="make-wish"
+              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:border-[#CEA472] data-[state=active]:font-medium bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-[#CEA472]/20 transition-all duration-300"
             >
               抛硬币
             </TabsTrigger>
-            <TabsTrigger 
-              value="wish-pool" 
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            <TabsTrigger
+              value="wish-pool"
+              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:border-[#CEA472] data-[state=active]:font-medium bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-[#CEA472]/20 transition-all duration-300"
             >
               许愿池
             </TabsTrigger>
@@ -690,7 +691,7 @@ export default function Home() {
                   onClick={handleMakeWish}
                   disabled={isAnimating}
                   size="lg"
-                  className="w-full h-12 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+                  className="w-full h-12 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
@@ -833,7 +834,8 @@ export default function Home() {
                                           {isAdminMode && (
                                             <button
                                               onClick={() => handleDeleteFollower(wish.id, name)}
-                                              className="text-red-500 hover:text-red-400 transition-colors"
+                                              className="text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors p-1 rounded"
+                                              title="删除跟随者"
                                             >
                                               <Trash2 className="w-3 h-3" />
                                             </button>
@@ -857,7 +859,7 @@ export default function Home() {
                               <Button
                                 onClick={() => handleFollow(wish.id)}
                                 variant="outline"
-                                className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
                               >
                                 <Heart className="w-4 h-4" />
                                 跟随
@@ -871,7 +873,7 @@ export default function Home() {
                                   <Button
                                     onClick={() => handleOpenEditTripDialog(wish)}
                                     variant="outline"
-                                    className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                    className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
                                   >
                                     <Edit className="w-4 h-4" />
                                     编辑行程
@@ -882,7 +884,7 @@ export default function Home() {
                                     <Button
                                       onClick={() => handleOpenEditDialog(wish)}
                                       variant="outline"
-                                      className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                      className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
                                     >
                                       <Edit className="w-4 h-4" />
                                       编辑
@@ -890,7 +892,7 @@ export default function Home() {
                                     <Button
                                       onClick={() => handleOpenConfirmDialog(wish.id)}
                                       variant="outline"
-                                      className="flex items-center gap-2 border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+                                      className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
                                     >
                                       <CheckCircle className="w-4 h-4" />
                                       确定成行
@@ -900,7 +902,7 @@ export default function Home() {
                                 <Button
                                   onClick={() => handleDeleteWish(wish.id)}
                                   variant="outline"
-                                  className="flex items-center gap-2 border-red-500/40 bg-black/40 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300"
+                                  className="flex items-center gap-2 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-500"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                   删除
@@ -958,7 +960,7 @@ export default function Home() {
                 setPasswordError(false);
               }}
               variant="outline"
-              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
             </Button>
@@ -1017,7 +1019,7 @@ export default function Home() {
                 setConfirmWishId(null);
               }}
               variant="outline"
-              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
             </Button>
@@ -1116,7 +1118,7 @@ export default function Home() {
                 setEditWishId(null);
               }}
               variant="outline"
-              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
             </Button>
@@ -1175,7 +1177,7 @@ export default function Home() {
                 setEditTripWishId(null);
               }}
               variant="outline"
-              className="border-[#CEA472]/40 bg-black/40 text-[#CEA472] hover:bg-[#CEA472] hover:text-[#0a0a0f] hover:border-[#CEA472] transition-all duration-300"
+              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
             </Button>
