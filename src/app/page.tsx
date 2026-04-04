@@ -536,11 +536,11 @@ export default function Home() {
                         {hasTrips && (
                           <div className="hidden sm:block mt-2 space-y-1 w-full">
                             {confirmedTrips.map(trip => {
-                              // 格式化日期为XXXX年XX月XX日
+                              // 格式化日期为XX月XX日（不显示年份）
                               const dateStr = trip.confirmed_date || '';
                               const dateParts = dateStr.split('-');
                               const formattedDate = dateParts.length >= 3
-                                ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
+                                ? `${dateParts[1]}月${dateParts[2]}日`
                                 : dateStr;
                               const isExpired = trip.is_expired === 1;
 
@@ -570,11 +570,11 @@ export default function Home() {
                   {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
                     .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
                     .map(trip => {
-                      // 格式化日期为XXXX年XX月XX日
+                      // 格式化日期为XX月XX日（不显示年份）
                       const dateStr = trip.confirmed_date || '';
                       const dateParts = dateStr.split('-');
                       const formattedDate = dateParts.length >= 3
-                        ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
+                        ? `${dateParts[1]}月${dateParts[2]}日`
                         : dateStr;
                       const isExpired = trip.is_expired === 1;
 
