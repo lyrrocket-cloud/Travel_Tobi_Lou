@@ -975,7 +975,7 @@ export default function Home() {
                 setPasswordError(false);
               }}
               variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1034,7 +1034,7 @@ export default function Home() {
                 setConfirmWishId(null);
               }}
               variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1133,7 +1133,7 @@ export default function Home() {
                 setEditWishId(null);
               }}
               variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1192,7 +1192,7 @@ export default function Home() {
                 setEditTripWishId(null);
               }}
               variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
