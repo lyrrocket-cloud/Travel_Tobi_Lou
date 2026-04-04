@@ -536,23 +536,25 @@ export default function Home() {
                         {hasTrips && (
                           <div className="hidden sm:block mt-2 space-y-1 w-full">
                             {confirmedTrips.map(trip => {
-                              // 格式化日期，只显示月-日
+                              // 格式化日期为XXXX年XX月XX日
                               const dateStr = trip.confirmed_date || '';
                               const dateParts = dateStr.split('-');
-                              const shortDate = dateParts.length >= 3 ? `${dateParts[1]}-${dateParts[2]}` : dateStr;
+                              const formattedDate = dateParts.length >= 3
+                                ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
+                                : dateStr;
                               const isExpired = trip.is_expired === 1;
-                              
+
                               return (
-                                <div 
+                                <div
                                   key={trip.id}
                                   className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center ${
-                                    isExpired 
-                                      ? 'text-[#FFFFFF]/60 bg-gray-500/20' 
+                                    isExpired
+                                      ? 'text-[#FFFFFF]/60 bg-gray-500/20'
                                       : 'text-[#FFFFFF] bg-[#CEA472]/20'
                                   }`}
                                 >
                                   <div className={`font-semibold truncate text-[10px] sm:text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
-                                  <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{shortDate}</div>
+                                  <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
                                 </div>
                               );
                             })}
@@ -568,24 +570,27 @@ export default function Home() {
                   {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
                     .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
                     .map(trip => {
+                      // 格式化日期为XXXX年XX月XX日
                       const dateStr = trip.confirmed_date || '';
                       const dateParts = dateStr.split('-');
-                      const shortDate = dateParts.length >= 3 ? `${dateParts[1]}-${dateParts[2]}` : dateStr;
+                      const formattedDate = dateParts.length >= 3
+                        ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日`
+                        : dateStr;
                       const isExpired = trip.is_expired === 1;
-                      
+
                       return (
-                        <div 
+                        <div
                           key={trip.id}
                           className={`flex items-center justify-between text-sm px-3 py-2 rounded ${
-                            isExpired 
-                              ? 'text-[#FFFFFF]/60 bg-gray-500/20' 
+                            isExpired
+                              ? 'text-[#FFFFFF]/60 bg-gray-500/20'
                               : 'text-[#FFFFFF] bg-[#CEA472]/20'
                           }`}
                         >
                           <div className="flex items-center gap-2">
                             <span className={`font-semibold ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</span>
                           </div>
-                          <span className="text-[#FFFFFF]/60 text-xs">{shortDate}</span>
+                          <span className="text-[#FFFFFF]/60 text-xs">{formattedDate}</span>
                         </div>
                       );
                     })}
@@ -799,7 +804,11 @@ export default function Home() {
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80">
                                   <div className="flex items-center gap-1">
                                     <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                    <span className={`font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出发日期：{wish.confirmed_date}</span>
+                                    <span className={`font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出发日期：{(() => {
+                                      const dateStr = wish.confirmed_date || '';
+                                      const dateParts = dateStr.split('-');
+                                      return dateParts.length >= 3 ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日` : dateStr;
+                                    })()}</span>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[#FFFFFF]/80">
@@ -812,7 +821,7 @@ export default function Home() {
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                    <span>{wish.travel_year}-{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}</span>
+                                    <span>{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className="w-4 h-4 text-[#CEA472]" />
