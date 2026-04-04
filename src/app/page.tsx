@@ -87,6 +87,11 @@ export default function Home() {
   const [editTripDate, setEditTripDate] = useState('');
   const [editTripTravelers, setEditTripTravelers] = useState('');
 
+  // 跟随相关状态
+  const [showFollowDialog, setShowFollowDialog] = useState(false);
+  const [followWishId, setFollowWishId] = useState<number | null>(null);
+  const [followerName, setFollowerName] = useState('');
+
   useEffect(() => {
     if (activeTab === 'wish-pool') {
       fetchWishes();
@@ -185,11 +190,19 @@ export default function Home() {
   };
 
   const handleFollow = async (wishId: number) => {
-    const followerName = prompt('请输入您的姓名');
-    if (!followerName) return;
+    setFollowWishId(wishId);
+    setFollowerName('');
+    setShowFollowDialog(true);
+  };
+
+  const handleConfirmFollow = async () => {
+    if (!followWishId || !followerName) {
+      alert('请输入您的姓名');
+      return;
+    }
 
     try {
-      const response = await fetch(`/api/wishes/${wishId}/follow`, {
+      const response = await fetch(`/api/wishes/${followWishId}/follow`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -201,6 +214,9 @@ export default function Home() {
 
       if (response.ok) {
         alert('已成功跟随该愿望！');
+        setShowFollowDialog(false);
+        setFollowWishId(null);
+        setFollowerName('');
         fetchWishes();
       } else {
         alert(data.error || '跟随失败，请重试');
@@ -1157,6 +1173,55 @@ export default function Home() {
               onClick={() => {
                 setShowEditTripDialog(false);
                 setEditTripWishId(null);
+              }}
+              variant="outline"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Follow Dialog - 跟随愿望 */}
+      <Dialog open={showFollowDialog} onOpenChange={setShowFollowDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
+              <Heart className="w-5 h-5" />
+              跟随愿望
+            </DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              请输入您的姓名以跟随该愿望
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[#FFFFFF] flex items-center gap-2">
+                <User className="w-4 h-4 text-[#CEA472]" />
+                您的姓名
+              </Label>
+              <Input
+                type="text"
+                placeholder="请输入您的姓名"
+                value={followerName}
+                onChange={(e) => setFollowerName(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={handleConfirmFollow}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              确认跟随
+            </Button>
+            <Button
+              onClick={() => {
+                setShowFollowDialog(false);
+                setFollowWishId(null);
+                setFollowerName('');
               }}
               variant="outline"
               className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
