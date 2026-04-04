@@ -834,7 +834,7 @@ export default function Home() {
                                           {isAdminMode && (
                                             <button
                                               onClick={() => handleDeleteFollower(wish.id, name)}
-                                              className="text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-colors p-1 rounded"
+                                              className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-1 rounded"
                                               title="删除跟随者"
                                             >
                                               <Trash2 className="w-3 h-3" />
@@ -907,7 +907,7 @@ export default function Home() {
                                   variant="outline"
                                   size="icon"
                                   title="删除"
-                                  className="size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50"
+                                  className="size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
