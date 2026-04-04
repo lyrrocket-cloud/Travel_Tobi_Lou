@@ -54,8 +54,7 @@ const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 export default function Home() {
   const [activeTab, setActiveTab] = useState('make-wish');
   const [destination, setDestination] = useState('');
-  const [travelYear, setTravelYear] = useState<number>(currentYear);
-  const [travelMonth, setTravelMonth] = useState('');
+  const [travelYearMonth, setTravelYearMonth] = useState('');
   const [wisherName, setWisherName] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
@@ -79,8 +78,7 @@ export default function Home() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editWishId, setEditWishId] = useState<number | null>(null);
   const [editDestination, setEditDestination] = useState('');
-  const [editTravelYear, setEditTravelYear] = useState<number>(currentYear);
-  const [editTravelMonth, setEditTravelMonth] = useState('');
+  const [editTravelYearMonth, setEditTravelYearMonth] = useState('');
   const [editWisherName, setEditWisherName] = useState('');
   
   // 编辑行程相关状态（已成行旅行）
@@ -128,13 +126,24 @@ export default function Home() {
   };
 
   const handleMakeWish = async () => {
-    if (!destination || !travelYear || !travelMonth || !wisherName) {
+    if (!destination || !travelYearMonth || !wisherName) {
       alert('请填写所有必填项');
       return;
     }
 
+    // 解析 YYYY-MM 格式
+    const dateMatch = travelYearMonth.match(/^(\d{4})-(\d{2})$/);
+    if (!dateMatch) {
+      alert('请输入正确的日期格式（YYYY-MM），例如：2026-03');
+      return;
+    }
+
+    const travelYear = parseInt(dateMatch[1]);
+    const travelMonthNum = parseInt(dateMatch[2]);
+    const travelMonth = months[travelMonthNum - 1];
+
     setIsAnimating(true);
-    
+
     // 模拟抛硬币动画
     setTimeout(async () => {
       try {
@@ -152,13 +161,12 @@ export default function Home() {
         });
 
         const data = await response.json();
-        
+
         if (response.ok) {
           setAnimationComplete(true);
           setTimeout(() => {
             setDestination('');
-            setTravelYear(currentYear);
-            setTravelMonth('');
+            setTravelYearMonth('');
             setWisherName('');
             setIsAnimating(false);
             setAnimationComplete(false);
@@ -295,17 +303,29 @@ export default function Home() {
   const handleOpenEditDialog = (wish: Wish) => {
     setEditWishId(wish.id);
     setEditDestination(wish.destination);
-    setEditTravelYear(wish.travel_year || currentYear);
-    setEditTravelMonth(wish.travel_month);
+    // 将年份和月份转换为 YYYY-MM 格式
+    const monthNum = months.indexOf(wish.travel_month) + 1;
+    setEditTravelYearMonth(`${wish.travel_year}-${String(monthNum).padStart(2, '0')}`);
     setEditWisherName(wish.wisher_name);
     setShowEditDialog(true);
   };
 
   const handleEditWish = async () => {
-    if (!editWishId || !editDestination || !editTravelYear || !editTravelMonth || !editWisherName) {
+    if (!editWishId || !editDestination || !editTravelYearMonth || !editWisherName) {
       alert('请填写所有必填项');
       return;
     }
+
+    // 解析 YYYY-MM 格式
+    const dateMatch = editTravelYearMonth.match(/^(\d{4})-(\d{2})$/);
+    if (!dateMatch) {
+      alert('请输入正确的日期格式（YYYY-MM），例如：2026-03');
+      return;
+    }
+
+    const editTravelYear = parseInt(dateMatch[1]);
+    const travelMonthNum = parseInt(dateMatch[2]);
+    const editTravelMonth = months[travelMonthNum - 1];
 
     try {
       const response = await fetch(`/api/wishes/${editWishId}`, {
@@ -313,11 +333,11 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          destination: editDestination, 
-          travelYear: editTravelYear, 
-          travelMonth: editTravelMonth, 
-          wisherName: editWisherName 
+        body: JSON.stringify({
+          destination: editDestination,
+          travelYear: editTravelYear,
+          travelMonth: editTravelMonth,
+          wisherName: editWisherName
         }),
       });
 
@@ -641,40 +661,14 @@ export default function Home() {
                     <Calendar className="w-4 h-4 text-[#CEA472]" />
                     希望出行年月
                   </Label>
-                  <div className="flex gap-2">
-                    <Select value={travelYear.toString()} onValueChange={(v) => setTravelYear(parseInt(v))} disabled={isAnimating}>
-                      <SelectTrigger className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
-                        <SelectValue placeholder="选择年份" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
-                        {years.map((year) => (
-                          <SelectItem 
-                            key={year} 
-                            value={year.toString()} 
-                            className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
-                          >
-                            {year}年
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={travelMonth} onValueChange={setTravelMonth} disabled={isAnimating}>
-                      <SelectTrigger className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
-                        <SelectValue placeholder="选择月份" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
-                        {months.map((month) => (
-                          <SelectItem 
-                            key={month} 
-                            value={month} 
-                            className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
-                          >
-                            {month}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Input
+                    type="text"
+                    placeholder="YYYY-MM（如：2026-03）"
+                    value={travelYearMonth}
+                    onChange={(e) => setTravelYearMonth(e.target.value)}
+                    className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+                    disabled={isAnimating}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -1072,40 +1066,13 @@ export default function Home() {
                 <Calendar className="w-4 h-4 text-[#CEA472]" />
                 希望出行年月
               </Label>
-              <div className="flex gap-2">
-                <Select value={editTravelYear.toString()} onValueChange={(v) => setEditTravelYear(parseInt(v))}>
-                  <SelectTrigger className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
-                    <SelectValue placeholder="选择年份" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
-                    {years.map((year) => (
-                      <SelectItem 
-                        key={year} 
-                        value={year.toString()} 
-                        className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
-                      >
-                        {year}年
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={editTravelMonth} onValueChange={setEditTravelMonth}>
-                  <SelectTrigger className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] flex-1">
-                    <SelectValue placeholder="选择月份" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0a0a0f] border-[#CEA472]/30">
-                    {months.map((month) => (
-                      <SelectItem 
-                        key={month} 
-                        value={month} 
-                        className="text-[#FFFFFF] hover:bg-[#CEA472]/10 focus:bg-[#CEA472]/10"
-                      >
-                        {month}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <Input
+                type="text"
+                placeholder="YYYY-MM（如：2026-03）"
+                value={editTravelYearMonth}
+                onChange={(e) => setEditTravelYearMonth(e.target.value)}
+                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              />
             </div>
             <div className="space-y-2">
               <Label className="text-[#FFFFFF] flex items-center gap-2">
