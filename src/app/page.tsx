@@ -525,9 +525,9 @@ export default function Home() {
                           }`}
                         />
                         {/* 月份标签 */}
-                        <span className={`text-[10px] sm:text-xs mt-1 sm:mt-2 ${
-                          hasTrips 
-                            ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold' 
+                        <span className={`text-[10px] sm:text-xs mt-3 sm:mt-4 ${
+                          hasTrips
+                            ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold'
                             : isPastMonth ? 'text-gray-400/50' : 'text-[#FFFFFF]/40'
                         }`}>
                           {month}
