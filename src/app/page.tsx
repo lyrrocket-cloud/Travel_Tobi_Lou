@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle, Pencil } from 'lucide-react';
+import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle, Edit2 } from 'lucide-react';
 
 interface Wish {
   id: number;
@@ -876,7 +876,7 @@ export default function Home() {
                                     title="编辑行程"
                                     className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                                   >
-                                    <Pencil className="w-4 h-4" />
+                                    <Edit2 className="w-4 h-4" />
                                   </Button>
                                 ) : (
                                   // 未成行：显示编辑和确定成行按钮
@@ -888,7 +888,7 @@ export default function Home() {
                                       title="编辑"
                                       className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                                     >
-                                      <Pencil className="w-4 h-4" />
+                                      <Edit2 className="w-4 h-4" />
                                     </Button>
                                     <Button
                                       onClick={() => handleOpenConfirmDialog(wish.id)}
@@ -1041,7 +1041,7 @@ export default function Home() {
         <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
           <DialogHeader>
             <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Pencil className="w-5 h-5" />
+              <Edit2 className="w-5 h-5" />
               编辑愿望
             </DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">
@@ -1113,7 +1113,7 @@ export default function Home() {
         <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
           <DialogHeader>
             <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Pencil className="w-5 h-5" />
+              <Edit2 className="w-5 h-5" />
               编辑行程
             </DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">
