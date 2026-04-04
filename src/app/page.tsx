@@ -1052,7 +1052,7 @@ export default function Home() {
               onClick={handleConfirmTrip}
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
-              确认成行
+              确认
             </Button>
             <Button
               onClick={() => {
