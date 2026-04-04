@@ -687,28 +687,29 @@ export default function Home() {
                   />
                 </div>
 
-                <Button
-                  onClick={handleMakeWish}
-                  disabled={isAnimating}
-                  className="w-64 h-11 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
-                >
-                  {isAnimating ? (
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-6 h-6">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
-                          <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
+                <div className="flex justify-center mt-6">
+                  <Button
+                    onClick={handleMakeWish}
+                    disabled={isAnimating}
+                    className="w-64 h-11 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+                  >
+                    {isAnimating ? (
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-6 h-6">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
+                            <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
+                          </div>
                         </div>
+                        <span>抛硬币中...</span>
                       </div>
-                      <span>抛硬币中...</span>
-                    </div>
-                  ) : (
-                    <span>抛硬币</span>
-                  )}
-                </Button>
+                    ) : (
+                      <span>抛硬币</span>
+                    )}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
-            {/* Coin Animation Overlay */}
             {isAnimating && (
               <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
                 <div className="text-center">
