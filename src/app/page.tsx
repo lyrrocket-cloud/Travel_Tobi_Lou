@@ -963,21 +963,21 @@ export default function Home() {
           </div>
           <DialogFooter>
             <Button
+              onClick={handleAdminLogin}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              确认
+            </Button>
+            <Button
               onClick={() => {
                 setShowPasswordDialog(false);
                 setPassword('');
                 setPasswordError(false);
               }}
               variant="outline"
-              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
-            </Button>
-            <Button
-              onClick={handleAdminLogin}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
-            >
-              确认
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1023,20 +1023,20 @@ export default function Home() {
           </div>
           <DialogFooter>
             <Button
+              onClick={handleConfirmTrip}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              确认成行
+            </Button>
+            <Button
               onClick={() => {
                 setShowConfirmDialog(false);
                 setConfirmWishId(null);
               }}
               variant="outline"
-              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
-            </Button>
-            <Button
-              onClick={handleConfirmTrip}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
-            >
-              确认成行
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1122,20 +1122,20 @@ export default function Home() {
           </div>
           <DialogFooter>
             <Button
+              onClick={handleEditWish}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              保存
+            </Button>
+            <Button
               onClick={() => {
                 setShowEditDialog(false);
                 setEditWishId(null);
               }}
               variant="outline"
-              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
-            </Button>
-            <Button
-              onClick={handleEditWish}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
-            >
-              保存
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1181,20 +1181,20 @@ export default function Home() {
           </div>
           <DialogFooter>
             <Button
+              onClick={handleEditTrip}
+              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+            >
+              保存
+            </Button>
+            <Button
               onClick={() => {
                 setShowEditTripDialog(false);
                 setEditTripWishId(null);
               }}
               variant="outline"
-              className="border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#0a0a0f] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
             >
               取消
-            </Button>
-            <Button
-              onClick={handleEditTrip}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
-            >
-              保存
             </Button>
           </DialogFooter>
         </DialogContent>
