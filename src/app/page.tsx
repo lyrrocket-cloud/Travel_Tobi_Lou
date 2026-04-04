@@ -803,8 +803,8 @@ export default function Home() {
                               <div className="space-y-2">
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80">
                                   <div className="flex items-center gap-1">
-                                    <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                    <span className={`font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出发日期：{(() => {
+                                    <Calendar className={`w-3.5 h-3.5 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                    <span className={`text-sm font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出发日期：{(() => {
                                       const dateStr = wish.confirmed_date || '';
                                       const dateParts = dateStr.split('-');
                                       return dateParts.length >= 3 ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日` : dateStr;
@@ -812,41 +812,41 @@ export default function Home() {
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1 text-[#FFFFFF]/80">
-                                  <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                  <span className={`font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出行人：{wish.travelers}</span>
+                                  <User className={`w-3.5 h-3.5 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                  <span className={`text-sm font-semibold ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>出行人：{wish.travelers}</span>
                                 </div>
                               </div>
                             ) : (
                               <>
                                 <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
-                                    <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                    <span>{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
+                                    <Calendar className="w-3.5 h-3.5 text-[#CEA472]" />
+                                    <span className="text-sm">{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
                                   </div>
                                   <div className="flex items-center gap-1">
-                                    <User className="w-4 h-4 text-[#CEA472]" />
-                                    <span>{wish.wisher_name}</span>
+                                    <User className="w-3.5 h-3.5 text-[#CEA472]" />
+                                    <span className="text-sm">{wish.wisher_name}</span>
                                   </div>
                                 </div>
                                 
                                 {/* 未成行才显示跟随人信息 */}
-                                <div className="text-[#FFFFFF]/50 text-sm">
+                                <div className="text-[#FFFFFF]/50 text-xs">
                                   {wish.followers.length > 0 ? (
                                     <div className="flex flex-wrap items-center gap-2">
                                       <div className="flex items-center gap-1">
-                                        <Heart className="w-4 h-4 text-[#CEA472]" />
-                                        <span className="text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                        <Heart className="w-3.5 h-3.5 text-[#CEA472]" />
+                                        <span className="text-xs text-[#CEA472]">{wish.followers.length} 人跟随：</span>
                                       </div>
                                       {wish.followers.map((name, idx) => (
-                                        <div key={idx} className="flex items-center gap-1 px-2 py-1 rounded bg-black/30 border border-[#CEA472]/20">
-                                          <span className="text-[#FFFFFF]/80 text-sm">{name}</span>
+                                        <div key={idx} className="flex items-center gap-1 px-2 py-0.5 rounded bg-black/30 border border-[#CEA472]/20">
+                                          <span className="text-[#FFFFFF]/80 text-xs">{name}</span>
                                           {isAdminMode && (
                                             <button
                                               onClick={() => handleDeleteFollower(wish.id, name)}
-                                              className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-1 rounded"
+                                              className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded"
                                               title="删除跟随者"
                                             >
-                                              <Trash2 className="w-3 h-3" />
+                                              <Trash2 className="w-2.5 h-2.5" />
                                             </button>
                                           )}
                                         </div>
@@ -854,8 +854,8 @@ export default function Home() {
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-1">
-                                      <Heart className="w-4 h-4 text-[#CEA472]" />
-                                      <span>暂无跟随</span>
+                                      <Heart className="w-3.5 h-3.5 text-[#CEA472]" />
+                                      <span className="text-xs">暂无跟随</span>
                                     </div>
                                   )}
                                 </div>
