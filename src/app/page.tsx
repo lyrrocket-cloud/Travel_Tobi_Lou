@@ -797,7 +797,7 @@ export default function Home() {
                             
                             {/* 已成行显示具体信息 */}
                             {wish.is_confirmed === 1 ? (
-                              <div className="flex items-center gap-4 text-[#FFFFFF]/80">
+                              <div className="space-y-1.5 text-[#FFFFFF]/80">
                                 <div className="flex items-center gap-1">
                                   <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
                                   <span className="text-sm">{(() => {
@@ -813,7 +813,7 @@ export default function Home() {
                               </div>
                             ) : (
                               <>
-                                <div className="flex items-center gap-4 text-[#FFFFFF]/80 mb-2">
+                                <div className="space-y-1.5 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4 text-[#CEA472]" />
                                     <span className="text-sm">{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
@@ -823,43 +823,43 @@ export default function Home() {
                                     <span className="text-sm">{wish.wisher_name}</span>
                                   </div>
                                 </div>
-                                
-                                {/* 未成行才显示跟随人信息 */}
-                                <div className="text-[#FFFFFF]/50 text-xs">
-                                  {wish.followers.length > 0 ? (
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      <div className="flex items-center gap-1">
-                                        <Heart className="w-4 h-4 text-[#CEA472]" />
-                                        <span className="text-xs text-[#CEA472]">{wish.followers.length} 人跟随：</span>
-                                      </div>
-                                      {wish.followers.map((name, idx) => (
-                                        <div key={idx} className="flex items-center gap-1 px-2 py-0.5 rounded bg-black/30 border border-[#CEA472]/20">
-                                          <span className="text-[#FFFFFF]/80 text-xs">{name}</span>
-                                          {isAdminMode && (
-                                            <button
-                                              onClick={() => handleDeleteFollower(wish.id, name)}
-                                              className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded"
-                                              title="删除跟随者"
-                                            >
-                                              <Trash2 className="w-3 h-3" />
-                                            </button>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center gap-1">
-                                      <Heart className="w-4 h-4 text-[#CEA472]" />
-                                      <span className="text-xs">暂无跟随</span>
-                                    </div>
-                                  )}
-                                </div>
                               </>
                             )}
+
+                            {/* 跟随人信息 - 所有愿望都显示 */}
+                            <div className="text-[#FFFFFF]/50 text-xs">
+                              {wish.followers.length > 0 ? (
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <div className="flex items-center gap-1">
+                                    <Heart className="w-4 h-4 text-[#CEA472]" />
+                                    <span className="text-xs text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                  </div>
+                                  {wish.followers.map((name, idx) => (
+                                    <div key={idx} className="flex items-center gap-1 px-2 py-0.5 rounded bg-black/30 border border-[#CEA472]/20">
+                                      <span className="text-[#FFFFFF]/80 text-xs">{name}</span>
+                                      {isAdminMode && (
+                                        <button
+                                          onClick={() => handleDeleteFollower(wish.id, name)}
+                                          className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded"
+                                          title="删除跟随者"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                        </button>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1">
+                                  <Heart className="w-4 h-4 text-[#CEA472]" />
+                                  <span className="text-xs">暂无跟随</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
                             {/* 非管理模式：只显示跟随按钮 */}
-                            {wish.is_confirmed !== 1 && !isAdminMode && (
+                            {!isAdminMode && (
                               <Button
                                 onClick={() => handleFollow(wish.id)}
                                 variant="outline"
