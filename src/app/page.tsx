@@ -797,7 +797,7 @@ export default function Home() {
                             
                             {/* 已成行显示具体信息 */}
                             {wish.is_confirmed === 1 ? (
-                              <div className="space-y-1.5 text-[#FFFFFF]/80">
+                              <div className="space-y-2 pl-6 text-[#FFFFFF]/80">
                                 <div className="flex items-center gap-1">
                                   <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
                                   <span className="text-sm">{(() => {
@@ -813,7 +813,7 @@ export default function Home() {
                               </div>
                             ) : (
                               <>
-                                <div className="space-y-1.5 text-[#FFFFFF]/80 mb-2">
+                                <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-2">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4 text-[#CEA472]" />
                                     <span className="text-sm">{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
@@ -827,7 +827,7 @@ export default function Home() {
                             )}
 
                             {/* 跟随人信息 - 所有愿望都显示 */}
-                            <div className="text-[#FFFFFF]/50 text-xs">
+                            <div className="text-[#FFFFFF]/50 text-xs pl-6">
                               {wish.followers.length > 0 ? (
                                 <div className="flex flex-wrap items-center gap-2">
                                   <div className="flex items-center gap-1">
