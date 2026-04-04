@@ -797,9 +797,19 @@ export default function Home() {
                             
                             {/* 已成行显示具体信息 */}
                             {wish.is_confirmed === 1 ? (
-                              <div className="flex items-center gap-3 text-[#FFFFFF]/80">
-                                <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                              <div className="flex items-center gap-4 text-[#FFFFFF]/80">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                  <span className="text-sm">{(() => {
+                                    const dateStr = wish.confirmed_date || '';
+                                    const dateParts = dateStr.split('-');
+                                    return dateParts.length >= 3 ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日` : dateStr;
+                                  })()}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                  <span className="text-sm">{wish.travelers}</span>
+                                </div>
                               </div>
                             ) : (
                               <>
