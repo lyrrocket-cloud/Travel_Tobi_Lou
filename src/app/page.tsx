@@ -91,6 +91,13 @@ export default function Home() {
   const [followWishId, setFollowWishId] = useState<number | null>(null);
   const [followerName, setFollowerName] = useState('');
 
+  // 删除确认相关状态
+  const [showDeleteWishDialog, setShowDeleteWishDialog] = useState(false);
+  const [deleteWishId, setDeleteWishId] = useState<number | null>(null);
+  const [showDeleteFollowerDialog, setShowDeleteFollowerDialog] = useState(false);
+  const [deleteFollowerWishId, setDeleteFollowerWishId] = useState<number | null>(null);
+  const [deleteFollowerName, setDeleteFollowerName] = useState('');
+
   useEffect(() => {
     if (activeTab === 'wish-pool') {
       fetchWishes();
@@ -227,15 +234,22 @@ export default function Home() {
   };
 
   const handleDeleteWish = async (wishId: number) => {
-    if (!confirm('确定要删除这个愿望吗？')) return;
+    setDeleteWishId(wishId);
+    setShowDeleteWishDialog(true);
+  };
+
+  const handleConfirmDeleteWish = async () => {
+    if (!deleteWishId) return;
 
     try {
-      const response = await fetch(`/api/wishes/${wishId}`, {
+      const response = await fetch(`/api/wishes/${deleteWishId}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
         alert('删除成功！');
+        setShowDeleteWishDialog(false);
+        setDeleteWishId(null);
         fetchWishes();
       } else {
         alert('删除失败，请重试');
@@ -247,15 +261,24 @@ export default function Home() {
   };
 
   const handleDeleteFollower = async (wishId: number, followerName: string) => {
-    if (!confirm(`确定要删除跟随人"${followerName}"吗？`)) return;
+    setDeleteFollowerWishId(wishId);
+    setDeleteFollowerName(followerName);
+    setShowDeleteFollowerDialog(true);
+  };
+
+  const handleConfirmDeleteFollower = async () => {
+    if (!deleteFollowerWishId || !deleteFollowerName) return;
 
     try {
-      const response = await fetch(`/api/wishes/${wishId}/followers/${encodeURIComponent(followerName)}`, {
+      const response = await fetch(`/api/wishes/${deleteFollowerWishId}/followers/${encodeURIComponent(deleteFollowerName)}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
         alert('删除成功！');
+        setShowDeleteFollowerDialog(false);
+        setDeleteFollowerWishId(null);
+        setDeleteFollowerName('');
         fetchWishes();
       } else {
         const data = await response.json();
@@ -1206,6 +1229,73 @@ export default function Home() {
                 setShowFollowDialog(false);
                 setFollowWishId(null);
                 setFollowerName('');
+              }}
+              variant="outline"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Wish Confirmation Dialog */}
+      <Dialog open={showDeleteWishDialog} onOpenChange={setShowDeleteWishDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
+              <Trash2 className="w-5 h-5" />
+              删除愿望
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-[#FFFFFF]/80">确定要删除这个愿望吗？</p>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={handleConfirmDeleteWish}
+              className="bg-red-500 hover:bg-red-600 text-[#FFFFFF]"
+            >
+              删除
+            </Button>
+            <Button
+              onClick={() => {
+                setShowDeleteWishDialog(false);
+                setDeleteWishId(null);
+              }}
+              variant="outline"
+              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Follower Confirmation Dialog */}
+      <Dialog open={showDeleteFollowerDialog} onOpenChange={setShowDeleteFollowerDialog}>
+        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+          <DialogHeader>
+            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
+              <Trash2 className="w-5 h-5" />
+              删除跟随人
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-[#FFFFFF]/80">确定要删除跟随人"{deleteFollowerName}"吗？</p>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={handleConfirmDeleteFollower}
+              className="bg-red-500 hover:bg-red-600 text-[#FFFFFF]"
+            >
+              删除
+            </Button>
+            <Button
+              onClick={() => {
+                setShowDeleteFollowerDialog(false);
+                setDeleteFollowerWishId(null);
+                setDeleteFollowerName('');
               }}
               variant="outline"
               className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
