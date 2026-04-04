@@ -16,7 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -945,9 +944,6 @@ export default function Home() {
         <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
           <DialogHeader>
             <DialogTitle className="text-[#CEA472]">管理员验证</DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              请输入管理密码以进入管理模式
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <Input
@@ -1001,9 +997,6 @@ export default function Home() {
               <CheckCircle className="w-5 h-5" />
               确定成行
             </DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              录入具体出行信息，确认后将置顶显示
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -1060,9 +1053,6 @@ export default function Home() {
               <Edit2 className="w-5 h-5" />
               编辑愿望
             </DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              修改愿望的相关信息
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -1132,9 +1122,6 @@ export default function Home() {
               <Edit2 className="w-5 h-5" />
               编辑行程
             </DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              修改出发日期和出行人信息
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
