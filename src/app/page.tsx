@@ -859,10 +859,11 @@ export default function Home() {
                               <Button
                                 onClick={() => handleFollow(wish.id)}
                                 variant="outline"
-                                className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+                                size="icon"
+                                title="跟随"
+                                className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                               >
                                 <Heart className="w-4 h-4" />
-                                跟随
                               </Button>
                             )}
                             {/* 管理模式：显示编辑、确定成行、删除按钮 */}
