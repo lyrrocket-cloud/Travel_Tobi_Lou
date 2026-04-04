@@ -600,13 +600,13 @@ export default function Home() {
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
             <TabsTrigger
               value="make-wish"
-              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:border-[#CEA472] data-[state=active]:font-medium bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-[#CEA472]/20 transition-all duration-300"
+              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:font-medium bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-300"
             >
               抛硬币
             </TabsTrigger>
             <TabsTrigger
               value="wish-pool"
-              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:border-[#CEA472] data-[state=active]:font-medium bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-[#CEA472]/20 transition-all duration-300"
+              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:font-medium bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-300"
             >
               许愿池
             </TabsTrigger>
