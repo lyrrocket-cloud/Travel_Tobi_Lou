@@ -690,8 +690,7 @@ export default function Home() {
                 <Button
                   onClick={handleMakeWish}
                   disabled={isAnimating}
-                  size="lg"
-                  className="w-full h-12 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+                  className="w-64 h-11 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
                 >
                   {isAnimating ? (
                     <div className="flex items-center gap-3">
