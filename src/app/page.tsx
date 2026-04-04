@@ -873,10 +873,11 @@ export default function Home() {
                                   <Button
                                     onClick={() => handleOpenEditTripDialog(wish)}
                                     variant="outline"
-                                    className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+                                    size="icon"
+                                    title="编辑行程"
+                                    className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                                   >
                                     <Edit className="w-4 h-4" />
-                                    编辑行程
                                   </Button>
                                 ) : (
                                   // 未成行：显示编辑和确定成行按钮
@@ -884,28 +885,31 @@ export default function Home() {
                                     <Button
                                       onClick={() => handleOpenEditDialog(wish)}
                                       variant="outline"
-                                      className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+                                      size="icon"
+                                      title="编辑"
+                                      className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                                     >
                                       <Edit className="w-4 h-4" />
-                                      编辑
                                     </Button>
                                     <Button
                                       onClick={() => handleOpenConfirmDialog(wish.id)}
                                       variant="outline"
-                                      className="flex items-center gap-2 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 hover:text-[#CEA472]"
+                                      size="icon"
+                                      title="确定成行"
+                                      className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                                     >
                                       <CheckCircle className="w-4 h-4" />
-                                      确定成行
                                     </Button>
                                   </>
                                 )}
                                 <Button
                                   onClick={() => handleDeleteWish(wish.id)}
                                   variant="outline"
-                                  className="flex items-center gap-2 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:text-red-500"
+                                  size="icon"
+                                  title="删除"
+                                  className="size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50"
                                 >
                                   <Trash2 className="w-4 h-4" />
-                                  删除
                                 </Button>
                               </>
                             )}
