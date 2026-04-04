@@ -1121,7 +1121,7 @@ export default function Home() {
               onClick={handleEditWish}
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
-              保存
+              确认
             </Button>
             <Button
               onClick={() => {
@@ -1177,7 +1177,7 @@ export default function Home() {
               onClick={handleEditTrip}
               className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
             >
-              保存
+              确认
             </Button>
             <Button
               onClick={() => {
