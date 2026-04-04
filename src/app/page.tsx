@@ -797,7 +797,7 @@ export default function Home() {
                             
                             {/* 已成行显示具体信息 */}
                             {wish.is_confirmed === 1 ? (
-                              <div className="space-y-2 pl-6 text-[#FFFFFF]/80">
+                              <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3">
                                 <div className="flex items-center gap-1">
                                   <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
                                   <span className="text-sm">{(() => {
@@ -827,16 +827,16 @@ export default function Home() {
                             )}
 
                             {/* 跟随人信息 - 所有愿望都显示 */}
-                            <div className="text-[#FFFFFF]/50 text-xs pl-6">
+                            <div className={`text-xs pl-6 ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>
                               {wish.followers.length > 0 ? (
                                 <div className="flex flex-wrap items-center gap-2">
                                   <div className="flex items-center gap-1">
-                                    <Heart className="w-4 h-4 text-[#CEA472]" />
-                                    <span className="text-xs text-[#CEA472]">{wish.followers.length} 人跟随：</span>
+                                    <Heart className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                    <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>{wish.followers.length} 人跟随：</span>
                                   </div>
                                   {wish.followers.map((name, idx) => (
-                                    <div key={idx} className="flex items-center gap-1 px-2 py-0.5 rounded bg-black/30 border border-[#CEA472]/20">
-                                      <span className="text-[#FFFFFF]/80 text-xs">{name}</span>
+                                    <div key={idx} className={`flex items-center gap-1 px-2 py-0.5 rounded ${wish.is_expired === 1 ? 'bg-gray-500/20 border-gray-500/20' : 'bg-black/30 border border-[#CEA472]/20'}`}>
+                                      <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
                                       {isAdminMode && (
                                         <button
                                           onClick={() => handleDeleteFollower(wish.id, name)}
@@ -851,15 +851,15 @@ export default function Home() {
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-1">
-                                  <Heart className="w-4 h-4 text-[#CEA472]" />
-                                  <span className="text-xs">暂无跟随</span>
+                                  <Heart className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                  <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>暂无跟随</span>
                                 </div>
                               )}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            {/* 非管理模式：只显示跟随按钮 */}
-                            {!isAdminMode && (
+                            {/* 非管理模式：只显示跟随按钮（已过期不允许跟随） */}
+                            {!isAdminMode && wish.is_expired !== 1 && (
                               <Button
                                 onClick={() => handleFollow(wish.id)}
                                 variant="outline"
