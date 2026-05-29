@@ -1,111 +1,82 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle, Edit2, Plane, FileText, Receipt, Car } from 'lucide-react';
-
-interface Wish {
-  id: number;
-  destination: string;
-  travel_year: number;
-  travel_month: string;
-  wisher_name: string;
-  followers_count: number;
-  created_at: string;
-  followers: string[];
-  is_confirmed: number;
-  confirmed_date?: string;
-  travelers?: string;
-  is_pinned: number;
-  confirmed_at?: string;
-  is_expired?: number;
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
 
 const months = [
   '一月', '二月', '三月', '四月', '五月', '六月',
   '七月', '八月', '九月', '十月', '十一月', '十二月'
 ];
 
-// 生成年份选项（当前年份到当前年份+3年）
-const currentYear = new Date().getFullYear();
-const years = [currentYear, currentYear + 1, currentYear + 2, currentYear + 3];
+const monthsShort = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
 
-const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+interface Wish {
+  id: string;
+  destination: string;
+  travel_month: string;
+  travel_year: number;
+  wisher_name: string;
+  is_confirmed: number;
+  is_expired?: number;
+  confirmed_date?: string;
+  travelers?: string;
+  followers_count: number;
+  followers: string[];
+}
 
 export default function Home() {
-  const [mainTab, setMainTab] = useState('wish');
-  const [activeTab, setActiveTab] = useState('make-wish');
   const [destination, setDestination] = useState('');
   const [travelYearMonth, setTravelYearMonth] = useState('');
   const [wisherName, setWisherName] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [wishes, setWishes] = useState<Wish[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  
-  // 管理相关状态
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('make-wish');
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  
-  // 成行相关状态
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [confirmWishId, setConfirmWishId] = useState<number | null>(null);
-  const [confirmedDate, setConfirmedDate] = useState('');
-  const [travelers, setTravelers] = useState('');
-  
-  // 编辑相关状态
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [editWishId, setEditWishId] = useState<number | null>(null);
-  const [editDestination, setEditDestination] = useState('');
-  const [editTravelYearMonth, setEditTravelYearMonth] = useState('');
-  const [editWisherName, setEditWisherName] = useState('');
-  
-  // 编辑行程相关状态（已成行旅行）
-  const [showEditTripDialog, setShowEditTripDialog] = useState(false);
-  const [editTripWishId, setEditTripWishId] = useState<number | null>(null);
-  const [editTripDate, setEditTripDate] = useState('');
-  const [editTripTravelers, setEditTripTravelers] = useState('');
-
-  // 跟随相关状态
-  const [showFollowDialog, setShowFollowDialog] = useState(false);
-  const [followWishId, setFollowWishId] = useState<number | null>(null);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingWish, setEditingWish] = useState<Wish | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [confirmingWishId, setConfirmingWishId] = useState<string>('');
+  const [confirmDate, setConfirmDate] = useState('');
+  const [confirmTravelers, setConfirmTravelers] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deletingWishId, setDeletingWishId] = useState<string>('');
+  const [editTripModalOpen, setEditTripModalOpen] = useState(false);
+  const [editingTrip, setEditingTrip] = useState<Wish | null>(null);
+  const [followModalOpen, setFollowModalOpen] = useState(false);
+  const [followingWishId, setFollowingWishId] = useState<string>('');
   const [followerName, setFollowerName] = useState('');
-
-  // 删除确认相关状态
-  const [showDeleteWishDialog, setShowDeleteWishDialog] = useState(false);
-  const [deleteWishId, setDeleteWishId] = useState<number | null>(null);
-  const [showDeleteFollowerDialog, setShowDeleteFollowerDialog] = useState(false);
-  const [deleteFollowerWishId, setDeleteFollowerWishId] = useState<number | null>(null);
+  const [deleteFollowerModalOpen, setDeleteFollowerModalOpen] = useState(false);
+  const [deletingFollowerWishId, setDeletingFollowerWishId] = useState<string>('');
   const [deleteFollowerName, setDeleteFollowerName] = useState('');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [mainTab, setMainTab] = useState('wish');
 
-  useEffect(() => {
-    if (activeTab === 'wish-pool') {
-      fetchWishes();
+  // 加载愿望数据
+  const fetchWishes = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/wishes');
+      const data = await response.json();
+      setWishes(data.wishes || []);
+    } catch (error) {
+      console.error('Failed to fetch wishes:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [activeTab]);
+  };
 
-  // 初始加载愿望数据（用于时间轴显示）
+  // 初始加载愿望数据
   useEffect(() => {
     fetchWishes();
   }, []);
@@ -123,19 +94,6 @@ export default function Home() {
       }
     }
   }, [wishes]);
-
-  const fetchWishes = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/wishes');
-      const data = await response.json();
-      setWishes(data.wishes || []);
-    } catch (error) {
-      console.error('Failed to fetch wishes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleMakeWish = async () => {
     if (!destination || !travelYearMonth || !wisherName) {
@@ -177,367 +135,273 @@ export default function Home() {
         if (response.ok) {
           setAnimationComplete(true);
           setTimeout(() => {
+            setIsAnimating(false);
+            setAnimationComplete(false);
             setDestination('');
             setTravelYearMonth('');
             setWisherName('');
-            setIsAnimating(false);
-            setAnimationComplete(false);
-            setActiveTab('wish-pool');
-          }, 2000);
+            fetchWishes();
+          }, 1500);
         } else {
-          alert('许愿失败，请重试');
+          alert(data.error || '创建愿望失败');
           setIsAnimating(false);
         }
       } catch (error) {
-        console.error('Failed to make wish:', error);
-        alert('许愿失败，请重试');
+        console.error('Error creating wish:', error);
+        alert('创建愿望失败，请稍后重试');
         setIsAnimating(false);
       }
-    }, 2000);
+    }, 800);
   };
 
-  const handleFollow = async (wishId: number) => {
-    setFollowWishId(wishId);
-    setFollowerName('');
-    setShowFollowDialog(true);
-  };
-
-  const handleConfirmFollow = async () => {
-    if (!followWishId || !followerName) {
-      alert('请输入您的姓名');
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/wishes/${followWishId}/follow`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ followerName }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert('已成功跟随该愿望！');
-        setShowFollowDialog(false);
-        setFollowWishId(null);
-        setFollowerName('');
-        fetchWishes();
-      } else {
-        alert(data.error || '跟随失败，请重试');
-      }
-    } catch (error) {
-      console.error('Failed to follow wish:', error);
-      alert('跟随失败，请重试');
-    }
-  };
-
-  const handleDeleteWish = async (wishId: number) => {
-    setDeleteWishId(wishId);
-    setShowDeleteWishDialog(true);
-  };
-
-  const handleConfirmDeleteWish = async () => {
-    if (!deleteWishId) return;
-
-    try {
-      const response = await fetch(`/api/wishes/${deleteWishId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        alert('删除成功！');
-        setShowDeleteWishDialog(false);
-        setDeleteWishId(null);
-        fetchWishes();
-      } else {
-        alert('删除失败，请重试');
-      }
-    } catch (error) {
-      console.error('Failed to delete wish:', error);
-      alert('删除失败，请重试');
-    }
-  };
-
-  const handleDeleteFollower = async (wishId: number, followerName: string) => {
-    setDeleteFollowerWishId(wishId);
-    setDeleteFollowerName(followerName);
-    setShowDeleteFollowerDialog(true);
-  };
-
-  const handleConfirmDeleteFollower = async () => {
-    if (!deleteFollowerWishId || !deleteFollowerName) return;
-
-    try {
-      const response = await fetch(`/api/wishes/${deleteFollowerWishId}/followers/${encodeURIComponent(deleteFollowerName)}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        alert('删除成功！');
-        setShowDeleteFollowerDialog(false);
-        setDeleteFollowerWishId(null);
-        setDeleteFollowerName('');
-        fetchWishes();
-      } else {
-        const data = await response.json();
-        alert(data.error || '删除失败，请重试');
-      }
-    } catch (error) {
-      console.error('Failed to delete follower:', error);
-      alert('删除失败，请重试');
+  const handleOpenAdmin = () => {
+    if (isAdminMode) {
+      setIsAdminMode(false);
+    } else {
+      setPasswordModalOpen(true);
     }
   };
 
   const handleAdminLogin = () => {
-    if (password === 'tobi7758258') {
+    if (adminPassword === 'tobi7758258') {
       setIsAdminMode(true);
-      setShowPasswordDialog(false);
-      setPassword('');
-      setPasswordError(false);
+      setPasswordModalOpen(false);
+      setAdminPassword('');
     } else {
-      setPasswordError(true);
-    }
-  };
-
-  const handleOpenConfirmDialog = (wishId: number) => {
-    setConfirmWishId(wishId);
-    setConfirmedDate('');
-    setTravelers('');
-    setShowConfirmDialog(true);
-  };
-
-  const handleConfirmTrip = async () => {
-    if (!confirmWishId || !confirmedDate || !travelers) {
-      alert('请填写所有必填项');
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/wishes/${confirmWishId}/confirm`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ confirmedDate, travelers }),
-      });
-
-      if (response.ok) {
-        alert('成行确认成功！');
-        setShowConfirmDialog(false);
-        setConfirmWishId(null);
-        fetchWishes();
-      } else {
-        const data = await response.json();
-        alert(data.error || '确认失败，请重试');
-      }
-    } catch (error) {
-      console.error('Failed to confirm trip:', error);
-      alert('确认失败，请重试');
+      alert('密码错误');
     }
   };
 
   const handleOpenEditDialog = (wish: Wish) => {
-    setEditWishId(wish.id);
-    setEditDestination(wish.destination);
-    // 将年份和月份转换为 YYYY-MM 格式
-    const monthNum = months.indexOf(wish.travel_month) + 1;
-    setEditTravelYearMonth(`${wish.travel_year}-${String(monthNum).padStart(2, '0')}`);
-    setEditWisherName(wish.wisher_name);
-    setShowEditDialog(true);
+    setEditingWish(wish);
+    setEditModalOpen(true);
   };
 
   const handleEditWish = async () => {
-    if (!editWishId || !editDestination || !editTravelYearMonth || !editWisherName) {
-      alert('请填写所有必填项');
-      return;
-    }
-
-    // 解析 YYYY-MM 格式
-    const dateMatch = editTravelYearMonth.match(/^(\d{4})-(\d{2})$/);
-    if (!dateMatch) {
-      alert('请输入正确的日期格式（YYYY-MM），例如：2026-03');
-      return;
-    }
-
-    const editTravelYear = parseInt(dateMatch[1]);
-    const travelMonthNum = parseInt(dateMatch[2]);
-    const editTravelMonth = months[travelMonthNum - 1];
+    if (!editingWish) return;
 
     try {
-      const response = await fetch(`/api/wishes/${editWishId}`, {
+      const response = await fetch('/api/wishes', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          destination: editDestination,
-          travelYear: editTravelYear,
-          travelMonth: editTravelMonth,
-          wisherName: editWisherName
+          id: editingWish.id,
+          destination: editingWish.destination,
+          travelYear: editingWish.travel_year,
+          travelMonth: editingWish.travel_month,
+          wisherName: editingWish.wisher_name,
         }),
       });
 
       if (response.ok) {
-        alert('编辑成功！');
-        setShowEditDialog(false);
-        setEditWishId(null);
+        setEditModalOpen(false);
+        setEditingWish(null);
         fetchWishes();
       } else {
         const data = await response.json();
-        alert(data.error || '编辑失败，请重试');
+        alert(data.error || '更新愿望失败');
       }
     } catch (error) {
-      console.error('Failed to edit wish:', error);
-      alert('编辑失败，请重试');
+      console.error('Error updating wish:', error);
+      alert('更新愿望失败，请稍后重试');
     }
   };
 
-  // 打开编辑行程对话框
-  const handleOpenEditTripDialog = (wish: Wish) => {
-    setEditTripWishId(wish.id);
-    setEditTripDate(wish.confirmed_date || '');
-    setEditTripTravelers(wish.travelers || '');
-    setShowEditTripDialog(true);
+  const handleOpenConfirmDialog = (wishId: string) => {
+    setConfirmingWishId(wishId);
+    setConfirmModalOpen(true);
   };
 
-  // 更新已成行旅行的出发日期和出行人
-  const handleEditTrip = async () => {
-    if (!editTripWishId || !editTripDate || !editTripTravelers) {
-      alert('请填写所有必填项');
+  const handleConfirmWish = async () => {
+    if (!confirmingWishId || !confirmDate || !confirmTravelers) {
+      alert('请填写完整的行程信息');
       return;
     }
 
     try {
-      const response = await fetch(`/api/wishes/${editTripWishId}/confirm`, {
+      const response = await fetch('/api/wishes', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          confirmedDate: editTripDate, 
-          travelers: editTripTravelers,
+        body: JSON.stringify({
+          id: confirmingWishId,
+          isConfirmed: 1,
+          confirmedDate: confirmDate,
+          travelers: confirmTravelers,
         }),
       });
 
       if (response.ok) {
-        alert('更新成功！');
-        setShowEditTripDialog(false);
-        setEditTripWishId(null);
+        setConfirmModalOpen(false);
+        setConfirmingWishId('');
+        setConfirmDate('');
+        setConfirmTravelers('');
         fetchWishes();
       } else {
         const data = await response.json();
-        alert(data.error || '更新失败，请重试');
+        alert(data.error || '确认成行失败');
       }
     } catch (error) {
-      console.error('Failed to edit trip:', error);
-      alert('更新失败，请重试');
+      console.error('Error confirming wish:', error);
+      alert('确认成行失败，请稍后重试');
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const handleOpenDeleteDialog = (wishId: string) => {
+    setDeletingWishId(wishId);
+    setDeleteModalOpen(true);
   };
 
-  return (
-    <div className="min-h-screen relative">
-      {/* 固定背景图片层 */}
-      <div 
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundColor: '#0a0a0f',
-          backgroundImage: 'linear-gradient(rgba(10, 10, 15, 0.75), rgba(10, 10, 15, 0.75)), url(/matterhorn-bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
-      {/* 管理按钮 - 右上角 */}
-      <div className="fixed top-4 right-4 z-50">
-        <Button
-          onClick={() => {
-            if (isAdminMode) {
-              setIsAdminMode(false);
-            } else {
-              setShowPasswordDialog(true);
-            }
-          }}
-          variant="outline"
-          size="icon"
-          title={isAdminMode ? "退出管理模式" : "进入管理模式"}
-          className={`w-10 h-10 bg-black/40 border-[#CEA472]/30 ${
-            isAdminMode
-              ? 'bg-[#CEA472] text-[#0a0a0f] border-[#CEA472]'
-              : 'text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50'
-          } transition-all duration-300`}
-        >
-          <Settings className="w-5 h-5" />
-        </Button>
-      </div>
-      
-      <div className="container mx-auto px-4 py-8">        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex flex-col items-center justify-center gap-4 mb-4">
-            {/* 图标容器 - 金色衬底 + 黑色线框 */}
-            <div 
-              className="w-20 h-20 flex items-center justify-center rounded-2xl"
-              style={{
-                backgroundColor: '#CEA472',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
-              }}
-            >
-              <Plane className="w-10 h-10" style={{ color: '#0a0a0f' }} />
-            </div>
-            {/* 主标题 */}
-            <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行工具箱</h1>
-          </div>
-        </div>
+  const handleDeleteWish = async () => {
+    if (!deletingWishId) return;
 
-        {/* 一级标签页 */}
-        <Tabs value={mainTab} onValueChange={setMainTab} className="w-full max-w-4xl mx-auto mb-8">
-          <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
-            <TabsTrigger
-              value="wish"
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
-            >
-              <Heart className="w-4 h-4 mr-2" />
-              旅行许愿
-            </TabsTrigger>
-            <TabsTrigger
-              value="plan"
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              旅行规划
-            </TabsTrigger>
-            <TabsTrigger
-              value="account"
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
-            >
-              <Receipt className="w-4 h-4 mr-2" />
-              旅行记账
-            </TabsTrigger>
-            <TabsTrigger
-              value="drive"
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
-            >
-              <Car className="w-4 h-4 mr-2" />
-              旅行驾驶
-            </TabsTrigger>
-          </TabsList>
+    try {
+      const response = await fetch('/api/wishes', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: deletingWishId,
+        }),
+      });
 
-        {/* 旅行许愿标签页内容 */}
-        {mainTab === 'wish' && (
-          <div className="space-y-6">
+      if (response.ok) {
+        setDeleteModalOpen(false);
+        setDeletingWishId('');
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '删除愿望失败');
+      }
+    } catch (error) {
+      console.error('Error deleting wish:', error);
+      alert('删除愿望失败，请稍后重试');
+    }
+  };
+
+  const handleOpenEditTripDialog = (wish: Wish) => {
+    setEditingTrip(wish);
+    setEditTripModalOpen(true);
+  };
+
+  const handleEditTrip = async () => {
+    if (!editingTrip || !editingTrip.confirmed_date || !editingTrip.travelers) {
+      alert('请填写完整的行程信息');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/wishes', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: editingTrip.id,
+          confirmedDate: editingTrip.confirmed_date,
+          travelers: editingTrip.travelers,
+        }),
+      });
+
+      if (response.ok) {
+        setEditTripModalOpen(false);
+        setEditingTrip(null);
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '更新行程失败');
+      }
+    } catch (error) {
+      console.error('Error updating trip:', error);
+      alert('更新行程失败，请稍后重试');
+    }
+  };
+
+  const handleOpenFollowDialog = (wishId: string) => {
+    setFollowingWishId(wishId);
+    setFollowModalOpen(true);
+  };
+
+  const handleFollow = async () => {
+    if (!followingWishId || !followerName) {
+      alert('请输入跟随者姓名');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/wishes/follow', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          wishId: followingWishId,
+          followerName,
+        }),
+      });
+
+      if (response.ok) {
+        setFollowModalOpen(false);
+        setFollowingWishId('');
+        setFollowerName('');
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '跟随失败');
+      }
+    } catch (error) {
+      console.error('Error following wish:', error);
+      alert('跟随失败，请稍后重试');
+    }
+  };
+
+  const handleOpenDeleteFollowerDialog = (wishId: string, followerNameVal: string) => {
+    setDeletingFollowerWishId(wishId);
+    setDeleteFollowerName(followerNameVal);
+    setDeleteFollowerModalOpen(true);
+  };
+
+  const handleDeleteFollower = async () => {
+    if (!deletingFollowerWishId || !deleteFollowerName) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/wishes/follow', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          wishId: deletingFollowerWishId,
+          followerName: deleteFollowerName,
+        }),
+      });
+
+      if (response.ok) {
+        setDeleteFollowerModalOpen(false);
+        setDeletingFollowerWishId('');
+        setDeleteFollowerName('');
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '删除跟随者失败');
+      }
+    } catch (error) {
+      console.error('Error deleting follower:', error);
+      alert('删除跟随者失败，请稍后重试');
+    }
+  };
+
+  // 渲染主内容区域
+  const renderMainContent = () => {
+    if (mainTab === 'wish') {
+      return (
+        <div className="space-y-6">
           {/* 年度时间轴 */}
           {wishes.some(w => w.is_confirmed === 1) && (
             <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-8">
@@ -907,7 +771,7 @@ export default function Home() {
                                         <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
                                         {isAdminMode && (
                                           <button
-                                            onClick={() => handleDeleteFollower(wish.id, name)}
+                                            onClick={() => handleOpenDeleteFollowerDialog(wish.id, name)}
                                             className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded"
                                             title="删除跟随者"
                                           >
@@ -929,7 +793,7 @@ export default function Home() {
                               {/* 非管理模式：只显示跟随按钮（已过期不允许跟随） */}
                               {!isAdminMode && wish.is_expired !== 1 && (
                                 <Button
-                                  onClick={() => handleFollow(wish.id)}
+                                  onClick={() => handleOpenFollowDialog(wish.id)}
                                   variant="outline"
                                   size="icon"
                                   title="跟随"
@@ -976,7 +840,7 @@ export default function Home() {
                                     </>
                                   )}
                                   <Button
-                                    onClick={() => handleDeleteWish(wish.id)}
+                                    onClick={() => handleOpenDeleteDialog(wish.id)}
                                     variant="outline"
                                     size="icon"
                                     title="删除"
@@ -997,457 +861,421 @@ export default function Home() {
             </TabsContent>
           </Tabs>
         </div>
-        )}
-
-        {/* 旅行规划标签页内容 */}
-        {mainTab === 'plan' && (
-          <div className="space-y-6">
+      );
+    } else if (mainTab === 'plan') {
+      return (
+        <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
-              <div className="text-center py-16">
-                <FileText className="w-20 h-20 text-[#CEA472]/50 mx-auto mb-6" />
-                <h2 className="text-2xl font-bold text-[#CEA472] mb-4">旅行规划</h2>
-                <p className="text-[#FFFFFF]/60 text-lg">计划您的完美旅程</p>
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <Calendar className="w-8 h-8 text-[#CEA472] mx-auto mb-3" />
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">行程规划</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">制定详细的旅行路线和日程安排</p>
-                  </div>
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <MapPin className="w-8 h-8 text-[#CEA472] mx-auto mb-3" />
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">目的地探索</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">发现热门景点和隐藏宝藏</p>
-                  </div>
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <Receipt className="w-8 h-8 text-[#CEA472] mx-auto mb-3" />
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">预算管理</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">规划旅行预算和费用支出</p>
-                  </div>
-                </div>
+              <div className="text-center py-12">
+                <Map className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行规划</h3>
+                <p className="text-[#FFFFFF]/60 mb-2">此功能正在开发中...</p>
+                <p className="text-sm text-[#FFFFFF]/40">即将支持：行程规划、目的地探索、预算管理</p>
               </div>
             </CardContent>
           </Card>
         </div>
-        )}
-
-        {/* 旅行记账标签页内容 */}
-        {mainTab === 'account' && (
-          <div className="space-y-6">
+      );
+    } else if (mainTab === 'account') {
+      return (
+        <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
-              <div className="text-center py-16">
-                <Receipt className="w-20 h-20 text-[#CEA472]/50 mx-auto mb-6" />
-                <h2 className="text-2xl font-bold text-[#CEA472] mb-4">旅行记账</h2>
-                <p className="text-[#FFFFFF]/60 text-lg">记录每一笔旅行开支</p>
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">💰</span>
-                    </div>
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">支出记录</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">记录旅行中的各项花费</p>
-                  </div>
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">📊</span>
-                    </div>
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">统计分析</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">查看支出统计和趋势分析</p>
-                  </div>
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">📝</span>
-                    </div>
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">账单管理</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">管理和导出旅行账单</p>
-                  </div>
-                </div>
+              <div className="text-center py-12">
+                <Coins className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行记账</h3>
+                <p className="text-[#FFFFFF]/60 mb-2">此功能正在开发中...</p>
+                <p className="text-sm text-[#FFFFFF]/40">即将支持：支出记录、统计分析、账单管理</p>
               </div>
             </CardContent>
           </Card>
         </div>
-        )}
-
-        {/* 旅行驾驶标签页内容 */}
-        {mainTab === 'drive' && (
-          <div className="space-y-6">
+      );
+    } else if (mainTab === 'drive') {
+      return (
+        <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
-              <div className="text-center py-16">
-                <Car className="w-20 h-20 text-[#CEA472]/50 mx-auto mb-6" />
-                <h2 className="text-2xl font-bold text-[#CEA472] mb-4">旅行驾驶</h2>
-                <p className="text-[#FFFFFF]/60 text-lg">自驾旅行助手</p>
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">🗺️</span>
-                    </div>
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">路线规划</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">规划自驾路线和导航指引</p>
-                  </div>
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">⛽</span>
-                    </div>
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">油耗计算</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">计算油耗和费用预估</p>
-                  </div>
-                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
-                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
-                      <span className="text-2xl">🏠</span>
-                    </div>
-                    <h3 className="text-[#FFFFFF] font-semibold mb-2">沿途景点</h3>
-                    <p className="text-[#FFFFFF]/50 text-sm">发现沿途值得停留的景点</p>
-                  </div>
-                </div>
+              <div className="text-center py-12">
+                <Car className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行驾驶</h3>
+                <p className="text-[#FFFFFF]/60 mb-2">此功能正在开发中...</p>
+                <p className="text-sm text-[#FFFFFF]/40">即将支持：路线规划、油耗计算、沿途景点</p>
               </div>
             </CardContent>
           </Card>
         </div>
-        )}
-      </Tabs>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="min-h-screen w-full relative overflow-hidden">
+      {/* 背景图片 */}
+      <div 
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      {/* 深色叠加层，确保文字可读 */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* 内容区域 */}
+      <div className="relative z-10 py-12 px-4 sm:px-6 lg:px-8">
+        {/* 标题和管理按钮 */}
+        <div className="flex items-center justify-between mb-8 max-w-4xl mx-auto">
+          <div className="flex items-center gap-3">
+            <Plane className="w-8 h-8 text-[#CEA472]" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#FFFFFF] tracking-wide">
+              旅行工具箱
+            </h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`text-sm ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40'}`}>管理</span>
+            <Switch
+              checked={isAdminMode}
+              onCheckedChange={handleOpenAdmin}
+            />
+          </div>
+        </div>
+
+        {/* 主标签页 */}
+        <Tabs value={mainTab} onValueChange={setMainTab} className="w-full max-w-4xl mx-auto">
+          <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 mb-8">
+            <TabsTrigger
+              value="wish"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            >
+              <Plane className="w-4 h-4 mr-2" />
+              旅行许愿
+            </TabsTrigger>
+            <TabsTrigger
+              value="plan"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            >
+              <Map className="w-4 h-4 mr-2" />
+              旅行规划
+            </TabsTrigger>
+            <TabsTrigger
+              value="account"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            >
+              <Receipt className="w-4 h-4 mr-2" />
+              旅行记账
+            </TabsTrigger>
+            <TabsTrigger
+              value="drive"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            >
+              <Car className="w-4 h-4 mr-2" />
+              旅行驾驶
+            </TabsTrigger>
+          </TabsList>
+
+          {/* 主标签页内容 */}
+          {renderMainContent()}
+        </Tabs>
       </div>
 
-      {/* Password Dialog */}
-      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+      {/* 密码对话框 */}
+      <Dialog open={passwordModalOpen} onOpenChange={setPasswordModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#CEA472]">管理员验证</DialogTitle>
+            <DialogTitle className="text-[#FFFFFF]">进入管理模式</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">请输入管理员密码以进入管理模式</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            <Label htmlFor="admin-password" className="text-[#FFFFFF]">密码</Label>
             <Input
+              id="admin-password"
               type="password"
-              placeholder="请输入密码"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setPasswordError(false);
-              }}
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleAdminLogin();
                 }
               }}
-              className={`bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 ${
-                passwordError ? 'border-red-500' : ''
-              }`}
             />
-            {passwordError && (
-              <p className="text-red-500 text-sm">密码错误，请重试</p>
-            )}
           </div>
           <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setPasswordModalOpen(false)}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
             <Button
               onClick={handleAdminLogin}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
             >
               确认
-            </Button>
-            <Button
-              onClick={() => {
-                setShowPasswordDialog(false);
-                setPassword('');
-                setPasswordError(false);
-              }}
-              variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
-            >
-              取消
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Confirm Trip Dialog */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+      {/* 编辑对话框 */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <CheckCircle className="w-5 h-5" />
-              确定成行
-            </DialogTitle>
+            <DialogTitle className="text-[#FFFFFF]">编辑愿望</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#CEA472]" />
-                出发日期
-              </Label>
-              <Input
-                type="date"
-                value={confirmedDate}
-                onChange={(e) => setConfirmedDate(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] focus:border-[#CEA472]/50"
-              />
+            <Label htmlFor="edit-destination" className="text-[#FFFFFF]">目的地</Label>
+            <Input
+              id="edit-destination"
+              value={editingWish?.destination || ''}
+              onChange={(e) => editingWish && setEditingWish({ ...editingWish, destination: e.target.value })}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-year" className="text-[#FFFFFF]">期望年份</Label>
+                <Input
+                  id="edit-year"
+                  type="number"
+                  value={editingWish?.travel_year || ''}
+                  onChange={(e) => editingWish && setEditingWish({ ...editingWish, travel_year: parseInt(e.target.value) })}
+                  className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-month" className="text-[#FFFFFF]">期望月份</Label>
+                <select
+                  id="edit-month"
+                  value={editingWish?.travel_month || ''}
+                  onChange={(e) => editingWish && setEditingWish({ ...editingWish, travel_month: e.target.value })}
+                  className="w-full h-11 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
+                >
+                  {months.map((month) => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <User className="w-4 h-4 text-[#CEA472]" />
-                出行人（多人用逗号分隔）
-              </Label>
-              <Input
-                placeholder="例如：张三、李四、王五"
-                value={travelers}
-                onChange={(e) => setTravelers(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-              />
-            </div>
+            <Label htmlFor="edit-wisher" className="text-[#FFFFFF]">许愿人</Label>
+            <Input
+              id="edit-wisher"
+              value={editingWish?.wisher_name || ''}
+              onChange={(e) => editingWish && setEditingWish({ ...editingWish, wisher_name: e.target.value })}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+            />
           </div>
           <DialogFooter>
             <Button
-              onClick={handleConfirmTrip}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
-            >
-              确认
-            </Button>
-            <Button
-              onClick={() => {
-                setShowConfirmDialog(false);
-                setConfirmWishId(null);
-              }}
               variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+              onClick={() => {
+                setEditModalOpen(false);
+                setEditingWish(null);
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Wish Dialog */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
-          <DialogHeader>
-            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Edit2 className="w-5 h-5" />
-              编辑愿望
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#CEA472]" />
-                目的地
-              </Label>
-              <Input
-                placeholder="例如：巴黎、东京、马尔代夫..."
-                value={editDestination}
-                onChange={(e) => setEditDestination(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#CEA472]" />
-                希望出行年月
-              </Label>
-              <Input
-                type="text"
-                placeholder="YYYY-MM（如：2026-03）"
-                value={editTravelYearMonth}
-                onChange={(e) => setEditTravelYearMonth(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <User className="w-4 h-4 text-[#CEA472]" />
-                许愿人姓名
-              </Label>
-              <Input
-                placeholder="请输入许愿人姓名"
-                value={editWisherName}
-                onChange={(e) => setEditWisherName(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-              />
-            </div>
-          </div>
-          <DialogFooter>
             <Button
               onClick={handleEditWish}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
             >
-              确认
-            </Button>
-            <Button
-              onClick={() => {
-                setShowEditDialog(false);
-                setEditWishId(null);
-              }}
-              variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
-            >
-              取消
+              保存
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Trip Dialog - 编辑已成行旅行 */}
-      <Dialog open={showEditTripDialog} onOpenChange={setShowEditTripDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+      {/* 确认成行对话框 */}
+      <Dialog open={confirmModalOpen} onOpenChange={setConfirmModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Edit2 className="w-5 h-5" />
-              编辑行程
-            </DialogTitle>
+            <DialogTitle className="text-[#FFFFFF]">确认成行</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#CEA472]" />
-                出发日期
-              </Label>
-              <Input
-                type="date"
-                value={editTripDate}
-                onChange={(e) => setEditTripDate(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] focus:border-[#CEA472]/50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <User className="w-4 h-4 text-[#CEA472]" />
-                出行人（多人用逗号分隔）
-              </Label>
-              <Input
-                placeholder="例如：张三、李四、王五"
-                value={editTripTravelers}
-                onChange={(e) => setEditTripTravelers(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-              />
-            </div>
+            <Label htmlFor="confirm-date" className="text-[#FFFFFF]">出发日期</Label>
+            <Input
+              id="confirm-date"
+              type="date"
+              value={confirmDate}
+              onChange={(e) => setConfirmDate(e.target.value)}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+            />
+            <Label htmlFor="confirm-travelers" className="text-[#FFFFFF]">同行人员</Label>
+            <Input
+              id="confirm-travelers"
+              value={confirmTravelers}
+              onChange={(e) => setConfirmTravelers(e.target.value)}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              placeholder="例如：张三、李四、王五"
+            />
           </div>
           <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setConfirmModalOpen(false);
+                setConfirmingWishId('');
+                setConfirmDate('');
+                setConfirmTravelers('');
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleConfirmWish}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+            >
+              确认
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 删除对话框 */}
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">删除愿望</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">确定要删除这个愿望吗？此操作不可撤销。</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteModalOpen(false);
+                setDeletingWishId('');
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleDeleteWish}
+              className="bg-red-500 text-white hover:bg-red-500/80"
+            >
+              删除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 编辑行程对话框 */}
+      <Dialog open={editTripModalOpen} onOpenChange={setEditTripModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">编辑行程</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Label htmlFor="edit-trip-date" className="text-[#FFFFFF]">出发日期</Label>
+            <Input
+              id="edit-trip-date"
+              type="date"
+              value={editingTrip?.confirmed_date || ''}
+              onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, confirmed_date: e.target.value })}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+            />
+            <Label htmlFor="edit-trip-travelers" className="text-[#FFFFFF]">同行人员</Label>
+            <Input
+              id="edit-trip-travelers"
+              value={editingTrip?.travelers || ''}
+              onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, travelers: e.target.value })}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              placeholder="例如：张三、李四、王五"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditTripModalOpen(false);
+                setEditingTrip(null);
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
             <Button
               onClick={handleEditTrip}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
             >
-              确认
-            </Button>
-            <Button
-              onClick={() => {
-                setShowEditTripDialog(false);
-                setEditTripWishId(null);
-              }}
-              variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
-            >
-              取消
+              保存
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Follow Dialog - 跟随愿望 */}
-      <Dialog open={showFollowDialog} onOpenChange={setShowFollowDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+      {/* 跟随对话框 */}
+      <Dialog open={followModalOpen} onOpenChange={setFollowModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Heart className="w-5 h-5" />
-              跟随愿望
-            </DialogTitle>
+            <DialogTitle className="text-[#FFFFFF]">跟随愿望</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label className="text-[#FFFFFF] flex items-center gap-2">
-                <User className="w-4 h-4 text-[#CEA472]" />
-                您的姓名
-              </Label>
-              <Input
-                type="text"
-                placeholder="请输入您的姓名"
-                value={followerName}
-                onChange={(e) => setFollowerName(e.target.value)}
-                className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-              />
-            </div>
+            <Label htmlFor="follower-name" className="text-[#FFFFFF]">您的姓名</Label>
+            <Input
+              id="follower-name"
+              value={followerName}
+              onChange={(e) => setFollowerName(e.target.value)}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleFollow();
+                }
+              }}
+            />
           </div>
           <DialogFooter>
             <Button
-              onClick={handleConfirmFollow}
-              className="bg-[#CEA472] hover:bg-[#CEA472]/80 text-[#0a0a0f]"
+              variant="outline"
+              onClick={() => {
+                setFollowModalOpen(false);
+                setFollowingWishId('');
+                setFollowerName('');
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleFollow}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
             >
               确认
             </Button>
-            <Button
-              onClick={() => {
-                setShowFollowDialog(false);
-                setFollowWishId(null);
-                setFollowerName('');
-              }}
-              variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
-            >
-              取消
-            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Wish Confirmation Dialog */}
-      <Dialog open={showDeleteWishDialog} onOpenChange={setShowDeleteWishDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
+      {/* 删除跟随者对话框 */}
+      <Dialog open={deleteFollowerModalOpen} onOpenChange={setDeleteFollowerModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Trash2 className="w-5 h-5" />
-              删除愿望
-            </DialogTitle>
+            <DialogTitle className="text-[#FFFFFF]">删除跟随者</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">确定要删除跟随者"{deleteFollowerName}"吗？</DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <p className="text-[#FFFFFF]/80">确定要删除这个愿望吗？</p>
-          </div>
           <DialogFooter>
             <Button
-              onClick={handleConfirmDeleteWish}
-              className="bg-red-500 hover:bg-red-600 text-[#FFFFFF]"
-            >
-              删除
-            </Button>
-            <Button
-              onClick={() => {
-                setShowDeleteWishDialog(false);
-                setDeleteWishId(null);
-              }}
               variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
-            >
-              取消
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Follower Confirmation Dialog */}
-      <Dialog open={showDeleteFollowerDialog} onOpenChange={setShowDeleteFollowerDialog}>
-        <DialogContent className="bg-[#0a0a0f] border-[#CEA472]/30 text-[#FFFFFF]">
-          <DialogHeader>
-            <DialogTitle className="text-[#CEA472] flex items-center gap-2">
-              <Trash2 className="w-5 h-5" />
-              删除跟随人
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-[#FFFFFF]/80">确定要删除跟随人"{deleteFollowerName}"吗？</p>
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={handleConfirmDeleteFollower}
-              className="bg-red-500 hover:bg-red-600 text-[#FFFFFF]"
-            >
-              删除
-            </Button>
-            <Button
               onClick={() => {
-                setShowDeleteFollowerDialog(false);
-                setDeleteFollowerWishId(null);
+                setDeleteFollowerModalOpen(false);
+                setDeletingFollowerWishId('');
                 setDeleteFollowerName('');
               }}
-              variant="outline"
-              className="bg-[#FFFFFF] border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
+            </Button>
+            <Button
+              onClick={handleDeleteFollower}
+              className="bg-red-500 text-white hover:bg-red-500/80"
+            >
+              删除
             </Button>
           </DialogFooter>
         </DialogContent>
