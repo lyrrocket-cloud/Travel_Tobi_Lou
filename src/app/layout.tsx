@@ -3,11 +3,14 @@ import { Inspector } from 'react-dev-inspector';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: '旅行许愿池',
-  description: '抛下硬币，许下心愿，让梦想照进现实',
+  title: '旅行工具箱',
+  description: '旅行工具箱 - 包含许愿、规划、记账、驾驶等功能',
   keywords: [
-    '旅行许愿池',
-    '许愿',
+    '旅行工具箱',
+    '旅行许愿',
+    '旅行规划',
+    '旅行记账',
+    '旅行驾驶',
     '旅行',
   ],
   authors: [{ name: 'Coze Code Team', url: 'https://code.coze.cn' }],

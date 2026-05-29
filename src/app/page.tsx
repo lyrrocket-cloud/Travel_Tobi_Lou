@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle, Edit2 } from 'lucide-react';
+import { MapPin, Calendar, User, Heart, Sparkles, Settings, Trash2, Droplets, CheckCircle, Edit2, Plane, FileText, Receipt, Car } from 'lucide-react';
 
 interface Wish {
   id: number;
@@ -51,6 +51,7 @@ const years = [currentYear, currentYear + 1, currentYear + 2, currentYear + 3];
 const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export default function Home() {
+  const [mainTab, setMainTab] = useState('wish');
   const [activeTab, setActiveTab] = useState('make-wish');
   const [destination, setDestination] = useState('');
   const [travelYearMonth, setTravelYearMonth] = useState('');
@@ -483,8 +484,7 @@ export default function Home() {
         </Button>
       </div>
       
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+      <div className="container mx-auto px-4 py-8">        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex flex-col items-center justify-center gap-4 mb-4">
             {/* 图标容器 - 金色衬底 + 黑色线框 */}
@@ -495,470 +495,609 @@ export default function Home() {
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
               }}
             >
-              <Heart className="w-10 h-10" style={{ color: '#0a0a0f' }} />
+              <Plane className="w-10 h-10" style={{ color: '#0a0a0f' }} />
             </div>
             {/* 主标题 */}
-            <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行许愿池</h1>
+            <h1 className="text-5xl font-bold text-[#FFFFFF] drop-shadow-lg">旅行工具箱</h1>
           </div>
         </div>
 
-        {/* 年度时间轴 */}
-        {wishes.some(w => w.is_confirmed === 1) && (
-          <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-8">
-            <CardContent className="pt-6">
-              {/* 年度切换 */}
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <button
-                  onClick={() => {
-                    const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
-                    const currentYearIndex = years.indexOf(selectedYear);
-                    if (currentYearIndex > 0) {
-                      setSelectedYear(years[currentYearIndex - 1]);
-                    }
-                  }}
-                  className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                  disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y < selectedYear).length}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <h3 className="text-[#CEA472] font-semibold flex items-center gap-2 min-w-[140px] justify-center">
-                  <Calendar className="w-5 h-5" />
-                  {selectedYear} 旅行计划
-                </h3>
-                <button
-                  onClick={() => {
-                    const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
-                    const currentYearIndex = years.indexOf(selectedYear);
-                    if (currentYearIndex < years.length - 1) {
-                      setSelectedYear(years[currentYearIndex + 1]);
-                    }
-                  }}
-                  className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                  disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y > selectedYear).length}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-              
-              <div className="relative">
-                {/* 时间轴主线 */}
-                <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
-                
-                {/* 月份节点 */}
-                <div className="grid grid-cols-12 gap-1 sm:gap-2 relative">
-                  {monthsShort.map((month, idx) => {
-                    const monthNum = idx + 1;
-                    const now = new Date();
-                    const currentYear = now.getFullYear();
-                    const currentMonth = now.getMonth() + 1;
-                    
-                    // 判断月份是否已过：当前年份已过或当前年份中当前月份之后的月份
-                    const isPastMonth = selectedYear < currentYear || (selectedYear === currentYear && monthNum < currentMonth);
-                    
-                    const confirmedTrips = wishes.filter(w => {
-                      if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
-                      const date = new Date(w.confirmed_date);
-                      return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
-                    });
-                    const hasTrips = confirmedTrips.length > 0;
-                    const hasExpiredTrips = confirmedTrips.some(trip => trip.is_expired === 1);
-                    const showGray = isPastMonth || hasExpiredTrips;
-                    
-                    return (
-                      <div key={month} className="flex flex-col items-center min-w-0">
-                        {/* 月份节点 */}
-                        <div 
-                          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
-                            hasTrips 
-                              ? showGray
-                                ? 'bg-gray-400 shadow-lg shadow-gray-400/30' 
-                                : 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50'
-                              : isPastMonth
-                                ? 'bg-gray-400/30'
-                                : 'bg-[#CEA472]/30'
-                          }`}
-                        />
-                        {/* 月份标签 */}
-                        <span className={`text-[10px] sm:text-xs mt-3 sm:mt-4 ${
-                          hasTrips
-                            ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold'
-                            : isPastMonth ? 'text-gray-400/50' : 'text-[#FFFFFF]/40'
-                        }`}>
-                          {month}
-                        </span>
-                        {/* 已成行旅行标注 - 仅在sm及以上屏幕显示 */}
-                        {hasTrips && (
-                          <div className="hidden sm:block mt-2 space-y-1 w-full">
-                            {confirmedTrips.map(trip => {
-                              // 格式化日期为XX月XX日（不显示年份）
-                              const dateStr = trip.confirmed_date || '';
-                              const dateParts = dateStr.split('-');
-                              const formattedDate = dateParts.length >= 3
-                                ? `${dateParts[1]}月${dateParts[2]}日`
-                                : dateStr;
-                              const isExpired = trip.is_expired === 1;
-
-                              return (
-                                <div
-                                  key={trip.id}
-                                  className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center ${
-                                    isExpired
-                                      ? 'text-[#FFFFFF]/60 bg-gray-500/20'
-                                      : 'text-[#FFFFFF] bg-[#CEA472]/20'
-                                  }`}
-                                >
-                                  <div className={`font-semibold truncate text-[10px] sm:text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
-                                  <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                {/* 手机端：已确认旅行列表 */}
-                <div className="sm:hidden mt-4 space-y-2">
-                  {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
-                    .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
-                    .map(trip => {
-                      // 格式化日期为XX月XX日（不显示年份）
-                      const dateStr = trip.confirmed_date || '';
-                      const dateParts = dateStr.split('-');
-                      const formattedDate = dateParts.length >= 3
-                        ? `${dateParts[1]}月${dateParts[2]}日`
-                        : dateStr;
-                      const isExpired = trip.is_expired === 1;
-
-                      return (
-                        <div
-                          key={trip.id}
-                          className={`flex items-center justify-between text-sm px-3 py-2 rounded ${
-                            isExpired
-                              ? 'text-[#FFFFFF]/60 bg-gray-500/20'
-                              : 'text-[#FFFFFF] bg-[#CEA472]/20'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className={`font-semibold ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</span>
-                          </div>
-                          <span className="text-[#FFFFFF]/60 text-xs">{formattedDate}</span>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
-          <TabsList className="grid w-full grid-cols-2 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
+        {/* 一级标签页 */}
+        <Tabs value={mainTab} onValueChange={setMainTab} className="w-full max-w-4xl mx-auto mb-8">
+          <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
             <TabsTrigger
-              value="make-wish"
+              value="wish"
               className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
             >
-              抛硬币
+              <Heart className="w-4 h-4 mr-2" />
+              旅行许愿
             </TabsTrigger>
             <TabsTrigger
-              value="wish-pool"
+              value="plan"
               className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
             >
-              许愿池
+              <FileText className="w-4 h-4 mr-2" />
+              旅行规划
+            </TabsTrigger>
+            <TabsTrigger
+              value="account"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            >
+              <Receipt className="w-4 h-4 mr-2" />
+              旅行记账
+            </TabsTrigger>
+            <TabsTrigger
+              value="drive"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+            >
+              <Car className="w-4 h-4 mr-2" />
+              旅行驾驶
             </TabsTrigger>
           </TabsList>
 
-          {/* Make Wish Tab */}
-          <TabsContent value="make-wish" className="space-y-6">
-            <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-              <CardContent className="space-y-6 pt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF]">
-                    <MapPin className="w-4 h-4 text-[#CEA472]" />
-                    目的地
-                  </Label>
-                  <Input
-                    id="destination"
-                    placeholder="例如：巴黎、东京、马尔代夫..."
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-                    disabled={isAnimating}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2 text-[#FFFFFF]">
-                    <Calendar className="w-4 h-4 text-[#CEA472]" />
-                    希望出行年月
-                  </Label>
-                  <Input
-                    type="text"
-                    placeholder="YYYY-MM（如：2026-03）"
-                    value={travelYearMonth}
-                    onChange={(e) => setTravelYearMonth(e.target.value)}
-                    className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-                    disabled={isAnimating}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF]">
-                    <User className="w-4 h-4 text-[#CEA472]" />
-                    许愿人姓名
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="请输入您的姓名"
-                    value={wisherName}
-                    onChange={(e) => setWisherName(e.target.value)}
-                    className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
-                    disabled={isAnimating}
-                  />
-                </div>
-
-                <div className="flex justify-center mt-6">
-                  <Button
-                    onClick={handleMakeWish}
-                    disabled={isAnimating}
-                    className="w-64 h-11 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+        {/* 旅行许愿标签页内容 */}
+        <TabsContent value="wish" className="space-y-6">
+          {/* 年度时间轴 */}
+          {wishes.some(w => w.is_confirmed === 1) && (
+            <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-8">
+              <CardContent className="pt-6">
+                {/* 年度切换 */}
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <button
+                    onClick={() => {
+                      const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
+                      const currentYearIndex = years.indexOf(selectedYear);
+                      if (currentYearIndex > 0) {
+                        setSelectedYear(years[currentYearIndex - 1]);
+                      }
+                    }}
+                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y < selectedYear).length}
                   >
-                    {isAnimating ? (
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-6 h-6">
-                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
-                            <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
-                          </div>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <h3 className="text-[#CEA472] font-semibold flex items-center gap-2 min-w-[140px] justify-center">
+                    <Calendar className="w-5 h-5" />
+                    {selectedYear} 旅行计划
+                  </h3>
+                  <button
+                    onClick={() => {
+                      const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
+                      const currentYearIndex = years.indexOf(selectedYear);
+                      if (currentYearIndex < years.length - 1) {
+                        setSelectedYear(years[currentYearIndex + 1]);
+                      }
+                    }}
+                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y > selectedYear).length}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="relative">
+                  {/* 时间轴主线 */}
+                  <div className="absolute top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
+                  
+                  {/* 月份节点 */}
+                  <div className="grid grid-cols-12 gap-1 sm:gap-2 relative">
+                    {monthsShort.map((month, idx) => {
+                      const monthNum = idx + 1;
+                      const now = new Date();
+                      const currentYear = now.getFullYear();
+                      const currentMonth = now.getMonth() + 1;
+                      
+                      // 判断月份是否已过：当前年份已过或当前年份中当前月份之后的月份
+                      const isPastMonth = selectedYear < currentYear || (selectedYear === currentYear && monthNum < currentMonth);
+                      
+                      const confirmedTrips = wishes.filter(w => {
+                        if (w.is_confirmed !== 1 || !w.confirmed_date) return false;
+                        const date = new Date(w.confirmed_date);
+                        return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
+                      });
+                      const hasTrips = confirmedTrips.length > 0;
+                      const hasExpiredTrips = confirmedTrips.some(trip => trip.is_expired === 1);
+                      const showGray = isPastMonth || hasExpiredTrips;
+                      
+                      return (
+                        <div key={month} className="flex flex-col items-center min-w-0">
+                          {/* 月份节点 */}
+                          <div 
+                            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
+                              hasTrips 
+                                ? showGray
+                                  ? 'bg-gray-400 shadow-lg shadow-gray-400/30' 
+                                  : 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50'
+                                : isPastMonth
+                                  ? 'bg-gray-400/30'
+                                  : 'bg-[#CEA472]/30'
+                            }`}
+                          />
+                          {/* 月份标签 */}
+                          <span className={`text-[10px] sm:text-xs mt-3 sm:mt-4 ${
+                            hasTrips
+                              ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold'
+                              : isPastMonth ? 'text-gray-400/50' : 'text-[#FFFFFF]/40'
+                          }`}>
+                            {month}
+                          </span>
+                          {/* 已成行旅行标注 - 仅在sm及以上屏幕显示 */}
+                          {hasTrips && (
+                            <div className="hidden sm:block mt-2 space-y-1 w-full">
+                              {confirmedTrips.map(trip => {
+                                // 格式化日期为XX月XX日（不显示年份）
+                                const dateStr = trip.confirmed_date || '';
+                                const dateParts = dateStr.split('-');
+                                const formattedDate = dateParts.length >= 3
+                                  ? `${dateParts[1]}月${dateParts[2]}日`
+                                  : dateStr;
+                                const isExpired = trip.is_expired === 1;
+
+                                return (
+                                  <div
+                                    key={trip.id}
+                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center ${
+                                      isExpired
+                                        ? 'text-[#FFFFFF]/60 bg-gray-500/20'
+                                        : 'text-[#FFFFFF] bg-[#CEA472]/20'
+                                    }`}
+                                  >
+                                    <div className={`font-semibold truncate text-[10px] sm:text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
+                                    <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
-                        <span>抛硬币中...</span>
-                      </div>
-                    ) : (
-                      <span>抛硬币</span>
-                    )}
-                  </Button>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* 手机端：已确认旅行列表 */}
+                  <div className="sm:hidden mt-4 space-y-2">
+                    {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
+                      .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
+                      .map(trip => {
+                        // 格式化日期为XX月XX日（不显示年份）
+                        const dateStr = trip.confirmed_date || '';
+                        const dateParts = dateStr.split('-');
+                        const formattedDate = dateParts.length >= 3
+                          ? `${dateParts[1]}月${dateParts[2]}日`
+                          : dateStr;
+                        const isExpired = trip.is_expired === 1;
+
+                        return (
+                          <div
+                            key={trip.id}
+                            className={`flex items-center justify-between text-sm px-3 py-2 rounded ${
+                              isExpired
+                                ? 'text-[#FFFFFF]/60 bg-gray-500/20'
+                                : 'text-[#FFFFFF] bg-[#CEA472]/20'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className={`font-semibold ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</span>
+                            </div>
+                            <span className="text-[#FFFFFF]/60 text-xs">{formattedDate}</span>
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          )}
 
-            {isAnimating && (
-              <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-                <div className="text-center">
-                  <div className="relative w-32 h-32 mx-auto mb-6">
-                    <div 
-                      className="absolute inset-0 rounded-full bg-gradient-to-br from-[#CEA472] to-[#CEA472]/60 shadow-2xl animate-spin"
-                      style={{ animationDuration: '0.3s' }}
+          {/* 子标签页 */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
+            <TabsList className="grid w-full grid-cols-2 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
+              <TabsTrigger
+                value="make-wish"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+              >
+                抛硬币
+              </TabsTrigger>
+              <TabsTrigger
+                value="wish-pool"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+              >
+                许愿池
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Make Wish Tab */}
+            <TabsContent value="make-wish" className="space-y-6">
+              <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+                <CardContent className="space-y-6 pt-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF]">
+                      <MapPin className="w-4 h-4 text-[#CEA472]" />
+                      目的地
+                    </Label>
+                    <Input
+                      id="destination"
+                      placeholder="例如：巴黎、东京、马尔代夫..."
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                      className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+                      disabled={isAnimating}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-[#FFFFFF]">
+                      <Calendar className="w-4 h-4 text-[#CEA472]" />
+                      希望出行年月
+                    </Label>
+                    <Input
+                      type="text"
+                      placeholder="YYYY-MM（如：2026-03）"
+                      value={travelYearMonth}
+                      onChange={(e) => setTravelYearMonth(e.target.value)}
+                      className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+                      disabled={isAnimating}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF]">
+                      <User className="w-4 h-4 text-[#CEA472]" />
+                      许愿人姓名
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="请输入您的姓名"
+                      value={wisherName}
+                      onChange={(e) => setWisherName(e.target.value)}
+                      className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+                      disabled={isAnimating}
+                    />
+                  </div>
+
+                  <div className="flex justify-center mt-6">
+                    <Button
+                      onClick={handleMakeWish}
+                      disabled={isAnimating}
+                      className="w-64 h-11 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
                     >
-                      <div className="absolute inset-2 rounded-full bg-gradient-to-br from-[#CEA472]/90 to-[#CEA472]/50" />
-                      <div className="absolute inset-4 rounded-full bg-gradient-to-br from-[#CEA472] to-[#CEA472]/70 flex items-center justify-center">
-                        <span className="text-4xl">💫</span>
-                      </div>
-                    </div>
-                    {/* Ripple effects */}
-                    <div className="absolute inset-0 rounded-full border-4 border-[#CEA472]/50 animate-ping" />
-                    <div className="absolute -inset-4 rounded-full border-2 border-[#CEA472]/30 animate-ping" style={{ animationDelay: '0.2s' }} />
-                    <div className="absolute -inset-8 rounded-full border border-[#CEA472]/20 animate-ping" style={{ animationDelay: '0.4s' }} />
-                  </div>
-                  {animationComplete ? (
-                    <div className="space-y-3">
-                      <div className="text-3xl font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
-                      <p className="text-lg text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <p className="text-2xl font-semibold text-[#CEA472]">正在抛硬币...</p>
-                      <p className="text-lg text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Wish Pool Tab */}
-          <TabsContent value="wish-pool" className="space-y-6">
-            <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-              <CardContent className="pt-6">
-                {loading ? (
-                  <div className="text-center py-12">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#CEA472] border-t-transparent" />
-                    <p className="mt-4 text-[#FFFFFF]/60">加载中...</p>
-                  </div>
-                ) : wishes.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Droplets className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
-                    <p className="text-xl text-[#FFFFFF]/60">许愿池还是空的</p>
-                    <p className="text-[#FFFFFF]/40 mt-2">成为第一个许愿的人吧！</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {wishes.map((wish, index) => (
-                      <div
-                        key={wish.id}
-                        className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
-                          wish.is_expired === 1
-                            ? 'border-gray-500/30 bg-gray-500/5'
-                            : wish.is_confirmed === 1
-                              ? 'border-[#CEA472] bg-[#CEA472]/10' 
-                              : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <MapPin className="w-5 h-5 text-[#CEA472]" />
-                              <h3 className="text-lg font-bold text-[#FFFFFF]">
-                                {wish.destination}
-                              </h3>
-                              {wish.is_expired === 1 ? (
-                                <span className="px-2 py-0.5 text-xs bg-gray-500/50 text-gray-300 rounded-full font-semibold">
-                                  已过期
-                                </span>
-                              ) : wish.is_confirmed === 1 && (
-                                <span className="px-2 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold">
-                                  已成行
-                                </span>
-                              )}
-                            </div>
-                            
-                            {/* 已成行显示具体信息 */}
-                            {wish.is_confirmed === 1 ? (
-                              <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3">
-                                <div className="flex items-center gap-1">
-                                  <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                  <span className="text-sm">{(() => {
-                                    const dateStr = wish.confirmed_date || '';
-                                    const dateParts = dateStr.split('-');
-                                    return dateParts.length >= 3 ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日` : dateStr;
-                                  })()}</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                  <span className="text-sm">{wish.travelers}</span>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-2">
-                                  <div className="flex items-center gap-1">
-                                    <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                    <span className="text-sm">{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
-                                    <User className="w-4 h-4 text-[#CEA472]" />
-                                    <span className="text-sm">{wish.wisher_name}</span>
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            {/* 跟随人信息 - 所有愿望都显示 */}
-                            <div className={`text-xs pl-6 ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>
-                              {wish.followers.length > 0 ? (
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <div className="flex items-center gap-1">
-                                    <Heart className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                    <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>{wish.followers.length} 人跟随：</span>
-                                  </div>
-                                  {wish.followers.map((name, idx) => (
-                                    <div key={idx} className={`flex items-center gap-1 px-2 py-0.5 rounded ${wish.is_expired === 1 ? 'bg-gray-500/20 border-gray-500/20' : 'bg-black/30 border border-[#CEA472]/20'}`}>
-                                      <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
-                                      {isAdminMode && (
-                                        <button
-                                          onClick={() => handleDeleteFollower(wish.id, name)}
-                                          className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded"
-                                          title="删除跟随者"
-                                        >
-                                          <Trash2 className="w-3 h-3" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-1">
-                                  <Heart className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                  <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>暂无跟随</span>
-                                </div>
-                              )}
+                      {isAnimating ? (
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-6 h-6">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
+                              <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {/* 非管理模式：只显示跟随按钮（已过期不允许跟随） */}
-                            {!isAdminMode && wish.is_expired !== 1 && (
-                              <Button
-                                onClick={() => handleFollow(wish.id)}
-                                variant="outline"
-                                size="icon"
-                                title="跟随"
-                                className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
-                              >
-                                <Heart className="w-4 h-4" />
-                              </Button>
-                            )}
-                            {/* 管理模式：显示编辑、确定成行、删除按钮 */}
-                            {isAdminMode && (
-                              <>
-                                {wish.is_confirmed === 1 ? (
-                                  // 已成行：显示编辑行程按钮
-                                  <Button
-                                    onClick={() => handleOpenEditTripDialog(wish)}
-                                    variant="outline"
-                                    size="icon"
-                                    title="编辑行程"
-                                    className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
-                                  >
-                                    <Edit2 className="w-4 h-4" />
-                                  </Button>
+                          <span>抛硬币中...</span>
+                        </div>
+                      ) : (
+                        <span>抛硬币</span>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {isAnimating && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+                  <div className="text-center">
+                    <div className="relative w-32 h-32 mx-auto mb-6">
+                      <div 
+                        className="absolute inset-0 rounded-full bg-gradient-to-br from-[#CEA472] to-[#CEA472]/60 shadow-2xl animate-spin"
+                        style={{ animationDuration: '0.3s' }}
+                      >
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-[#CEA472]/90 to-[#CEA472]/50" />
+                        <div className="absolute inset-4 rounded-full bg-gradient-to-br from-[#CEA472] to-[#CEA472]/70 flex items-center justify-center">
+                          <span className="text-4xl">💫</span>
+                        </div>
+                      </div>
+                      {/* Ripple effects */}
+                      <div className="absolute inset-0 rounded-full border-4 border-[#CEA472]/50 animate-ping" />
+                      <div className="absolute -inset-4 rounded-full border-2 border-[#CEA472]/30 animate-ping" style={{ animationDelay: '0.2s' }} />
+                      <div className="absolute -inset-8 rounded-full border border-[#CEA472]/20 animate-ping" style={{ animationDelay: '0.4s' }} />
+                    </div>
+                    {animationComplete ? (
+                      <div className="space-y-3">
+                        <div className="text-3xl font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
+                        <p className="text-lg text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-2xl font-semibold text-[#CEA472]">正在抛硬币...</p>
+                        <p className="text-lg text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Wish Pool Tab */}
+            <TabsContent value="wish-pool" className="space-y-6">
+              <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+                <CardContent className="pt-6">
+                  {loading ? (
+                    <div className="text-center py-12">
+                      <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#CEA472] border-t-transparent" />
+                      <p className="mt-4 text-[#FFFFFF]/60">加载中...</p>
+                    </div>
+                  ) : wishes.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Droplets className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
+                      <p className="text-xl text-[#FFFFFF]/60">许愿池还是空的</p>
+                      <p className="text-[#FFFFFF]/40 mt-2">成为第一个许愿的人吧！</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {wishes.map((wish, index) => (
+                        <div
+                          key={wish.id}
+                          className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
+                            wish.is_expired === 1
+                              ? 'border-gray-500/30 bg-gray-500/5'
+                              : wish.is_confirmed === 1
+                                ? 'border-[#CEA472] bg-[#CEA472]/10' 
+                                : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <MapPin className="w-5 h-5 text-[#CEA472]" />
+                                <h3 className="text-lg font-bold text-[#FFFFFF]">
+                                  {wish.destination}
+                                </h3>
+                                {wish.is_expired === 1 ? (
+                                  <span className="px-2 py-0.5 text-xs bg-gray-500/50 text-gray-300 rounded-full font-semibold">
+                                    已过期
+                                  </span>
+                                ) : wish.is_confirmed === 1 && (
+                                  <span className="px-2 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold">
+                                    已成行
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {/* 已成行显示具体信息 */}
+                              {wish.is_confirmed === 1 ? (
+                                <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3">
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                    <span className="text-sm">{(() => {
+                                      const dateStr = wish.confirmed_date || '';
+                                      const dateParts = dateStr.split('-');
+                                      return dateParts.length >= 3 ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日` : dateStr;
+                                    })()}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                    <span className="text-sm">{wish.travelers}</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-2">
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="w-4 h-4 text-[#CEA472]" />
+                                      <span className="text-sm">{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <User className="w-4 h-4 text-[#CEA472]" />
+                                      <span className="text-sm">{wish.wisher_name}</span>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+
+                              {/* 跟随人信息 - 所有愿望都显示 */}
+                              <div className={`text-xs pl-6 ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>
+                                {wish.followers.length > 0 ? (
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex items-center gap-1">
+                                      <Heart className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                      <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>{wish.followers.length} 人跟随：</span>
+                                    </div>
+                                    {wish.followers.map((name, idx) => (
+                                      <div key={idx} className={`flex items-center gap-1 px-2 py-0.5 rounded ${wish.is_expired === 1 ? 'bg-gray-500/20 border-gray-500/20' : 'bg-black/30 border border-[#CEA472]/20'}`}>
+                                        <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
+                                        {isAdminMode && (
+                                          <button
+                                            onClick={() => handleDeleteFollower(wish.id, name)}
+                                            className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded"
+                                            title="删除跟随者"
+                                          >
+                                            <Trash2 className="w-3 h-3" />
+                                          </button>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
                                 ) : (
-                                  // 未成行：显示编辑和确定成行按钮
-                                  <>
+                                  <div className="flex items-center gap-1">
+                                    <Heart className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
+                                    <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>暂无跟随</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {/* 非管理模式：只显示跟随按钮（已过期不允许跟随） */}
+                              {!isAdminMode && wish.is_expired !== 1 && (
+                                <Button
+                                  onClick={() => handleFollow(wish.id)}
+                                  variant="outline"
+                                  size="icon"
+                                  title="跟随"
+                                  className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
+                                >
+                                  <Heart className="w-4 h-4" />
+                                </Button>
+                              )}
+                              {/* 管理模式：显示编辑、确定成行、删除按钮 */}
+                              {isAdminMode && (
+                                <>
+                                  {wish.is_confirmed === 1 ? (
+                                    // 已成行：显示编辑行程按钮
                                     <Button
-                                      onClick={() => handleOpenEditDialog(wish)}
+                                      onClick={() => handleOpenEditTripDialog(wish)}
                                       variant="outline"
                                       size="icon"
-                                      title="编辑"
+                                      title="编辑行程"
                                       className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
                                     >
                                       <Edit2 className="w-4 h-4" />
                                     </Button>
-                                    <Button
-                                      onClick={() => handleOpenConfirmDialog(wish.id)}
-                                      variant="outline"
-                                      size="icon"
-                                      title="确定成行"
-                                      className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
-                                    >
-                                      <CheckCircle className="w-4 h-4" />
-                                    </Button>
-                                  </>
-                                )}
-                                <Button
-                                  onClick={() => handleDeleteWish(wish.id)}
-                                  variant="outline"
-                                  size="icon"
-                                  title="删除"
-                                  className="size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
-                            )}
+                                  ) : (
+                                    // 未成行：显示编辑和确定成行按钮
+                                    <>
+                                      <Button
+                                        onClick={() => handleOpenEditDialog(wish)}
+                                        variant="outline"
+                                        size="icon"
+                                        title="编辑"
+                                        className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
+                                      >
+                                        <Edit2 className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        onClick={() => handleOpenConfirmDialog(wish.id)}
+                                        variant="outline"
+                                        size="icon"
+                                        title="确定成行"
+                                        className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
+                                      >
+                                        <CheckCircle className="w-4 h-4" />
+                                      </Button>
+                                    </>
+                                  )}
+                                  <Button
+                                    onClick={() => handleDeleteWish(wish.id)}
+                                    variant="outline"
+                                    size="icon"
+                                    title="删除"
+                                    className="size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+
+        {/* 旅行规划标签页内容 */}
+        <TabsContent value="plan" className="space-y-6">
+          <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+            <CardContent className="pt-6">
+              <div className="text-center py-16">
+                <FileText className="w-20 h-20 text-[#CEA472]/50 mx-auto mb-6" />
+                <h2 className="text-2xl font-bold text-[#CEA472] mb-4">旅行规划</h2>
+                <p className="text-[#FFFFFF]/60 text-lg">计划您的完美旅程</p>
+                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <Calendar className="w-8 h-8 text-[#CEA472] mx-auto mb-3" />
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">行程规划</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">制定详细的旅行路线和日程安排</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <MapPin className="w-8 h-8 text-[#CEA472] mx-auto mb-3" />
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">目的地探索</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">发现热门景点和隐藏宝藏</p>
+                  </div>
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <Receipt className="w-8 h-8 text-[#CEA472] mx-auto mb-3" />
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">预算管理</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">规划旅行预算和费用支出</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* 旅行记账标签页内容 */}
+        <TabsContent value="account" className="space-y-6">
+          <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+            <CardContent className="pt-6">
+              <div className="text-center py-16">
+                <Receipt className="w-20 h-20 text-[#CEA472]/50 mx-auto mb-6" />
+                <h2 className="text-2xl font-bold text-[#CEA472] mb-4">旅行记账</h2>
+                <p className="text-[#FFFFFF]/60 text-lg">记录每一笔旅行开支</p>
+                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-2xl">💰</span>
+                    </div>
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">支出记录</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">记录旅行中的各项花费</p>
+                  </div>
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-2xl">📊</span>
+                    </div>
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">统计分析</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">查看支出统计和趋势分析</p>
+                  </div>
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-2xl">📝</span>
+                    </div>
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">账单管理</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">管理和导出旅行账单</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* 旅行驾驶标签页内容 */}
+        <TabsContent value="drive" className="space-y-6">
+          <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+            <CardContent className="pt-6">
+              <div className="text-center py-16">
+                <Car className="w-20 h-20 text-[#CEA472]/50 mx-auto mb-6" />
+                <h2 className="text-2xl font-bold text-[#CEA472] mb-4">旅行驾驶</h2>
+                <p className="text-[#FFFFFF]/60 text-lg">自驾旅行助手</p>
+                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-2xl">🗺️</span>
+                    </div>
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">路线规划</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">规划自驾路线和导航指引</p>
+                  </div>
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-2xl">⛽</span>
+                    </div>
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">油耗计算</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">计算油耗和费用预估</p>
+                  </div>
+                  <div className="p-4 border border-[#CEA472]/20 rounded-lg bg-black/30">
+                    <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center">
+                      <span className="text-2xl">🏠</span>
+                    </div>
+                    <h3 className="text-[#FFFFFF] font-semibold mb-2">沿途景点</h3>
+                    <p className="text-[#FFFFFF]/50 text-sm">发现沿途值得停留的景点</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
         </Tabs>
       </div>
 
