@@ -536,7 +536,8 @@ export default function Home() {
           </TabsList>
 
         {/* 旅行许愿标签页内容 */}
-        <TabsContent value="wish" className="space-y-6">
+        {mainTab === 'wish' && (
+          <div className="space-y-6">
           {/* 年度时间轴 */}
           {wishes.some(w => w.is_confirmed === 1) && (
             <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-8">
@@ -995,10 +996,12 @@ export default function Home() {
               </Card>
             </TabsContent>
           </Tabs>
-        </TabsContent>
+        </div>
+        )}
 
         {/* 旅行规划标签页内容 */}
-        <TabsContent value="plan" className="space-y-6">
+        {mainTab === 'plan' && (
+          <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="text-center py-16">
@@ -1025,10 +1028,12 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>
+        )}
 
         {/* 旅行记账标签页内容 */}
-        <TabsContent value="account" className="space-y-6">
+        {mainTab === 'account' && (
+          <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="text-center py-16">
@@ -1061,10 +1066,12 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>
+        )}
 
         {/* 旅行驾驶标签页内容 */}
-        <TabsContent value="drive" className="space-y-6">
+        {mainTab === 'drive' && (
+          <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="text-center py-16">
@@ -1097,7 +1104,8 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>
+        )}
       </Tabs>
       </div>
 
