@@ -1098,7 +1098,7 @@ export default function Home() {
             </CardContent>
           </Card>
         </TabsContent>
-        </Tabs>
+      </Tabs>
       </div>
 
       {/* Password Dialog */}
