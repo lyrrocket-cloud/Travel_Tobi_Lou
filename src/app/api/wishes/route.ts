@@ -1,155 +1,336 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/storage/database/supabase-client';
 
-export async function GET() {
-  try {
-    const client = getSupabaseClient();
+// 内存存储作为备用方案
+let inMemoryWishes: any[] = [];
+let inMemoryFollowers: any[] = [];
+let wishIdCounter = 1;
+
+function getInMemoryWishes() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  
+  return inMemoryWishes.map(wish => {
+    let isExpired = false;
     
-    // 获取所有愿望
-    const { data: wishes, error: wishesError } = await client
-      .from('wishes')
-      .select('*');
-
-    if (wishesError) {
-      return NextResponse.json({ error: wishesError.message }, { status: 500 });
-    }
-
-    // 获取所有跟随记录
-    const { data: followers, error: followersError } = await client
-      .from('wish_followers')
-      .select('wish_id, follower_name');
-
-    if (followersError) {
-      return NextResponse.json({ error: followersError.message }, { status: 500 });
-    }
-
-    // 月份映射
-    const monthMap: Record<string, number> = {
-      '一月': 1, '二月': 2, '三月': 3, '四月': 4, '五月': 5, '六月': 6,
-      '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
-    };
-
-    // 获取当前时间
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
-
-    // 判断是否已过期
-    // 逻辑：
-    // 1. 已成行：如果出发日期已过，则过期
-    // 2. 未成行：根据期望年月判断是否已过期
-    const isExpired = (wish: { travel_year?: number; travel_month: string; is_confirmed: number; confirmed_date?: string }) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // 只比较日期，忽略时间
+    if (wish.is_confirmed === 1 && wish.confirmed_date) {
+      const confirmedDate = new Date(wish.confirmed_date);
+      isExpired = confirmedDate < new Date(now.setHours(0, 0, 0, 0));
+    } else {
+      const travelYear = wish.travel_year || currentYear;
+      const monthMap: Record<string, number> = {
+        '一月': 1, '二月': 2, '三月': 3, '四月': 4, '五月': 5, '六月': 6,
+        '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
+      };
+      const travelMonth = monthMap[wish.travel_month] || 1;
       
-      // 已成行：判断出发日期是否已过
-      if (wish.is_confirmed === 1 && wish.confirmed_date) {
-        const tripDate = new Date(wish.confirmed_date);
-        tripDate.setHours(0, 0, 0, 0);
-        return tripDate < today;
+      if (travelYear < currentYear || (travelYear === currentYear && travelMonth < now.getMonth() + 1)) {
+        isExpired = true;
       }
-      
-      // 未成行：根据期望年月判断
-      const targetYear = wish.travel_year || currentYear;
-      const targetMonth = monthMap[wish.travel_month] || 0;
-      if (targetMonth === 0) return false;
-      
-      // 判断是否过期：当前年份 > 期望年份，或当前年份 = 期望年份且当前月份 > 期望月份
-      if (currentYear > targetYear) return true;
-      if (currentYear === targetYear && currentMonth > targetMonth) return true;
-      
-      return false;
-    };
-
-    // 计算期望年月距离当前年月的差距（用于排序）
-    const getYearMonthDistance = (travelYear: number | undefined, travelMonth: string) => {
-      const targetYear = travelYear || currentYear;
-      const targetMonth = monthMap[travelMonth] || 0;
-      
-      // 计算月份差距
-      return (targetYear - currentYear) * 12 + (targetMonth - currentMonth);
-    };
-
-    // 组装数据，为每个愿望添加跟随人列表和过期状态
-    const wishesWithFollowers = wishes.map((wish) => ({
+    }
+    
+    return {
       ...wish,
-      followers: followers
-        ?.filter((f) => f.wish_id === wish.id)
-        .map((f) => f.follower_name) || [],
-      is_expired: isExpired(wish) ? 1 : 0,
-    }));
+      followers: inMemoryFollowers
+        .filter(f => f.wish_id === wish.id)
+        .map(f => f.follower_name),
+      is_expired: isExpired ? 1 : 0
+    };
+  }).sort((a, b) => {
+    if (a.is_expired !== b.is_expired) {
+      return a.is_expired - b.is_expired;
+    }
+    if (a.is_confirmed !== b.is_confirmed) {
+      return b.is_confirmed - a.is_confirmed;
+    }
+    return 0;
+  });
+}
 
-    // 排序规则：
-    // 1. 已过期的排在最后
-    // 2. 已成行的按出发日期最近排序
-    // 3. 其它的按距离期望年月和跟随人数排序
-    wishesWithFollowers.sort((a, b) => {
-      // 已过期的排在最后
-      if (a.is_expired !== b.is_expired) {
-        return a.is_expired - b.is_expired;
+export async function GET() {
+  console.log('[API Wishes] GET request received');
+  
+  try {
+    let wishes: any[] = [];
+    let usingInMemory = false;
+    
+    try {
+      const client = getSupabaseClient();
+      console.log('[API Wishes] Supabase client obtained');
+      
+      const { data: wishesData, error: wishesError } = await client
+        .from('wishes')
+        .select('*');
+      
+      if (wishesError) {
+        console.warn('[API Wishes] Supabase query failed, falling back to in-memory:', wishesError);
+        throw wishesError;
       }
-
-      // 已成行的愿望按出发日期排序
-      if (a.is_confirmed === 1 && b.is_confirmed === 1) {
-        const dateA = new Date(a.confirmed_date || '').getTime();
-        const dateB = new Date(b.confirmed_date || '').getTime();
-        return dateA - dateB;
+      
+      console.log('[API Wishes] Wishes from Supabase:', wishesData);
+      
+      const { data: followersData, error: followersError } = await client
+        .from('wish_followers')
+        .select('wish_id, follower_name');
+      
+      if (followersError) {
+        console.warn('[API Wishes] Followers query failed:', followersError);
       }
-
-      // 一个已成行一个未成行，已成行的在前
-      if (a.is_confirmed !== b.is_confirmed) {
-        return b.is_confirmed - a.is_confirmed;
-      }
-
-      // 都未成行，按距离期望年月和跟随人数排序
-      const distanceA = getYearMonthDistance(a.travel_year, a.travel_month);
-      const distanceB = getYearMonthDistance(b.travel_year, b.travel_month);
-      if (distanceA !== distanceB) {
-        return distanceA - distanceB;
-      }
-      return b.followers_count - a.followers_count;
-    });
-
-    return NextResponse.json({ wishes: wishesWithFollowers });
+      
+      const now = new Date();
+      const currentMonth = now.getMonth() + 1;
+      const currentYear = now.getFullYear();
+      
+      const monthMap: Record<string, number> = {
+        '一月': 1, '二月': 2, '三月': 3, '四月': 4, '五月': 5, '六月': 6,
+        '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
+      };
+      
+      wishes = wishesData.map(wish => {
+        let isExpired = false;
+        
+        if (wish.is_confirmed === 1 && wish.confirmed_date) {
+          const confirmedDate = new Date(wish.confirmed_date);
+          confirmedDate.setHours(0, 0, 0, 0);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          isExpired = confirmedDate < today;
+        } else {
+          const targetYear = wish.travel_year || currentYear;
+          const targetMonth = monthMap[wish.travel_month] || 0;
+          
+          if (targetMonth !== 0) {
+            if (currentYear > targetYear) {
+              isExpired = true;
+            } else if (currentYear === targetYear && currentMonth > targetMonth) {
+              isExpired = true;
+            }
+          }
+        }
+        
+        return {
+          ...wish,
+          followers: followersData
+            ?.filter(f => f.wish_id === wish.id)
+            .map(f => f.follower_name) || [],
+          is_expired: isExpired ? 1 : 0
+        };
+      });
+      
+      wishes.sort((a, b) => {
+        if (a.is_expired !== b.is_expired) {
+          return a.is_expired - b.is_expired;
+        }
+        if (a.is_confirmed === 1 && b.is_confirmed === 1) {
+          const dateA = new Date(a.confirmed_date || '').getTime();
+          const dateB = new Date(b.confirmed_date || '').getTime();
+          return dateA - dateB;
+        }
+        if (a.is_confirmed !== b.is_confirmed) {
+          return b.is_confirmed - a.is_confirmed;
+        }
+        return b.followers_count - a.followers_count;
+      });
+      
+    } catch (supabaseError) {
+      console.warn('[API Wishes] Using in-memory storage:', supabaseError);
+      usingInMemory = true;
+      wishes = getInMemoryWishes();
+    }
+    
+    console.log('[API Wishes] Returning', wishes.length, 'wishes');
+    return NextResponse.json({ wishes, usingInMemory });
+    
   } catch (error) {
-    console.error('Error fetching wishes:', error);
-    return NextResponse.json({ error: 'Failed to fetch wishes' }, { status: 500 });
+    console.error('[API Wishes] Error in GET:', error);
+    return NextResponse.json({ error: 'Failed to fetch wishes', details: String(error) }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  console.log('[API Wishes] POST request received');
+  
   try {
     const body = await request.json();
+    console.log('[API Wishes] Request body:', body);
+    
     const { destination, travelYear, travelMonth, wisherName } = body;
-
+    
     if (!destination || !travelYear || !travelMonth || !wisherName) {
+      console.log('[API Wishes] Missing required fields');
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
-
-    const client = getSupabaseClient();
     
-    const { data, error } = await client
-      .from('wishes')
-      .insert({
+    let createdWish: any = null;
+    let usingInMemory = false;
+    
+    try {
+      const client = getSupabaseClient();
+      
+      const { data, error } = await client
+        .from('wishes')
+        .insert({
+          destination,
+          travel_year: travelYear,
+          travel_month: travelMonth,
+          wisher_name: wisherName,
+          followers_count: 0,
+        })
+        .select()
+        .single();
+      
+      if (error) {
+        console.warn('[API Wishes] Supabase insert failed, falling back:', error);
+        throw error;
+      }
+      
+      createdWish = data;
+      
+    } catch (supabaseError) {
+      console.warn('[API Wishes] Using in-memory for insert');
+      usingInMemory = true;
+      
+      const newWish = {
+        id: `in-memory-${wishIdCounter++}`,
         destination,
         travel_year: travelYear,
         travel_month: travelMonth,
         wisher_name: wisherName,
         followers_count: 0,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+        is_confirmed: 0,
+        created_at: new Date().toISOString()
+      };
+      
+      inMemoryWishes.push(newWish);
+      createdWish = newWish;
     }
-
-    return NextResponse.json({ wish: data });
+    
+    console.log('[API Wishes] Created wish:', createdWish);
+    return NextResponse.json({ wish: createdWish, usingInMemory });
+    
   } catch (error) {
-    console.error('Error creating wish:', error);
-    return NextResponse.json({ error: 'Failed to create wish' }, { status: 500 });
+    console.error('[API Wishes] Error in POST:', error);
+    return NextResponse.json({ error: 'Failed to create wish', details: String(error) }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  console.log('[API Wishes] PUT request received');
+  
+  try {
+    const body = await request.json();
+    console.log('[API Wishes] Request body:', body);
+    
+    const { id, destination, travelYear, travelMonth, wisherName, isConfirmed, confirmedDate, travelers } = body;
+    
+    if (!id) {
+      return NextResponse.json({ error: 'Missing wish ID' }, { status: 400 });
+    }
+    
+    let usingInMemory = false;
+    
+    try {
+      const client = getSupabaseClient();
+      
+      const updateData: any = {};
+      if (destination !== undefined) updateData.destination = destination;
+      if (travelYear !== undefined) updateData.travel_year = travelYear;
+      if (travelMonth !== undefined) updateData.travel_month = travelMonth;
+      if (wisherName !== undefined) updateData.wisher_name = wisherName;
+      if (isConfirmed !== undefined) updateData.is_confirmed = isConfirmed;
+      if (confirmedDate !== undefined) updateData.confirmed_date = confirmedDate;
+      if (travelers !== undefined) updateData.travelers = travelers;
+      
+      const { data, error } = await client
+        .from('wishes')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) {
+        console.warn('[API Wishes] Supabase update failed, falling back:', error);
+        throw error;
+      }
+      
+      return NextResponse.json({ wish: data });
+      
+    } catch (supabaseError) {
+      usingInMemory = true;
+      const index = inMemoryWishes.findIndex(w => w.id === id);
+      
+      if (index !== -1) {
+        if (destination !== undefined) inMemoryWishes[index].destination = destination;
+        if (travelYear !== undefined) inMemoryWishes[index].travel_year = travelYear;
+        if (travelMonth !== undefined) inMemoryWishes[index].travel_month = travelMonth;
+        if (wisherName !== undefined) inMemoryWishes[index].wisher_name = wisherName;
+        if (isConfirmed !== undefined) inMemoryWishes[index].is_confirmed = isConfirmed;
+        if (confirmedDate !== undefined) inMemoryWishes[index].confirmed_date = confirmedDate;
+        if (travelers !== undefined) inMemoryWishes[index].travelers = travelers;
+        
+        return NextResponse.json({ wish: inMemoryWishes[index], usingInMemory });
+      }
+      
+      return NextResponse.json({ error: 'Wish not found' }, { status: 404 });
+    }
+    
+  } catch (error) {
+    console.error('[API Wishes] Error in PUT:', error);
+    return NextResponse.json({ error: 'Failed to update wish', details: String(error) }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  console.log('[API Wishes] DELETE request received');
+  
+  try {
+    const body = await request.json();
+    const { id } = body;
+    
+    if (!id) {
+      return NextResponse.json({ error: 'Missing wish ID' }, { status: 400 });
+    }
+    
+    let usingInMemory = false;
+    
+    try {
+      const client = getSupabaseClient();
+      
+      await client
+        .from('wish_followers')
+        .delete()
+        .eq('wish_id', id);
+      
+      const { error } = await client
+        .from('wishes')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.warn('[API Wishes] Supabase delete failed, falling back:', error);
+        throw error;
+      }
+      
+      return NextResponse.json({ success: true });
+      
+    } catch (supabaseError) {
+      usingInMemory = true;
+      const initialLength = inMemoryWishes.length;
+      inMemoryWishes = inMemoryWishes.filter(w => w.id !== id);
+      inMemoryFollowers = inMemoryFollowers.filter(f => f.wish_id !== id);
+      
+      if (inMemoryWishes.length < initialLength) {
+        return NextResponse.json({ success: true, usingInMemory });
+      }
+      
+      return NextResponse.json({ error: 'Wish not found' }, { status: 404 });
+    }
+    
+  } catch (error) {
+    console.error('[API Wishes] Error in DELETE:', error);
+    return NextResponse.json({ error: 'Failed to delete wish', details: String(error) }, { status: 500 });
   }
 }

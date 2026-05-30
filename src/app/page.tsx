@@ -64,13 +64,18 @@ export default function Home() {
 
   // 加载愿望数据
   const fetchWishes = async () => {
+    console.log('[Page] Fetching wishes...');
     setLoading(true);
     try {
       const response = await fetch('/api/wishes');
       const data = await response.json();
+      console.log('[Page] Fetch wishes response:', data);
       setWishes(data.wishes || []);
+      if (data.usingInMemory) {
+        console.log('[Page] Using in-memory storage');
+      }
     } catch (error) {
-      console.error('Failed to fetch wishes:', error);
+      console.error('[Page] Failed to fetch wishes:', error);
     } finally {
       setLoading(false);
     }
@@ -96,6 +101,8 @@ export default function Home() {
   }, [wishes]);
 
   const handleMakeWish = async () => {
+    console.log('[Page] Handle make wish called');
+    
     if (!destination || !travelYearMonth || !wisherName) {
       alert('请填写所有必填项');
       return;
@@ -111,6 +118,8 @@ export default function Home() {
     const travelYear = parseInt(dateMatch[1]);
     const travelMonthNum = parseInt(dateMatch[2]);
     const travelMonth = months[travelMonthNum - 1];
+
+    console.log('[Page] Making wish with:', { destination, travelYear, travelMonth, wisherName });
 
     setIsAnimating(true);
 
@@ -131,6 +140,7 @@ export default function Home() {
         });
 
         const data = await response.json();
+        console.log('[Page] Make wish response:', data);
 
         if (response.ok) {
           setAnimationComplete(true);
@@ -143,11 +153,11 @@ export default function Home() {
             fetchWishes();
           }, 1500);
         } else {
-          alert(data.error || '创建愿望失败');
+          alert(`创建愿望失败: ${data.error || '未知错误'}${data.details ? ` (${data.details})` : ''}`);
           setIsAnimating(false);
         }
       } catch (error) {
-        console.error('Error creating wish:', error);
+        console.error('[Page] Error creating wish:', error);
         alert('创建愿望失败，请稍后重试');
         setIsAnimating(false);
       }
