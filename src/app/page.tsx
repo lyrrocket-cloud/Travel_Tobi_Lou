@@ -927,7 +927,7 @@ export default function Home() {
       <div 
         className="absolute inset-0 w-full h-full object-cover"
         style={{
-          backgroundImage: 'url("https://neeko-copilot.bytedance.net/api/text_to_image?prompt=majestic%20Matterhorn%20mountain%20peak%20covered%20in%20snow%20with%20golden%20sunlight%20hitting%20the%20summit%20dramatic%20alpine%20landscape%20at%20dawn%20with%20soft%20pastel%20sky&image_size=landscape_16_9")',
+          backgroundImage: 'url("/matterhorn-bg.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
