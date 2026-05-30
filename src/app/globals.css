@@ -136,6 +136,12 @@ body {
   @apply font-sans;
   background-color: #0a0a0f;
   color: #FFFFFF;
+  background-image: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=majestic%20Matterhorn%20mountain%20peak%20covered%20in%20snow%20with%20golden%20sunlight%20hitting%20the%20summit%20dramatic%20alpine%20landscape%20at%20dawn%20with%20soft%20pastel%20sky&image_size=landscape_16_9');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 /* ========================================
