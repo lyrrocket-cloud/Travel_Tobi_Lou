@@ -880,7 +880,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 >
                   <div className="font-medium">{wish.destination}</div>
                   <div className="text-sm text-[#FFFFFF]/50">
-                    {wish.confirmed_date} · {wish.travel_year}年{wish.travel_month} · {wish.travelers}人
+                    {wish.confirmed_date} · {wish.travel_year}年{wish.travel_month} · {wish.travelers}
                   </div>
                 </button>
               ))}
@@ -972,9 +972,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                       {/* 前一个活动和当前活动之间的交通 */}
                       {index > 0 && (
                         <div className="pl-8 space-y-2">
-                          <div className="flex items-center gap-2 text-[#FFFFFF]/40 text-sm">
-                            <div className="w-px h-8 bg-[#CEA472]/20" />
-                          </div>
                           {currentDayPlan && getBetweenTransport(currentDayPlan, sortedActivities[index - 1].id, activity.id) ? (
                             renderTransportItem(getBetweenTransport(currentDayPlan, sortedActivities[index - 1].id, activity.id)!, day)
                           ) : (
