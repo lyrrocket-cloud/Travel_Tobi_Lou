@@ -41,7 +41,15 @@
             "position": "arrival"
           }
         ],
-        "activities": []
+        "activities": [
+          {
+            "type": "afternoon",
+            "startTime": "13:00",
+            "content": "徒步轻松版",
+            "location": "牧心谷",
+            "id": "activity-1780200632165"
+          }
+        ]
       },
       {
         "id": "day-2-1780192503997",
@@ -135,7 +143,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-05-31T04:00:34.894Z"
+    "updatedAt": "2026-05-31T04:10:32.325Z"
   },
   {
     "id": "trip-plan-1780193545980",
@@ -238,5 +246,66 @@
     ],
     "createdAt": "2026-05-31T02:12:25.980Z",
     "updatedAt": "2026-05-31T02:12:25.980Z"
+  },
+  {
+    "id": "trip-plan-1780200460413",
+    "wishId": "in-memory-4",
+    "destination": "千岛湖",
+    "startDate": "2026-05-23",
+    "travelDays": 2,
+    "travelers": "韩垚,秦瑜贲,陆丽莎,陈瑾妮",
+    "days": [
+      {
+        "id": "day-1-1780200460413",
+        "dayNumber": 1,
+        "activities": [
+          {
+            "type": "accommodation",
+            "startTime": "20:00",
+            "location": "千岛湖VOCO酒店",
+            "id": "activity-1780200583047"
+          },
+          {
+            "type": "afternoon",
+            "startTime": "13:00",
+            "content": "徒步轻松版",
+            "location": "牧心谷",
+            "id": "activity-1780200657098"
+          }
+        ],
+        "transport": [
+          {
+            "id": "transport-1780200469227",
+            "type": "train",
+            "from": "上海虹桥",
+            "to": "千岛湖",
+            "departureTime": "08:35",
+            "arrivalTime": "10:45",
+            "details": "G7357",
+            "position": "arrival"
+          },
+          {
+            "id": "transport-1780200666670",
+            "type": "taxi",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780200657098",
+            "afterActivityId": "activity-1780200583047"
+          }
+        ]
+      },
+      {
+        "id": "day-2-1780200460413",
+        "dayNumber": 2,
+        "activities": [],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T04:07:40.413Z",
+    "updatedAt": "2026-05-31T04:11:09.283Z"
   }
 ]
