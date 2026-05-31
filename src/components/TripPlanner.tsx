@@ -905,167 +905,169 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               </Button>
             </div>
             <div className="overflow-x-auto">
-              <div className="flex min-w-max">
-                <div className="w-16 flex-shrink-0 flex flex-col">
-                  <div className="h-12 border-b border-[#CEA472]/20"></div>
-                  {Array.from({ length: 24 }, (_, i) => i).map(hour => (
-                    <div key={hour} className="h-20 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
-                      {String(hour).padStart(2, '0')}:00
-                    </div>
-                  ))}
-                </div>
-                <div className="flex-1 flex">
-                  {currentTripPlan?.days.map(day => {
-                    const sortedActivities = getSortedActivities(day.activities);
-                    const date = getDateDisplay(day.dayNumber);
-                    
-                    const getTimePosition = (time: string) => {
-                      const [hours, minutes] = time.split(':').map(Number);
-                      return (hours * 60 + minutes) * (20 / 60);
-                    };
-                    
-                    const getDuration = (startTime: string, endTime?: string) => {
-                      if (!endTime) return 40;
-                      const [startHours, startMinutes] = startTime.split(':').map(Number);
-                      const [endHours, endMinutes] = endTime.split(':').map(Number);
-                      const durationMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
-                      return Math.max(durationMinutes * (20 / 60), 40);
-                    };
-                    
-                    const allItems: Array<{
-                      id: string;
-                      type: 'arrival' | 'departure' | 'transport' | 'activity';
-                      startTime: string;
-                      endTime?: string;
-                      data: any;
-                    }> = [];
-                    
-                    if (day.dayNumber === 1 && getArrivalTransport(day)) {
-                      allItems.push({
-                        id: 'arrival',
-                        type: 'arrival',
-                        startTime: getArrivalTransport(day)!.arrivalTime || '00:00',
-                        data: getArrivalTransport(day),
-                      });
-                    }
-                    
-                    sortedActivities.forEach((activity, index) => {
-                      const prevActivity = sortedActivities[index - 1];
-                      const transportBetween = prevActivity 
-                        ? getBetweenTransport(day, prevActivity.id, activity.id)
-                        : day.dayNumber === 1 ? getBetweenTransport(day, 'arrival', activity.id) : null;
+              <div className="overflow-y-auto max-h-[600px]">
+                <div className="flex min-w-max">
+                  <div className="w-16 flex-shrink-0 flex flex-col">
+                    <div className="h-12 border-b border-[#CEA472]/20"></div>
+                    {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                      <div key={hour} className="h-10 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
+                        {String(hour).padStart(2, '0')}:00
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex-1 flex">
+                    {currentTripPlan?.days.map(day => {
+                      const sortedActivities = getSortedActivities(day.activities);
+                      const date = getDateDisplay(day.dayNumber);
                       
-                      if (transportBetween) {
+                      const getTimePosition = (time: string) => {
+                        const [hours, minutes] = time.split(':').map(Number);
+                        return (hours * 60 + minutes) * (40 / 60);
+                      };
+                      
+                      const getDuration = (startTime: string, endTime?: string) => {
+                        if (!endTime) return 60;
+                        const [startHours, startMinutes] = startTime.split(':').map(Number);
+                        const [endHours, endMinutes] = endTime.split(':').map(Number);
+                        const durationMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+                        return Math.max(durationMinutes * (40 / 60), 60);
+                      };
+                      
+                      const allItems: Array<{
+                        id: string;
+                        type: 'arrival' | 'departure' | 'transport' | 'activity';
+                        startTime: string;
+                        endTime?: string;
+                        data: any;
+                      }> = [];
+                      
+                      if (day.dayNumber === 1 && getArrivalTransport(day)) {
                         allItems.push({
-                          id: `transport-${activity.id}`,
-                          type: 'transport',
-                          startTime: transportBetween.departureTime || prevActivity?.endTime || activity.startTime,
-                          endTime: transportBetween.arrivalTime || activity.startTime,
-                          data: transportBetween,
+                          id: 'arrival',
+                          type: 'arrival',
+                          startTime: getArrivalTransport(day)!.arrivalTime || '00:00',
+                          data: getArrivalTransport(day),
                         });
                       }
                       
-                      allItems.push({
-                        id: activity.id,
-                        type: 'activity',
-                        startTime: activity.startTime,
-                        endTime: activity.endTime,
-                        data: activity,
+                      sortedActivities.forEach((activity, index) => {
+                        const prevActivity = sortedActivities[index - 1];
+                        const transportBetween = prevActivity 
+                          ? getBetweenTransport(day, prevActivity.id, activity.id)
+                          : day.dayNumber === 1 ? getBetweenTransport(day, 'arrival', activity.id) : null;
+                        
+                        if (transportBetween) {
+                          allItems.push({
+                            id: `transport-${activity.id}`,
+                            type: 'transport',
+                            startTime: transportBetween.departureTime || prevActivity?.endTime || activity.startTime,
+                            endTime: transportBetween.arrivalTime || activity.startTime,
+                            data: transportBetween,
+                          });
+                        }
+                        
+                        allItems.push({
+                          id: activity.id,
+                          type: 'activity',
+                          startTime: activity.startTime,
+                          endTime: activity.endTime,
+                          data: activity,
+                        });
                       });
-                    });
-                    
-                    if (day.dayNumber === currentTripPlan.travelDays && sortedActivities.length > 0) {
-                      const lastActivity = sortedActivities[sortedActivities.length - 1];
-                      const transportBeforeDeparture = getBetweenTransport(day, lastActivity.id, 'departure');
-                      if (transportBeforeDeparture) {
-                        allItems.push({
-                          id: 'transport-departure',
-                          type: 'transport',
-                          startTime: transportBeforeDeparture.departureTime || lastActivity.endTime || '23:00',
-                          endTime: transportBeforeDeparture.arrivalTime,
-                          data: transportBeforeDeparture,
-                        });
+                      
+                      if (day.dayNumber === currentTripPlan.travelDays && sortedActivities.length > 0) {
+                        const lastActivity = sortedActivities[sortedActivities.length - 1];
+                        const transportBeforeDeparture = getBetweenTransport(day, lastActivity.id, 'departure');
+                        if (transportBeforeDeparture) {
+                          allItems.push({
+                            id: 'transport-departure',
+                            type: 'transport',
+                            startTime: transportBeforeDeparture.departureTime || lastActivity.endTime || '23:00',
+                            endTime: transportBeforeDeparture.arrivalTime,
+                            data: transportBeforeDeparture,
+                          });
+                        }
+                        if (getDepartureTransport(day)) {
+                          allItems.push({
+                            id: 'departure',
+                            type: 'departure',
+                            startTime: getDepartureTransport(day)!.departureTime || '23:00',
+                            data: getDepartureTransport(day),
+                          });
+                        }
                       }
-                      if (getDepartureTransport(day)) {
-                        allItems.push({
-                          id: 'departure',
-                          type: 'departure',
-                          startTime: getDepartureTransport(day)!.departureTime || '23:00',
-                          data: getDepartureTransport(day),
-                        });
-                      }
-                    }
-                    
-                    return (
-                      <div key={day.id} className="flex-1 min-w-[180px] max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
-                        <div className="h-12 border-b border-[#CEA472]/20 p-2 text-center">
-                          <div className="text-[#CEA472] font-medium text-sm">Day {day.dayNumber}</div>
-                          {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
-                        </div>
-                        <div className="flex-1 relative">
-                          {Array.from({ length: 24 }, (_, i) => i).map(hour => (
-                            <div key={hour} className="h-20 border-b border-[#CEA472]/10"></div>
-                          ))}
-                          {allItems.map(item => {
-                            const top = getTimePosition(item.startTime);
-                            const height = getDuration(item.startTime, item.endTime);
-                            
-                            let bgColor = '';
-                            let borderColor = '';
-                            let icon = null;
-                            let title = '';
-                            let subtitle = '';
-                            
-                            if (item.type === 'arrival' || item.type === 'departure') {
-                              bgColor = 'bg-[#CEA472]/10';
-                              borderColor = 'border-[#CEA472]';
-                              icon = transportIcons[item.data.type] || transportIcons['other'];
-                              title = item.type === 'arrival' ? '到达' : '离开';
-                              subtitle = item.data.to || item.data.from || '目的地';
-                            } else if (item.type === 'transport') {
-                              bgColor = 'bg-[#CEA472]/5';
-                              borderColor = 'border-[#CEA472]/50';
-                              icon = transportIcons[item.data.type] || transportIcons['other'];
-                              title = '交通';
-                              subtitle = `${item.data.from || '某地'} → ${item.data.to || '某地'}`;
-                            } else {
-                              bgColor = 'bg-[#CEA472]/15';
-                              borderColor = 'border-[#CEA472]';
-                              icon = activityTypeIcons[item.data.type] || activityTypeIcons['other'];
-                              title = activityTypes[item.data.type] || '活动';
-                              subtitle = item.data.content || item.data.location || '';
-                            }
-                            
-                            return (
-                              <div
-                                key={item.id}
-                                className={`absolute left-1 right-1 ${bgColor} border ${borderColor} rounded-md p-1 overflow-hidden`}
-                                style={{
-                                  top: `${top}px`,
-                                  height: `${height}px`,
-                                  zIndex: 10,
-                                }}
-                              >
-                                <div className="flex items-start gap-1">
-                                  <div className="text-[#CEA472] flex-shrink-0 mt-0.5">
-                                    {icon}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
-                                    {subtitle && <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>}
-                                    <div className="text-[#FFFFFF]/40 text-[10px]">
-                                      {item.startTime}
-                                      {item.endTime && ` - ${item.endTime}`}
+                      
+                      return (
+                        <div key={day.id} className="flex-1 min-w-[180px] max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
+                          <div className="h-12 border-b border-[#CEA472]/20 p-2 text-center">
+                            <div className="text-[#CEA472] font-medium text-sm">Day {day.dayNumber}</div>
+                            {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
+                          </div>
+                          <div className="flex-1 relative">
+                            {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                              <div key={hour} className="h-10 border-b border-[#CEA472]/10"></div>
+                            ))}
+                            {allItems.map(item => {
+                              const top = getTimePosition(item.startTime);
+                              const height = getDuration(item.startTime, item.endTime);
+                              
+                              let bgColor = '';
+                              let borderColor = '';
+                              let icon = null;
+                              let title = '';
+                              let subtitle = '';
+                              
+                              if (item.type === 'arrival' || item.type === 'departure') {
+                                bgColor = 'bg-[#CEA472]/10';
+                                borderColor = 'border-[#CEA472]';
+                                icon = transportIcons[item.data.type] || transportIcons['other'];
+                                title = item.type === 'arrival' ? '到达' : '离开';
+                                subtitle = item.data.to || item.data.from || '目的地';
+                              } else if (item.type === 'transport') {
+                                bgColor = 'bg-[#CEA472]/5';
+                                borderColor = 'border-[#CEA472]/50';
+                                icon = transportIcons[item.data.type] || transportIcons['other'];
+                                title = '交通';
+                                subtitle = `${item.data.from || '某地'} → ${item.data.to || '某地'}`;
+                              } else {
+                                bgColor = 'bg-[#CEA472]/15';
+                                borderColor = 'border-[#CEA472]';
+                                icon = activityTypeIcons[item.data.type] || activityTypeIcons['other'];
+                                title = activityTypes[item.data.type] || '活动';
+                                subtitle = item.data.content || item.data.location || '';
+                              }
+                              
+                              return (
+                                <div
+                                  key={item.id}
+                                  className={`absolute left-1 right-1 ${bgColor} border ${borderColor} rounded-md p-1 overflow-hidden`}
+                                  style={{
+                                    top: `${top}px`,
+                                    height: `${height}px`,
+                                    zIndex: 10,
+                                  }}
+                                >
+                                  <div className="flex items-start gap-1">
+                                    <div className="text-[#CEA472] flex-shrink-0 mt-0.5">
+                                      {icon}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
+                                      {subtitle && <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>}
+                                      <div className="text-[#FFFFFF]/40 text-[10px]">
+                                        {item.startTime}
+                                        {item.endTime && ` - ${item.endTime}`}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
