@@ -257,7 +257,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          wishId: wish.id,
+          wishId: String(wish.id),  // 统一使用字符串类型
           destination: wish.destination,
           startDate: wish.confirmed_date,
           travelDays: 3, // 默认3天
@@ -267,7 +267,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
 
       if (response.ok) {
         await fetchTripPlans();
-        setSelectedWishId(wish.id);
+        setSelectedWishId(String(wish.id));  // 统一使用字符串类型
         setShowWishSelector(false);
       } else {
         alert('创建旅行规划失败');
@@ -282,12 +282,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
 
   // 选择愿望
   const selectWish = async (wish: Wish) => {
-    // 检查是否已存在该愿望的旅行规划
-    const existingPlan = tripPlans.find(plan => plan.wishId === wish.id);
+    // 检查是否已存在该愿望的旅行规划（注意类型转换）
+    const existingPlan = tripPlans.find(plan => plan.wishId === String(wish.id));
     
     if (existingPlan) {
       // 如果有，直接选择
-      setSelectedWishId(wish.id);
+      setSelectedWishId(String(wish.id));
       setShowWishSelector(false);
     } else {
       // 如果没有，询问用户是否要创建
@@ -942,7 +942,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
         ) : (
           <div className="space-y-4">
             {confirmedWishes.map(wish => {
-              const hasPlan = tripPlans.some(plan => plan.wishId === wish.id);
+              const hasPlan = tripPlans.some(plan => plan.wishId === String(wish.id));
               return (
                 <div
                   key={wish.id}
