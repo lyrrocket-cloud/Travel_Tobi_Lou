@@ -1036,7 +1036,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 icon = arrival ? transportIcons[arrival.type] || transportIcons['other'] : transportIcons['other'];
                                 if (item.transportAfter) {
                                   const transport = item.transportAfter;
-                                  transportText = `下一程: ${transportNames[transport.type] || transport.type || '交通'} - ${transport.to || '后站'}`;
+                                  transportText = `"${transportNames[transport.type] || transport.type || '交通'}"至${transport.to || '下一站'}`;
                                 }
                               } else if (item.type === 'departure') {
                                 bgColor = 'bg-[#CEA472]/10';
@@ -1054,7 +1054,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 
                                 if (item.transportAfter) {
                                   const t = item.transportAfter;
-                                  transportText = `下一程: ${transportNames[t.type] || t.type || '交通'} - ${t.to || '后站'}`;
+                                  transportText = `"${transportNames[t.type] || t.type || '交通'}"至${t.to || '下一站'}`;
                                 }
                               }
                               
