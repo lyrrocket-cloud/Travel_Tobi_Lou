@@ -320,8 +320,8 @@ export default function Home() {
       });
 
       if (response.ok) {
-        // 找到对应的愿望信息
-        const wish = wishes.find(w => w.id === confirmingWishId);
+        // 找到对应的愿望信息（确保类型一致）
+        const wish = wishes.find(w => String(w.id) === confirmingWishId);
         if (wish) {
           // 创建旅行规划
           try {
@@ -928,7 +928,7 @@ export default function Home() {
                                         <Edit2 className="w-4 h-4" />
                                       </Button>
                                       <Button
-                                        onClick={() => handleOpenConfirmDialog(wish.id)}
+                                        onClick={() => handleOpenConfirmDialog(String(wish.id))}
                                         variant="outline"
                                         size="icon"
                                         title="确定成行"
