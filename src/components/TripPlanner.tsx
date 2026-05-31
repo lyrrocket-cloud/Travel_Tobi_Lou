@@ -137,6 +137,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [showSchedule, setShowSchedule] = useState(false);
   const [showTripEditor, setShowTripEditor] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [creatingTrip, setCreatingTrip] = useState(false);
 
   // 初始化：从 localStorage 读取保存的状态
   useEffect(() => {
@@ -214,6 +215,56 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   useEffect(() => {
     fetchTripPlans();
   }, []);
+
+  // 创建新的旅行规划
+  const createTripPlan = async (wish: Wish) => {
+    if (!wish.confirmed_date) return;
+    
+    try {
+      setCreatingTrip(true);
+      const response = await fetch('/api/trip-plans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          wishId: wish.id,
+          destination: wish.destination,
+          startDate: wish.confirmed_date,
+          travelDays: 3, // 默认3天
+          travelers: wish.travelers || '未设置',
+        }),
+      });
+
+      if (response.ok) {
+        await fetchTripPlans();
+        setSelectedWishId(wish.id);
+        setShowWishSelector(false);
+      } else {
+        alert('创建旅行规划失败');
+      }
+    } catch (error) {
+      console.error('[Trip Planner] Failed to create trip plan:', error);
+      alert('创建旅行规划失败，请稍后重试');
+    } finally {
+      setCreatingTrip(false);
+    }
+  };
+
+  // 选择愿望
+  const selectWish = async (wish: Wish) => {
+    // 检查是否已存在该愿望的旅行规划
+    const existingPlan = tripPlans.find(plan => plan.wishId === wish.id);
+    
+    if (existingPlan) {
+      // 如果有，直接选择
+      setSelectedWishId(wish.id);
+      setShowWishSelector(false);
+    } else {
+      // 如果没有，询问用户是否要创建
+      await createTripPlan(wish);
+    }
+  };
 
   // 获取当前选择的愿望对应的旅行规划
   const currentTripPlan = selectedWishId ? tripPlans.find(plan => plan.wishId === selectedWishId) : null;
@@ -847,10 +898,48 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     );
   }
 
-  if (!currentTripPlan) {
+  // 如果没有选择愿望，或者愿望选择器打开了，显示选择界面
+  if (!currentTripPlan || showWishSelector) {
     return (
-      <div className="text-center py-12">
-        <div className="text-[#FFFFFF]/60">请先选择一个已确认成行的愿望</div>
+      <div className="w-full">
+        <div className="flex items-center mb-6">
+          <h3 className="text-xl font-semibold text-[#CEA472]">选择旅行</h3>
+        </div>
+
+        {confirmedWishes.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-[#FFFFFF]/60">暂无已确认成行的愿望</div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {confirmedWishes.map(wish => {
+              const hasPlan = tripPlans.some(plan => plan.wishId === wish.id);
+              return (
+                <div
+                  key={wish.id}
+                  className="bg-black/30 border border-[#CEA472]/20 rounded-lg p-4 cursor-pointer hover:bg-black/40 transition-colors"
+                  onClick={() => selectWish(wish)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-[#FFFFFF] font-medium">{wish.destination}</h4>
+                      <p className="text-[#FFFFFF]/60 text-sm">
+                        {wish.confirmed_date} · {wish.travelers}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {hasPlan ? (
+                        <span className="text-[#CEA472] text-sm">已有规划</span>
+                      ) : (
+                        <span className="text-[#FFFFFF]/40 text-sm">点击创建规划</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
@@ -865,7 +954,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
         </h3>
         <Button
             variant="outline"
-            onClick={() => setShowWishSelector(!showWishSelector)}
+            onClick={() => setShowWishSelector(true)}
             className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/80"
           >
             切换行程
