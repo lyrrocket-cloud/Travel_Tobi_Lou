@@ -23,11 +23,11 @@
           {
             "id": "transport-1780197395465",
             "type": "flight",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
+            "from": "上海浦东",
+            "to": "济州岛",
+            "departureTime": "15:35",
+            "arrivalTime": "18:10",
+            "details": "MU5027",
             "position": "arrival"
           },
           {
@@ -135,7 +135,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-05-31T03:44:46.197Z"
+    "updatedAt": "2026-05-31T04:00:34.894Z"
   },
   {
     "id": "trip-plan-1780193545980",

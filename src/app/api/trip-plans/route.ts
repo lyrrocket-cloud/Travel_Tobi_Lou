@@ -7,8 +7,8 @@ interface ActivityItem {
   id: string;
   type: string; // 'breakfast' | 'morning' | 'lunch' | 'afternoon' | 'dinner' | 'evening' | 'accommodation' | 'other'
   startTime: string;
-  endTime: string;
-  content: string;
+  endTime?: string;
+  content?: string;
   location?: string;
   notes?: string;
 }

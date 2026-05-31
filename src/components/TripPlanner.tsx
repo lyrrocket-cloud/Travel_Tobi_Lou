@@ -59,8 +59,8 @@ interface ActivityItem {
   id: string;
   type: string; // 活动类型：breakfast, morning, lunch, afternoon, dinner, evening, accommodation, other
   startTime: string; // 开始时间
-  endTime: string; // 结束时间
-  content: string; // 活动内容
+  endTime?: string; // 结束时间（可选）
+  content?: string; // 活动内容（可选）
   location?: string; // 地点
   notes?: string; // 备注
 }
@@ -129,10 +129,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [newActivity, setNewActivity] = useState<Omit<ActivityItem, 'id'>>({
     type: 'other',
     startTime: '09:00',
-    endTime: '10:00',
-    content: '',
+    endTime: undefined,
+    content: undefined,
     location: '',
-    notes: '',
+    notes: undefined,
   });
   const [loading, setLoading] = useState(true);
 
@@ -186,7 +186,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
 
   // 添加活动
   const addActivity = async () => {
-    if (!currentTripPlan || !newActivity.content) return;
+    if (!currentTripPlan) return;
 
     const activityId = `activity-${Date.now()}`;
     const activity: ActivityItem = {
@@ -217,10 +217,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
         setNewActivity({
           type: 'other',
           startTime: '09:00',
-          endTime: '10:00',
-          content: '',
+          endTime: undefined,
+          content: undefined,
           location: '',
-          notes: '',
+          notes: undefined,
         });
       }
     } catch (error) {
@@ -688,28 +688,28 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">结束时间</Label>
+                <Label className="text-[#FFFFFF]/60">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   type="time"
-                  value={editingData.endTime}
-                  onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value })}
+                  value={editingData.endTime || ''}
+                  onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label className="text-[#FFFFFF]/60">活动内容</Label>
+                <Label className="text-[#FFFFFF]/60">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
-                  value={editingData.content}
-                  onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value })}
+                  value={editingData.content || ''}
+                  onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value || undefined })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="活动内容"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label className="text-[#FFFFFF]/60">备注</Label>
+                <Label className="text-[#FFFFFF]/60">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   value={editingData.notes || ''}
-                  onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value })}
+                  onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value || undefined })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="备注"
                 />
@@ -759,7 +759,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div className="flex items-center gap-2">
                 <span className="text-[#CEA472] font-medium">{activityTypes[activity.type]}</span>
                 <span className="text-[#FFFFFF]/60 text-sm">
-                  {activity.startTime} - {activity.endTime}
+                  {activity.startTime}
+                  {activity.endTime && ` - ${activity.endTime}`}
                 </span>
               </div>
               <Button
@@ -775,7 +776,9 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <Edit2 className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-[#FFFFFF] mt-1">{activity.content}</p>
+            {activity.content && (
+              <p className="text-[#FFFFFF] mt-1">{activity.content}</p>
+            )}
             {activity.location && (
               <p className="text-[#FFFFFF]/60 text-sm mt-1">📍 {activity.location}</p>
             )}
@@ -1005,28 +1008,28 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60">结束时间</Label>
+                          <Label className="text-[#FFFFFF]/60">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                           <Input
                             type="time"
-                            value={newActivity.endTime}
-                            onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value })}
+                            value={newActivity.endTime || ''}
+                            onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value || undefined })}
                             className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <Label className="text-[#FFFFFF]/60">活动内容</Label>
+                          <Label className="text-[#FFFFFF]/60">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                           <Input
-                            value={newActivity.content}
-                            onChange={(e) => setNewActivity({ ...newActivity, content: e.target.value })}
+                            value={newActivity.content || ''}
+                            onChange={(e) => setNewActivity({ ...newActivity, content: e.target.value || undefined })}
                             className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                             placeholder="活动内容"
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <Label className="text-[#FFFFFF]/60">备注</Label>
+                          <Label className="text-[#FFFFFF]/60">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                           <Input
                             value={newActivity.notes || ''}
-                            onChange={(e) => setNewActivity({ ...newActivity, notes: e.target.value })}
+                            onChange={(e) => setNewActivity({ ...newActivity, notes: e.target.value || undefined })}
                             className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                             placeholder="备注"
                           />
@@ -1036,7 +1039,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                         <Button
                           onClick={addActivity}
                           className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-                          disabled={!newActivity.content}
                         >
                           <Save className="w-4 h-4 mr-2" />
                           保存活动
