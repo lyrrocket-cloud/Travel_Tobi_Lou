@@ -146,7 +146,13 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     location: '',
     notes: undefined,
   });
-  const [showSchedule, setShowSchedule] = useState(false);
+  const [showSchedule, setShowSchedule] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-show-schedule');
+      return saved === 'true';
+    }
+    return false;
+  });
   const [loading, setLoading] = useState(true);
 
   // 保存 selectedWishId 到 localStorage
@@ -162,6 +168,13 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       localStorage.setItem('travel-toolbox-selected-day', String(selectedDay));
     }
   }, [selectedDay]);
+
+  // 保存 showSchedule 到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('travel-toolbox-show-schedule', String(showSchedule));
+    }
+  }, [showSchedule]);
 
   // 默认选择第一个有规划的愿望
   useEffect(() => {
@@ -894,66 +907,79 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                         return Math.max(durationMinutes * (40 / 60), 60);
                       };
                       
-                      const allItems: Array<{
+                      // 构建活动列表，包含交通信息
+                      const mergedItems: Array<{
                         id: string;
-                        type: 'arrival' | 'departure' | 'transport' | 'activity';
+                        type: 'arrival' | 'departure' | 'activity';
                         startTime: string;
                         endTime?: string;
-                        data: any;
+                        activity: ActivityItem | null;
+                        transportBefore: TransportInfo | null;
+                        transportAfter: TransportInfo | null;
                       }> = [];
                       
-                      if (day.dayNumber === 1 && getArrivalTransport(day)) {
-                        allItems.push({
-                          id: 'arrival',
-                          type: 'arrival',
-                          startTime: getArrivalTransport(day)!.arrivalTime || '00:00',
-                          data: getArrivalTransport(day),
-                        });
-                      }
-                      
-                      sortedActivities.forEach((activity, index) => {
-                        const prevActivity = sortedActivities[index - 1];
-                        const transportBetween = prevActivity 
-                          ? getBetweenTransport(day, prevActivity.id, activity.id)
-                          : day.dayNumber === 1 ? getBetweenTransport(day, 'arrival', activity.id) : null;
-                        
-                        if (transportBetween) {
-                          allItems.push({
-                            id: `transport-${activity.id}`,
-                            type: 'transport',
-                            startTime: transportBetween.departureTime || prevActivity?.endTime || activity.startTime,
-                            endTime: transportBetween.arrivalTime || activity.startTime,
-                            data: transportBetween,
+                      // 添加到达（第一天）
+                      if (day.dayNumber === 1) {
+                        const arrival = getArrivalTransport(day);
+                        if (arrival) {
+                          mergedItems.push({
+                            id: 'arrival',
+                            type: 'arrival',
+                            startTime: arrival.arrivalTime || '00:00',
+                            activity: null,
+                            transportBefore: null,
+                            transportAfter: sortedActivities.length > 0 
+                              ? (getBetweenTransport(day, 'arrival', sortedActivities[0].id) || null)
+                              : null,
                           });
                         }
+                      }
+                      
+                      // 添加活动和交通
+                      sortedActivities.forEach((activity, index) => {
+                        const prevActivity = sortedActivities[index - 1];
+                        let transportBefore = prevActivity 
+                          ? (getBetweenTransport(day, prevActivity.id, activity.id) || null)
+                          : null;
                         
-                        allItems.push({
+                        if (!transportBefore && day.dayNumber === 1 && !getArrivalTransport(day)) {
+                          transportBefore = getBetweenTransport(day, 'arrival', activity.id) || null;
+                        }
+                        
+                        const nextActivity = sortedActivities[index + 1];
+                        let transportAfter = nextActivity 
+                          ? (getBetweenTransport(day, activity.id, nextActivity.id) || null) 
+                          : null;
+                        
+                        // 如果是最后一天最后一个活动，检查离开前的交通
+                        if (day.dayNumber === currentTripPlan.travelDays && !nextActivity && getDepartureTransport(day)) {
+                          transportAfter = getBetweenTransport(day, activity.id, 'departure') || null;
+                        }
+                        
+                        mergedItems.push({
                           id: activity.id,
                           type: 'activity',
                           startTime: activity.startTime,
                           endTime: activity.endTime,
-                          data: activity,
+                          activity: activity,
+                          transportBefore: transportBefore,
+                          transportAfter: transportAfter,
                         });
                       });
                       
-                      if (day.dayNumber === currentTripPlan.travelDays && sortedActivities.length > 0) {
-                        const lastActivity = sortedActivities[sortedActivities.length - 1];
-                        const transportBeforeDeparture = getBetweenTransport(day, lastActivity.id, 'departure');
-                        if (transportBeforeDeparture) {
-                          allItems.push({
-                            id: 'transport-departure',
-                            type: 'transport',
-                            startTime: transportBeforeDeparture.departureTime || lastActivity.endTime || '23:00',
-                            endTime: transportBeforeDeparture.arrivalTime,
-                            data: transportBeforeDeparture,
-                          });
-                        }
-                        if (getDepartureTransport(day)) {
-                          allItems.push({
+                      // 添加离开（最后一天）
+                      if (day.dayNumber === currentTripPlan.travelDays) {
+                        const departure = getDepartureTransport(day);
+                        if (departure) {
+                          mergedItems.push({
                             id: 'departure',
                             type: 'departure',
-                            startTime: getDepartureTransport(day)!.departureTime || '23:00',
-                            data: getDepartureTransport(day),
+                            startTime: departure.departureTime || '23:00',
+                            activity: null,
+                            transportBefore: sortedActivities.length > 0 
+                              ? (getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure') || null) 
+                              : null,
+                            transportAfter: null,
                           });
                         }
                       }
@@ -968,38 +994,54 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                             {Array.from({ length: 24 }, (_, i) => i).map(hour => (
                               <div key={hour} className="h-10 border-b border-[#CEA472]/10"></div>
                             ))}
-                            {allItems.map(item => {
+                            {mergedItems.map(item => {
                               const top = getTimePosition(item.startTime);
                               const height = getDuration(item.startTime, item.endTime);
                               
                               let bgColor = '';
                               let borderColor = '';
-                              let icon = null;
                               let title = '';
                               let subtitle = '';
-                              let zIndexVal = 10;
+                              let transportText = '';
+                              let icon = null;
                               
-                              if (item.type === 'arrival' || item.type === 'departure') {
+                              if (item.type === 'arrival') {
                                 bgColor = 'bg-[#CEA472]/10';
                                 borderColor = 'border-[#CEA472]';
-                                icon = transportIcons[item.data.type] || transportIcons['other'];
-                                title = item.type === 'arrival' ? '到达' : '离开';
-                                subtitle = item.data.to || item.data.from || '目的地';
-                                zIndexVal = 20;
-                              } else if (item.type === 'transport') {
-                                bgColor = 'bg-[#CEA472]/5';
-                                borderColor = 'border-[#CEA472]/50';
-                                icon = transportIcons[item.data.type] || transportIcons['other'];
-                                title = '交通';
-                                subtitle = `${item.data.from || '某地'} → ${item.data.to || '某地'}`;
-                                zIndexVal = 15;
-                              } else {
+                                title = '到达';
+                                const arrival = getArrivalTransport(day);
+                                subtitle = arrival?.to || '目的地';
+                                icon = arrival ? transportIcons[arrival.type] || transportIcons['other'] : transportIcons['other'];
+                                if (item.transportAfter) {
+                                  transportText = `前往: ${item.transportAfter.to || '下一站'} (${item.transportAfter.departureTime || ''})`;
+                                }
+                              } else if (item.type === 'departure') {
+                                bgColor = 'bg-[#CEA472]/10';
+                                borderColor = 'border-[#CEA472]';
+                                title = '离开';
+                                const departure = getDepartureTransport(day);
+                                subtitle = departure?.from || '目的地';
+                                icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
+                                if (item.transportBefore) {
+                                  transportText = `出发: ${item.transportBefore.from || '当前位置'} (${item.transportBefore.departureTime || ''})`;
+                                }
+                              } else if (item.activity) {
                                 bgColor = 'bg-[#CEA472]/15';
                                 borderColor = 'border-[#CEA472]';
-                                icon = activityTypeIcons[item.data.type] || activityTypeIcons['other'];
-                                title = activityTypes[item.data.type] || '活动';
-                                subtitle = item.data.content || item.data.location || '';
-                                zIndexVal = 25;
+                                icon = activityTypeIcons[item.activity.type] || activityTypeIcons['other'];
+                                title = activityTypes[item.activity.type] || '活动';
+                                subtitle = item.activity.content || item.activity.location || '';
+                                
+                                const transportParts: string[] = [];
+                                if (item.transportBefore) {
+                                  transportParts.push(`自: ${item.transportBefore.from || '前站'}`);
+                                }
+                                if (item.transportAfter) {
+                                  transportParts.push(`往: ${item.transportAfter.to || '后站'}`);
+                                }
+                                if (transportParts.length > 0) {
+                                  transportText = transportParts.join(' → ');
+                                }
                               }
                               
                               return (
@@ -1009,7 +1051,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                   style={{
                                     top: `${top}px`,
                                     height: `${height}px`,
-                                    zIndex: zIndexVal,
+                                    zIndex: 20,
                                   }}
                                 >
                                   <div className="flex items-start gap-1">
@@ -1020,6 +1062,9 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
                                       {subtitle && height > 50 && (
                                         <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
+                                      )}
+                                      {transportText && height > 60 && (
+                                        <div className="text-[#CEA472]/80 text-[10px] truncate">{transportText}</div>
                                       )}
                                       {height > 40 && (
                                         <div className="text-[#FFFFFF]/40 text-[10px]">
