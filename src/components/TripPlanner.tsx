@@ -1140,12 +1140,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       </div>
 
       <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
-        <TabsList className="grid w-full bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1" style={{ gridTemplateColumns: `repeat(${currentTripPlan.travelDays}, minmax(0, 1fr))` }}>
+        <TabsList className="inline-flex h-[72px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
             <TabsTrigger
               key={day}
               value={String(day)}
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-3 px-2 rounded-md transition-all duration-300"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-2 px-4 rounded-md transition-all duration-300 min-w-[80px]"
             >
               <span className="text-sm font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
