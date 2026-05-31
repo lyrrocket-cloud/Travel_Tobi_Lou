@@ -145,79 +145,89 @@ body {
 }
 
 /* ========================================
-   滚动条样式（避免页面抖动 - 始终显示）
+   悬浮滚动条样式（解决页面跳动问题）
    ======================================== */
 
-/* HTML元素 - 关键修复：确保滚动条宽度始终为8px */
-html {
-  overflow-y: scroll !important;
-  overflow-x: hidden !important;
-  scrollbar-gutter: stable 8px !important;
-}
-
-/* 全局滚动条样式 - Webkit内核浏览器 */
-::-webkit-scrollbar {
-  width: 8px !important;
-  height: 8px !important;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(206, 164, 114, 0.3);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(206, 164, 114, 0.5);
-}
-
-::-webkit-scrollbar-thumb:active {
-  background: rgba(206, 164, 114, 0.7);
-}
-
-/* Firefox浏览器滚动条 */
-* {
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(206, 164, 114, 0.3) rgba(0, 0, 0, 0.2) !important;
-}
-
-/* 关键修复：用最高优先级阻止任何body样式变化 */
-html body,
-body,
-body::before,
-body::after {
-  padding-right: 8px !important;
-  margin-right: 0 !important;
-  overflow: auto !important;
-  scrollbar-gutter: stable 8px !important;
-}
-
-/* 当Dialog打开时，保持完全相同的样式 */
-body:has([data-state="open"][role="dialog"]),
-body[data-state="open"],
-body.dialog-open {
-  padding-right: 8px !important;
-  margin-right: 0 !important;
-  overflow: auto !important;
-  scrollbar-gutter: stable 8px !important;
-}
-
-/* 最高优先级：覆盖任何内联样式 */
-body[style] {
-  padding-right: 8px !important;
-  overflow: auto !important;
-  scrollbar-gutter: stable 8px !important;
-}
-
-/* 额外保护：使用CSS变量锁定样式 */
+/* 隐藏所有默认滚动条 */
+html,
 body {
-  --fixed-padding-right: 8px;
-  --fixed-overflow: auto;
+  overflow: auto !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+
+/* Webkit浏览器：隐藏默认滚动条 */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+/* 悬浮滚动条样式 - 仅在hover时显示 */
+.floating-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  display: block !important;
+}
+
+.floating-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.floating-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(206, 164, 114, 0.4);
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.floating-scrollbar:hover::-webkit-scrollbar-track {
+  opacity: 1;
+}
+
+.floating-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(206, 164, 114, 0.6);
+  opacity: 1;
+}
+
+.floating-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(206, 164, 114, 0.8);
+}
+
+/* Firefox悬浮滚动条 */
+.floating-scrollbar {
+  scrollbar-width: none;
+}
+
+.floating-scrollbar:hover {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(206, 164, 114, 0.6) rgba(0, 0, 0, 0.1);
+}
+
+/* 全屏页面使用悬浮滚动条 */
+html,
+body,
+#__next,
+main {
+  scrollbar-width: none;
+}
+
+html:hover,
+body:hover,
+#__next:hover,
+main:hover {
+  scrollbar-width: thin;
+}
+
+/* 阻止Radix UI Dialog修改任何样式 */
+body {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
 }
 
 /* 隐藏滚动条工具类 */

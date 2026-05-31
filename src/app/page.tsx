@@ -36,26 +36,6 @@ const extractYYYYMMFromDate = (dateStr: string): string => {
 };
 
 export default function Home() {
-  // 关键修复：阻止Radix UI Dialog修改body样式，避免页面跳动
-  useEffect(() => {
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-          // 强制重置body的滚动相关样式
-          document.body.style.paddingRight = '8px';
-          document.body.style.overflow = 'auto';
-          document.body.style.marginRight = '0';
-        }
-      }
-    });
-    
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['style']
-    });
-
-    return () => observer.disconnect();
-  }, []);
   const [destination, setDestination] = useState('');
   const [travelYearMonth, setTravelYearMonth] = useState('');
   const [wisherName, setWisherName] = useState('');
