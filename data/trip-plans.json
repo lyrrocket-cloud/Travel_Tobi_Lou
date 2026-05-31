@@ -70,6 +70,16 @@
             "departureTime": "",
             "arrivalTime": "",
             "details": ""
+          },
+          {
+            "id": "transport-1780197395465",
+            "type": "",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "arrival"
           }
         ]
       },
@@ -127,7 +137,63 @@
             "notes": ""
           }
         ],
-        "transport": []
+        "transport": [
+          {
+            "id": "transport-1780197401530",
+            "type": "",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "after",
+            "afterTime": "breakfast"
+          },
+          {
+            "id": "transport-1780197403092",
+            "type": "",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "after",
+            "afterTime": "morning"
+          },
+          {
+            "id": "transport-1780197404814",
+            "type": "",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "after",
+            "afterTime": "lunch"
+          },
+          {
+            "id": "transport-1780197405716",
+            "type": "",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "after",
+            "afterTime": "afternoon"
+          },
+          {
+            "id": "transport-1780197406518",
+            "type": "",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "after",
+            "afterTime": "dinner"
+          }
+        ]
       },
       {
         "id": "day-3-1780192503997",
@@ -187,7 +253,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-05-31T03:10:05.897Z"
+    "updatedAt": "2026-05-31T03:16:46.635Z"
   },
   {
     "id": "trip-plan-1780193545980",

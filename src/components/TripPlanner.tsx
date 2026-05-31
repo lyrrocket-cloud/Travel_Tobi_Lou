@@ -241,7 +241,24 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       });
 
       if (response.ok) {
-        fetchTripPlans();
+        const data = await response.json();
+        // 更新本地状态以确保拿到最新的transport ID
+        const updatedPlan = data.tripPlan || currentTripPlan;
+        const newDayPlan = updatedPlan.days.find((d: DayPlan) => d.dayNumber === dayNumber);
+        const addedTransport = newDayPlan?.transport.find((t: TransportInfo) => t.position === position && t.beforeTime === relativeTime);
+        
+        if (addedTransport) {
+          // 立即进入编辑模式
+          setEditingTransport({ dayNumber, transportId: addedTransport.id });
+        } else {
+          // 如果找不到，刷新数据后再设置编辑模式
+          fetchTripPlans().then(() => {
+            // 重新获取最新的transport并进入编辑模式
+            setTimeout(() => {
+              setEditingTransport({ dayNumber, transportId: newTransport.id });
+            }, 100);
+          });
+        }
       }
     } catch (error) {
       console.error('[Trip Planner] Failed to add transport:', error);
@@ -585,11 +602,11 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <TabsTrigger
                   key={day}
                   value={String(day)}
-                  className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col"
+                  className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-3 px-1 min-h-[60px]"
                 >
-                  <span>Day {day}</span>
+                  <span className="text-sm font-medium">Day {day}</span>
                   {getDateDisplay(day) && (
-                    <span className="text-xs opacity-70">{getDateDisplay(day)}</span>
+                    <span className="text-xs opacity-70 whitespace-nowrap">{getDateDisplay(day)}</span>
                   )}
                 </TabsTrigger>
               ))}
