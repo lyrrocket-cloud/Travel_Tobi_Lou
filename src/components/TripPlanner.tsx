@@ -889,7 +889,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <div className="overflow-y-auto max-h-[600px] schedule-scroll">
+              <div className="overflow-y-auto max-h-[900px] schedule-scroll">
                 <div className="flex min-w-max">
                   <div className="w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
@@ -1138,7 +1138,11 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 borderColor = 'border-[#CEA472]';
                                 icon = activityTypeIcons[item.activity.type] || activityTypeIcons['other'];
                                 title = activityTypes[item.activity.type] || '活动';
-                                subtitle = item.activity.content || item.activity.location || '';
+                                // 显示活动内容+地点
+                                const contentParts = [];
+                                if (item.activity.content) contentParts.push(item.activity.content);
+                                if (item.activity.location) contentParts.push(item.activity.location);
+                                subtitle = contentParts.join(' · ');
                                 
                                 if (item.transportAfter) {
                                   const t = item.transportAfter;
