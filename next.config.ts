@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   // outputFileTracingRoot: path.resolve(__dirname, '../../'),
   /* config options here */
   allowedDevOrigins: ['*.dev.coze.site'],
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   images: {
     remotePatterns: [
       {
