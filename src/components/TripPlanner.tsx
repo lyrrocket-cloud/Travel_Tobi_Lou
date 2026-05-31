@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -152,6 +152,14 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       return saved === 'true';
     }
     return false;
+  });
+  const [showTripEditor, setShowTripEditor] = useState(() => {
+    // 如果日程表显示，则编辑器默认隐藏
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-show-schedule');
+      return saved !== 'true';
+    }
+    return true;
   });
   const [loading, setLoading] = useState(true);
 
@@ -820,7 +828,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <p className="text-[#FFFFFF] mt-1">{activity.content}</p>
             )}
             {activity.location && (
-              <p className="text-[#FFFFFF]/60 text-sm mt-1">📍 {activity.location}</p>
+              <p className="text-[#FFFFFF]/60 text-sm mt-1"><MapPin className="w-3 h-3 inline mr-1" /> {activity.location}</p>
             )}
             {activity.notes && (
               <p className="text-[#FFFFFF]/40 text-xs mt-1">{activity.notes}</p>
@@ -1228,7 +1236,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
         </Card>
       )}
 
-      <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
+      {showTripEditor && (
+        <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
         <TabsList className="inline-flex h-[72px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
             <TabsTrigger
@@ -1455,15 +1464,24 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
             </div>
           </TabsContent>
         ))}
-      </Tabs>
+</Tabs>
+      )}
       
       <div className="mt-8">
         <Button
-          onClick={() => setShowSchedule(!showSchedule)}
+          onClick={() => {
+            if (showSchedule) {
+              setShowSchedule(false);
+              setShowTripEditor(true);
+            } else {
+              setShowSchedule(true);
+              setShowTripEditor(false);
+            }
+          }}
           className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
         >
           <span className="mr-2">📅</span>
-          {showSchedule ? '收起日程表' : '生成日程表'}
+          {showSchedule ? '编辑日程' : '生成日程表'}
         </Button>
       </div>
     </div>
