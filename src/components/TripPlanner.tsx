@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -40,7 +40,7 @@ const transportIcons: Record<string, React.ReactNode> = {
   train: <Train className="w-4 h-4" />,
   bus: <Bus className="w-4 h-4" />,
   taxi: <Car className="w-4 h-4" />,
-  walk: <ArrowRight className="w-4 h-4" />,
+  walk: <Footprints className="w-4 h-4" />,
   other: <Car className="w-4 h-4" />,
 };
 
