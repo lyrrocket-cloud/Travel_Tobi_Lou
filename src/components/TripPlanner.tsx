@@ -1224,8 +1224,43 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 )}
               </div>
 
+              {/* 最后一个活动和离开之间的交通 */}
+              {day === currentTripPlan.travelDays && currentDayPlan && sortedActivities.length > 0 && (
+                <div className="pl-8 space-y-2 mt-6">
+                  {getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure') ? (
+                    renderTransportItem(getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure')!, day)
+                  ) : (
+                    <Button
+                      onClick={() => addTransport(day, 'between', sortedActivities[sortedActivities.length - 1].id, 'departure')}
+                      variant="outline"
+                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      添加交通
+                    </Button>
+                  )}
+                </div>
+              )}
+              {/* 离开 */}
+              {day === currentTripPlan.travelDays && (
+                <div className="space-y-2 mt-4">
+                  {currentDayPlan && getDepartureTransport(currentDayPlan) ? (
+                    renderTransportItem(getDepartureTransport(currentDayPlan)!, day)
+                  ) : (
+                    <Button
+                      onClick={() => addTransport(day, 'departure')}
+                      variant="outline"
+                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      添加离开
+                    </Button>
+                  )}
+                </div>
+              )}
+
               {/* 添加活动按钮 */}
-              <div>
+              <div className="mt-6">
                 {showAddActivity ? (
                   <Card className="border border-[#CEA472]/20 bg-black/30">
                     <CardContent className="pt-4">
@@ -1325,41 +1360,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                   </Button>
                 )}
               </div>
-
-              {/* 最后一个活动和离开之间的交通 */}
-              {day === currentTripPlan.travelDays && currentDayPlan && sortedActivities.length > 0 && (
-                <div className="pl-8 space-y-2 mt-6">
-                  {getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure') ? (
-                    renderTransportItem(getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure')!, day)
-                  ) : (
-                    <Button
-                      onClick={() => addTransport(day, 'between', sortedActivities[sortedActivities.length - 1].id, 'departure')}
-                      variant="outline"
-                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      添加交通
-                    </Button>
-                  )}
-                </div>
-              )}
-              {/* 离开 */}
-              {day === currentTripPlan.travelDays && (
-                <div className="space-y-2 mt-4">
-                  {currentDayPlan && getDepartureTransport(currentDayPlan) ? (
-                    renderTransportItem(getDepartureTransport(currentDayPlan)!, day)
-                  ) : (
-                    <Button
-                      onClick={() => addTransport(day, 'departure')}
-                      variant="outline"
-                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      添加离开
-                    </Button>
-                  )}
-                </div>
-              )}
             </div>
           </TabsContent>
         ))}
