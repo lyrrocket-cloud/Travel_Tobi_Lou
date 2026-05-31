@@ -867,21 +867,13 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       {showSchedule && (
         <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
           <CardContent className="pt-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
                   <Calendar className="w-5 h-5 text-[#0a0a0f]" />
                 </div>
                 <h4 className="text-[#CEA472] font-medium">旅行日程表</h4>
               </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setShowSchedule(false)}
-                className="text-[#FFFFFF]/60"
-              >
-                <X className="w-4 h-4" />
-              </Button>
             </div>
             <div className="overflow-x-auto">
               <div className="overflow-y-auto max-h-[600px] schedule-scroll">
