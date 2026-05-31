@@ -923,11 +923,15 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
                           const firstActivity = sortedActivities[0];
+                          // 正确设置到达的时间范围：到达时间是startTime，结束时间是第一个活动的开始时间（如果有）
+                          const arrivalStartTime = arrival.arrivalTime || '00:00';
+                          let arrivalEndTime = firstActivity ? firstActivity.startTime : arrivalStartTime;
+                          
                           mergedItems.push({
                             id: 'arrival',
                             type: 'arrival',
-                            startTime: arrival.arrivalTime || '00:00',
-                            endTime: firstActivity?.startTime || arrival.arrivalTime || '23:00',
+                            startTime: arrivalStartTime,
+                            endTime: arrivalEndTime,
                             activity: null,
                             transportBefore: null,
                             transportAfter: sortedActivities.length > 0 
@@ -974,14 +978,18 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                         const departure = getDepartureTransport(day);
                         if (departure) {
                           const lastActivity = sortedActivities[sortedActivities.length - 1];
+                          // 正确设置离开的时间范围：开始时间是最后一个活动的结束时间（如果有），结束时间是出发时间
+                          const departureStartTime = lastActivity && lastActivity.endTime ? lastActivity.endTime : (departure.departureTime || '23:00');
+                          const departureEndTime = departure.departureTime || '23:00';
+                          
                           mergedItems.push({
                             id: 'departure',
                             type: 'departure',
-                            startTime: lastActivity?.endTime || departure.departureTime || '00:00',
-                            endTime: departure.departureTime || '23:00',
+                            startTime: departureStartTime,
+                            endTime: departureEndTime,
                             activity: null,
                             transportBefore: sortedActivities.length > 0 
-                              ? (getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure') || null) 
+                              ? (getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure') || null)
                               : null,
                             transportAfter: null,
                           });
@@ -1018,14 +1026,14 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 icon = arrival ? transportIcons[arrival.type] || transportIcons['other'] : transportIcons['other'];
                                 if (item.transportAfter) {
                                   const transport = item.transportAfter;
-                                  transportText = `${transport.from || '出发点'} → ${transport.to || '下一站'} (${transport.type || '交通'})`;
+                                  transportText = `下一程: ${transportNames[transport.type] || transport.type || '交通'} - ${transport.to || '后站'}`;
                                 }
                               } else if (item.type === 'departure') {
                                 bgColor = 'bg-[#CEA472]/10';
                                 borderColor = 'border-[#CEA472]';
                                 title = '离开';
                                 const departure = getDepartureTransport(day);
-                                subtitle = departure?.from || '目的地';
+                                subtitle = departure?.from || '出发地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
                               } else if (item.activity) {
                                 bgColor = 'bg-[#CEA472]/15';
@@ -1034,15 +1042,9 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 title = activityTypes[item.activity.type] || '活动';
                                 subtitle = item.activity.content || item.activity.location || '';
                                 
-                                const transportParts: string[] = [];
-                                if (item.transportBefore) {
-                                  transportParts.push(`${item.transportBefore.type || '交通'}: ${item.transportBefore.from || '前站'} →`);
-                                }
                                 if (item.transportAfter) {
-                                  transportParts.push(`→ ${item.transportAfter.type || '交通'}: ${item.transportAfter.to || '后站'}`);
-                                }
-                                if (transportParts.length > 0) {
-                                  transportText = transportParts.join(' ');
+                                  const t = item.transportAfter;
+                                  transportText = `下一程: ${transportNames[t.type] || t.type || '交通'} - ${t.to || '后站'}`;
                                 }
                               }
                               
@@ -1062,10 +1064,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
-                                      {subtitle && height > 40 && (
+                                      {subtitle && (
                                         <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
                                       )}
-                                      {transportText && height > 60 && (
+                                      {transportText && (
                                         <div className="text-[#CEA472]/80 text-[10px] truncate">{transportText}</div>
                                       )}
                                     </div>

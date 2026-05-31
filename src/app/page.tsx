@@ -952,18 +952,19 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden">
-      {/* 背景图片 */}
+    <div className="min-h-screen w-full relative">
+      {/* 背景图片 - fixed定位确保不跳动 */}
       <div 
-        className="absolute inset-0 w-full h-full object-cover"
+        className="fixed inset-0 w-full h-full -z-10"
         style={{
           backgroundImage: 'url("/matterhorn-bg.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
         }}
       />
       {/* 深色叠加层，确保文字可读 */}
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="fixed inset-0 bg-black/60 -z-10" />
 
       {/* 内容区域 */}
       <div className="relative z-10 py-12 px-4 sm:px-6 lg:px-8">

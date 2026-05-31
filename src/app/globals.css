@@ -136,12 +136,6 @@ body {
   @apply font-sans;
   background-color: #0a0a0f;
   color: #FFFFFF;
-  /* 渐变背景替代，避免外部API调用失败 */
-  background-image: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   min-height: 100vh;
 }
 
@@ -258,41 +252,33 @@ body {
   --color-white: #FFFFFF;
   --color-bg-dark: #0a0a0f;
 }
-/* 日程表滚动条样式 */
+/* 日程表滚动条样式 - 符合UI规范 */
 .schedule-scroll::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 .schedule-scroll::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 .schedule-scroll::-webkit-scrollbar-thumb {
-  background: rgba(206, 164, 114, 0.4);
-  border-radius: 3px;
-  transition: background 0.2s ease;
+  background: rgba(206, 164, 114, 0.5);
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .schedule-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(206, 164, 114, 0.6);
+  background: rgba(206, 164, 114, 0.8);
 }
 
 .schedule-scroll::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* 固定背景图片，不随页面切换跳动 */
-body {
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-/* 确保内容悬浮在背景上方 */
-#page-content {
-  position: relative;
-  z-index: 1;
+/* Firefox滚动条支持 */
+.schedule-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(206, 164, 114, 0.5) rgba(0, 0, 0, 0.2);
 }
