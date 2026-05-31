@@ -1100,7 +1100,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                             {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
                           </div>
                           <div className="flex-1 relative">
-                            {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                            {/* 只显示从earliestHour开始的时间背景 */}
+                            {Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour).map(hour => (
                               <div key={hour} className="h-10 border-b border-[#CEA472]/10"></div>
                             ))}
                             {mergedItems.map(item => {
@@ -1123,7 +1124,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 icon = arrival ? transportIcons[arrival.type] || transportIcons['other'] : transportIcons['other'];
                                 if (item.transportAfter) {
                                   const transport = item.transportAfter;
-                                  transportText = `"${transportNames[transport.type] || transport.type || '交通'}"至${transport.to || '下一站'}`;
+                                  transportText = `${transportNames[transport.type] || transport.type || '交通'}至下一程`;
                                 }
                               } else if (item.type === 'departure') {
                                 bgColor = 'bg-[#CEA472]/10';
@@ -1141,7 +1142,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 
                                 if (item.transportAfter) {
                                   const t = item.transportAfter;
-                                  transportText = `"${transportNames[t.type] || t.type || '交通'}"至${t.to || '下一站'}`;
+                                  transportText = `${transportNames[t.type] || t.type || '交通'}至下一程`;
                                 }
                               }
                               
