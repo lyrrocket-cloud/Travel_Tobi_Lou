@@ -43,7 +43,6 @@ export default function Home() {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('make-wish');
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -65,7 +64,35 @@ export default function Home() {
   const [deletingFollowerWishId, setDeletingFollowerWishId] = useState<string>('');
   const [deleteFollowerName, setDeleteFollowerName] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [mainTab, setMainTab] = useState('wish');
+  const [mainTab, setMainTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-main-tab');
+      return saved || 'wish';
+    }
+    return 'wish';
+  });
+
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-active-tab');
+      return saved || 'make-wish';
+    }
+    return 'make-wish';
+  });
+
+  // 保存 activeTab 到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && activeTab) {
+      localStorage.setItem('travel-toolbox-active-tab', activeTab);
+    }
+  }, [activeTab]);
+
+  // 保存 mainTab 到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && mainTab) {
+      localStorage.setItem('travel-toolbox-main-tab', mainTab);
+    }
+  }, [mainTab]);
 
   // 加载愿望数据
   const fetchWishes = async () => {

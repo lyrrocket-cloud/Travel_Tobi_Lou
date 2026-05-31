@@ -118,9 +118,21 @@ const calculateDate = (startDate: string, dayOffset: number): string => {
 
 export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
-  const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
+  const [selectedWishId, setSelectedWishId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-selected-wish-id');
+      return saved || null;
+    }
+    return null;
+  });
   const [showWishSelector, setShowWishSelector] = useState(false);
-  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedDay, setSelectedDay] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-selected-day');
+      return saved ? parseInt(saved, 10) : 1;
+    }
+    return 1;
+  });
   const [editingActivity, setEditingActivity] = useState<{ dayNumber: number; activityId: string } | null>(null);
   const [editingActivityData, setEditingActivityData] = useState<ActivityItem | null>(null);
   const [editingTransport, setEditingTransport] = useState<{ dayNumber: number; transportId: string } | null>(null);
@@ -135,6 +147,20 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     notes: undefined,
   });
   const [loading, setLoading] = useState(true);
+
+  // 保存 selectedWishId 到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && selectedWishId) {
+      localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+    }
+  }, [selectedWishId]);
+
+  // 保存 selectedDay 到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('travel-toolbox-selected-day', String(selectedDay));
+    }
+  }, [selectedDay]);
 
   // 默认选择第一个有规划的愿望
   useEffect(() => {
