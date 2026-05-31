@@ -1161,10 +1161,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               {/* 到达 */}
               {day === 1 && (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-[#CEA472]">
-                    <Plane className="w-4 h-4" />
-                    <span className="font-medium">到达</span>
-                  </div>
                   {currentDayPlan && getArrivalTransport(currentDayPlan) ? (
                     renderTransportItem(getArrivalTransport(currentDayPlan)!, day)
                   ) : (
@@ -1353,10 +1349,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               {/* 离开 */}
               {day === currentTripPlan.travelDays && (
                 <div className="space-y-2 mt-4">
-                  <div className="flex items-center gap-2 text-[#CEA472]">
-                    <Plane className="w-4 h-4" />
-                    <span className="font-medium">离开</span>
-                  </div>
                   {currentDayPlan && getDepartureTransport(currentDayPlan) ? (
                     renderTransportItem(getDepartureTransport(currentDayPlan)!, day)
                   ) : (
