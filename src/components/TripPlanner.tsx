@@ -893,20 +893,107 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <div className="flex min-w-max">
                   <div className="w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
-                    {Array.from({ length: 24 }, (_, i) => i).map(hour => (
-                      <div key={hour} className="h-10 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
-                        {String(hour).padStart(2, '0')}:00
-                      </div>
-                    ))}
+                    {/* 找到所有天数的最早时间，默认从7点开始，有更早活动则从更早开始 */}
+                    {(() => {
+                      let earliestHour = 7;
+                      // 检查所有天数的活动和交通的最早时间
+                      currentTripPlan?.days.forEach(day => {
+                        const sortedActivities = getSortedActivities(day.activities);
+                        // 检查活动
+                        sortedActivities.forEach(activity => {
+                          const hour = parseInt(activity.startTime.split(':')[0]);
+                          if (hour < earliestHour) earliestHour = hour;
+                        });
+                        // 检查到达
+                        if (day.dayNumber === 1) {
+                          const arrival = getArrivalTransport(day);
+                          if (arrival) {
+                            const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
+                            if (depHour < earliestHour) earliestHour = depHour;
+                            const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
+                            if (arrHour < earliestHour) earliestHour = arrHour;
+                          }
+                        }
+                        // 检查离开
+                        if (day.dayNumber === currentTripPlan.travelDays) {
+                          const departure = getDepartureTransport(day);
+                          if (departure) {
+                            const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
+                            if (depHour < earliestHour) earliestHour = depHour;
+                            const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
+                            if (arrHour < earliestHour) earliestHour = arrHour;
+                          }
+                        }
+                        // 检查交通
+                        sortedActivities.forEach((activity, idx) => {
+                          const nextActivity = sortedActivities[idx + 1];
+                          if (nextActivity) {
+                            const transport = getBetweenTransport(day, activity.id, nextActivity.id);
+                            if (transport) {
+                              const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
+                              if (depHour < earliestHour) earliestHour = depHour;
+                            }
+                          }
+                        });
+                      });
+                      
+                      const hoursToShow = Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour);
+                      
+                      // 存储earliestHour供下面使用
+                      return hoursToShow.map(hour => (
+                        <div key={hour} className="h-10 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
+                          {String(hour).padStart(2, '0')}:00
+                        </div>
+                      ));
+                    })()}
                   </div>
                   <div className="flex-1 flex">
                     {currentTripPlan?.days.map(day => {
                       const sortedActivities = getSortedActivities(day.activities);
                       const date = getDateDisplay(day.dayNumber);
                       
+                      {/* 同样计算这个天数的earliestHour */}
+                      let earliestHour = 7;
+                      // 检查活动
+                      sortedActivities.forEach(activity => {
+                        const hour = parseInt(activity.startTime.split(':')[0]);
+                        if (hour < earliestHour) earliestHour = hour;
+                      });
+                      // 检查到达
+                      if (day.dayNumber === 1) {
+                        const arrival = getArrivalTransport(day);
+                        if (arrival) {
+                          const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
+                          if (depHour < earliestHour) earliestHour = depHour;
+                          const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
+                          if (arrHour < earliestHour) earliestHour = arrHour;
+                        }
+                      }
+                      // 检查离开
+                      if (day.dayNumber === currentTripPlan.travelDays) {
+                        const departure = getDepartureTransport(day);
+                        if (departure) {
+                          const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
+                          if (depHour < earliestHour) earliestHour = depHour;
+                          const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
+                          if (arrHour < earliestHour) earliestHour = arrHour;
+                        }
+                      }
+                      // 检查交通
+                      sortedActivities.forEach((activity, idx) => {
+                        const nextActivity = sortedActivities[idx + 1];
+                        if (nextActivity) {
+                          const transport = getBetweenTransport(day, activity.id, nextActivity.id);
+                          if (transport) {
+                            const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
+                            if (depHour < earliestHour) earliestHour = depHour;
+                          }
+                        }
+                      });
+                      
                       const getTimePosition = (time: string) => {
                         const [hours, minutes] = time.split(':').map(Number);
-                        return (hours * 60 + minutes) * (40 / 60);
+                        return ((hours - earliestHour) * 60 + minutes) * (40 / 60);
                       };
                       
                       const getDuration = (startTime: string, endTime?: string) => {
