@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { readJsonFile, writeJsonFile, DATA_FILES } from '@/lib/storage';
 
 // 活动项接口
 interface ActivityItem {
@@ -50,17 +49,6 @@ interface TripPlan {
   updatedAt: string;
 }
 
-// 本地文件存储路径
-const DATA_FILE = path.join(process.cwd(), 'data', 'trip-plans.json');
-
-// 确保数据目录存在
-function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-}
-
 // 数据迁移函数：将旧数据结构转换为新结构
 function migrateTripPlan(plan: any): TripPlan {
   // 确保days存在
@@ -102,28 +90,14 @@ function migrateTripPlan(plan: any): TripPlan {
 
 // 从文件读取数据
 function readFromFile(): TripPlan[] {
-  try {
-    ensureDataDir();
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, 'utf-8');
-      const plans = JSON.parse(data);
-      // 对每个计划进行迁移
-      return plans.map(migrateTripPlan);
-    }
-  } catch (error) {
-    console.error('[Trip Plan] Error reading file:', error);
-  }
-  return [];
+  const plans = readJsonFile<TripPlan[]>(DATA_FILES.TRIP_PLANS, []);
+  // 对每个计划进行迁移
+  return plans.map(migrateTripPlan);
 }
 
 // 写入数据到文件
 function writeToFile(data: TripPlan[]) {
-  try {
-    ensureDataDir();
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('[Trip Plan] Error writing file:', error);
-  }
+  writeJsonFile(DATA_FILES.TRIP_PLANS, data);
 }
 
 // 初始化空的DayPlan

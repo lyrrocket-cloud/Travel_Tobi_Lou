@@ -1,52 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/storage/database/supabase-client';
-import fs from 'fs';
-import path from 'path';
-
-// 本地文件存储路径
-const DATA_FILE = path.join(process.cwd(), 'data', 'wishes.json');
-const FOLLOWERS_FILE = path.join(process.cwd(), 'data', 'followers.json');
-
-// 确保数据目录存在
-function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-}
-
-// 从文件读取数据
-function readFromFile(filePath: string, defaultValue: any) {
-  try {
-    if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, 'utf-8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('[File Storage] Error reading file:', error);
-  }
-  return defaultValue;
-}
-
-// 写入数据到文件
-function writeToFile(filePath: string, data: any) {
-  try {
-    ensureDataDir();
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('[File Storage] Error writing file:', error);
-  }
-}
+import { readJsonFile, writeJsonFile, DATA_FILES } from '@/lib/storage';
 
 // 保存数据到文件
 function saveToFile(wishes: any[], followers: any[]) {
-  writeToFile(DATA_FILE, wishes);
-  writeToFile(FOLLOWERS_FILE, followers);
+  writeJsonFile(DATA_FILES.WISHES, wishes);
+  writeJsonFile(DATA_FILES.FOLLOWERS, followers);
 }
 
 // 从文件加载数据
-let inMemoryWishes: any[] = readFromFile(DATA_FILE, []);
-let inMemoryFollowers: any[] = readFromFile(FOLLOWERS_FILE, []);
+let inMemoryWishes: any[] = readJsonFile(DATA_FILES.WISHES, []);
+let inMemoryFollowers: any[] = readJsonFile(DATA_FILES.FOLLOWERS, []);
 
 export async function POST(request: NextRequest) {
   console.log('[API Follow (new)] POST request received');

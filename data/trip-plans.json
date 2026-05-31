@@ -531,5 +531,125 @@
     ],
     "createdAt": "2026-05-31T12:06:04.500Z",
     "updatedAt": "2026-05-31T12:06:04.500Z"
+  },
+  {
+    "id": "trip-plan-1780229484801",
+    "wishId": 13,
+    "destination": "安吉",
+    "startDate": "2026-07-01",
+    "travelDays": 3,
+    "travelers": "tobi",
+    "days": [
+      {
+        "id": "day-1-1780229484801",
+        "dayNumber": 1,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780229484801",
+        "dayNumber": 2,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780229484801",
+        "dayNumber": 3,
+        "activities": [],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T12:11:24.801Z",
+    "updatedAt": "2026-05-31T12:11:24.801Z"
+  },
+  {
+    "id": "trip-plan-1780229711807",
+    "wishId": 11,
+    "destination": "坦桑尼亚",
+    "startDate": "2026-10-15",
+    "travelDays": 3,
+    "travelers": "楼宜人",
+    "days": [
+      {
+        "id": "day-1-1780229711807",
+        "dayNumber": 1,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780229711807",
+        "dayNumber": 2,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780229711807",
+        "dayNumber": 3,
+        "activities": [],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T12:15:11.807Z",
+    "updatedAt": "2026-05-31T12:15:11.807Z"
+  },
+  {
+    "id": "trip-plan-1780229783972",
+    "wishId": 12,
+    "destination": "南疆",
+    "startDate": "2026-02-18",
+    "travelDays": 3,
+    "travelers": "楼宜人,秦瑜贲,陆丽莎,陶晓婷,王一平,陈瑾妮",
+    "days": [
+      {
+        "id": "day-1-1780229783972",
+        "dayNumber": 1,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780229783972",
+        "dayNumber": 2,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780229783972",
+        "dayNumber": 3,
+        "activities": [],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T12:16:23.972Z",
+    "updatedAt": "2026-05-31T12:16:23.972Z"
+  },
+  {
+    "id": "trip-plan-1780230004062",
+    "wishId": "13",
+    "destination": "安吉",
+    "startDate": "2026-07-01",
+    "travelDays": 3,
+    "travelers": "tobi",
+    "days": [
+      {
+        "id": "day-1-1780230004062",
+        "dayNumber": 1,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780230004062",
+        "dayNumber": 2,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780230004062",
+        "dayNumber": 3,
+        "activities": [],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T12:20:04.062Z",
+    "updatedAt": "2026-05-31T12:20:04.062Z"
   }
 ]
