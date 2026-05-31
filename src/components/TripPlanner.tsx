@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -868,7 +868,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
         <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-[#CEA472] font-medium">📅 旅行日程表</h4>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
+                  <Calendar className="w-5 h-5 text-[#0a0a0f]" />
+                </div>
+                <h4 className="text-[#CEA472] font-medium">旅行日程表</h4>
+              </div>
               <Button
                 size="icon"
                 variant="ghost"
