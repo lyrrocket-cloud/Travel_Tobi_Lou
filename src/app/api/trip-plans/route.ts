@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// 旅行规划日程项接口
-interface DayPlanItem {
+// 活动项接口
+interface ActivityItem {
   id: string;
-  time: string; // 'breakfast' | 'morning' | 'lunch' | 'afternoon' | 'dinner' | 'evening' | 'accommodation'
+  type: string; // 'breakfast' | 'morning' | 'lunch' | 'afternoon' | 'dinner' | 'evening' | 'accommodation' | 'other'
+  startTime: string;
+  endTime: string;
   content: string;
   location?: string;
   notes?: string;
@@ -20,6 +22,9 @@ interface TransportInfo {
   departureTime?: string;
   arrivalTime?: string;
   details?: string;
+  position: 'arrival' | 'departure' | 'between';
+  beforeActivityId?: string;
+  afterActivityId?: string;
 }
 
 // 单日旅行计划接口
@@ -27,7 +32,7 @@ interface DayPlan {
   id: string;
   dayNumber: number;
   date?: string;
-  items: DayPlanItem[];
+  activities: ActivityItem[];
   transport: TransportInfo[];
 }
 
@@ -85,15 +90,7 @@ function createEmptyDayPlan(dayNumber: number): DayPlan {
   return {
     id: `day-${dayNumber}-${Date.now()}`,
     dayNumber,
-    items: [
-      { id: `item-${dayNumber}-breakfast`, time: 'breakfast', content: '', location: '', notes: '' },
-      { id: `item-${dayNumber}-morning`, time: 'morning', content: '', location: '', notes: '' },
-      { id: `item-${dayNumber}-lunch`, time: 'lunch', content: '', location: '', notes: '' },
-      { id: `item-${dayNumber}-afternoon`, time: 'afternoon', content: '', location: '', notes: '' },
-      { id: `item-${dayNumber}-dinner`, time: 'dinner', content: '', location: '', notes: '' },
-      { id: `item-${dayNumber}-evening`, time: 'evening', content: '', location: '', notes: '' },
-      { id: `item-${dayNumber}-accommodation`, time: 'accommodation', content: '', location: '', notes: '' },
-    ],
+    activities: [],
     transport: [],
   };
 }
