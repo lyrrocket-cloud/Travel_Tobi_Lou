@@ -760,10 +760,7 @@ export default function Home() {
                                 <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3">
                                   <div className="flex items-center gap-1">
                                     <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                    <span className="text-sm">{(() => {
-                                      const dateStr = wish.confirmed_date || '';
-                                      return extractYYYYMMFromDate(dateStr);
-                                    })()}</span>
+                                    <span className="text-sm">{wish.confirmed_date || ''}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
