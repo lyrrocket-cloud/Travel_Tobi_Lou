@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
+import TripPlanner from '@/components/TripPlanner';
+import { Wish } from '@/types';
 
 const months = [
   '一月', '二月', '三月', '四月', '五月', '六月',
@@ -33,20 +35,6 @@ const extractYYYYMMFromDate = (dateStr: string): string => {
   return dateStr;
 };
 
-interface Wish {
-  id: string;
-  destination: string;
-  travel_month: string;
-  travel_year: number;
-  wisher_name: string;
-  is_confirmed: number;
-  is_expired?: number;
-  confirmed_date?: string;
-  travelers?: string;
-  followers_count: number;
-  followers: string[];
-}
-
 export default function Home() {
   const [destination, setDestination] = useState('');
   const [travelYearMonth, setTravelYearMonth] = useState('');
@@ -65,6 +53,7 @@ export default function Home() {
   const [confirmingWishId, setConfirmingWishId] = useState<string>('');
   const [confirmDate, setConfirmDate] = useState('');
   const [confirmTravelers, setConfirmTravelers] = useState('');
+  const [confirmTravelDays, setConfirmTravelDays] = useState('3');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletingWishId, setDeletingWishId] = useState<string>('');
   const [editTripModalOpen, setEditTripModalOpen] = useState(false);
@@ -241,12 +230,13 @@ export default function Home() {
   };
 
   const handleConfirmWish = async () => {
-    if (!confirmingWishId || !confirmDate || !confirmTravelers) {
+    if (!confirmingWishId || !confirmDate || !confirmTravelers || !confirmTravelDays) {
       alert('请填写完整的行程信息');
       return;
     }
 
     try {
+      // 首先确认愿望成行
       const response = await fetch('/api/wishes', {
         method: 'PUT',
         headers: {
@@ -261,10 +251,34 @@ export default function Home() {
       });
 
       if (response.ok) {
+        // 找到对应的愿望信息
+        const wish = wishes.find(w => w.id === confirmingWishId);
+        if (wish) {
+          // 创建旅行规划
+          try {
+            await fetch('/api/trip-plans', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                wishId: confirmingWishId,
+                destination: wish.destination,
+                startDate: confirmDate,
+                travelDays: parseInt(confirmTravelDays),
+                travelers: confirmTravelers,
+              }),
+            });
+          } catch (planError) {
+            console.error('Error creating trip plan:', planError);
+          }
+        }
+
         setConfirmModalOpen(false);
         setConfirmingWishId('');
         setConfirmDate('');
         setConfirmTravelers('');
+        setConfirmTravelDays('3');
         fetchWishes();
       } else {
         const data = await response.json();
@@ -883,18 +897,7 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <div className="space-y-6">
-          <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <Map className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行规划</h3>
-                <p className="text-[#FFFFFF]/60 mb-2">此功能正在开发中...</p>
-                <p className="text-sm text-[#FFFFFF]/40">即将支持：行程规划、目的地探索、预算管理</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} />
       );
     } else if (mainTab === 'account') {
       return (
@@ -1124,14 +1127,30 @@ export default function Home() {
               onChange={(e) => setConfirmDate(e.target.value)}
               className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
             />
-            <Label htmlFor="confirm-travelers" className="text-[#FFFFFF]">同行人员</Label>
-            <Input
-              id="confirm-travelers"
-              value={confirmTravelers}
-              onChange={(e) => setConfirmTravelers(e.target.value)}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
-              placeholder="例如：张三、李四、王五"
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="confirm-travel-days" className="text-[#FFFFFF]">旅行天数</Label>
+                <Input
+                  id="confirm-travel-days"
+                  type="number"
+                  min="1"
+                  max="30"
+                  value={confirmTravelDays}
+                  onChange={(e) => setConfirmTravelDays(e.target.value)}
+                  className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+                />
+              </div>
+              <div>
+                <Label htmlFor="confirm-travelers" className="text-[#FFFFFF]">同行人员</Label>
+                <Input
+                  id="confirm-travelers"
+                  value={confirmTravelers}
+                  onChange={(e) => setConfirmTravelers(e.target.value)}
+                  className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+                  placeholder="例如：张三、李四、王五"
+                />
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button
@@ -1141,6 +1160,7 @@ export default function Home() {
                 setConfirmingWishId('');
                 setConfirmDate('');
                 setConfirmTravelers('');
+                setConfirmTravelDays('3');
               }}
               className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
