@@ -122,7 +122,9 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [showWishSelector, setShowWishSelector] = useState(false);
   const [selectedDay, setSelectedDay] = useState(1);
   const [editingActivity, setEditingActivity] = useState<{ dayNumber: number; activityId: string } | null>(null);
+  const [editingActivityData, setEditingActivityData] = useState<ActivityItem | null>(null);
   const [editingTransport, setEditingTransport] = useState<{ dayNumber: number; transportId: string } | null>(null);
+  const [editingTransportData, setEditingTransportData] = useState<TransportInfo | null>(null);
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [newActivity, setNewActivity] = useState<Omit<ActivityItem, 'id'>>({
     type: 'other',
@@ -289,9 +291,47 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       if (response.ok) {
         fetchTripPlans();
         setEditingActivity(null);
+        setEditingActivityData(null);
       }
     } catch (error) {
       console.error('[Trip Planner] Failed to delete activity:', error);
+    }
+  };
+
+  // 批量更新活动数据
+  const updateActivityData = async (dayNumber: number, activityId: string, updatedData: ActivityItem) => {
+    if (!currentTripPlan) return;
+
+    const updatedDays = currentTripPlan.days.map(day => {
+      if (day.dayNumber === dayNumber) {
+        const updatedActivities = day.activities.map(a => {
+          if (a.id === activityId) {
+            return updatedData;
+          }
+          return a;
+        });
+        return { ...day, activities: updatedActivities };
+      }
+      return day;
+    });
+
+    try {
+      const response = await fetch('/api/trip-plans', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: currentTripPlan.id,
+          days: updatedDays,
+        }),
+      });
+
+      if (response.ok) {
+        fetchTripPlans();
+        setEditingActivity(null);
+        setEditingActivityData(null);
+      }
+    } catch (error) {
+      console.error('[Trip Planner] Failed to update activity data:', error);
     }
   };
 
@@ -340,10 +380,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
 
       if (response.ok) {
         setEditingTransport({ dayNumber, transportId });
+        setEditingTransportData(newTransport);
       }
     } catch (error) {
       console.error('[Trip Planner] Failed to add transport:', error);
       setEditingTransport({ dayNumber, transportId });
+      setEditingTransportData(newTransport);
     }
   };
 
@@ -407,9 +449,47 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       if (response.ok) {
         fetchTripPlans();
         setEditingTransport(null);
+        setEditingTransportData(null);
       }
     } catch (error) {
       console.error('[Trip Planner] Failed to delete transport:', error);
+    }
+  };
+
+  // 批量更新交通信息
+  const updateTransportData = async (dayNumber: number, transportId: string, updatedData: TransportInfo) => {
+    if (!currentTripPlan) return;
+
+    const updatedDays = currentTripPlan.days.map(day => {
+      if (day.dayNumber === dayNumber) {
+        const updatedTransport = day.transport.map(t => {
+          if (t.id === transportId) {
+            return updatedData;
+          }
+          return t;
+        });
+        return { ...day, transport: updatedTransport };
+      }
+      return day;
+    });
+
+    try {
+      const response = await fetch('/api/trip-plans', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: currentTripPlan.id,
+          days: updatedDays,
+        }),
+      });
+
+      if (response.ok) {
+        fetchTripPlans();
+        setEditingTransport(null);
+        setEditingTransportData(null);
+      }
+    } catch (error) {
+      console.error('[Trip Planner] Failed to update transport data:', error);
     }
   };
 
@@ -431,6 +511,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   // 交通项的渲染组件
   const renderTransportItem = (transport: TransportInfo, day: number) => {
     const isEditing = editingTransport?.dayNumber === day && editingTransport?.transportId === transport.id;
+    const editingData = isEditing && editingTransportData ? editingTransportData : transport;
 
     if (isEditing) {
       return (
@@ -440,8 +521,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div>
                 <Label className="text-[#FFFFFF]/60">交通方式</Label>
                 <select
-                  value={transport.type}
-                  onChange={(e) => updateTransport(day, transport.id, 'type', e.target.value)}
+                  value={editingData.type}
+                  onChange={(e) => setEditingTransportData({ ...editingData, type: e.target.value })}
                   className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
                 >
                   <option value="taxi">出租车</option>
@@ -455,8 +536,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div>
                 <Label className="text-[#FFFFFF]/60">出发地</Label>
                 <Input
-                  value={transport.from}
-                  onChange={(e) => updateTransport(day, transport.id, 'from', e.target.value)}
+                  value={editingData.from}
+                  onChange={(e) => setEditingTransportData({ ...editingData, from: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="从哪里出发"
                 />
@@ -464,8 +545,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div>
                 <Label className="text-[#FFFFFF]/60">目的地</Label>
                 <Input
-                  value={transport.to}
-                  onChange={(e) => updateTransport(day, transport.id, 'to', e.target.value)}
+                  value={editingData.to}
+                  onChange={(e) => setEditingTransportData({ ...editingData, to: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="到哪里去"
                 />
@@ -474,8 +555,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <Label className="text-[#FFFFFF]/60">出发时间</Label>
                 <Input
                   type="time"
-                  value={transport.departureTime || ''}
-                  onChange={(e) => updateTransport(day, transport.id, 'departureTime', e.target.value)}
+                  value={editingData.departureTime || ''}
+                  onChange={(e) => setEditingTransportData({ ...editingData, departureTime: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                 />
               </div>
@@ -483,16 +564,16 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <Label className="text-[#FFFFFF]/60">到达时间</Label>
                 <Input
                   type="time"
-                  value={transport.arrivalTime || ''}
-                  onChange={(e) => updateTransport(day, transport.id, 'arrivalTime', e.target.value)}
+                  value={editingData.arrivalTime || ''}
+                  onChange={(e) => setEditingTransportData({ ...editingData, arrivalTime: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                 />
               </div>
               <div className="md:col-span-2">
                 <Label className="text-[#FFFFFF]/60">备注</Label>
                 <Input
-                  value={transport.details || ''}
-                  onChange={(e) => updateTransport(day, transport.id, 'details', e.target.value)}
+                  value={editingData.details || ''}
+                  onChange={(e) => setEditingTransportData({ ...editingData, details: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="其他说明信息"
                 />
@@ -509,7 +590,11 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               </Button>
               <Button
                 size="icon"
-                onClick={() => setEditingTransport(null)}
+                onClick={() => {
+                  if (editingTransportData) {
+                    updateTransportData(day, transport.id, editingTransportData);
+                  }
+                }}
                 className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
               >
                 <Save className="w-4 h-4" />
@@ -524,7 +609,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       <div 
         key={transport.id}
         className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/40 transition-colors"
-        onClick={() => setEditingTransport({ dayNumber: day, transportId: transport.id })}
+        onClick={() => {
+          setEditingTransport({ dayNumber: day, transportId: transport.id });
+          setEditingTransportData({ ...transport });
+        }}
       >
         <div className="flex items-center gap-2 text-[#CEA472]">
           {transportIcons[transport.type] || transportIcons['other']}
@@ -557,6 +645,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   // 活动项的渲染组件
   const renderActivityItem = (activity: ActivityItem, day: number) => {
     const isEditing = editingActivity?.dayNumber === day && editingActivity?.activityId === activity.id;
+    const editingData = isEditing && editingActivityData ? editingActivityData : activity;
 
     if (isEditing) {
       return (
@@ -566,8 +655,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div>
                 <Label className="text-[#FFFFFF]/60">活动类型</Label>
                 <select
-                  value={activity.type}
-                  onChange={(e) => updateActivity(day, activity.id, 'type', e.target.value)}
+                  value={editingData.type}
+                  onChange={(e) => setEditingActivityData({ ...editingData, type: e.target.value })}
                   className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
                 >
                   <option value="breakfast">早餐</option>
@@ -583,8 +672,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div>
                 <Label className="text-[#FFFFFF]/60">地点</Label>
                 <Input
-                  value={activity.location || ''}
-                  onChange={(e) => updateActivity(day, activity.id, 'location', e.target.value)}
+                  value={editingData.location || ''}
+                  onChange={(e) => setEditingActivityData({ ...editingData, location: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="活动地点"
                 />
@@ -593,8 +682,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <Label className="text-[#FFFFFF]/60">开始时间</Label>
                 <Input
                   type="time"
-                  value={activity.startTime}
-                  onChange={(e) => updateActivity(day, activity.id, 'startTime', e.target.value)}
+                  value={editingData.startTime}
+                  onChange={(e) => setEditingActivityData({ ...editingData, startTime: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                 />
               </div>
@@ -602,16 +691,16 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 <Label className="text-[#FFFFFF]/60">结束时间</Label>
                 <Input
                   type="time"
-                  value={activity.endTime}
-                  onChange={(e) => updateActivity(day, activity.id, 'endTime', e.target.value)}
+                  value={editingData.endTime}
+                  onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                 />
               </div>
               <div className="md:col-span-2">
                 <Label className="text-[#FFFFFF]/60">活动内容</Label>
                 <Input
-                  value={activity.content}
-                  onChange={(e) => updateActivity(day, activity.id, 'content', e.target.value)}
+                  value={editingData.content}
+                  onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="活动内容"
                 />
@@ -619,8 +708,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               <div className="md:col-span-2">
                 <Label className="text-[#FFFFFF]/60">备注</Label>
                 <Input
-                  value={activity.notes || ''}
-                  onChange={(e) => updateActivity(day, activity.id, 'notes', e.target.value)}
+                  value={editingData.notes || ''}
+                  onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="备注"
                 />
@@ -637,7 +726,11 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               </Button>
               <Button
                 size="icon"
-                onClick={() => setEditingActivity(null)}
+                onClick={() => {
+                  if (editingActivityData) {
+                    updateActivityData(day, activity.id, editingActivityData);
+                  }
+                }}
                 className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
               >
                 <Save className="w-4 h-4" />
@@ -652,7 +745,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       <div 
         key={activity.id}
         className="bg-black/30 border border-[#CEA472]/20 rounded-md p-4 cursor-pointer hover:bg-black/40 transition-colors"
-        onClick={() => setEditingActivity({ dayNumber: day, activityId: activity.id })}
+        onClick={() => {
+          setEditingActivity({ dayNumber: day, activityId: activity.id });
+          setEditingActivityData({ ...activity });
+        }}
       >
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#CEA472]/20 flex items-center justify-center">
@@ -672,6 +768,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                 onClick={(e) => {
                   e.stopPropagation();
                   setEditingActivity({ dayNumber: day, activityId: activity.id });
+                  setEditingActivityData({ ...activity });
                 }}
                 className="text-[#FFFFFF]/40 hover:text-[#CEA472] h-8 w-8"
               >
@@ -716,12 +813,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           {currentTripPlan.destination} 旅行规划
         </h3>
         <Button
-          variant="outline"
-          onClick={() => setShowWishSelector(!showWishSelector)}
-          className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/80"
-        >
-          切换愿望
-        </Button>
+            variant="outline"
+            onClick={() => setShowWishSelector(!showWishSelector)}
+            className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/80"
+          >
+            切换行程
+          </Button>
       </div>
 
       {showWishSelector && (
