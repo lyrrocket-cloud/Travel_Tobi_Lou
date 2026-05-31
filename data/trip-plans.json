@@ -266,7 +266,7 @@
           },
           {
             "type": "lunch",
-            "startTime": "12:00",
+            "startTime": "11:30",
             "location": "我家姐点心",
             "id": "activity-1780201410818"
           },
@@ -276,6 +276,13 @@
             "content": "酒店自助餐",
             "location": "千岛湖VOCO酒店",
             "id": "activity-1780201520683"
+          },
+          {
+            "type": "afternoon",
+            "startTime": "15:00",
+            "content": "游泳",
+            "location": "千岛湖VOCO酒店",
+            "id": "activity-1780222915267"
           }
         ],
         "transport": [
@@ -348,6 +355,30 @@
             "position": "between",
             "beforeActivityId": "arrival",
             "afterActivityId": "activity-1780201410818"
+          },
+          {
+            "id": "transport-1780222919093",
+            "type": "taxi",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780200657098",
+            "afterActivityId": "activity-1780222915267"
+          },
+          {
+            "id": "transport-1780222921881",
+            "type": "walk",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780222915267",
+            "afterActivityId": "activity-1780201520683"
           }
         ]
       },
@@ -469,6 +500,6 @@
       }
     ],
     "createdAt": "2026-05-31T04:07:40.413Z",
-    "updatedAt": "2026-05-31T08:47:21.953Z"
+    "updatedAt": "2026-05-31T10:22:05.801Z"
   }
 ]
