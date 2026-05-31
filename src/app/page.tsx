@@ -1116,11 +1116,11 @@ export default function Home() {
             <DialogTitle className="text-[#FFFFFF]">确认成行</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <Label htmlFor="confirm-date" className="text-[#FFFFFF]">出发日期 (YYYY-MM-DD)</Label>
+            <Label htmlFor="confirm-date" className="text-[#FFFFFF]">出发日期</Label>
             <Input
               id="confirm-date"
               type="text"
-              placeholder="例如: 2026-06-01"
+              placeholder="YYYY-MM-DD"
               value={confirmDate}
               onChange={(e) => setConfirmDate(e.target.value)}
               className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
@@ -1209,11 +1209,11 @@ export default function Home() {
             <DialogTitle className="text-[#FFFFFF]">编辑行程</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <Label htmlFor="edit-trip-date" className="text-[#FFFFFF]">出发日期 (YYYY-MM-DD)</Label>
+            <Label htmlFor="edit-trip-date" className="text-[#FFFFFF]">出发日期</Label>
             <Input
               id="edit-trip-date"
               type="text"
-              placeholder="例如: 2026-06-01"
+              placeholder="YYYY-MM-DD"
               value={editingTrip?.confirmed_date || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, confirmed_date: e.target.value })}
               className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
