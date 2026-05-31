@@ -1480,7 +1480,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           }}
           className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
         >
-          <span className="mr-2">📅</span>
           {showSchedule ? '编辑日程' : '生成日程表'}
         </Button>
       </div>
