@@ -61,7 +61,17 @@
             "notes": ""
           }
         ],
-        "transport": []
+        "transport": [
+          {
+            "id": "transport-1780197005668",
+            "type": "other",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": ""
+          }
+        ]
       },
       {
         "id": "day-2-1780192503997",
@@ -177,7 +187,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-05-31T01:55:03.997Z"
+    "updatedAt": "2026-05-31T03:10:05.897Z"
   },
   {
     "id": "trip-plan-1780193545980",
