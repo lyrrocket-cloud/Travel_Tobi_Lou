@@ -63,7 +63,14 @@ export default function Home() {
   const [deleteFollowerModalOpen, setDeleteFollowerModalOpen] = useState(false);
   const [deletingFollowerWishId, setDeletingFollowerWishId] = useState<string>('');
   const [deleteFollowerName, setDeleteFollowerName] = useState('');
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('travel-toolbox-selected-year');
+      return saved ? parseInt(saved, 10) : new Date().getFullYear();
+    }
+    return new Date().getFullYear();
+  });
+
   const [mainTab, setMainTab] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('travel-toolbox-main-tab');
@@ -93,6 +100,47 @@ export default function Home() {
       localStorage.setItem('travel-toolbox-main-tab', mainTab);
     }
   }, [mainTab]);
+
+  // 保存 selectedYear 到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('travel-toolbox-selected-year', String(selectedYear));
+    }
+  }, [selectedYear]);
+
+  // 恢复滚动位置
+  useEffect(() => {
+    const savedScrollY = localStorage.getItem('travel-toolbox-scroll-y');
+    if (savedScrollY) {
+      // 延迟执行以确保页面内容已加载
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollY, 10));
+      }, 100);
+    }
+
+    // 监听滚动事件，保存滚动位置
+    const handleScroll = () => {
+      localStorage.setItem('travel-toolbox-scroll-y', String(window.scrollY));
+    };
+
+    // 使用节流来避免频繁写入
+    let scrollTimeout: NodeJS.Timeout;
+    const throttledHandleScroll = () => {
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      scrollTimeout = setTimeout(handleScroll, 100);
+    };
+
+    window.addEventListener('scroll', throttledHandleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', throttledHandleScroll);
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+    };
+  }, []);
 
   // 加载愿望数据
   const fetchWishes = async () => {
