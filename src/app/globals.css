@@ -136,7 +136,7 @@ body {
   @apply font-sans;
   background-color: #0a0a0f;
   color: #FFFFFF;
-  background-image: url('https://neeko-copilot.bytedance.net/api/text_to_image?prompt=majestic%20Matterhorn%20mountain%20peak%20covered%20in%20snow%20with%20golden%20sunlight%20hitting%20the%20summit%20dramatic%20alpine%20landscape%20at%20dawn%20with%20soft%20pastel%20sky&image_size=landscape_16_9');
+  background-image: url('https://neeko-copilot.bytedance.net/api/text-to-image?prompt=majestic%20Matterhorn%20mountain%20peak%20covered%20in%20snow%20with%20golden%20sunlight%20hitting%20the%20summit%20dramatic%20alpine%20landscape%20at%20dawn%20with%20soft%20pastel%20sky&image-size=landscape_16_9');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -148,17 +148,17 @@ body {
    滚动条样式（避免页面抖动 - 始终显示）
    ======================================== */
 
-/* HTML元素 - 始终显示滚动条以避免页面抖动 */
+/* HTML元素 - 关键修复：确保滚动条宽度始终为8px */
 html {
-  overflow-y: scroll;
-  overflow-x: hidden;
-  scrollbar-gutter: stable;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable 8px !important;
 }
 
-/* 全局滚动条样式 - Webkit内核浏览器（Chrome、Safari、Edge） */
+/* 全局滚动条样式 - Webkit内核浏览器 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 8px !important;
+  height: 8px !important;
 }
 
 ::-webkit-scrollbar-track {
@@ -182,15 +182,42 @@ html {
 
 /* Firefox浏览器滚动条 */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(206, 164, 114, 0.3) rgba(0, 0, 0, 0.2);
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(206, 164, 114, 0.3) rgba(0, 0, 0, 0.2) !important;
 }
 
-/* 禁用Radix UI Dialog自动处理滚动条的行为 */
-body:has([data-state="open"][role="dialog"]) {
-  overflow: auto !important;
-  padding-right: 0 !important;
+/* 关键修复：用最高优先级阻止任何body样式变化 */
+html body,
+body,
+body::before,
+body::after {
+  padding-right: 8px !important;
   margin-right: 0 !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable 8px !important;
+}
+
+/* 当Dialog打开时，保持完全相同的样式 */
+body:has([data-state="open"][role="dialog"]),
+body[data-state="open"],
+body.dialog-open {
+  padding-right: 8px !important;
+  margin-right: 0 !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable 8px !important;
+}
+
+/* 最高优先级：覆盖任何内联样式 */
+body[style] {
+  padding-right: 8px !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable 8px !important;
+}
+
+/* 额外保护：使用CSS变量锁定样式 */
+body {
+  --fixed-padding-right: 8px;
+  --fixed-overflow: auto;
 }
 
 /* 隐藏滚动条工具类 */
