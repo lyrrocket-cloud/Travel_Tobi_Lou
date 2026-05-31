@@ -186,26 +186,31 @@ html {
   scrollbar-color: rgba(206, 164, 114, 0.3) rgba(0, 0, 0, 0.2);
 }
 
-/* 弹窗内滚动条样式 */
+/* 弹窗内滚动条样式 - 与主页面保持一致 */
 [role="dialog"] ::-webkit-scrollbar,
 [data-state="open"] ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 [role="dialog"] ::-webkit-scrollbar-track,
 [data-state="open"] ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 [role="dialog"] ::-webkit-scrollbar-thumb,
 [data-state="open"] ::-webkit-scrollbar-thumb {
-  background: rgba(206, 164, 114, 0.4);
+  background: rgba(206, 164, 114, 0.3);
 }
 
 [role="dialog"] ::-webkit-scrollbar-thumb:hover,
 [data-state="open"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(206, 164, 114, 0.6);
+  background: rgba(206, 164, 114, 0.5);
+}
+
+/* Radix UI Dialog 防止页面跳动 - 添加固定右内边距补偿滚动条 */
+body:has([data-state="open"][role="dialog"]) {
+  padding-right: 8px !important;
 }
 
 /* 隐藏滚动条工具类 */
