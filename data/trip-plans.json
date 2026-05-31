@@ -41,15 +41,7 @@
             "position": "arrival"
           }
         ],
-        "activities": [
-          {
-            "type": "afternoon",
-            "startTime": "13:00",
-            "content": "徒步轻松版",
-            "location": "牧心谷",
-            "id": "activity-1780200632165"
-          }
-        ]
+        "activities": []
       },
       {
         "id": "day-2-1780192503997",
@@ -143,7 +135,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-05-31T04:10:32.325Z"
+    "updatedAt": "2026-05-31T04:22:13.043Z"
   },
   {
     "id": "trip-plan-1780193545980",
@@ -271,6 +263,19 @@
             "content": "徒步轻松版",
             "location": "牧心谷",
             "id": "activity-1780200657098"
+          },
+          {
+            "type": "lunch",
+            "startTime": "12:00",
+            "location": "我家姐点心",
+            "id": "activity-1780201410818"
+          },
+          {
+            "type": "dinner",
+            "startTime": "18:00",
+            "content": "酒店自助餐",
+            "location": "千岛湖VOCO酒店",
+            "id": "activity-1780201520683"
           }
         ],
         "transport": [
@@ -295,6 +300,54 @@
             "position": "between",
             "beforeActivityId": "activity-1780200657098",
             "afterActivityId": "activity-1780200583047"
+          },
+          {
+            "id": "transport-1780201412633",
+            "type": "taxi",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780201410818",
+            "afterActivityId": "activity-1780200657098"
+          },
+          {
+            "id": "transport-1780201522877",
+            "type": "walk",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780201520683",
+            "afterActivityId": "activity-1780200583047"
+          },
+          {
+            "id": "transport-1780201530014",
+            "type": "taxi",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780200657098",
+            "afterActivityId": "activity-1780201520683"
+          },
+          {
+            "id": "transport-1780201806423",
+            "type": "taxi",
+            "from": "",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "arrival",
+            "afterActivityId": "activity-1780201410818"
           }
         ]
       },
@@ -306,6 +359,6 @@
       }
     ],
     "createdAt": "2026-05-31T04:07:40.413Z",
-    "updatedAt": "2026-05-31T04:11:09.283Z"
+    "updatedAt": "2026-05-31T04:30:17.696Z"
   }
 ]
