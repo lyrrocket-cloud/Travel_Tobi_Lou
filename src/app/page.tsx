@@ -17,6 +17,22 @@ const months = [
 
 const monthsShort = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
 
+// 统一日期格式化函数 - 格式化为YYYY-MM
+const formatDateToYYYYMM = (year: number | string, month: number | string): string => {
+  const yearStr = typeof year === 'number' ? String(year) : year;
+  const monthStr = typeof month === 'number' ? String(month).padStart(2, '0') : month.padStart(2, '0');
+  return `${yearStr}-${monthStr}`;
+};
+
+// 从YYYY-MM-DD格式中提取YYYY-MM
+const extractYYYYMMFromDate = (dateStr: string): string => {
+  const dateParts = dateStr.split('-');
+  if (dateParts.length >= 2) {
+    return `${dateParts[0]}-${dateParts[1]}`;
+  }
+  return dateStr;
+};
+
 interface Wish {
   id: string;
   destination: string;
@@ -504,12 +520,9 @@ export default function Home() {
                           {hasTrips && (
                             <div className="hidden sm:block mt-2 space-y-1 w-full">
                               {confirmedTrips.map(trip => {
-                                // 格式化日期为XX月XX日（不显示年份）
+                                // 格式化日期为YYYY-MM
                                 const dateStr = trip.confirmed_date || '';
-                                const dateParts = dateStr.split('-');
-                                const formattedDate = dateParts.length >= 3
-                                  ? `${dateParts[1]}月${dateParts[2]}日`
-                                  : dateStr;
+                                const formattedDate = extractYYYYMMFromDate(dateStr);
                                 const isExpired = trip.is_expired === 1;
 
                                 return (
@@ -538,12 +551,9 @@ export default function Home() {
                     {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
                       .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
                       .map(trip => {
-                        // 格式化日期为XX月XX日（不显示年份）
+                        // 格式化日期为YYYY-MM
                         const dateStr = trip.confirmed_date || '';
-                        const dateParts = dateStr.split('-');
-                        const formattedDate = dateParts.length >= 3
-                          ? `${dateParts[1]}月${dateParts[2]}日`
-                          : dateStr;
+                        const formattedDate = extractYYYYMMFromDate(dateStr);
                         const isExpired = trip.is_expired === 1;
 
                         return (
@@ -744,8 +754,7 @@ export default function Home() {
                                     <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
                                     <span className="text-sm">{(() => {
                                       const dateStr = wish.confirmed_date || '';
-                                      const dateParts = dateStr.split('-');
-                                      return dateParts.length >= 3 ? `${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日` : dateStr;
+                                      return extractYYYYMMFromDate(dateStr);
                                     })()}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
@@ -758,7 +767,7 @@ export default function Home() {
                                   <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-2">
                                     <div className="flex items-center gap-1">
                                       <Calendar className="w-4 h-4 text-[#CEA472]" />
-                                      <span className="text-sm">{wish.travel_year}年{String(months.indexOf(wish.travel_month) + 1).padStart(2, '0')}月</span>
+                                      <span className="text-sm">{formatDateToYYYYMM(wish.travel_year, months.indexOf(wish.travel_month) + 1)}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                       <User className="w-4 h-4 text-[#CEA472]" />
