@@ -851,45 +851,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           </Button>
       </div>
 
-      {showWishSelector && (
-        <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-[#CEA472] font-medium">选择愿望</h4>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setShowWishSelector(false)}
-                className="text-[#FFFFFF]/60"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {confirmedWishes.map(wish => (
-                <button
-                  key={wish.id}
-                  onClick={() => {
-                    setSelectedWishId(wish.id);
-                    setShowWishSelector(false);
-                  }}
-                  className={`w-full text-left p-3 rounded-md border transition-colors ${
-                    selectedWishId === wish.id
-                      ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]'
-                      : 'bg-black/30 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'
-                  }`}
-                >
-                  <div className="font-medium">{wish.destination}</div>
-                  <div className="text-sm text-[#FFFFFF]/50">
-                    {wish.confirmed_date} · {wish.travel_year}年{wish.travel_month} · {wish.travelers}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {showSchedule && (
         <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
           <CardContent className="pt-4">
@@ -1016,6 +977,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                               let icon = null;
                               let title = '';
                               let subtitle = '';
+                              let zIndexVal = 10;
                               
                               if (item.type === 'arrival' || item.type === 'departure') {
                                 bgColor = 'bg-[#CEA472]/10';
@@ -1023,18 +985,21 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 icon = transportIcons[item.data.type] || transportIcons['other'];
                                 title = item.type === 'arrival' ? '到达' : '离开';
                                 subtitle = item.data.to || item.data.from || '目的地';
+                                zIndexVal = 20;
                               } else if (item.type === 'transport') {
                                 bgColor = 'bg-[#CEA472]/5';
                                 borderColor = 'border-[#CEA472]/50';
                                 icon = transportIcons[item.data.type] || transportIcons['other'];
                                 title = '交通';
                                 subtitle = `${item.data.from || '某地'} → ${item.data.to || '某地'}`;
+                                zIndexVal = 15;
                               } else {
                                 bgColor = 'bg-[#CEA472]/15';
                                 borderColor = 'border-[#CEA472]';
                                 icon = activityTypeIcons[item.data.type] || activityTypeIcons['other'];
                                 title = activityTypes[item.data.type] || '活动';
                                 subtitle = item.data.content || item.data.location || '';
+                                zIndexVal = 25;
                               }
                               
                               return (
@@ -1044,7 +1009,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                   style={{
                                     top: `${top}px`,
                                     height: `${height}px`,
-                                    zIndex: 10,
+                                    zIndex: zIndexVal,
                                   }}
                                 >
                                   <div className="flex items-start gap-1">
@@ -1053,11 +1018,15 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
-                                      {subtitle && <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>}
-                                      <div className="text-[#FFFFFF]/40 text-[10px]">
-                                        {item.startTime}
-                                        {item.endTime && ` - ${item.endTime}`}
-                                      </div>
+                                      {subtitle && height > 50 && (
+                                        <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
+                                      )}
+                                      {height > 40 && (
+                                        <div className="text-[#FFFFFF]/40 text-[10px]">
+                                          {item.startTime}
+                                          {item.endTime && ` - ${item.endTime}`}
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -1070,6 +1039,45 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {showWishSelector && (
+        <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
+          <CardContent className="pt-4">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-[#CEA472] font-medium">选择愿望</h4>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setShowWishSelector(false)}
+                className="text-[#FFFFFF]/60"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {confirmedWishes.map(wish => (
+                <button
+                  key={wish.id}
+                  onClick={() => {
+                    setSelectedWishId(wish.id);
+                    setShowWishSelector(false);
+                  }}
+                  className={`w-full text-left p-3 rounded-md border transition-colors ${
+                    selectedWishId === wish.id
+                      ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]'
+                      : 'bg-black/30 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'
+                  }`}
+                >
+                  <div className="font-medium">{wish.destination}</div>
+                  <div className="text-sm text-[#FFFFFF]/50">
+                    {wish.confirmed_date} · {wish.travel_year}年{wish.travel_month} · {wish.travelers}
+                  </div>
+                </button>
+              ))}
             </div>
           </CardContent>
         </Card>
