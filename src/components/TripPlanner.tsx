@@ -138,25 +138,30 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [showTripEditor, setShowTripEditor] = useState(true);
   const [loading, setLoading] = useState(true);
   const [creatingTrip, setCreatingTrip] = useState(false);
+  const [initializedFromStorage, setInitializedFromStorage] = useState(false);
 
-  // 初始化：从 localStorage 读取保存的状态
+  // 初始化：从 localStorage 读取保存的状态（必须最先执行）
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
+      const savedDay = localStorage.getItem('travel-toolbox-selected-day');
+      const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
+      
       if (savedWishId) {
         setSelectedWishId(savedWishId);
       }
       
-      const savedDay = localStorage.getItem('travel-toolbox-selected-day');
       if (savedDay) {
         setSelectedDay(parseInt(savedDay, 10));
       }
       
-      const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
       if (savedShowSchedule === 'true') {
         setShowSchedule(true);
         setShowTripEditor(false);
       }
+      
+      // 标记已完成 localStorage 初始化
+      setInitializedFromStorage(true);
     }
   }, []);
 
@@ -181,23 +186,47 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     }
   }, [showSchedule]);
 
-  // 默认选择第一个有规划的愿望
+  // 默认选择第一个有规划的愿望（仅在 localStorage 初始化完成且数据加载完成后执行）
   useEffect(() => {
-    if (confirmedWishes.length > 0 && tripPlans.length > 0) {
-      // 如果已经有 selectedWishId，不需要再设置
-      if (selectedWishId) return;
-      
-      const firstWishWithPlan = confirmedWishes.find(wish => 
-        tripPlans.some(plan => plan.wishId === wish.id)
-      );
-      if (firstWishWithPlan) {
-        setSelectedWishId(firstWishWithPlan.id);
-      } else if (confirmedWishes.length > 0) {
-        // 如果没有找到有规划的愿望，选择第一个已确认的愿望
-        setSelectedWishId(confirmedWishes[0].id);
+    // 必须等待 localStorage 初始化完成
+    if (!initializedFromStorage) return;
+    
+    // 如果数据还没加载完成，等待
+    if (loading) return;
+    
+    // 如果已经有 selectedWishId，验证它是否仍然有效
+    if (selectedWishId) {
+      // 检查保存的 selectedWishId 是否存在于当前的愿望列表中
+      const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
+      if (wishExists) {
+        // 愿望存在，检查是否有对应的 tripPlan
+        const hasPlan = tripPlans.some(plan => plan.wishId === selectedWishId);
+        if (hasPlan) {
+          // 一切正常，保持选择
+          return;
+        }
+        // 愿望存在但没有 tripPlan，也保持选择（用户可以创建规划）
+        return;
+      } else {
+        // 愿望不存在（可能数据被清空），清除 localStorage
+        localStorage.removeItem('travel-toolbox-selected-wish-id');
+        setSelectedWishId(null);
       }
     }
-  }, [confirmedWishes, tripPlans, selectedWishId]);
+    
+    // 选择第一个有规划的愿望
+    if (confirmedWishes.length > 0) {
+      const firstWishWithPlan = confirmedWishes.find(wish => 
+        tripPlans.some(plan => plan.wishId === String(wish.id))
+      );
+      if (firstWishWithPlan) {
+        setSelectedWishId(String(firstWishWithPlan.id));
+      } else {
+        // 如果没有找到有规划的愿望，选择第一个已确认的愿望
+        setSelectedWishId(String(confirmedWishes[0].id));
+      }
+    }
+  }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading]);
 
   // 加载旅行规划数据
   const fetchTripPlans = async () => {
