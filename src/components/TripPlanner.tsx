@@ -146,6 +146,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     location: '',
     notes: undefined,
   });
+  const [showSchedule, setShowSchedule] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // 保存 selectedWishId 到 localStorage
@@ -889,6 +890,109 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
         </Card>
       )}
 
+      {showSchedule && (
+        <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
+          <CardContent className="pt-4">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-[#CEA472] font-medium">📅 旅行日程表</h4>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setShowSchedule(false)}
+                className="text-[#FFFFFF]/60"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {currentTripPlan?.days.map(day => {
+                const sortedActivities = getSortedActivities(day.activities);
+                const date = getDateDisplay(day.dayNumber);
+                return (
+                  <div key={day.id} className="space-y-2">
+                    <div className="flex items-center gap-2 text-[#CEA472] font-medium">
+                      <span>Day {day.dayNumber}</span>
+                      {date && <span className="text-[#FFFFFF]/60 text-sm">({date})</span>}
+                    </div>
+                    <div className="space-y-2 pl-2 border-l-2 border-[#CEA472]/30">
+                      {day.dayNumber === 1 && getArrivalTransport(day) && (
+                        <div className="py-1">
+                          <div className="text-[#FFFFFF]/80 text-sm flex items-center gap-2">
+                            {transportIcons[getArrivalTransport(day)!.type] || transportIcons['other']}
+                            <span>到达 {getArrivalTransport(day)!.to || '目的地'}</span>
+                            {getArrivalTransport(day)!.arrivalTime && (
+                              <span className="text-[#FFFFFF]/40">({getArrivalTransport(day)!.arrivalTime})</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      {sortedActivities.map(activity => {
+                        const prevActivity = sortedActivities[sortedActivities.indexOf(activity) - 1];
+                        const transportBetween = prevActivity 
+                          ? getBetweenTransport(day, prevActivity.id, activity.id)
+                          : day.dayNumber === 1 ? getBetweenTransport(day, 'arrival', activity.id) : null;
+                        
+                        return (
+                          <React.Fragment key={activity.id}>
+                            {transportBetween && (
+                              <div className="py-1">
+                                <div className="text-[#FFFFFF]/70 text-sm flex items-center gap-2">
+                                  {transportIcons[transportBetween.type] || transportIcons['other']}
+                                  <span>{transportBetween.from || '某地'} → {transportBetween.to || '某地'}</span>
+                                  {transportBetween.departureTime && (
+                                    <span className="text-[#FFFFFF]/40">({transportBetween.departureTime})</span>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            <div className="py-1">
+                              <div className="text-[#FFFFFF] text-sm flex items-center gap-2">
+                                {activityTypeIcons[activity.type] || activityTypeIcons['other']}
+                                <span className="font-medium">{activityTypes[activity.type] || '活动'}</span>
+                                <span className="text-[#FFFFFF]/40">{activity.startTime}</span>
+                                {activity.endTime && <span className="text-[#FFFFFF]/40">- {activity.endTime}</span>}
+                              </div>
+                              {activity.content && (
+                                <div className="text-[#FFFFFF]/80 text-sm ml-6">{activity.content}</div>
+                              )}
+                              {activity.location && (
+                                <div className="text-[#FFFFFF]/60 text-xs ml-6">📍 {activity.location}</div>
+                              )}
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
+                      {day.dayNumber === currentTripPlan.travelDays && sortedActivities.length > 0 && getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure') && (
+                        <div className="py-1">
+                          <div className="text-[#FFFFFF]/70 text-sm flex items-center gap-2">
+                            {transportIcons[getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure')!.type] || transportIcons['other']}
+                            <span>{getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure')!.from || '某地'} → {getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure')!.to || '目的地'}</span>
+                            {getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure')!.departureTime && (
+                              <span className="text-[#FFFFFF]/40">({getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure')!.departureTime})</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      {day.dayNumber === currentTripPlan.travelDays && getDepartureTransport(day) && (
+                        <div className="py-1">
+                          <div className="text-[#FFFFFF]/80 text-sm flex items-center gap-2">
+                            {transportIcons[getDepartureTransport(day)!.type] || transportIcons['other']}
+                            <span>离开 {getDepartureTransport(day)!.from || '目的地'}</span>
+                            {getDepartureTransport(day)!.departureTime && (
+                              <span className="text-[#FFFFFF]/40">({getDepartureTransport(day)!.departureTime})</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg">
         <div className="flex justify-between items-center">
           <div>
@@ -1138,6 +1242,16 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           </TabsContent>
         ))}
       </Tabs>
+      
+      <div className="mt-8">
+        <Button
+          onClick={() => setShowSchedule(!showSchedule)}
+          className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+        >
+          <span className="mr-2">📅</span>
+          {showSchedule ? '收起日程表' : '生成日程表'}
+        </Button>
+      </div>
     </div>
   );
 }
