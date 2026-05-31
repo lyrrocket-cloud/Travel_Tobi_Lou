@@ -896,7 +896,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               {currentTripPlan.destination}
             </h4>
             <p className="text-[#FFFFFF]/60 text-sm">
-              {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}人
+              {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
         </div>
@@ -943,9 +943,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                   {/* 到达和第一个活动之间的交通 */}
                   {currentDayPlan && sortedActivities.length > 0 && (
                     <div className="pl-8 space-y-2">
-                      <div className="flex items-center gap-2 text-[#FFFFFF]/40 text-sm">
-                        <div className="w-px h-8 bg-[#CEA472]/20" />
-                      </div>
                       {getBetweenTransport(currentDayPlan, 'arrival', sortedActivities[0].id) ? (
                         renderTransportItem(getBetweenTransport(currentDayPlan, 'arrival', sortedActivities[0].id)!, day)
                       ) : (
@@ -1105,9 +1102,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               {/* 最后一个活动和离开之间的交通 */}
               {day === currentTripPlan.travelDays && currentDayPlan && sortedActivities.length > 0 && (
                 <div className="pl-8 space-y-2 mt-6">
-                  <div className="flex items-center gap-2 text-[#FFFFFF]/40 text-sm">
-                    <div className="w-px h-8 bg-[#CEA472]/20" />
-                  </div>
                   {getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure') ? (
                     renderTransportItem(getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure')!, day)
                   ) : (
