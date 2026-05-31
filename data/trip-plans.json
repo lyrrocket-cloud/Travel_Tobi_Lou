@@ -1,0 +1,182 @@
+[
+  {
+    "id": "trip-plan-1780192503997",
+    "wishId": "in-memory-1",
+    "destination": "济州岛",
+    "startDate": "2026-06-17",
+    "travelDays": 3,
+    "travelers": "秦瑜贲",
+    "days": [
+      {
+        "id": "day-1-1780192503997",
+        "dayNumber": 1,
+        "items": [
+          {
+            "id": "item-1-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780192503997",
+        "dayNumber": 2,
+        "items": [
+          {
+            "id": "item-2-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780192503997",
+        "dayNumber": 3,
+        "items": [
+          {
+            "id": "item-3-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T01:55:03.997Z",
+    "updatedAt": "2026-05-31T01:55:03.997Z"
+  }
+]

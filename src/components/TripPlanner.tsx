@@ -81,10 +81,25 @@ interface TripPlannerProps {
 export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
+  const [showWishSelector, setShowWishSelector] = useState(false);
   const [selectedDay, setSelectedDay] = useState(1);
   const [editingItem, setEditingItem] = useState<{ dayNumber: number; itemId: string } | null>(null);
   const [editingValue, setEditingValue] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // 默认选择第一个有规划的愿望
+  useEffect(() => {
+    if (confirmedWishes.length > 0 && tripPlans.length > 0 && !selectedWishId) {
+      const firstWishWithPlan = confirmedWishes.find(wish => 
+        tripPlans.some(plan => plan.wishId === wish.id)
+      );
+      if (firstWishWithPlan) {
+        setSelectedWishId(firstWishWithPlan.id);
+      } else if (confirmedWishes.length > 0) {
+        setSelectedWishId(confirmedWishes[0].id);
+      }
+    }
+  }, [confirmedWishes, tripPlans, selectedWishId]);
 
   // 加载旅行规划数据
   const fetchTripPlans = async () => {
@@ -279,61 +294,77 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     );
   }
 
-  // 如果没有选择愿望
-  if (!selectedWishId) {
-    return (
-      <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-        <CardContent className="pt-6">
-          <div className="text-center py-12">
-            <div className="text-[#FFFFFF]/60 text-lg mb-6">选择一个旅行来规划</div>
-            <div className="grid gap-4 max-w-md mx-auto">
-              {confirmedWishes.map(wish => {
-                const hasPlan = tripPlans.some(plan => plan.wishId === wish.id);
-                return (
-                  <Button
-                    key={wish.id}
-                    onClick={() => setSelectedWishId(wish.id)}
-                    variant="outline"
-                    className="w-full justify-start text-left h-auto py-4 bg-black/40 border-[#CEA472]/30 hover:bg-[#CEA472]/10 hover:border-[#CEA472]/50"
-                  >
-                    <div>
-                      <div className="font-semibold text-[#FFFFFF]">{wish.destination}</div>
-                      <div className="text-sm text-[#FFFFFF]/60">
-                        {wish.travel_year}年{wish.travel_month}
-                        {hasPlan && <span className="ml-2 text-[#CEA472]">（已有规划）</span>}
-                      </div>
+  // 显示愿望选择器
+  const renderWishSelector = () => (
+    <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+      <CardContent className="pt-6">
+        <div className="text-center py-8">
+          <div className="text-[#FFFFFF]/60 text-lg mb-6">选择一个旅行来规划</div>
+          <div className="grid gap-4 max-w-md mx-auto">
+            {confirmedWishes.map(wish => {
+              const hasPlan = tripPlans.some(plan => plan.wishId === wish.id);
+              return (
+                <Button
+                  key={wish.id}
+                  onClick={() => {
+                    setSelectedWishId(wish.id);
+                    setShowWishSelector(false);
+                  }}
+                  variant="outline"
+                  className="w-full justify-start text-left h-auto py-4 bg-black/40 border-[#CEA472]/30 hover:bg-[#CEA472]/10 hover:border-[#CEA472]/50"
+                >
+                  <div>
+                    <div className="font-semibold text-[#FFFFFF]">{wish.destination}</div>
+                    <div className="text-sm text-[#FFFFFF]/60">
+                      {wish.travel_year}年{wish.travel_month}
+                      {hasPlan && <span className="ml-2 text-[#CEA472]">（已有规划）</span>}
                     </div>
-                  </Button>
-                );
-              })}
-            </div>
+                  </div>
+                </Button>
+              );
+            })}
           </div>
-        </CardContent>
-      </Card>
-    );
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  // 如果显示选择器
+  if (showWishSelector || !selectedWishId) {
+    return renderWishSelector();
   }
 
   // 如果选择了愿望但还没有旅行规划
   if (!currentTripPlan) {
     const selectedWish = confirmedWishes.find(w => w.id === selectedWishId);
     return (
-      <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-        <CardContent className="pt-6">
-          <div className="text-center py-12">
-            <div className="text-[#FFFFFF] text-xl font-semibold mb-2">{selectedWish?.destination}</div>
-            <div className="text-[#FFFFFF]/60 mb-6">暂无旅行规划</div>
-            <Button
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-              onClick={() => {
-                // 这里会在主页面中处理创建旅行规划的逻辑
-                window.location.reload();
-              }}
-            >
-              创建旅行规划
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-[#FFFFFF]">{selectedWish?.destination}</h2>
+              <Button
+                variant="outline"
+                onClick={() => setShowWishSelector(true)}
+                className="bg-black/40 border-[#CEA472]/30 hover:bg-[#CEA472]/10"
+              >
+                切换旅行
+              </Button>
+            </div>
+            <div className="text-center py-8">
+              <div className="text-[#FFFFFF]/60 mb-6">暂无旅行规划</div>
+              <Button
+                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                创建旅行规划
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -353,10 +384,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
             </div>
             <Button
               variant="outline"
-              onClick={() => setSelectedWishId(null)}
+              onClick={() => setShowWishSelector(true)}
               className="bg-black/40 border-[#CEA472]/30 hover:bg-[#CEA472]/10"
             >
-              返回选择
+              切换旅行
             </Button>
           </div>
         </CardContent>
