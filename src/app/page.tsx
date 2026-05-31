@@ -1239,9 +1239,10 @@ export default function Home() {
             <Label htmlFor="follower-name" className="text-[#FFFFFF]">您的姓名</Label>
             <Input
               id="follower-name"
+              placeholder="请输入您的姓名"
               value={followerName}
               onChange={(e) => setFollowerName(e.target.value)}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleFollow();
