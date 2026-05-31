@@ -178,5 +178,857 @@
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
     "updatedAt": "2026-05-31T01:55:03.997Z"
+  },
+  {
+    "id": "trip-plan-1780193545980",
+    "wishId": "in-memory-2",
+    "destination": "坦桑尼亚",
+    "startDate": "2026-10-01",
+    "travelDays": 15,
+    "travelers": "秦瑜贲",
+    "days": [
+      {
+        "id": "day-1-1780193545980",
+        "dayNumber": 1,
+        "items": [
+          {
+            "id": "item-1-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-1-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780193545980",
+        "dayNumber": 2,
+        "items": [
+          {
+            "id": "item-2-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-2-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780193545980",
+        "dayNumber": 3,
+        "items": [
+          {
+            "id": "item-3-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-3-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-4-1780193545980",
+        "dayNumber": 4,
+        "items": [
+          {
+            "id": "item-4-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-4-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-4-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-4-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-4-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-4-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-4-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-5-1780193545980",
+        "dayNumber": 5,
+        "items": [
+          {
+            "id": "item-5-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-5-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-5-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-5-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-5-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-5-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-5-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-6-1780193545980",
+        "dayNumber": 6,
+        "items": [
+          {
+            "id": "item-6-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-6-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-6-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-6-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-6-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-6-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-6-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-7-1780193545980",
+        "dayNumber": 7,
+        "items": [
+          {
+            "id": "item-7-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-7-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-7-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-7-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-7-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-7-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-7-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-8-1780193545980",
+        "dayNumber": 8,
+        "items": [
+          {
+            "id": "item-8-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-8-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-8-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-8-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-8-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-8-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-8-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-9-1780193545980",
+        "dayNumber": 9,
+        "items": [
+          {
+            "id": "item-9-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-9-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-9-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-9-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-9-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-9-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-9-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-10-1780193545980",
+        "dayNumber": 10,
+        "items": [
+          {
+            "id": "item-10-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-10-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-10-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-10-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-10-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-10-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-10-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-11-1780193545980",
+        "dayNumber": 11,
+        "items": [
+          {
+            "id": "item-11-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-11-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-11-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-11-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-11-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-11-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-11-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-12-1780193545980",
+        "dayNumber": 12,
+        "items": [
+          {
+            "id": "item-12-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-12-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-12-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-12-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-12-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-12-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-12-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-13-1780193545980",
+        "dayNumber": 13,
+        "items": [
+          {
+            "id": "item-13-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-13-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-13-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-13-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-13-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-13-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-13-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-14-1780193545980",
+        "dayNumber": 14,
+        "items": [
+          {
+            "id": "item-14-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-14-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-14-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-14-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-14-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-14-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-14-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      },
+      {
+        "id": "day-15-1780193545980",
+        "dayNumber": 15,
+        "items": [
+          {
+            "id": "item-15-breakfast",
+            "time": "breakfast",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-15-morning",
+            "time": "morning",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-15-lunch",
+            "time": "lunch",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-15-afternoon",
+            "time": "afternoon",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-15-dinner",
+            "time": "dinner",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-15-evening",
+            "time": "evening",
+            "content": "",
+            "location": "",
+            "notes": ""
+          },
+          {
+            "id": "item-15-accommodation",
+            "time": "accommodation",
+            "content": "",
+            "location": "",
+            "notes": ""
+          }
+        ],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-05-31T02:12:25.980Z",
+    "updatedAt": "2026-05-31T02:12:25.980Z"
   }
 ]

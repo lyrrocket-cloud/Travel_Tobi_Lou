@@ -169,13 +169,7 @@ export default function Home() {
     }, 800);
   };
 
-  const handleOpenAdmin = () => {
-    if (isAdminMode) {
-      setIsAdminMode(false);
-    } else {
-      setPasswordModalOpen(true);
-    }
-  };
+
 
   const handleAdminLogin = () => {
     if (adminPassword === 'tobi7758258') {
@@ -961,7 +955,13 @@ export default function Home() {
             <span className={`text-sm ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40'}`}>管理</span>
             <Switch
               checked={isAdminMode}
-              onCheckedChange={handleOpenAdmin}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setPasswordModalOpen(true);
+                } else {
+                  setIsAdminMode(false);
+                }
+              }}
             />
           </div>
         </div>

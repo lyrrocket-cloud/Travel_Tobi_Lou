@@ -302,7 +302,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           <div className="text-[#FFFFFF]/60 text-lg mb-6">选择一个旅行来规划</div>
           <div className="grid gap-4 max-w-md mx-auto">
             {confirmedWishes.map(wish => {
-              const hasPlan = tripPlans.some(plan => plan.wishId === wish.id);
               return (
                 <Button
                   key={wish.id}
@@ -317,7 +316,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                     <div className="font-semibold text-[#FFFFFF]">{wish.destination}</div>
                     <div className="text-sm text-[#FFFFFF]/60">
                       {wish.travel_year}年{wish.travel_month}
-                      {hasPlan && <span className="ml-2 text-[#CEA472]">（已有规划）</span>}
                     </div>
                   </div>
                 </Button>
