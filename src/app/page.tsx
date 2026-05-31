@@ -586,7 +586,7 @@ export default function Home() {
             </TabsList>
 
             {/* Make Wish Tab */}
-            <TabsContent value="make-wish" className="space-y-6">
+            <TabsContent value="make-wish" className="space-y-6 min-h-[400px]">
               <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
                 <CardContent className="space-y-6 pt-6">
                   <div className="space-y-2">
@@ -692,7 +692,7 @@ export default function Home() {
             </TabsContent>
 
             {/* Wish Pool Tab */}
-            <TabsContent value="wish-pool" className="space-y-6">
+            <TabsContent value="wish-pool" className="space-y-6 min-h-[400px]">
               <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
                 <CardContent className="pt-6">
                   {loading ? (

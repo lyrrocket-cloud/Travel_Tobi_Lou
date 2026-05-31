@@ -1,10 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/storage/database/supabase-client';
+import fs from 'fs';
+import path from 'path';
 
-// 内存存储作为备用方案
-let inMemoryWishes: any[] = [];
-let inMemoryFollowers: any[] = [];
-let wishIdCounter = 1;
+// 本地文件存储路径
+const DATA_FILE = path.join(process.cwd(), 'data', 'wishes.json');
+const FOLLOWERS_FILE = path.join(process.cwd(), 'data', 'followers.json');
+
+// 确保数据目录存在
+function ensureDataDir() {
+  const dataDir = path.join(process.cwd(), 'data');
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+}
+
+// 从文件读取数据
+function readFromFile(filePath: string, defaultValue: any) {
+  try {
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf-8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('[File Storage] Error reading file:', error);
+  }
+  return defaultValue;
+}
+
+// 写入数据到文件
+function writeToFile(filePath: string, data: any) {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (error) {
+    console.error('[File Storage] Error writing file:', error);
+  }
+}
+
+// 内存存储，优先从文件加载
+let inMemoryWishes: any[] = readFromFile(DATA_FILE, []);
+let inMemoryFollowers: any[] = readFromFile(FOLLOWERS_FILE, []);
+let wishIdCounter = inMemoryWishes.length > 0 
+  ? Math.max(...inMemoryWishes.map((w: any) => {
+      const idNum = parseInt(w.id.replace('in-memory-', ''));
+      return isNaN(idNum) ? 0 : idNum;
+    })) + 1 
+  : 1;
+
+// 保存数据到文件
+function saveToFile() {
+  writeToFile(DATA_FILE, inMemoryWishes);
+  writeToFile(FOLLOWERS_FILE, inMemoryFollowers);
+}
 
 function getInMemoryWishes() {
   const now = new Date();
@@ -206,6 +254,7 @@ export async function POST(request: NextRequest) {
       
       inMemoryWishes.push(newWish);
       createdWish = newWish;
+      saveToFile(); // 保存到文件
     }
     
     console.log('[API Wishes] Created wish:', createdWish);
@@ -271,6 +320,7 @@ export async function PUT(request: NextRequest) {
         if (confirmedDate !== undefined) inMemoryWishes[index].confirmed_date = confirmedDate;
         if (travelers !== undefined) inMemoryWishes[index].travelers = travelers;
         
+        saveToFile(); // 保存到文件
         return NextResponse.json({ wish: inMemoryWishes[index], usingInMemory });
       }
       
@@ -323,6 +373,7 @@ export async function DELETE(request: NextRequest) {
       inMemoryFollowers = inMemoryFollowers.filter(f => f.wish_id !== id);
       
       if (inMemoryWishes.length < initialLength) {
+        saveToFile(); // 保存到文件
         return NextResponse.json({ success: true, usingInMemory });
       }
       
