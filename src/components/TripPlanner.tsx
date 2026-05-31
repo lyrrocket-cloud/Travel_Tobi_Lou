@@ -923,9 +923,9 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
                           const firstActivity = sortedActivities[0];
-                          // 正确设置到达的时间范围：到达时间是startTime，结束时间是第一个活动的开始时间（如果有）
-                          const arrivalStartTime = arrival.arrivalTime || '00:00';
-                          let arrivalEndTime = firstActivity ? firstActivity.startTime : arrivalStartTime;
+                          // 使用交通的出发时间作为到达卡片的起始点，结束时间为到达时间
+                          const arrivalStartTime = arrival.departureTime || arrival.arrivalTime || '00:00';
+                          const arrivalEndTime = arrival.arrivalTime || firstActivity?.startTime || arrivalStartTime;
                           
                           mergedItems.push({
                             id: 'arrival',
@@ -1140,12 +1140,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       </div>
 
       <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
-        <TabsList className="inline-flex h-[70px] bg-black/40 border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
+        <TabsList className="grid w-full bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1" style={{ gridTemplateColumns: `repeat(${currentTripPlan.travelDays}, minmax(0, 1fr))` }}>
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
             <TabsTrigger
               key={day}
               value={String(day)}
-              className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:shadow-none text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-2 px-4 rounded-md transition-all min-w-[80px]"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-3 px-2 rounded-md transition-all duration-300"
             >
               <span className="text-sm font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (

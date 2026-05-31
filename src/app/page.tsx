@@ -970,8 +970,14 @@ export default function Home() {
       <div className="relative z-10 py-12 px-4 sm:px-6 lg:px-8">
         {/* 标题和管理按钮 */}
         <div className="flex items-center justify-between mb-8 max-w-4xl mx-auto">
-          <div className="flex items-center gap-3">
-            <Plane className="w-8 h-8 text-[#CEA472]" />
+          <div className="flex items-center gap-4">
+            {/* 图标容器 - 金色衬底 + 黑色线框 */}
+            <div className="w-16 h-16 flex items-center justify-center rounded-2xl" style={{
+              backgroundColor: '#CEA472',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
+            }}>
+              <Plane className="w-8 h-8" style={{ color: '#0a0a0f' }} />
+            </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#FFFFFF] tracking-wide">
               旅行工具箱
             </h1>
