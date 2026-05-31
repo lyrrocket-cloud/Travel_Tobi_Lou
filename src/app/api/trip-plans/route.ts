@@ -61,13 +61,54 @@ function ensureDataDir() {
   }
 }
 
+// 数据迁移函数：将旧数据结构转换为新结构
+function migrateTripPlan(plan: any): TripPlan {
+  // 确保days存在
+  if (!plan.days) {
+    plan.days = [];
+  }
+
+  // 对每个day进行迁移
+  plan.days = plan.days.map((day: any) => {
+    // 如果有items但没有activities，进行迁移
+    if (day.items && !day.activities) {
+      console.log('[Trip Plan] Migrating items to activities for day', day.dayNumber);
+      day.activities = day.items
+        .filter((item: any) => item.content && item.content.trim())
+        .map((item: any) => ({
+          id: item.id,
+          type: item.time, // 原来的time字段用作type
+          startTime: '09:00', // 默认时间
+          endTime: '10:00',
+          content: item.content,
+          location: item.location,
+          notes: item.notes
+        }));
+      delete day.items; // 删除旧字段
+    } else if (!day.activities) {
+      day.activities = [];
+    }
+
+    // 确保transport存在
+    if (!day.transport) {
+      day.transport = [];
+    }
+
+    return day;
+  });
+
+  return plan as TripPlan;
+}
+
 // 从文件读取数据
 function readFromFile(): TripPlan[] {
   try {
     ensureDataDir();
     if (fs.existsSync(DATA_FILE)) {
       const data = fs.readFileSync(DATA_FILE, 'utf-8');
-      return JSON.parse(data);
+      const plans = JSON.parse(data);
+      // 对每个计划进行迁移
+      return plans.map(migrateTripPlan);
     }
   } catch (error) {
     console.error('[Trip Plan] Error reading file:', error);

@@ -136,7 +136,8 @@ body {
   @apply font-sans;
   background-color: #0a0a0f;
   color: #FFFFFF;
-  background-image: url('https://neeko-copilot.bytedance.net/api/text-to-image?prompt=majestic%20Matterhorn%20mountain%20peak%20covered%20in%20snow%20with%20golden%20sunlight%20hitting%20the%20summit%20dramatic%20alpine%20landscape%20at%20dawn%20with%20soft%20pastel%20sky&image-size=landscape_16_9');
+  /* 渐变背景替代，避免外部API调用失败 */
+  background-image: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
