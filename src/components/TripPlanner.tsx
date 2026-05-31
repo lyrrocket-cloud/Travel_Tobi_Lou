@@ -864,6 +864,19 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           </Button>
       </div>
 
+      <div className="mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg">
+        <div className="flex justify-between items-center">
+          <div>
+            <h4 className="text-[#FFFFFF] font-medium">
+              {currentTripPlan.destination}
+            </h4>
+            <p className="text-[#FFFFFF]/60 text-sm">
+              {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {showSchedule && (
         <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
           <CardContent className="pt-4">
@@ -1122,19 +1135,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           </CardContent>
         </Card>
       )}
-
-      <div className="mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg">
-        <div className="flex justify-between items-center">
-          <div>
-            <h4 className="text-[#FFFFFF] font-medium">
-              {currentTripPlan.destination}
-            </h4>
-            <p className="text-[#FFFFFF]/60 text-sm">
-              {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
-            </p>
-          </div>
-        </div>
-      </div>
 
       <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
         <TabsList className="inline-flex h-[72px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
