@@ -210,9 +210,10 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const addTransport = async (dayNumber: number, position: 'before' | 'after' | 'arrival' | 'departure', relativeTime?: string) => {
     if (!currentTripPlan) return;
 
+    const transportId = `transport-${Date.now()}`;
     const newTransport: TransportInfo = {
-      id: `transport-${Date.now()}`,
-      type: '',
+      id: transportId,
+      type: 'taxi',
       from: '',
       to: '',
       departureTime: '',
@@ -230,6 +231,18 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       return day;
     });
 
+    // 先更新本地状态
+    setTripPlans(prev => prev.map(plan => {
+      if (plan.id === currentTripPlan.id) {
+        return {
+          ...plan,
+          days: updatedDays
+        };
+      }
+      return plan;
+    }));
+
+    // 然后保存到服务器
     try {
       const response = await fetch('/api/trip-plans', {
         method: 'PUT',
@@ -241,27 +254,13 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // 更新本地状态以确保拿到最新的transport ID
-        const updatedPlan = data.tripPlan || currentTripPlan;
-        const newDayPlan = updatedPlan.days.find((d: DayPlan) => d.dayNumber === dayNumber);
-        const addedTransport = newDayPlan?.transport.find((t: TransportInfo) => t.position === position && t.beforeTime === relativeTime);
-        
-        if (addedTransport) {
-          // 立即进入编辑模式
-          setEditingTransport({ dayNumber, transportId: addedTransport.id });
-        } else {
-          // 如果找不到，刷新数据后再设置编辑模式
-          fetchTripPlans().then(() => {
-            // 重新获取最新的transport并进入编辑模式
-            setTimeout(() => {
-              setEditingTransport({ dayNumber, transportId: newTransport.id });
-            }, 100);
-          });
-        }
+        // 保存成功后进入编辑模式
+        setEditingTransport({ dayNumber, transportId });
       }
     } catch (error) {
       console.error('[Trip Planner] Failed to add transport:', error);
+      // 即使保存失败，也保持在编辑模式，让用户可以重试
+      setEditingTransport({ dayNumber, transportId });
     }
   };
 
@@ -530,37 +529,39 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       );
     }
 
-    if (transport.type) {
-      return (
-        <div 
-          key={transport.id}
-          className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/40 transition-colors"
-          onClick={() => setEditingTransport({ dayNumber: day, transportId: transport.id })}
-        >
-          <div className="flex items-center gap-2 text-[#CEA472]">
-            {transportIcons[transport.type] || transportIcons['other']}
-            <span className="font-medium">{transportNames[transport.type]}</span>
-          </div>
+    // 非编辑模式，显示简洁卡片
+    return (
+      <div 
+        key={transport.id}
+        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/40 transition-colors"
+        onClick={() => setEditingTransport({ dayNumber: day, transportId: transport.id })}
+      >
+        <div className="flex items-center gap-2 text-[#CEA472]">
+          {transportIcons[transport.type] || transportIcons['other']}
+          <span className="font-medium">{transportNames[transport.type] || '未设置'}</span>
+        </div>
+        {(transport.from || transport.to) && (
           <div className="text-[#FFFFFF]/80 text-sm mt-1 flex items-center gap-2">
             {transport.from && <span>{transport.from}</span>}
             {transport.from && transport.to && <span>→</span>}
             {transport.to && <span>{transport.to}</span>}
           </div>
-          {(transport.departureTime || transport.arrivalTime) && (
-            <div className="text-[#FFFFFF]/60 text-xs mt-1">
-              {transport.departureTime && <span>出发: {transport.departureTime}</span>}
-              {transport.departureTime && transport.arrivalTime && <span> | </span>}
-              {transport.arrivalTime && <span>到达: {transport.arrivalTime}</span>}
-            </div>
-          )}
-          {transport.details && (
-            <div className="text-[#FFFFFF]/50 text-xs mt-1">{transport.details}</div>
-          )}
-        </div>
-      );
-    }
-
-    return null;
+        )}
+        {(transport.departureTime || transport.arrivalTime) && (
+          <div className="text-[#FFFFFF]/60 text-xs mt-1">
+            {transport.departureTime && <span>出发: {transport.departureTime}</span>}
+            {transport.departureTime && transport.arrivalTime && <span> | </span>}
+            {transport.arrivalTime && <span>到达: {transport.arrivalTime}</span>}
+          </div>
+        )}
+        {transport.details && (
+          <div className="text-[#FFFFFF]/50 text-xs mt-1">{transport.details}</div>
+        )}
+        {!transport.type && !transport.from && !transport.to && (
+          <div className="text-[#FFFFFF]/30 text-xs mt-1">点击编辑交通信息</div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -597,14 +598,14 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
             onValueChange={(value) => setSelectedDay(parseInt(value))}
             className="w-full"
           >
-            <TabsList className="grid w-full bg-black/40 border border-[#CEA472]/20" style={{ gridTemplateColumns: `repeat(${Math.min(currentTripPlan.travelDays, 7)}, 1fr)` }}>
+            <TabsList className="inline-flex h-[70px] bg-black/40 border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
               {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
                 <TabsTrigger
                   key={day}
                   value={String(day)}
-                  className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-3 px-1 min-h-[60px]"
+                  className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] data-[state=active]:shadow-none text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-2 px-4 rounded-md transition-all min-w-[80px]"
                 >
-                  <span className="text-sm font-medium">Day {day}</span>
+                  <span className="text-sm font-medium whitespace-nowrap">Day {day}</span>
                   {getDateDisplay(day) && (
                     <span className="text-xs opacity-70 whitespace-nowrap">{getDateDisplay(day)}</span>
                   )}
@@ -631,18 +632,16 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                             <span className="font-medium">到达</span>
                           </div>
                           
-                          {getTransportByPosition(currentDayPlan, 'arrival').length > 0 ? (
-                            getTransportByPosition(currentDayPlan, 'arrival').map(transport => renderTransportItem(transport, day))
-                          ) : (
-                            <Button
-                              onClick={() => addTransport(day, 'arrival')}
-                              variant="outline"
-                              className="w-full justify-start bg-black/40 border border-[#CEA472]/30 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                            >
-                              <Plus className="w-4 h-4 mr-2" />
-                              添加到达交通
-                            </Button>
-                          )}
+                          {getTransportByPosition(currentDayPlan, 'arrival').map(transport => renderTransportItem(transport, day))}
+                          
+                          <Button
+                            onClick={() => addTransport(day, 'arrival')}
+                            variant="outline"
+                            className="w-full justify-start bg-black/40 border border-[#CEA472]/30 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            添加到达交通
+                          </Button>
                         </div>
                       )}
 
@@ -659,20 +658,18 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                           return (
                             <React.Fragment key={item.id}>
                               {/* 之前的交通 */}
-                              {beforeTransport.length > 0 && (
+                              {(day !== 1 && day !== currentTripPlan.travelDays) && (
                                 <div className="space-y-2 ml-6">
                                   {beforeTransport.map(transport => renderTransportItem(transport, day))}
-                                  {day !== 1 && day !== currentTripPlan.travelDays && beforeTransport.length === 0 && (
-                                    <Button
-                                      onClick={() => addTransport(day, 'before', item.time)}
-                                      variant="outline"
-                                      size="sm"
-                                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                                    >
-                                      <Plus className="w-3 h-3 mr-1" />
-                                      添加前往交通
-                                    </Button>
-                                  )}
+                                  <Button
+                                    onClick={() => addTransport(day, 'before', item.time)}
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                                  >
+                                    <Plus className="w-3 h-3 mr-1" />
+                                    添加前往交通
+                                  </Button>
                                 </div>
                               )}
 
@@ -725,39 +722,29 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                               </div>
 
                               {/* 之后的交通 */}
-                              {idx !== currentDayPlan.items.length - 1 && afterTransport.length > 0 && (
+                              {(day !== 1 && day !== currentTripPlan.travelDays) && (
                                 <div className="space-y-2 ml-6">
                                   {afterTransport.map(transport => renderTransportItem(transport, day))}
-                                </div>
-                              )}
-
-                              {/* 添加交通按钮（在时间块之后） */}
-                              {day !== 1 && day !== currentTripPlan.travelDays && (
-                                <div className="ml-6">
                                   {idx === currentDayPlan.items.length - 1 ? (
-                                    afterTransport.length === 0 && (
-                                      <Button
-                                        onClick={() => addTransport(day, 'after', item.time)}
-                                        variant="outline"
-                                        size="sm"
-                                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                                      >
-                                        <Plus className="w-3 h-3 mr-1" />
-                                        添加返程交通
-                                      </Button>
-                                    )
+                                    <Button
+                                      onClick={() => addTransport(day, 'after', item.time)}
+                                      variant="outline"
+                                      size="sm"
+                                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                                    >
+                                      <Plus className="w-3 h-3 mr-1" />
+                                      添加返程交通
+                                    </Button>
                                   ) : (
-                                    afterTransport.length === 0 && (
-                                      <Button
-                                        onClick={() => addTransport(day, 'after', item.time)}
-                                        variant="outline"
-                                        size="sm"
-                                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                                      >
-                                        <Plus className="w-3 h-3 mr-1" />
-                                        添加后续交通
-                                      </Button>
-                                    )
+                                    <Button
+                                      onClick={() => addTransport(day, 'after', item.time)}
+                                      variant="outline"
+                                      size="sm"
+                                      className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                                    >
+                                      <Plus className="w-3 h-3 mr-1" />
+                                      添加后续交通
+                                    </Button>
                                   )}
                                 </div>
                               )}
@@ -774,18 +761,16 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                             <span className="font-medium">离开</span>
                           </div>
                           
-                          {getTransportByPosition(currentDayPlan, 'departure').length > 0 ? (
-                            getTransportByPosition(currentDayPlan, 'departure').map(transport => renderTransportItem(transport, day))
-                          ) : (
-                            <Button
-                              onClick={() => addTransport(day, 'departure')}
-                              variant="outline"
-                              className="w-full justify-start bg-black/40 border border-[#CEA472]/30 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
-                            >
-                              <Plus className="w-4 h-4 mr-2" />
-                              添加离开交通
-                            </Button>
-                          )}
+                          {getTransportByPosition(currentDayPlan, 'departure').map(transport => renderTransportItem(transport, day))}
+                          
+                          <Button
+                            onClick={() => addTransport(day, 'departure')}
+                            variant="outline"
+                            className="w-full justify-start bg-black/40 border border-[#CEA472]/30 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            添加离开交通
+                          </Button>
                         </div>
                       )}
                     </div>
