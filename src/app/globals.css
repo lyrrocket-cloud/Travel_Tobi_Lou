@@ -258,3 +258,27 @@ body {
   --color-white: #FFFFFF;
   --color-bg-dark: #0a0a0f;
 }
+/* 日程表滚动条样式 */
+.schedule-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.schedule-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.schedule-scroll::-webkit-scrollbar-thumb {
+  background: rgba(206, 164, 114, 0.4);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.schedule-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(206, 164, 114, 0.6);
+}
+
+.schedule-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}

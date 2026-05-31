@@ -879,7 +879,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               </Button>
             </div>
             <div className="overflow-x-auto">
-              <div className="overflow-y-auto max-h-[600px]">
+              <div className="overflow-y-auto max-h-[600px] schedule-scroll">
                 <div className="flex min-w-max">
                   <div className="w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
@@ -922,10 +922,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                       if (day.dayNumber === 1) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
+                          const firstActivity = sortedActivities[0];
                           mergedItems.push({
                             id: 'arrival',
                             type: 'arrival',
                             startTime: arrival.arrivalTime || '00:00',
+                            endTime: firstActivity?.startTime || arrival.arrivalTime || '23:00',
                             activity: null,
                             transportBefore: null,
                             transportAfter: sortedActivities.length > 0 
@@ -971,10 +973,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                       if (day.dayNumber === currentTripPlan.travelDays) {
                         const departure = getDepartureTransport(day);
                         if (departure) {
+                          const lastActivity = sortedActivities[sortedActivities.length - 1];
                           mergedItems.push({
                             id: 'departure',
                             type: 'departure',
-                            startTime: departure.departureTime || '23:00',
+                            startTime: lastActivity?.endTime || departure.departureTime || '00:00',
+                            endTime: departure.departureTime || '23:00',
                             activity: null,
                             transportBefore: sortedActivities.length > 0 
                               ? (getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure') || null) 
@@ -1013,7 +1017,8 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 subtitle = arrival?.to || '目的地';
                                 icon = arrival ? transportIcons[arrival.type] || transportIcons['other'] : transportIcons['other'];
                                 if (item.transportAfter) {
-                                  transportText = `前往: ${item.transportAfter.to || '下一站'} (${item.transportAfter.departureTime || ''})`;
+                                  const transport = item.transportAfter;
+                                  transportText = `${transport.from || '出发点'} → ${transport.to || '下一站'} (${transport.type || '交通'})`;
                                 }
                               } else if (item.type === 'departure') {
                                 bgColor = 'bg-[#CEA472]/10';
@@ -1022,9 +1027,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 const departure = getDepartureTransport(day);
                                 subtitle = departure?.from || '目的地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
-                                if (item.transportBefore) {
-                                  transportText = `出发: ${item.transportBefore.from || '当前位置'} (${item.transportBefore.departureTime || ''})`;
-                                }
                               } else if (item.activity) {
                                 bgColor = 'bg-[#CEA472]/15';
                                 borderColor = 'border-[#CEA472]';
@@ -1034,13 +1036,13 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                 
                                 const transportParts: string[] = [];
                                 if (item.transportBefore) {
-                                  transportParts.push(`自: ${item.transportBefore.from || '前站'}`);
+                                  transportParts.push(`${item.transportBefore.type || '交通'}: ${item.transportBefore.from || '前站'} →`);
                                 }
                                 if (item.transportAfter) {
-                                  transportParts.push(`往: ${item.transportAfter.to || '后站'}`);
+                                  transportParts.push(`→ ${item.transportAfter.type || '交通'}: ${item.transportAfter.to || '后站'}`);
                                 }
                                 if (transportParts.length > 0) {
-                                  transportText = transportParts.join(' → ');
+                                  transportText = transportParts.join(' ');
                                 }
                               }
                               
@@ -1060,17 +1062,11 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
-                                      {subtitle && height > 50 && (
+                                      {subtitle && height > 40 && (
                                         <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
                                       )}
                                       {transportText && height > 60 && (
                                         <div className="text-[#CEA472]/80 text-[10px] truncate">{transportText}</div>
-                                      )}
-                                      {height > 40 && (
-                                        <div className="text-[#FFFFFF]/40 text-[10px]">
-                                          {item.startTime}
-                                          {item.endTime && ` - ${item.endTime}`}
-                                        </div>
                                       )}
                                     </div>
                                   </div>
