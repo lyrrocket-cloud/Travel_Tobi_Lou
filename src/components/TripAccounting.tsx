@@ -416,7 +416,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       {/* 标题和选择 */}
       <div className="flex justify-between items-center max-w-4xl mx-auto">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-semibold text-[#FFFFFF]">
+          <h2 className="text-xl font-semibold text-[#CEA472]">
             {currentWish?.destination} 旅行记账
           </h2>
           {defaultTripId === selectedWishId && <Star className="w-5 h-5 text-[#CEA472] fill-[#CEA472]" />}
