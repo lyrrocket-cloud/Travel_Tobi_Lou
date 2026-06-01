@@ -816,11 +816,12 @@ export default function Home() {
                       {wishes.map((wish, index) => (
                         <div
                           key={wish.id}
+                          onClick={() => wish.is_confirmed === 1 && !wish.is_expired && navigateToPlan(wish.id)}
                           className={`group overflow-hidden p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
                             wish.is_expired === 1
                               ? 'border-gray-500/30 bg-gray-500/5'
                               : wish.is_confirmed === 1
-                                ? 'border-[#CEA472] bg-[#CEA472]/10' 
+                                ? 'border-[#CEA472] bg-[#CEA472]/10 cursor-pointer hover:scale-[1.02] hover:bg-[#CEA472]/15' 
                                 : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
                           }`}
                         >
@@ -904,7 +905,10 @@ export default function Home() {
                               {/* 非管理模式：只显示跟随按钮（已过期不允许跟随） */}
                               {!isAdminMode && wish.is_expired !== 1 && (
                                 <Button
-                                  onClick={() => handleOpenFollowDialog(wish.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOpenFollowDialog(wish.id);
+                                  }}
                                   variant="outline"
                                   size="icon"
                                   title="跟随"
@@ -919,7 +923,10 @@ export default function Home() {
                                   {wish.is_confirmed === 1 ? (
                                     // 已成行：显示编辑行程按钮
                                     <Button
-                                      onClick={() => handleOpenEditTripDialog(wish)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenEditTripDialog(wish);
+                                      }}
                                       variant="outline"
                                       size="icon"
                                       title="编辑行程"
@@ -931,7 +938,10 @@ export default function Home() {
                                     // 未成行：显示编辑和确定成行按钮
                                     <>
                                       <Button
-                                        onClick={() => handleOpenEditDialog(wish)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleOpenEditDialog(wish);
+                                        }}
                                         variant="outline"
                                         size="icon"
                                         title="编辑"
@@ -940,7 +950,10 @@ export default function Home() {
                                         <Edit2 className="w-4 h-4" />
                                       </Button>
                                       <Button
-                                        onClick={() => handleOpenConfirmDialog(String(wish.id))}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleOpenConfirmDialog(String(wish.id));
+                                        }}
                                         variant="outline"
                                         size="icon"
                                         title="确定成行"
@@ -951,7 +964,10 @@ export default function Home() {
                                     </>
                                   )}
                                   <Button
-                                    onClick={() => handleOpenDeleteDialog(wish.id)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOpenDeleteDialog(wish.id);
+                                    }}
                                     variant="outline"
                                     size="icon"
                                     title="删除"
