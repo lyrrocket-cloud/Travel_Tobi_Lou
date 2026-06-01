@@ -836,8 +836,13 @@ export default function Home() {
 
           {/* 子标签页 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
-            {/* 许愿池标签 */}
-            <TabsList className="grid w-full grid-cols-1 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
+            <TabsList className="grid w-full max-w-4xl mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
+              <TabsTrigger
+                value="make-wish"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
+              >
+                抛硬币
+              </TabsTrigger>
               <TabsTrigger
                 value="wish-pool"
                 className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
@@ -902,7 +907,7 @@ export default function Home() {
               <Button
                 onClick={handleMakeWish}
                 disabled={isAnimating}
-                className="w-full max-w-[500px] mx-auto mt-6 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+                className="w-full max-w-4xl mx-auto mt-6 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
               >
                 {isAnimating ? (
                   <div className="flex items-center gap-3">
