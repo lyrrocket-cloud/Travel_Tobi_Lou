@@ -15,6 +15,7 @@ const activityTypes: Record<string, string> = {
   attraction: '景点',
   shopping: '购物',
   entertainment: '娱乐',
+  food: '餐饮',
   other: '其他',
 };
 
@@ -23,6 +24,7 @@ const activityTypeIcons: Record<string, React.ReactNode> = {
   attraction: <MapPin className="w-4 h-4" />,
   shopping: <RefreshCw className="w-4 h-4" />,
   entertainment: <Star className="w-4 h-4" />,
+  food: <UtensilsCrossed className="w-4 h-4" />,
   other: <Clock className="w-4 h-4" />,
 };
 
@@ -1520,6 +1522,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             <option value="attraction">景点</option>
                             <option value="shopping">购物</option>
                             <option value="entertainment">娱乐</option>
+                            <option value="food">餐饮</option>
                             <option value="other">其他</option>
                           </select>
                         </div>
