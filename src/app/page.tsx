@@ -79,6 +79,16 @@ export default function Home() {
     return 'wish';
   });
 
+  // 跳转到旅行规划页面并选中对应的愿望
+  const navigateToPlan = (wishId: string | number) => {
+    // 保存选中的愿望 ID
+    localStorage.setItem('travel-toolbox-selected-wish-id', String(wishId));
+    // 切换到规划标签页
+    setMainTab('plan');
+    // 保存当前标签页选择
+    localStorage.setItem('travel-toolbox-main-tab', 'plan');
+  };
+
   const [activeTab, setActiveTab] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('travel-toolbox-active-tab');
@@ -611,10 +621,11 @@ export default function Home() {
                                 return (
                                   <div
                                     key={trip.id}
-                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center ${
+                                    onClick={() => navigateToPlan(trip.id)}
+                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 ${
                                       isExpired
-                                        ? 'text-[#FFFFFF]/60 bg-gray-500/20'
-                                        : 'text-[#FFFFFF] bg-[#CEA472]/20'
+                                        ? 'text-[#FFFFFF]/60 bg-gray-500/20 hover:bg-gray-500/30'
+                                        : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
                                     }`}
                                   >
                                     <div className={`font-semibold truncate text-[10px] sm:text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
@@ -642,10 +653,11 @@ export default function Home() {
                         return (
                           <div
                             key={trip.id}
-                            className={`flex items-center justify-between text-sm px-3 py-2 rounded ${
+                            onClick={() => navigateToPlan(trip.id)}
+                            className={`flex items-center justify-between text-sm px-3 py-2 rounded cursor-pointer transition-all duration-200 ${
                               isExpired
-                                ? 'text-[#FFFFFF]/60 bg-gray-500/20'
-                                : 'text-[#FFFFFF] bg-[#CEA472]/20'
+                                ? 'text-[#FFFFFF]/60 bg-gray-500/20 hover:bg-gray-500/30'
+                                : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
                             }`}
                           >
                             <div className="flex items-center gap-2">
