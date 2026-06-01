@@ -1060,10 +1060,39 @@ export default function Home() {
                                   <Heart className="w-4 h-4" />
                                 </Button>
                               )}
-                              {/* 管理模式：显示确定成行、删除按钮（编辑通过点击详情区域完成） */}
+                              {/* 管理模式：显示编辑、确定成行、删除按钮 */}
                               {isAdminMode && (
                                 <>
-                                  {wish.is_confirmed !== 1 && (
+                                  {wish.is_confirmed === 1 ? (
+                                    // 已成行：显示编辑行程按钮（使用统一的编辑对话框）
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        // 获取该愿望的旅行天数
+                                        fetch(`/api/trip-plans?wishId=${wish.id}`)
+                                          .then(res => res.json())
+                                          .then(data => {
+                                            const travelDays = data.tripPlans && data.tripPlans.length > 0 
+                                              ? data.tripPlans[0].travelDays 
+                                              : 3;
+                                            handleOpenTripInfoEdit({
+                                              id: String(wish.id),
+                                              confirmed_date: wish.confirmed_date,
+                                              travelDays: travelDays,
+                                              travelers: wish.travelers,
+                                              destination: wish.destination,
+                                            });
+                                          });
+                                      }}
+                                      variant="outline"
+                                      size="icon"
+                                      title="编辑行程"
+                                      className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
+                                    >
+                                      <Edit2 className="w-4 h-4" />
+                                    </Button>
+                                  ) : (
+                                    // 未成行：显示编辑和确定成行按钮
                                     <>
                                       <Button
                                         onClick={(e) => {
