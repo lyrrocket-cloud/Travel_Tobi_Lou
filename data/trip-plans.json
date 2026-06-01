@@ -4,7 +4,7 @@
     "wishId": "in-memory-1",
     "destination": "济州岛",
     "startDate": "2026-06-17",
-    "travelDays": 3,
+    "travelDays": 4,
     "travelers": "秦瑜贲",
     "days": [
       {
@@ -132,10 +132,16 @@
         "dayNumber": 3,
         "transport": [],
         "activities": []
+      },
+      {
+        "id": "day-4-1780282115925",
+        "dayNumber": 4,
+        "activities": [],
+        "transport": []
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-05-31T04:22:13.043Z"
+    "updatedAt": "2026-06-01T02:48:36.015Z"
   },
   {
     "id": "trip-plan-1780193545980",

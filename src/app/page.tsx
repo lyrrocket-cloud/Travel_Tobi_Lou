@@ -1062,11 +1062,25 @@ export default function Home() {
                               {isAdminMode && (
                                 <>
                                   {wish.is_confirmed === 1 ? (
-                                    // 已成行：显示编辑行程按钮
+                                    // 已成行：显示编辑行程按钮（使用统一的编辑对话框）
                                     <Button
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        handleOpenEditTripDialog(wish);
+                                        // 获取该愿望的旅行天数
+                                        fetch(`/api/trip-plans?wishId=${wish.id}`)
+                                          .then(res => res.json())
+                                          .then(data => {
+                                            const travelDays = data.tripPlans && data.tripPlans.length > 0 
+                                              ? data.tripPlans[0].travelDays 
+                                              : 3;
+                                            handleOpenTripInfoEdit({
+                                              id: String(wish.id),
+                                              confirmed_date: wish.confirmed_date,
+                                              travelDays: travelDays,
+                                              travelers: wish.travelers,
+                                              destination: wish.destination,
+                                            });
+                                          });
                                       }}
                                       variant="outline"
                                       size="icon"
