@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -149,6 +149,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const [loading, setLoading] = useState(true);
   const [creatingTrip, setCreatingTrip] = useState(false);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
+  const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
 
   // 初始化：从 localStorage 读取保存的状态（必须最先执行）
   useEffect(() => {
@@ -156,6 +157,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
       const savedDay = localStorage.getItem('travel-toolbox-selected-day');
       const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
+      const savedDefaultTripId = localStorage.getItem('travel-toolbox-default-trip-id');
       
       if (savedWishId) {
         setSelectedWishId(savedWishId);
@@ -168,6 +170,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       if (savedShowSchedule === 'true') {
         setShowSchedule(true);
         setShowTripEditor(false);
+      }
+      
+      if (savedDefaultTripId) {
+        setDefaultTripId(savedDefaultTripId);
       }
       
       // 标记已完成 localStorage 初始化
@@ -195,6 +201,17 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       localStorage.setItem('travel-toolbox-show-schedule', String(showSchedule));
     }
   }, [showSchedule]);
+
+  // 保存默认旅行ID到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (defaultTripId) {
+        localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
+      } else {
+        localStorage.removeItem('travel-toolbox-default-trip-id');
+      }
+    }
+  }, [defaultTripId]);
 
   // 默认选择第一个有规划的愿望（仅在 localStorage 初始化完成且数据加载完成后执行）
   useEffect(() => {
@@ -224,6 +241,18 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       }
     }
     
+    // 优先选择默认旅行
+    if (defaultTripId) {
+      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
+      if (defaultWishExists) {
+        setSelectedWishId(defaultTripId);
+        return;
+      } else {
+        // 默认旅行不存在，清除
+        setDefaultTripId(null);
+      }
+    }
+    
     // 选择第一个有规划的愿望
     if (confirmedWishes.length > 0) {
       const firstWishWithPlan = confirmedWishes.find(wish => 
@@ -236,7 +265,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         setSelectedWishId(String(confirmedWishes[0].id));
       }
     }
-  }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading]);
+  }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
   // 加载旅行规划数据
   const fetchTripPlans = async () => {
@@ -986,6 +1015,18 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       ) : (
                         <span className="text-[#FFFFFF]/40 text-sm">点击创建规划</span>
                       )}
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDefaultTripId(String(wish.id));
+                        }}
+                        className={`size-8 ${defaultTripId === String(wish.id) ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/60 hover:bg-black/60'}`}
+                        title="设为默认旅行"
+                      >
+                        <Star className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -1005,7 +1046,17 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         <h3 className="text-xl font-semibold text-[#CEA472]">
           {currentTripPlan.destination} 旅行规划
         </h3>
-        <Button
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setDefaultTripId(selectedWishId)}
+            className={`size-8 ${defaultTripId === selectedWishId ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/60 hover:bg-black/60'}`}
+            title="设为默认旅行"
+          >
+            <Star className="w-4 h-4" />
+          </Button>
+          <Button
             variant="outline"
             size="icon"
             onClick={() => setShowWishSelector(true)}
@@ -1014,6 +1065,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           >
             <RefreshCw className="w-4 h-4" />
           </Button>
+        </div>
       </div>
 
       {/* 旅行信息卡片 - 只有管理模式下可编辑 */}
