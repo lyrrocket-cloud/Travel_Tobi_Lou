@@ -197,7 +197,20 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   const addExpense = async () => {
-    if (!currentExpenseRecord || !newExpense.amount || !newExpense.description) {
+    if (!currentExpenseRecord) {
+      console.error('[Trip Accounting] No expense record selected');
+      return;
+    }
+    if (!newExpense.amount) {
+      console.error('[Trip Accounting] Amount is required');
+      return;
+    }
+    if (!newExpense.description) {
+      console.error('[Trip Accounting] Description is required');
+      return;
+    }
+    if (!newExpense.date) {
+      console.error('[Trip Accounting] Date is required');
       return;
     }
 
@@ -229,6 +242,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         setShowAddExpense(false);
         setNewExpense({
           date: new Date().toISOString().split('T')[0],
+          time: '12:00',
           category: 'other',
           amount: '',
           description: '',
@@ -664,12 +678,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 <Button
                   onClick={addExpense}
-                  disabled={!newExpense.amount || !newExpense.description}
+                  disabled={!newExpense.amount || !newExpense.description || !newExpense.date}
                   className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   保存消费
                 </Button>
+                <p className="text-[#FFFFFF]/40 text-xs mt-2 text-center">
+                  请填写消费金额、描述和日期
+                </p>
               </div>
             </CardContent>
           </Card>
