@@ -41,6 +41,7 @@ const transportIcons: Record<string, React.ReactNode> = {
   bus: <Bus className="w-4 h-4" />,
   taxi: <Car className="w-4 h-4" />,
   walk: <Footprints className="w-4 h-4" />,
+  car: <Car className="w-4 h-4" />,
   other: <Car className="w-4 h-4" />,
 };
 
@@ -51,6 +52,7 @@ const transportNames: Record<string, string> = {
   bus: '大巴',
   taxi: '出租车',
   walk: '步行',
+  car: '自驾',
   other: '其他',
 };
 
@@ -658,6 +660,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
                   <option value="train">火车</option>
                   <option value="bus">大巴</option>
                   <option value="walk">步行</option>
+                  <option value="car">自驾</option>
                   <option value="other">其他</option>
                 </select>
               </div>

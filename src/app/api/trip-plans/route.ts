@@ -15,7 +15,7 @@ interface ActivityItem {
 // 交通信息接口
 interface TransportInfo {
   id: string;
-  type: string; // 'flight' | 'train' | 'bus' | 'taxi' | 'walk' | 'other'
+  type: string; // 'flight' | 'train' | 'bus' | 'taxi' | 'walk' | 'car' | 'other'
   from: string;
   to: string;
   departureTime?: string;
