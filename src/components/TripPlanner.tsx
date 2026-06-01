@@ -221,7 +221,20 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     // 如果数据还没加载完成，等待
     if (loading) return;
     
-    // 如果已经有 selectedWishId，验证它是否仍然有效
+    // 优先检查是否有默认旅行
+    if (defaultTripId) {
+      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
+      if (defaultWishExists) {
+        // 如果默认旅行存在，直接使用它，无论之前选中的是什么
+        setSelectedWishId(defaultTripId);
+        return;
+      } else {
+        // 默认旅行不存在，清除
+        setDefaultTripId(null);
+      }
+    }
+    
+    // 没有默认旅行时，检查之前的选择是否仍然有效
     if (selectedWishId) {
       // 检查保存的 selectedWishId 是否存在于当前的愿望列表中
       const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
@@ -238,18 +251,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         // 愿望不存在（可能数据被清空），清除 localStorage
         localStorage.removeItem('travel-toolbox-selected-wish-id');
         setSelectedWishId(null);
-      }
-    }
-    
-    // 优先选择默认旅行
-    if (defaultTripId) {
-      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
-      if (defaultWishExists) {
-        setSelectedWishId(defaultTripId);
-        return;
-      } else {
-        // 默认旅行不存在，清除
-        setDefaultTripId(null);
       }
     }
     
