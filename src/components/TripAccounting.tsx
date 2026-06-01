@@ -197,6 +197,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   const addExpense = async () => {
+    console.debug('[Trip Accounting] addExpense called');
+    console.debug('[Trip Accounting] selectedWishId:', selectedWishId);
+    console.debug('[Trip Accounting] tripExpenses:', tripExpenses);
+    console.debug('[Trip Accounting] currentExpenseRecord:', currentExpenseRecord);
+    
     if (!currentExpenseRecord) {
       console.error('[Trip Accounting] No expense record selected');
       return;
@@ -205,12 +210,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       console.error('[Trip Accounting] Amount is required');
       return;
     }
-    if (!newExpense.description) {
-      console.error('[Trip Accounting] Description is required');
-      return;
-    }
     if (!newExpense.date) {
       console.error('[Trip Accounting] Date is required');
+      return;
+    }
+    if (!newExpense.payers || newExpense.payers.length === 0) {
+      console.error('[Trip Accounting] Payers are required');
       return;
     }
 
@@ -678,14 +683,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 <Button
                   onClick={addExpense}
-                  disabled={!newExpense.amount || !newExpense.description || !newExpense.date}
+                  disabled={!newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0)}
                   className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   保存消费
                 </Button>
                 <p className="text-[#FFFFFF]/40 text-xs mt-2 text-center">
-                  请填写消费金额、描述和日期
+                  请填写消费金额、日期，并选择消费人
                 </p>
               </div>
             </CardContent>
