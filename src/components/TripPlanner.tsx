@@ -10,7 +10,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Wish } from '@/types';
 
-// 活动类型的显示名称
 const activityTypes: Record<string, string> = {
   breakfast: '早餐',
   morning: '上午活动',
@@ -22,7 +21,6 @@ const activityTypes: Record<string, string> = {
   other: '其他',
 };
 
-// 活动类型的图标
 const activityTypeIcons: Record<string, React.ReactNode> = {
   breakfast: <Coffee className="w-4 h-4" />,
   morning: <Sun className="w-4 h-4" />,
@@ -34,7 +32,6 @@ const activityTypeIcons: Record<string, React.ReactNode> = {
   other: <Clock className="w-4 h-4" />,
 };
 
-// 交通方式图标
 const transportIcons: Record<string, React.ReactNode> = {
   flight: <Plane className="w-4 h-4" />,
   train: <Train className="w-4 h-4" />,
@@ -45,7 +42,6 @@ const transportIcons: Record<string, React.ReactNode> = {
   other: <Car className="w-4 h-4" />,
 };
 
-// 交通方式名称
 const transportNames: Record<string, string> = {
   flight: '飞机',
   train: '火车',
@@ -56,18 +52,16 @@ const transportNames: Record<string, string> = {
   other: '其他',
 };
 
-// 活动项接口
 interface ActivityItem {
   id: string;
-  type: string; // 活动类型：breakfast, morning, lunch, afternoon, dinner, evening, accommodation, other
-  startTime: string; // 开始时间
-  endTime?: string; // 结束时间（可选）
-  content?: string; // 活动内容（可选）
-  location?: string; // 地点
-  notes?: string; // 备注
+  type: string;
+  startTime: string;
+  endTime?: string;
+  content?: string;
+  location?: string;
+  notes?: string;
 }
 
-// 交通信息接口
 interface TransportInfo {
   id: string;
   type: string;
@@ -77,11 +71,10 @@ interface TransportInfo {
   arrivalTime?: string;
   details?: string;
   position: 'arrival' | 'departure' | 'between';
-  beforeActivityId?: string; // 在哪个活动之前
-  afterActivityId?: string; // 在哪个活动之后
+  beforeActivityId?: string;
+  afterActivityId?: string;
 }
 
-// 单日旅行计划接口
 interface DayPlan {
   id: string;
   dayNumber: number;
@@ -90,7 +83,6 @@ interface DayPlan {
   transport: TransportInfo[];
 }
 
-// 旅行规划接口
 interface TripPlan {
   id: string;
   wishId: string;
@@ -116,7 +108,6 @@ interface TripPlannerProps {
   }) => void;
 }
 
-// 日期计算函数
 const calculateDate = (startDate: string, dayOffset: number): string => {
   const date = new Date(startDate);
   date.setDate(date.getDate() + dayOffset);
@@ -151,7 +142,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
 
-  // 初始化：从 localStorage 读取保存的状态（必须最先执行）
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
@@ -176,33 +166,28 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         setDefaultTripId(savedDefaultTripId);
       }
       
-      // 标记已完成 localStorage 初始化
       setInitializedFromStorage(true);
     }
   }, []);
 
-  // 保存 selectedWishId 到 localStorage
   useEffect(() => {
     if (typeof window !== 'undefined' && selectedWishId) {
       localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
     }
   }, [selectedWishId]);
 
-  // 保存 selectedDay 到 localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('travel-toolbox-selected-day', String(selectedDay));
     }
   }, [selectedDay]);
 
-  // 保存 showSchedule 到 localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('travel-toolbox-show-schedule', String(showSchedule));
     }
   }, [showSchedule]);
 
-  // 保存默认旅行ID到 localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (defaultTripId) {
@@ -213,48 +198,30 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   }, [defaultTripId]);
 
-  // 默认选择第一个有规划的愿望（仅在 localStorage 初始化完成且数据加载完成后执行）
   useEffect(() => {
-    // 必须等待 localStorage 初始化完成
     if (!initializedFromStorage) return;
-    
-    // 如果数据还没加载完成，等待
     if (loading) return;
     
-    // 优先检查是否有默认旅行
-    if (defaultTripId) {
-      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
-      if (defaultWishExists) {
-        // 如果默认旅行存在，直接使用它，无论之前选中的是什么
-        setSelectedWishId(defaultTripId);
-        return;
-      } else {
-        // 默认旅行不存在，清除
-        setDefaultTripId(null);
-      }
-    }
-    
-    // 没有默认旅行时，检查之前的选择是否仍然有效
     if (selectedWishId) {
-      // 检查保存的 selectedWishId 是否存在于当前的愿望列表中
       const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
       if (wishExists) {
-        // 愿望存在，检查是否有对应的 tripPlan
-        const hasPlan = tripPlans.some(plan => plan.wishId === selectedWishId);
-        if (hasPlan) {
-          // 一切正常，保持选择
-          return;
-        }
-        // 愿望存在但没有 tripPlan，也保持选择（用户可以创建规划）
         return;
       } else {
-        // 愿望不存在（可能数据被清空），清除 localStorage
         localStorage.removeItem('travel-toolbox-selected-wish-id');
         setSelectedWishId(null);
       }
     }
     
-    // 选择第一个有规划的愿望
+    if (defaultTripId) {
+      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
+      if (defaultWishExists) {
+        setSelectedWishId(defaultTripId);
+        return;
+      } else {
+        setDefaultTripId(null);
+      }
+    }
+    
     if (confirmedWishes.length > 0) {
       const firstWishWithPlan = confirmedWishes.find(wish => 
         tripPlans.some(plan => plan.wishId === String(wish.id))
@@ -262,13 +229,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       if (firstWishWithPlan) {
         setSelectedWishId(String(firstWishWithPlan.id));
       } else {
-        // 如果没有找到有规划的愿望，选择第一个已确认的愿望
         setSelectedWishId(String(confirmedWishes[0].id));
       }
     }
   }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
-  // 加载旅行规划数据
   const fetchTripPlans = async () => {
     try {
       const response = await fetch('/api/trip-plans');
@@ -285,7 +250,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     fetchTripPlans();
   }, []);
 
-  // 监听来自page.tsx的数据更新事件
   useEffect(() => {
     const handleTripPlansUpdated = () => {
       fetchTripPlans();
@@ -298,7 +262,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     };
   }, []);
 
-  // 创建新的旅行规划
   const createTripPlan = async (wish: Wish) => {
     if (!wish.confirmed_date) return;
     
@@ -310,17 +273,17 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          wishId: String(wish.id),  // 统一使用字符串类型
+          wishId: String(wish.id),
           destination: wish.destination,
           startDate: wish.confirmed_date,
-          travelDays: 3, // 默认3天
+          travelDays: 3,
           travelers: wish.travelers || '未设置',
         }),
       });
 
       if (response.ok) {
         await fetchTripPlans();
-        setSelectedWishId(String(wish.id));  // 统一使用字符串类型
+        setSelectedWishId(String(wish.id));
         setShowWishSelector(false);
       } else {
         alert('创建旅行规划失败');
@@ -333,39 +296,29 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 选择愿望
   const selectWish = async (wish: Wish) => {
-    // 检查是否已存在该愿望的旅行规划（注意类型转换）
     const existingPlan = tripPlans.find(plan => plan.wishId === String(wish.id));
     
     if (existingPlan) {
-      // 如果有，直接选择
       setSelectedWishId(String(wish.id));
       setShowWishSelector(false);
     } else {
-      // 如果没有，询问用户是否要创建
       await createTripPlan(wish);
     }
   };
 
-  // 获取当前选择的愿望对应的旅行规划
   const currentTripPlan = selectedWishId ? tripPlans.find(plan => plan.wishId === selectedWishId) : null;
-  
-  // 获取当前选择的天的计划
   const currentDayPlan = currentTripPlan?.days.find(d => d.dayNumber === selectedDay);
 
-  // 按时间排序活动
   const getSortedActivities = (activities: ActivityItem[]) => {
     return [...activities].sort((a, b) => a.startTime.localeCompare(b.startTime));
   };
 
-  // 获取日期显示
   const getDateDisplay = (day: number) => {
     if (!currentTripPlan?.startDate) return '';
     return calculateDate(currentTripPlan.startDate, day - 1);
   };
 
-  // 添加活动
   const addActivity = async () => {
     if (!currentTripPlan) return;
 
@@ -409,7 +362,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 更新活动
   const updateActivity = async (dayNumber: number, activityId: string, field: keyof ActivityItem, value: string) => {
     if (!currentTripPlan) return;
 
@@ -444,7 +396,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 删除活动
   const deleteActivity = async (dayNumber: number, activityId: string) => {
     if (!currentTripPlan) return;
 
@@ -479,7 +430,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 批量更新活动数据
   const updateActivityData = async (dayNumber: number, activityId: string, updatedData: ActivityItem) => {
     if (!currentTripPlan) return;
 
@@ -516,7 +466,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 添加交通信息
   const addTransport = async (dayNumber: number, position: 'arrival' | 'departure' | 'between', beforeActivityId?: string, afterActivityId?: string) => {
     if (!currentTripPlan) return;
 
@@ -541,7 +490,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       return day;
     });
 
-    // 先更新本地状态
     setTripPlans(prev => prev.map(plan => {
       if (plan.id === currentTripPlan.id) {
         return { ...plan, days: updatedDays };
@@ -570,7 +518,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 更新交通信息
   const updateTransport = async (dayNumber: number, transportId: string, field: keyof TransportInfo, value: string) => {
     if (!currentTripPlan) return;
 
@@ -605,7 +552,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 删除交通信息
   const deleteTransport = async (dayNumber: number, transportId: string) => {
     if (!currentTripPlan) return;
 
@@ -637,7 +583,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 批量更新交通信息
   const updateTransportData = async (dayNumber: number, transportId: string, updatedData: TransportInfo) => {
     if (!currentTripPlan) return;
 
@@ -674,7 +619,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 获取某个位置的交通
   const getArrivalTransport = (day: DayPlan) => {
     return day.transport.find(t => t.position === 'arrival');
   };
@@ -689,7 +633,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     );
   };
 
-  // 交通项的渲染组件
   const renderTransportItem = (transport: TransportInfo, day: number) => {
     const isEditing = editingTransport?.dayNumber === day && editingTransport?.transportId === transport.id;
     const editingData = isEditing && editingTransportData ? editingTransportData : transport;
@@ -824,7 +767,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     );
   };
 
-  // 活动项的渲染组件
   const renderActivityItem = (activity: ActivityItem, day: number) => {
     const isEditing = editingActivity?.dayNumber === day && editingActivity?.activityId === activity.id;
     const editingData = isEditing && editingActivityData ? editingActivityData : activity;
@@ -981,7 +923,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     );
   }
 
-  // 如果没有选择愿望，或者愿望选择器打开了，显示选择界面
   if (!currentTripPlan || showWishSelector) {
     return (
       <div className="w-full">
@@ -997,15 +938,19 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <div className="space-y-4">
             {confirmedWishes.map(wish => {
               const hasPlan = tripPlans.some(plan => plan.wishId === String(wish.id));
+              const isDefault = defaultTripId === String(wish.id);
               return (
                 <div
                   key={wish.id}
-                  className="bg-black/30 border border-[#CEA472]/20 rounded-lg p-4 cursor-pointer hover:bg-black/40 transition-colors"
+                  className={`bg-black/30 border rounded-lg p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
                   onClick={() => selectWish(wish)}
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-[#FFFFFF] font-medium">{wish.destination}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-[#FFFFFF] font-medium">{wish.destination}</h4>
+                        {isDefault && <Star className="w-4 h-4 text-[#CEA472] fill-[#CEA472]" />}
+                      </div>
                       <p className="text-[#FFFFFF]/60 text-sm">
                         {wish.confirmed_date} · {wish.travelers}
                       </p>
@@ -1016,18 +961,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       ) : (
                         <span className="text-[#FFFFFF]/40 text-sm">点击创建规划</span>
                       )}
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDefaultTripId(String(wish.id));
-                        }}
-                        className={`size-8 ${defaultTripId === String(wish.id) ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/60 hover:bg-black/60'}`}
-                        title="设为默认旅行"
-                      >
-                        <Star className="w-4 h-4" />
-                      </Button>
                     </div>
                   </div>
                 </div>
@@ -1044,9 +977,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-semibold text-[#CEA472]">
-          {currentTripPlan.destination} 旅行规划
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-xl font-semibold text-[#CEA472]">
+            {currentTripPlan.destination} 旅行规划
+          </h3>
+          {defaultTripId === selectedWishId && <Star className="w-5 h-5 text-[#CEA472] fill-[#CEA472]" />}
+        </div>
         <Button
           variant="outline"
           size="icon"
@@ -1058,7 +994,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         </Button>
       </div>
 
-      {/* 旅行信息卡片 - 只有管理模式下可编辑 */}
       <div 
         className={`mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
         onClick={() => {
@@ -1102,18 +1037,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <div className="flex min-w-max">
                   <div className="w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
-                    {/* 找到所有天数的最早时间，默认从7点开始，有更早活动则从更早开始 */}
                     {(() => {
                       let earliestHour = 7;
-                      // 检查所有天数的活动和交通的最早时间
                       currentTripPlan?.days.forEach(day => {
                         const sortedActivities = getSortedActivities(day.activities);
-                        // 检查活动
                         sortedActivities.forEach(activity => {
                           const hour = parseInt(activity.startTime.split(':')[0]);
                           if (hour < earliestHour) earliestHour = hour;
                         });
-                        // 检查到达
                         if (day.dayNumber === 1) {
                           const arrival = getArrivalTransport(day);
                           if (arrival) {
@@ -1123,7 +1054,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             if (arrHour < earliestHour) earliestHour = arrHour;
                           }
                         }
-                        // 检查离开
                         if (day.dayNumber === currentTripPlan.travelDays) {
                           const departure = getDepartureTransport(day);
                           if (departure) {
@@ -1133,7 +1063,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             if (arrHour < earliestHour) earliestHour = arrHour;
                           }
                         }
-                        // 检查交通
                         sortedActivities.forEach((activity, idx) => {
                           const nextActivity = sortedActivities[idx + 1];
                           if (nextActivity) {
@@ -1148,7 +1077,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       
                       const hoursToShow = Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour);
                       
-                      // 存储earliestHour供下面使用
                       return hoursToShow.map(hour => (
                         <div key={hour} className="h-10 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
                           {String(hour).padStart(2, '0')}:00
@@ -1161,14 +1089,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       const sortedActivities = getSortedActivities(day.activities);
                       const date = getDateDisplay(day.dayNumber);
                       
-                      {/* 同样计算这个天数的earliestHour */}
                       let earliestHour = 7;
-                      // 检查活动
                       sortedActivities.forEach(activity => {
                         const hour = parseInt(activity.startTime.split(':')[0]);
                         if (hour < earliestHour) earliestHour = hour;
                       });
-                      // 检查到达
                       if (day.dayNumber === 1) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
@@ -1178,7 +1103,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           if (arrHour < earliestHour) earliestHour = arrHour;
                         }
                       }
-                      // 检查离开
                       if (day.dayNumber === currentTripPlan.travelDays) {
                         const departure = getDepartureTransport(day);
                         if (departure) {
@@ -1188,7 +1112,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           if (arrHour < earliestHour) earliestHour = arrHour;
                         }
                       }
-                      // 检查交通
                       sortedActivities.forEach((activity, idx) => {
                         const nextActivity = sortedActivities[idx + 1];
                         if (nextActivity) {
@@ -1213,7 +1136,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         return Math.max(durationMinutes * (40 / 60), 60);
                       };
                       
-                      // 构建活动列表，包含交通信息
                       const mergedItems: Array<{
                         id: string;
                         type: 'arrival' | 'departure' | 'activity';
@@ -1224,12 +1146,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         transportAfter: TransportInfo | null;
                       }> = [];
                       
-                      // 添加到达（第一天）
                       if (day.dayNumber === 1) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
                           const firstActivity = sortedActivities[0];
-                          // 使用交通的出发时间作为到达卡片的起始点，结束时间为到达时间
                           const arrivalStartTime = arrival.departureTime || arrival.arrivalTime || '00:00';
                           const arrivalEndTime = arrival.arrivalTime || firstActivity?.startTime || arrivalStartTime;
                           
@@ -1247,7 +1167,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         }
                       }
                       
-                      // 添加活动和交通
                       sortedActivities.forEach((activity, index) => {
                         const prevActivity = sortedActivities[index - 1];
                         let transportBefore = prevActivity 
@@ -1263,7 +1182,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           ? (getBetweenTransport(day, activity.id, nextActivity.id) || null) 
                           : null;
                         
-                        // 如果是最后一天最后一个活动，检查离开前的交通
                         if (day.dayNumber === currentTripPlan.travelDays && !nextActivity && getDepartureTransport(day)) {
                           transportAfter = getBetweenTransport(day, activity.id, 'departure') || null;
                         }
@@ -1279,12 +1197,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         });
                       });
                       
-                      // 添加离开（最后一天）
                       if (day.dayNumber === currentTripPlan.travelDays) {
                         const departure = getDepartureTransport(day);
                         if (departure) {
                           const lastActivity = sortedActivities[sortedActivities.length - 1];
-                          // 正确设置离开的时间范围：开始时间是最后一个活动的结束时间（如果有），结束时间是出发时间
                           const departureStartTime = lastActivity && lastActivity.endTime ? lastActivity.endTime : (departure.departureTime || '23:00');
                           const departureEndTime = departure.departureTime || '23:00';
                           
@@ -1309,7 +1225,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
                           </div>
                           <div className="flex-1 relative">
-                            {/* 只显示从earliestHour开始的时间背景 */}
                             {Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour).map(hour => (
                               <div key={hour} className="h-10 border-b border-[#CEA472]/10"></div>
                             ))}
@@ -1347,7 +1262,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 borderColor = 'border-[#CEA472]';
                                 icon = activityTypeIcons[item.activity.type] || activityTypeIcons['other'];
                                 title = activityTypes[item.activity.type] || '活动';
-                                // 显示活动内容+地点
                                 const contentParts = [];
                                 if (item.activity.content) contentParts.push(item.activity.content);
                                 if (item.activity.location) contentParts.push(item.activity.location);
@@ -1403,35 +1317,56 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <CardContent className="pt-4">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-[#CEA472] font-medium">选择愿望</h4>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setShowWishSelector(false)}
-                className="text-[#FFFFFF]/60"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                {selectedWishId && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setDefaultTripId(selectedWishId);
+                    }}
+                    className={`text-sm ${defaultTripId === selectedWishId ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/60'}`}
+                  >
+                    <Star className="w-4 h-4 mr-1" />
+                    {defaultTripId === selectedWishId ? '已设为默认' : '设为默认'}
+                  </Button>
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setShowWishSelector(false)}
+                  className="text-[#FFFFFF]/60"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
             <div className="space-y-2">
-              {confirmedWishes.map(wish => (
-                <button
-                  key={wish.id}
-                  onClick={() => {
-                    setSelectedWishId(wish.id);
-                    setShowWishSelector(false);
-                  }}
-                  className={`w-full text-left p-3 rounded-md border transition-colors ${
-                    selectedWishId === wish.id
-                      ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]'
-                      : 'bg-black/30 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'
-                  }`}
-                >
-                  <div className="font-medium">{wish.destination}</div>
-                  <div className="text-sm text-[#FFFFFF]/50">
-                    {wish.confirmed_date} · {wish.travel_year}年{wish.travel_month} · {wish.travelers}
-                  </div>
-                </button>
-              ))}
+              {confirmedWishes.map(wish => {
+                const isDefault = defaultTripId === String(wish.id);
+                return (
+                  <button
+                    key={wish.id}
+                    onClick={() => {
+                      setSelectedWishId(wish.id);
+                      setShowWishSelector(false);
+                    }}
+                    className={`w-full text-left p-3 rounded-md border transition-colors ${selectedWishId === wish.id ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/30 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium flex items-center gap-2">
+                          {wish.destination}
+                          {isDefault && <Star className="w-4 h-4 fill-[#CEA472]" />}
+                        </div>
+                        <div className="text-sm text-[#FFFFFF]/50">
+                          {wish.confirmed_date} · {wish.travelers}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -1457,7 +1392,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">
             <div className="space-y-4">
-              {/* 到达 */}
               {day === 1 && (
                 <div className="space-y-2">
                   {currentDayPlan && getArrivalTransport(currentDayPlan) ? (
@@ -1472,7 +1406,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       添加到达
                     </Button>
                   )}
-                  {/* 到达和第一个活动之间的交通 */}
                   {currentDayPlan && sortedActivities.length > 0 && (
                     <div className="pl-8 space-y-2">
                       {getBetweenTransport(currentDayPlan, 'arrival', sortedActivities[0].id) ? (
@@ -1492,7 +1425,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 </div>
               )}
 
-              {/* 活动列表 */}
               <div className="space-y-4">
                 {sortedActivities.length === 0 ? (
                   <div className="text-center py-8 text-[#FFFFFF]/40">
@@ -1501,7 +1433,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 ) : (
                   sortedActivities.map((activity, index) => (
                     <div key={activity.id} className="space-y-4">
-                      {/* 前一个活动和当前活动之间的交通 */}
                       {index > 0 && (
                         <div className="pl-8 space-y-2">
                           {currentDayPlan && getBetweenTransport(currentDayPlan, sortedActivities[index - 1].id, activity.id) ? (
@@ -1519,14 +1450,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         </div>
                       )}
 
-                      {/* 活动项 */}
                       {renderActivityItem(activity, day)}
                     </div>
                   ))
                 )}
               </div>
 
-              {/* 最后一个活动和离开之间的交通 */}
               {day === currentTripPlan.travelDays && currentDayPlan && sortedActivities.length > 0 && (
                 <div className="pl-8 space-y-2 mt-6">
                   {getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure') ? (
@@ -1543,7 +1472,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   )}
                 </div>
               )}
-              {/* 离开 */}
               {day === currentTripPlan.travelDays && (
                 <div className="space-y-2 mt-4">
                   {currentDayPlan && getDepartureTransport(currentDayPlan) ? (
@@ -1561,7 +1489,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 </div>
               )}
 
-              {/* 添加活动按钮 */}
               <div className="mt-6">
                 {showAddActivity ? (
                   <Card className="border border-[#CEA472]/20 bg-black/30">
