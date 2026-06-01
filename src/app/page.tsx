@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import TripPlanner from '@/components/TripPlanner';
+import TripAccounting from '@/components/TripAccounting';
 import { Wish } from '@/types';
 
 const months = [
@@ -1184,18 +1185,7 @@ export default function Home() {
       );
     } else if (mainTab === 'account') {
       return (
-        <div className="space-y-6">
-          <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <Coins className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行记账</h3>
-                <p className="text-[#FFFFFF]/60 mb-2">此功能正在开发中...</p>
-                <p className="text-sm text-[#FFFFFF]/40">即将支持：支出记录、统计分析、账单管理</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <TripAccounting confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} />
       );
     } else if (mainTab === 'drive') {
       return (
