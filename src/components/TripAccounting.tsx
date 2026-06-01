@@ -87,10 +87,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   } | null>(null);
 
   const currentExpenseRecord = selectedWishId ? 
-    tripExpenses.find(record => record.wishId === selectedWishId) : null;
+    tripExpenses.find(record => String(record.wishId) === String(selectedWishId)) : null;
 
   const currentTripPlan = selectedWishId ?
-    tripPlans.find(p => p.wishId === selectedWishId) : null;
+    tripPlans.find(p => String(p.wishId) === String(selectedWishId)) : null;
 
   const fetchExpenses = async () => {
     try {
@@ -349,7 +349,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     ) : [];
 
   const getTravelDays = () => {
-    const plan = tripPlans?.find(p => p.wishId === selectedWishId);
+    const plan = tripPlans?.find(p => String(p.wishId) === String(selectedWishId));
     if (plan) return plan.travelDays;
     return 3;
   };
