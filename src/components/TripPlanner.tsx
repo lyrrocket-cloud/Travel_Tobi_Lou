@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -1012,7 +1012,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
             title="切换行程"
           >
-            <MapPin className="w-4 h-4" />
+            <RefreshCw className="w-4 h-4" />
           </Button>
       </div>
 
