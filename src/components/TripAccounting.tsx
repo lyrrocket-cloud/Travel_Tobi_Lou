@@ -126,18 +126,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   }, [selectedWishId, initializedFromStorage]);
 
-  const [defaultTripChanged, setDefaultTripChanged] = useState(false);
-
   // 保存默认旅行到localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined' && initializedFromStorage && defaultTripChanged) {
-      if (defaultTripId) {
-        localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
-      } else {
-        localStorage.removeItem('travel-toolbox-default-trip-id');
-      }
+    if (typeof window !== 'undefined' && initializedFromStorage && defaultTripId) {
+      localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
     }
-  }, [defaultTripId, initializedFromStorage, defaultTripChanged]);
+  }, [defaultTripId, initializedFromStorage]);
 
   // 初始加载数据
   useEffect(() => {
@@ -149,7 +143,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   // 根据默认旅行选择逻辑
   useEffect(() => {
-    if (!initializedFromStorage || loading) return;
+    if (!initializedFromStorage) return;
+    
+    if (confirmedWishes.length === 0) return;
     
     const isSelectionValid = selectedWishId && confirmedWishes.some(wish => String(wish.id) === selectedWishId);
     
@@ -162,7 +158,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           setSelectedWishId(defaultTripId);
           return;
         }
-        setDefaultTripId(null);
       }
       
       if (confirmedWishes.length > 0) {
@@ -170,7 +165,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       }
       return;
     }
-  }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
+  }, [confirmedWishes, selectedWishId, initializedFromStorage, defaultTripId]);
 
   // 创建账单记录
   const createExpenseRecord = async (wish: Wish) => {
@@ -383,7 +378,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         onClick={(e) => {
                           e.stopPropagation();
                           setDefaultTripId(String(wish.id));
-                          setDefaultTripChanged(true);
                         }}
                         className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
                         title={isDefault ? '默认旅行' : '设为默认旅行'}
@@ -806,7 +800,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         onClick={(e) => {
                           e.stopPropagation();
                           setDefaultTripId(String(wish.id));
-                          setDefaultTripChanged(true);
                         }}
                         className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
                         title={isDefault ? '默认旅行' : '设为默认旅行'}
