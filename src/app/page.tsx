@@ -1066,9 +1066,6 @@ export default function Home() {
                                   {wish.is_confirmed !== 1 && (
                                     <>
                                       <Button
-                                    // 未成行：显示编辑和确定成行按钮
-                                    <>
-                                      <Button
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           handleOpenEditDialog(wish);
