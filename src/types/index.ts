@@ -46,3 +46,52 @@ export interface TripExpenseRecord {
   createdAt: string;
   updatedAt: string;
 }
+
+// 活动项接口
+export interface ActivityItem {
+  id: string;
+  type: string;
+  startTime: string;
+  endTime?: string;
+  content?: string;
+  location?: string;
+  notes?: string;
+}
+
+// 交通信息接口
+export interface TransportInfo {
+  id: string;
+  type: string;
+  from: string;
+  to: string;
+  departureTime?: string;
+  arrivalTime?: string;
+  details?: string;
+  position: 'arrival' | 'departure' | 'between';
+  beforeActivityId?: string;
+  afterActivityId?: string;
+  afterTime?: 'breakfast' | 'lunch' | 'dinner';
+}
+
+// 日程计划接口
+export interface DayPlan {
+  id: string;
+  dayNumber: number;
+  date?: string;
+  activities: ActivityItem[];
+  transport: TransportInfo[];
+}
+
+// 旅行计划接口
+export interface TripPlan {
+  id: string;
+  wishId: string;
+  destination: string;
+  startDate?: string;
+  endDate?: string;
+  travelDays: number;
+  travelers: string;
+  days: DayPlan[];
+  createdAt: string;
+  updatedAt: string;
+}

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Wish } from '@/types';
+import { Wish, ActivityItem, TransportInfo, DayPlan, TripPlan } from '@/types';
 
 const activityTypes: Record<string, string> = {
   breakfast: '早餐',
@@ -51,50 +51,6 @@ const transportNames: Record<string, string> = {
   car: '自驾',
   other: '其他',
 };
-
-interface ActivityItem {
-  id: string;
-  type: string;
-  startTime: string;
-  endTime?: string;
-  content?: string;
-  location?: string;
-  notes?: string;
-}
-
-interface TransportInfo {
-  id: string;
-  type: string;
-  from: string;
-  to: string;
-  departureTime?: string;
-  arrivalTime?: string;
-  details?: string;
-  position: 'arrival' | 'departure' | 'between';
-  beforeActivityId?: string;
-  afterActivityId?: string;
-}
-
-interface DayPlan {
-  id: string;
-  dayNumber: number;
-  date?: string;
-  activities: ActivityItem[];
-  transport: TransportInfo[];
-}
-
-interface TripPlan {
-  id: string;
-  wishId: string;
-  destination: string;
-  startDate?: string;
-  endDate?: string;
-  travelDays: number;
-  travelers: string;
-  days: DayPlan[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 interface TripPlannerProps {
   confirmedWishes: Wish[];
@@ -816,7 +772,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   type="time"
                   value={editingData.endTime || ''}
-                  onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined })}
+                  onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined } as ActivityItem)}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                 />
               </div>
@@ -824,7 +780,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Label className="text-[#FFFFFF]/60">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   value={editingData.content || ''}
-                  onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value || undefined })}
+                  onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value || undefined } as ActivityItem)}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="活动内容"
                 />
@@ -833,7 +789,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Label className="text-[#FFFFFF]/60">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   value={editingData.notes || ''}
-                  onChange={(e) => setEditingActivityData({ ...editingActivityData, notes: e.target.value || undefined })}
+                  onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value || undefined } as ActivityItem)}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="备注"
                 />
