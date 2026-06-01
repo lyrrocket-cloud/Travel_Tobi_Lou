@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car } from 'lucide-react';
+import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -50,6 +50,8 @@ export default function Home() {
   const [editingWish, setEditingWish] = useState<Wish | null>(null);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmingWishId, setConfirmingWishId] = useState<string>('');
+  const [cancelConfirmModalOpen, setCancelConfirmModalOpen] = useState(false);
+  const [cancelingWishId, setCancelingWishId] = useState<string>('');
   const [confirmDate, setConfirmDate] = useState('');
   const [confirmTravelers, setConfirmTravelers] = useState('');
   const [confirmTravelDays, setConfirmTravelDays] = useState('3');
@@ -315,6 +317,45 @@ export default function Home() {
   const handleOpenConfirmDialog = (wishId: string) => {
     setConfirmingWishId(wishId);
     setConfirmModalOpen(true);
+  };
+
+  const handleOpenCancelConfirmDialog = (wishId: string) => {
+    setCancelingWishId(wishId);
+    setCancelConfirmModalOpen(true);
+  };
+
+  const handleCancelConfirmWish = async () => {
+    if (!cancelingWishId) {
+      return;
+    }
+
+    try {
+      // 取消成行状态
+      const response = await fetch('/api/wishes', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: cancelingWishId,
+          isConfirmed: 0,
+          confirmedDate: '',
+          travelers: '',
+        }),
+      });
+
+      if (response.ok) {
+        setCancelConfirmModalOpen(false);
+        setCancelingWishId('');
+        fetchWishes();
+      } else {
+        const data = await response.json();
+        alert(data.error || '取消成行失败');
+      }
+    } catch (error) {
+      console.error('Error canceling confirmation:', error);
+      alert('取消成行失败，请稍后重试');
+    }
   };
 
   const handleConfirmWish = async () => {
@@ -795,13 +836,15 @@ export default function Home() {
 
           {/* 子标签页 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
-            <TabsList className="grid w-full grid-cols-2 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
-              <TabsTrigger
-                value="make-wish"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
-              >
-                抛硬币
-              </TabsTrigger>
+            {/* 抛硬币按钮 - 独立于毛玻璃框外，与生成日程表按钮样式相同 */}
+            <Button
+              onClick={() => setActiveTab('make-wish')}
+              className={`w-full max-w-[500px] mx-auto mb-4 block ${activeTab === 'make-wish' ? 'bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80' : 'bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]/80 hover:bg-black/60'}`}
+            >
+              <Coins className="w-4 h-4 mr-2" />
+              抛硬币
+            </Button>
+            <TabsList className="grid w-full grid-cols-1 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
               <TabsTrigger
                 value="wish-pool"
                 className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
@@ -1041,33 +1084,47 @@ export default function Home() {
                               {isAdminMode && (
                                 <>
                                   {wish.is_confirmed === 1 ? (
-                                    // 已成行：显示编辑行程按钮（使用统一的编辑对话框）
-                                    <Button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        // 获取该愿望的旅行天数
-                                        fetch(`/api/trip-plans?wishId=${wish.id}`)
-                                          .then(res => res.json())
-                                          .then(data => {
-                                            const travelDays = data.tripPlans && data.tripPlans.length > 0 
-                                              ? data.tripPlans[0].travelDays 
-                                              : 3;
-                                            handleOpenTripInfoEdit({
-                                              id: String(wish.id),
-                                              confirmed_date: wish.confirmed_date,
-                                              travelDays: travelDays,
-                                              travelers: wish.travelers,
-                                              destination: wish.destination,
+                                    // 已成行：显示编辑行程按钮和取消成行按钮
+                                    <>
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          // 获取该愿望的旅行天数
+                                          fetch(`/api/trip-plans?wishId=${wish.id}`)
+                                            .then(res => res.json())
+                                            .then(data => {
+                                              const travelDays = data.tripPlans && data.tripPlans.length > 0 
+                                                ? data.tripPlans[0].travelDays 
+                                                : 3;
+                                              handleOpenTripInfoEdit({
+                                                id: String(wish.id),
+                                                confirmed_date: wish.confirmed_date,
+                                                travelDays: travelDays,
+                                                travelers: wish.travelers,
+                                                destination: wish.destination,
+                                              });
                                             });
-                                          });
-                                      }}
-                                      variant="outline"
-                                      size="icon"
-                                      title="编辑行程"
-                                      className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
-                                    >
-                                      <Edit2 className="w-4 h-4" />
-                                    </Button>
+                                        }}
+                                        variant="outline"
+                                        size="icon"
+                                        title="编辑行程"
+                                        className="size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50"
+                                      >
+                                        <Edit2 className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleOpenCancelConfirmDialog(String(wish.id));
+                                        }}
+                                        variant="outline"
+                                        size="icon"
+                                        title="取消成行"
+                                        className="size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
+                                      >
+                                        <XCircle className="w-4 h-4" />
+                                      </Button>
+                                    </>
                                   ) : (
                                     // 未成行：显示编辑和确定成行按钮
                                     <>
@@ -1413,6 +1470,34 @@ export default function Home() {
               className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
             >
               确认
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 取消成行确认对话框 */}
+      <Dialog open={cancelConfirmModalOpen} onOpenChange={setCancelConfirmModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">取消成行</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">确定要取消这个行程的成行状态吗？此操作会将行程退回为愿望状态。</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCancelConfirmModalOpen(false);
+                setCancelingWishId('');
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleCancelConfirmWish}
+              className="bg-red-500 text-white hover:bg-red-500/80"
+            >
+              确认取消成行
             </Button>
           </DialogFooter>
         </DialogContent>
