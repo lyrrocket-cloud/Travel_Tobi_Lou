@@ -361,14 +361,22 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     return locations;
   };
 
+  const getFilteredLocations = () => {
+    const allLocations = getActivityLocations();
+    if (newExpense.category === 'other' || !newExpense.category) {
+      return allLocations;
+    }
+    return allLocations.filter(loc => loc.type === newExpense.category);
+  };
+
   const handleActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {
     setSelectedActivity(activity);
-    setNewExpense({
-      ...newExpense,
+    setNewExpense(prev => ({
+      ...prev,
       location: activity.location,
-      category: activity.type || 'other',
+      category: activity.type || prev.category,
       date: new Date().toISOString().split('T')[0],
-    });
+    }));
   };
 
   const handlePayerToggle = (payer: string) => {
@@ -448,7 +456,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const currentWish = confirmedWishes.find(wish => String(wish.id) === selectedWishId);
   const travelers = getTravelers();
-  const activityLocations = getActivityLocations();
+  const filteredLocations = getFilteredLocations();
 
   return (
     <div className="space-y-6">
@@ -546,11 +554,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 <div>
                   <Label className="text-[#FFFFFF]/60 mb-2 block">活动地点</Label>
-                  {activityLocations.length > 0 && (
+                  {filteredLocations.length > 0 && (
                     <div className="mb-3">
-                      <div className="text-sm text-[#FFFFFF]/40 mb-2">从行程中选择：</div>
+                      <div className="text-sm text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
                       <div className="flex flex-wrap gap-2">
-                        {activityLocations.map((activity, idx) => (
+                        {filteredLocations.map((activity, idx) => (
                           <button
                             key={idx}
                             onClick={() => handleActivitySelect(activity)}
