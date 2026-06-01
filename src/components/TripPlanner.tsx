@@ -106,6 +106,7 @@ interface TripPlan {
 
 interface TripPlannerProps {
   confirmedWishes: Wish[];
+  isAdminMode?: boolean;
   onEditTripInfo?: (info: {
     id: string;
     confirmed_date?: string;
@@ -125,7 +126,7 @@ const calculateDate = (startDate: string, dayOffset: number): string => {
   return `${year}-${month}-${day}`;
 };
 
-export default function TripPlanner({ confirmedWishes, onEditTripInfo }: TripPlannerProps) {
+export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEditTripInfo }: TripPlannerProps) {
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
   const [showWishSelector, setShowWishSelector] = useState(false);
@@ -1013,13 +1014,11 @@ export default function TripPlanner({ confirmedWishes, onEditTripInfo }: TripPla
           </Button>
       </div>
 
-      {/* 可点击编辑的旅行信息卡片 */}
+      {/* 旅行信息卡片 - 只有管理模式下可编辑 */}
       <div 
-        className="mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg cursor-pointer hover:bg-black/40 transition-colors"
+        className={`mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
         onClick={() => {
-          if (onEditTripInfo) {
-            // 找到对应的愿望信息
-            const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
+          if (isAdminMode && onEditTripInfo) {
             onEditTripInfo({
               id: String(selectedWishId),
               confirmed_date: currentTripPlan.startDate,
@@ -1039,7 +1038,7 @@ export default function TripPlanner({ confirmedWishes, onEditTripInfo }: TripPla
               {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
-          <Edit2 className="w-4 h-4 text-[#CEA472]" />
+          {isAdminMode && <Edit2 className="w-4 h-4 text-[#CEA472]" />}
         </div>
       </div>
 
