@@ -1063,9 +1063,9 @@ export default function Home() {
                               {/* 管理模式：显示确定成行、删除按钮（编辑通过点击详情区域完成） */}
                               {isAdminMode && (
                                 <>
-                                  {wish.is_confirmed === 1 ? (
-                                    // 已成行：编辑通过点击详情区域完成，这里不显示重复按钮
-                                  ) : (
+                                  {wish.is_confirmed !== 1 && (
+                                    <>
+                                      <Button
                                     // 未成行：显示编辑和确定成行按钮
                                     <>
                                       <Button
