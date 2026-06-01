@@ -115,20 +115,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedWishId = localStorage.getItem('travel-toolbox-accounting-wish-id');
-      const savedDefaultId = localStorage.getItem('travel-toolbox-default-trip-id');
-      
-      if (savedWishId) {
-        setSelectedWishId(savedWishId);
-      }
-      
-      if (savedDefaultId) {
-        setDefaultTripId(savedDefaultId);
-      }
-      
-      setInitializedFromStorage(true);
+    const savedWishId = localStorage.getItem('travel-toolbox-accounting-wish-id');
+    const savedDefaultId = localStorage.getItem('travel-toolbox-default-trip-id');
+    
+    if (savedWishId) {
+      setSelectedWishId(savedWishId);
     }
+    
+    if (savedDefaultId) {
+      setDefaultTripId(savedDefaultId);
+    }
+    
+    setInitializedFromStorage(true);
   }, []);
 
   useEffect(() => {
@@ -144,11 +142,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   }, [defaultTripId, initializedFromStorage]);
 
   useEffect(() => {
+    console.debug('[Trip Accounting] Initializing...');
     Promise.all([
       fetchExpenses(),
       fetchTripPlans()
-    ]);
+    ]).then(() => {
+      console.debug('[Trip Accounting] Data loaded');
+    });
   }, []);
+
+  useEffect(() => {
+    if (selectedWishId) {
+      console.debug('[Trip Accounting] selectedWishId changed:', selectedWishId);
+      console.debug('[Trip Accounting] tripExpenses:', tripExpenses);
+      const record = tripExpenses.find(r => String(r.wishId) === String(selectedWishId));
+      console.debug('[Trip Accounting] Found record:', record);
+    }
+  }, [selectedWishId, tripExpenses]);
 
   useEffect(() => {
     if (!initializedFromStorage) return;
