@@ -149,28 +149,24 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   useEffect(() => {
     if (!initializedFromStorage || loading) return;
     
-    if (selectedWishId) {
-      const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
-      if (wishExists) {
-        return;
-      } else {
-        localStorage.removeItem('travel-toolbox-accounting-wish-id');
-        setSelectedWishId(null);
-      }
-    }
+    const isSelectionValid = selectedWishId && confirmedWishes.some(wish => String(wish.id) === selectedWishId);
     
-    if (defaultTripId) {
-      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
-      if (defaultWishExists) {
-        setSelectedWishId(defaultTripId);
-        return;
-      } else {
+    if (!isSelectionValid) {
+      localStorage.removeItem('travel-toolbox-accounting-wish-id');
+      
+      if (defaultTripId) {
+        const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
+        if (defaultWishExists) {
+          setSelectedWishId(defaultTripId);
+          return;
+        }
         setDefaultTripId(null);
       }
-    }
-    
-    if (confirmedWishes.length > 0) {
-      setSelectedWishId(String(confirmedWishes[0].id));
+      
+      if (confirmedWishes.length > 0) {
+        setSelectedWishId(String(confirmedWishes[0].id));
+      }
+      return;
     }
   }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
