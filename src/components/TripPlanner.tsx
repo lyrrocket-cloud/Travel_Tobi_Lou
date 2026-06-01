@@ -106,6 +106,13 @@ interface TripPlan {
 
 interface TripPlannerProps {
   confirmedWishes: Wish[];
+  onEditTripInfo?: (info: {
+    id: string;
+    confirmed_date?: string;
+    travelDays?: number;
+    travelers?: string;
+    destination?: string;
+  }) => void;
 }
 
 // 日期计算函数
@@ -118,7 +125,7 @@ const calculateDate = (startDate: string, dayOffset: number): string => {
   return `${year}-${month}-${day}`;
 };
 
-export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
+export default function TripPlanner({ confirmedWishes, onEditTripInfo }: TripPlannerProps) {
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
   const [showWishSelector, setShowWishSelector] = useState(false);
@@ -245,6 +252,19 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
 
   useEffect(() => {
     fetchTripPlans();
+  }, []);
+
+  // 监听来自page.tsx的数据更新事件
+  useEffect(() => {
+    const handleTripPlansUpdated = () => {
+      fetchTripPlans();
+    };
+    
+    window.addEventListener('tripPlansUpdated', handleTripPlansUpdated);
+    
+    return () => {
+      window.removeEventListener('tripPlansUpdated', handleTripPlansUpdated);
+    };
   }, []);
 
   // 创建新的旅行规划
@@ -993,7 +1013,23 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
           </Button>
       </div>
 
-      <div className="mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg">
+      {/* 可点击编辑的旅行信息卡片 */}
+      <div 
+        className="mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg cursor-pointer hover:bg-black/40 transition-colors"
+        onClick={() => {
+          if (onEditTripInfo) {
+            // 找到对应的愿望信息
+            const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
+            onEditTripInfo({
+              id: String(selectedWishId),
+              confirmed_date: currentTripPlan.startDate,
+              travelDays: currentTripPlan.travelDays,
+              travelers: currentTripPlan.travelers,
+              destination: currentTripPlan.destination,
+            });
+          }
+        }}
+      >
         <div className="flex justify-between items-center">
           <div>
             <h4 className="text-[#FFFFFF] font-medium">
@@ -1003,6 +1039,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
               {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
+          <Edit2 className="w-4 h-4 text-[#CEA472]" />
         </div>
       </div>
 

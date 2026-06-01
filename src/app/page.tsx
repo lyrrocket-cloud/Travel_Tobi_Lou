@@ -57,6 +57,15 @@ export default function Home() {
   const [deletingWishId, setDeletingWishId] = useState<string>('');
   const [editTripModalOpen, setEditTripModalOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Wish | null>(null);
+  // 新增：编辑旅行信息的统一状态（包含出发日期、天数和同行人）
+  const [tripInfoEditModalOpen, setTripInfoEditModalOpen] = useState(false);
+  const [editingTripInfo, setEditingTripInfo] = useState<{
+    id: string;
+    confirmed_date?: string;
+    travelDays?: number;
+    travelers?: string;
+    destination?: string;
+  } | null>(null);
   const [followModalOpen, setFollowModalOpen] = useState(false);
   const [followingWishId, setFollowingWishId] = useState<string>('');
   const [followerName, setFollowerName] = useState('');
@@ -437,6 +446,117 @@ export default function Home() {
     } catch (error) {
       console.error('Error updating trip:', error);
       alert('更新行程失败，请稍后重试');
+    }
+  };
+
+  // 打开统一的旅行信息编辑对话框
+  const handleOpenTripInfoEdit = (info: {
+    id: string;
+    confirmed_date?: string;
+    travelDays?: number;
+    travelers?: string;
+    destination?: string;
+  }) => {
+    setEditingTripInfo(info);
+    setTripInfoEditModalOpen(true);
+  };
+
+  // 保存统一的旅行信息编辑
+  const handleSaveTripInfo = async () => {
+    if (!editingTripInfo) return;
+
+    // 验证必填字段
+    if (!editingTripInfo.confirmed_date) {
+      alert('请填写出发日期');
+      return;
+    }
+    if (!editingTripInfo.travelers) {
+      alert('请填写同行人员');
+      return;
+    }
+    if (!editingTripInfo.travelDays || editingTripInfo.travelDays < 1) {
+      alert('请填写有效的旅行天数');
+      return;
+    }
+
+    try {
+      // 调用愿望更新API
+      const response = await fetch('/api/wishes', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: editingTripInfo.id,
+          confirmedDate: editingTripInfo.confirmed_date,
+          travelers: editingTripInfo.travelers,
+        }),
+      });
+
+      if (response.ok) {
+        // 如果旅行天数有变化，需要更新旅行规划
+        const existingPlanRes = await fetch(`/api/trip-plans?wishId=${editingTripInfo.id}`);
+        const planData = await existingPlanRes.json();
+        
+        if (planData.tripPlans && planData.tripPlans.length > 0) {
+          const plan = planData.tripPlans[0];
+          
+          // 如果天数不同，需要调整days数组
+          if (plan.travelDays !== editingTripInfo.travelDays) {
+            let updatedDays = plan.days;
+            
+            if (editingTripInfo.travelDays! > plan.travelDays) {
+              // 增加天数
+              const daysToAdd = editingTripInfo.travelDays! - plan.travelDays;
+              for (let i = 0; i < daysToAdd; i++) {
+                updatedDays.push({
+                  id: `day-${plan.travelDays + i + 1}-${Date.now()}`,
+                  dayNumber: plan.travelDays + i + 1,
+                  activities: [],
+                  transport: [],
+                });
+              }
+            } else {
+              // 减少天数
+              updatedDays = updatedDays.slice(0, editingTripInfo.travelDays);
+            }
+
+            // 更新旅行规划
+            await fetch('/api/trip-plans', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: plan.id,
+                travelDays: editingTripInfo.travelDays,
+                days: updatedDays,
+              }),
+            });
+          } else {
+            // 只更新出发日期
+            await fetch('/api/trip-plans', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: plan.id,
+                startDate: editingTripInfo.confirmed_date,
+                travelers: editingTripInfo.travelers,
+              }),
+            });
+          }
+        }
+
+        setTripInfoEditModalOpen(false);
+        setEditingTripInfo(null);
+        fetchWishes();
+        // 触发TripPlanner刷新
+        window.dispatchEvent(new Event('tripPlansUpdated'));
+      } else {
+        const data = await response.json();
+        alert(data.error || '更新旅行信息失败');
+      }
+    } catch (error) {
+      console.error('Error updating trip info:', error);
+      alert('更新旅行信息失败，请稍后重试');
     }
   };
 
@@ -845,10 +965,31 @@ export default function Home() {
                               
                               {/* 已成行显示具体信息 */}
                               {wish.is_confirmed === 1 ? (
-                                <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3">
+                                <div 
+                                  className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3 cursor-pointer hover:bg-[#CEA472]/5 rounded transition-colors p-2 -ml-2"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    // 获取该愿望的旅行天数（需要从tripPlans获取）
+                                    fetch(`/api/trip-plans?wishId=${wish.id}`)
+                                      .then(res => res.json())
+                                      .then(data => {
+                                        const travelDays = data.tripPlans && data.tripPlans.length > 0 
+                                          ? data.tripPlans[0].travelDays 
+                                          : 3;
+                                        handleOpenTripInfoEdit({
+                                          id: String(wish.id),
+                                          confirmed_date: wish.confirmed_date,
+                                          travelDays: travelDays,
+                                          travelers: wish.travelers,
+                                          destination: wish.destination,
+                                        });
+                                      });
+                                  }}
+                                >
                                   <div className="flex items-center gap-1">
                                     <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
                                     <span className="text-sm">{wish.confirmed_date || ''}</span>
+                                    <Edit2 className="w-3 h-3 text-[#CEA472] ml-2 opacity-50" />
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
@@ -991,7 +1132,7 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} />
+        <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} onEditTripInfo={handleOpenTripInfoEdit} />
       );
     } else if (mainTab === 'account') {
       return (
@@ -1307,6 +1448,73 @@ export default function Home() {
               className="bg-red-500 text-white hover:bg-red-500/80"
             >
               删除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 统一的旅行信息编辑对话框 */}
+      <Dialog open={tripInfoEditModalOpen} onOpenChange={setTripInfoEditModalOpen}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">编辑旅行信息</DialogTitle>
+            {editingTripInfo?.destination && (
+              <DialogDescription className="text-[#CEA472]">
+                {editingTripInfo.destination}
+              </DialogDescription>
+            )}
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="trip-info-date" className="text-[#FFFFFF]">出发日期</Label>
+              <Input
+                id="trip-info-date"
+                type="text"
+                placeholder="YYYY-MM-DD"
+                value={editingTripInfo?.confirmed_date || ''}
+                onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, confirmed_date: e.target.value } : null)}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="trip-info-days" className="text-[#FFFFFF]">旅行天数</Label>
+              <Input
+                id="trip-info-days"
+                type="number"
+                min="1"
+                max="30"
+                value={editingTripInfo?.travelDays || 3}
+                onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelDays: parseInt(e.target.value) || 1 } : null)}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="trip-info-travelers" className="text-[#FFFFFF]">同行人员</Label>
+              <Input
+                id="trip-info-travelers"
+                value={editingTripInfo?.travelers || ''}
+                onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelers: e.target.value } : null)}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                placeholder="例如：张三、李四、王五"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setTripInfoEditModalOpen(false);
+                setEditingTripInfo(null);
+              }}
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleSaveTripInfo}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+            >
+              保存
             </Button>
           </DialogFooter>
         </DialogContent>
