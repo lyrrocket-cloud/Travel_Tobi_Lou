@@ -19,7 +19,7 @@ const expenseCategories: Record<string, string> = {
   entertainment: '娱乐',
   food: '餐饮',
   transportation: '交通',
-  other: '其他'
+  other: '其它'
 };
 
 const expenseCategoryIcons: Record<string, React.ReactNode> = {
@@ -406,7 +406,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const getFilteredLocations = () => {
     const allLocations = getActivityLocations();
-    if (newExpense.category === 'other' || !newExpense.category) {
+    if (!newExpense.category) {
       return allLocations;
     }
     return allLocations.filter(loc => loc.type === newExpense.category);

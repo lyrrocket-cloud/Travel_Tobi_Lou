@@ -16,7 +16,7 @@ const activityTypes: Record<string, string> = {
   shopping: '购物',
   entertainment: '娱乐',
   food: '餐饮',
-  other: '其他',
+  other: '其它',
 };
 
 const activityTypeIcons: Record<string, React.ReactNode> = {
@@ -651,7 +651,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <option value="bus">大巴</option>
                   <option value="walk">步行</option>
                   <option value="car">自驾</option>
-                  <option value="other">其他</option>
+                  <option value="other">其它</option>
                 </select>
               </div>
               <div>
@@ -786,7 +786,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <option value="dinner">晚餐</option>
                   <option value="evening">晚间活动</option>
                   <option value="accommodation">住宿</option>
-                  <option value="other">其他</option>
+                  <option value="other">其它</option>
                 </select>
               </div>
               <div>
@@ -1523,7 +1523,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             <option value="shopping">购物</option>
                             <option value="entertainment">娱乐</option>
                             <option value="food">餐饮</option>
-                            <option value="other">其他</option>
+                            <option value="other">其它</option>
                           </select>
                         </div>
                         <div>
