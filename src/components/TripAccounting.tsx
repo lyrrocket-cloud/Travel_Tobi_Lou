@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory } from '@/types';
+import { TripPlan } from '@/types';
 
 // 支出类别名称映射
 const CATEGORY_NAMES: Record<ExpenseCategory, string> = {
@@ -35,10 +36,18 @@ const CATEGORY_ICONS: Record<ExpenseCategory, string> = {
 interface TripAccountingProps {
   confirmedWishes: Wish[];
   isAdminMode?: boolean;
+  onEditTripInfo?: (info: {
+    id: string;
+    confirmed_date?: string;
+    travelDays?: number;
+    travelers?: string;
+    destination?: string;
+  }) => void;
 }
 
-export default function TripAccounting({ confirmedWishes, isAdminMode = false }: TripAccountingProps) {
+export default function TripAccounting({ confirmedWishes, isAdminMode = false, onEditTripInfo }: TripAccountingProps) {
   const [tripExpenses, setTripExpenses] = useState<TripExpenseRecord[]>([]);
+  const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
   const [showWishSelector, setShowWishSelector] = useState(false);
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -48,6 +57,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
   const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
+  const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
   
   // 新增支出表单数据
   const [newExpense, setNewExpense] = useState<{
@@ -80,13 +90,31 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     }
   };
 
+  // 加载旅行规划数据
+  const fetchTripPlans = async () => {
+    try {
+      const response = await fetch('/api/trip-plans');
+      const data = await response.json();
+      setTripPlans(data.tripPlans || []);
+    } catch (error) {
+      console.error('[Trip Accounting] Error fetching trip plans:', error);
+    }
+  };
+
   // 初始化：从localStorage读取上次选择的旅行
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedWishId = localStorage.getItem('travel-toolbox-accounting-wish-id');
+      const savedDefaultId = localStorage.getItem('travel-toolbox-default-trip-id');
+      
       if (savedWishId) {
         setSelectedWishId(savedWishId);
       }
+      
+      if (savedDefaultId) {
+        setDefaultTripId(savedDefaultId);
+      }
+      
       setInitializedFromStorage(true);
     }
   }, []);
@@ -98,17 +126,53 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     }
   }, [selectedWishId, initializedFromStorage]);
 
+  // 保存默认旅行到localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && initializedFromStorage) {
+      if (defaultTripId) {
+        localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
+      } else {
+        localStorage.removeItem('travel-toolbox-default-trip-id');
+      }
+    }
+  }, [defaultTripId, initializedFromStorage]);
+
   // 初始加载数据
   useEffect(() => {
-    fetchExpenses();
+    Promise.all([
+      fetchExpenses(),
+      fetchTripPlans()
+    ]);
   }, []);
 
-  // 如果没有选中的旅行，自动选择第一个
+  // 根据默认旅行选择逻辑
   useEffect(() => {
-    if (confirmedWishes.length > 0 && !selectedWishId && initializedFromStorage) {
+    if (!initializedFromStorage || loading) return;
+    
+    if (selectedWishId) {
+      const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
+      if (wishExists) {
+        return;
+      } else {
+        localStorage.removeItem('travel-toolbox-accounting-wish-id');
+        setSelectedWishId(null);
+      }
+    }
+    
+    if (defaultTripId) {
+      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
+      if (defaultWishExists) {
+        setSelectedWishId(defaultTripId);
+        return;
+      } else {
+        setDefaultTripId(null);
+      }
+    }
+    
+    if (confirmedWishes.length > 0) {
       setSelectedWishId(String(confirmedWishes[0].id));
     }
-  }, [confirmedWishes, selectedWishId, initializedFromStorage]);
+  }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
   // 创建账单记录
   const createExpenseRecord = async (wish: Wish) => {
@@ -272,51 +336,80 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     ) : [];
 
   // 如果没有选中的旅行，显示选择界面
-  if (!selectedWishId) {
+  if (!selectedWishId || showWishSelector) {
     return (
-      <div className="space-y-6">
-        <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/30">
-          <CardContent className="pt-6">
-            <div className="text-center py-12">
-              <Coins className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行记账</h3>
-              <p className="text-[#FFFFFF]/60">请先选择一个旅行开始记账</p>
-              
-              <div className="mt-6">
-                {confirmedWishes.length > 0 ? (
-                  <div className="space-y-3 max-w-md mx-auto">
-                    {confirmedWishes.map(wish => (
+      <div className="w-full">
+        <div className="flex items-center mb-6">
+          <h3 className="text-xl font-semibold text-[#CEA472]">选择旅行</h3>
+        </div>
+
+        {confirmedWishes.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-[#FFFFFF]/60">暂无已确认成行的愿望</div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {confirmedWishes.map(wish => {
+              const hasRecord = tripExpenses.some(record => record.wishId === String(wish.id));
+              const isDefault = defaultTripId === String(wish.id);
+              return (
+                <div
+                  key={wish.id}
+                  className={`bg-black/30 border rounded-lg p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  onClick={() => {
+                    if (hasRecord) {
+                      setSelectedWishId(String(wish.id));
+                      setShowWishSelector(false);
+                    } else {
+                      createExpenseRecord(wish);
+                    }
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-[#FFFFFF] font-medium">{wish.destination}</h4>
+                        {isDefault && <Star className="w-4 h-4 text-[#CEA472] fill-[#CEA472]" />}
+                      </div>
+                      <p className="text-[#FFFFFF]/60 text-sm">
+                        {wish.confirmed_date} · {wish.travelers}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {hasRecord ? (
+                        <span className="text-[#CEA472] text-sm">已有记录</span>
+                      ) : (
+                        <span className="text-[#FFFFFF]/40 text-sm">点击创建记录</span>
+                      )}
                       <button
-                        key={wish.id}
-                        onClick={() => {
-                          const existingRecord = tripExpenses.find(record => record.wishId === String(wish.id));
-                          if (existingRecord) {
-                            setSelectedWishId(String(wish.id));
-                          } else {
-                            createExpenseRecord(wish);
-                          }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDefaultTripId(String(wish.id));
                         }}
-                        className="w-full p-4 rounded-lg bg-black/40 border border-[#CEA472]/20 text-left hover:bg-[#CEA472]/10 hover:border-[#CEA472]/50 transition-all"
+                        className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
+                        title={isDefault ? '默认旅行' : '设为默认旅行'}
                       >
-                        <div className="font-medium text-[#FFFFFF]">{wish.destination}</div>
-                        <div className="text-sm text-[#FFFFFF]/60 mt-1">
-                          {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
-                        </div>
+                        <Star className={`w-5 h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
                       </button>
-                    ))}
+                    </div>
                   </div>
-                ) : (
-                  <p className="text-[#FFFFFF]/40">暂无已确认的旅行</p>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
 
   const currentWish = confirmedWishes.find(wish => String(wish.id) === selectedWishId);
+  
+  // 获取旅行天数（如果有相关的旅行规划的话）
+  const getTravelDays = () => {
+    const plan = tripPlans?.find(p => p.wishId === selectedWishId);
+    if (plan) return plan.travelDays;
+    return 3; // 默认3天
+  };
 
   return (
     <div className="space-y-6">
@@ -324,8 +417,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
       <div className="flex justify-between items-center max-w-4xl mx-auto">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-semibold text-[#FFFFFF]">
-            {currentWish?.destination || '旅行记账'}
+            {currentWish?.destination} 旅行记账
           </h2>
+          {defaultTripId === selectedWishId && <Star className="w-5 h-5 text-[#CEA472] fill-[#CEA472]" />}
         </div>
         <Button
           variant="outline"
@@ -336,6 +430,34 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
+      </div>
+
+      {/* 行程简介框 */}
+      <div 
+        className={`mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg max-w-4xl mx-auto ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
+        onClick={() => {
+          if (isAdminMode && onEditTripInfo && currentWish) {
+            onEditTripInfo({
+              id: String(selectedWishId),
+              confirmed_date: currentWish.confirmed_date,
+              travelDays: getTravelDays(),
+              travelers: currentWish.travelers,
+              destination: currentWish.destination,
+            });
+          }
+        }}
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <h4 className="text-[#FFFFFF] font-medium">
+              {currentWish?.destination}
+            </h4>
+            <p className="text-[#FFFFFF]/60 text-sm">
+              {getTravelDays()}天 · {currentWish?.travelers}
+            </p>
+          </div>
+          {isAdminMode && <Edit2 className="w-4 h-4 text-[#CEA472]" />}
+        </div>
       </div>
 
       {/* 统计卡片 */}
@@ -648,36 +770,52 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
           <div className="space-y-3 py-4 max-h-80 overflow-y-auto">
             {confirmedWishes.map(wish => {
               const existingRecord = tripExpenses.find(record => record.wishId === String(wish.id));
+              const isDefault = defaultTripId === String(wish.id);
               return (
-                <button
-                  key={wish.id}
-                  onClick={() => {
-                    if (existingRecord) {
-                      setSelectedWishId(String(wish.id));
-                      setShowWishSelector(false);
-                    } else {
-                      createExpenseRecord(wish);
-                    }
-                  }}
-                  className={`w-full p-4 rounded-lg text-left transition-all ${
-                    String(wish.id) === selectedWishId
-                      ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                      : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/60'
-                  }`}
-                >
-                  <div className="font-medium flex items-center gap-2">
-                    {wish.destination}
-                    {existingRecord && <Star className="w-4 h-4 fill-[#CEA472]" />}
-                  </div>
-                  <div className="text-sm text-[#FFFFFF]/60 mt-1">
-                    {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
-                  </div>
-                  {!existingRecord && (
-                    <div className="text-xs text-[#CEA472]/80 mt-1">
-                      点击创建账单记录
+                <div key={wish.id}>
+                  <button
+                    onClick={() => {
+                      if (existingRecord) {
+                        setSelectedWishId(String(wish.id));
+                        setShowWishSelector(false);
+                      } else {
+                        createExpenseRecord(wish);
+                      }
+                    }}
+                    className={`w-full p-4 rounded-lg text-left transition-all ${
+                      String(wish.id) === selectedWishId
+                        ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
+                        : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium flex items-center gap-2">
+                          {wish.destination}
+                          {isDefault && <Star className="w-4 h-4 fill-[#CEA472]" />}
+                        </div>
+                        <div className="text-sm text-[#FFFFFF]/60 mt-1">
+                          {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
+                        </div>
+                        {!existingRecord && (
+                          <div className="text-xs text-[#CEA472]/80 mt-1">
+                            点击创建账单记录
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDefaultTripId(String(wish.id));
+                        }}
+                        className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
+                        title={isDefault ? '默认旅行' : '设为默认旅行'}
+                      >
+                        <Star className={`w-5 h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
+                      </button>
                     </div>
-                  )}
-                </button>
+                  </button>
+                </div>
               );
             })}
           </div>

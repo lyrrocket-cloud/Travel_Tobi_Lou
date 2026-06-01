@@ -1185,7 +1185,11 @@ export default function Home() {
       );
     } else if (mainTab === 'account') {
       return (
-        <TripAccounting confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} />
+        <TripAccounting 
+          confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
+          isAdminMode={isAdminMode} 
+          onEditTripInfo={handleOpenTripInfoEdit}
+        />
       );
     } else if (mainTab === 'drive') {
       return (
