@@ -17,6 +17,7 @@ const expenseCategories: Record<string, string> = {
   attraction: '景点',
   shopping: '购物',
   entertainment: '娱乐',
+  food: '餐饮',
   transportation: '交通',
   other: '其他'
 };
@@ -26,6 +27,7 @@ const expenseCategoryIcons: Record<string, React.ReactNode> = {
   attraction: <MapPin className="w-4 h-4" />,
   shopping: <ShoppingBag className="w-4 h-4" />,
   entertainment: <Gamepad2 className="w-4 h-4" />,
+  food: <span>🍽️</span>,
   transportation: <Car className="w-4 h-4" />,
   other: <Clock className="w-4 h-4" />,
 };
