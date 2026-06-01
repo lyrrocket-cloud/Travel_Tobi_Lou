@@ -965,33 +965,10 @@ export default function Home() {
                               
                               {/* 已成行显示具体信息 */}
                               {wish.is_confirmed === 1 ? (
-                                <div 
-                                  className={`space-y-2 pl-6 text-[#FFFFFF]/80 mb-3 ${isAdminMode ? 'cursor-pointer hover:bg-[#CEA472]/5 rounded transition-colors p-2 -ml-2' : ''}`}
-                                  onClick={(e) => {
-                                    if (isAdminMode) {
-                                      e.stopPropagation();
-                                      // 获取该愿望的旅行天数（需要从tripPlans获取）
-                                      fetch(`/api/trip-plans?wishId=${wish.id}`)
-                                        .then(res => res.json())
-                                        .then(data => {
-                                          const travelDays = data.tripPlans && data.tripPlans.length > 0 
-                                            ? data.tripPlans[0].travelDays 
-                                            : 3;
-                                          handleOpenTripInfoEdit({
-                                            id: String(wish.id),
-                                            confirmed_date: wish.confirmed_date,
-                                            travelDays: travelDays,
-                                            travelers: wish.travelers,
-                                            destination: wish.destination,
-                                          });
-                                        });
-                                    }
-                                  }}
-                                >
+                                <div className="space-y-2 pl-6 text-[#FFFFFF]/80 mb-3">
                                   <div className="flex items-center gap-1">
                                     <Calendar className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
                                     <span className="text-sm">{wish.confirmed_date || ''}</span>
-                                    {isAdminMode && <Edit2 className="w-3 h-3 text-[#CEA472] ml-2 opacity-50" />}
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className={`w-4 h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />

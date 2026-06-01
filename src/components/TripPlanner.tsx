@@ -1007,10 +1007,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         </h3>
         <Button
             variant="outline"
+            size="icon"
             onClick={() => setShowWishSelector(true)}
-            className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/80"
+            className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+            title="切换行程"
           >
-            切换行程
+            <MapPin className="w-4 h-4" />
           </Button>
       </div>
 
