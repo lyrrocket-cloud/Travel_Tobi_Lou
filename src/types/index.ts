@@ -27,6 +27,7 @@ export interface ExpenseItem {
   id: string;
   wishId: string;
   date: string;
+  time: string;
   category: ExpenseCategory;
   amount: number;
   description: string;

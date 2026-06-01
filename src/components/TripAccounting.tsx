@@ -61,6 +61,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   
   const [newExpense, setNewExpense] = useState<{
     date: string;
+    time: string;
     category: string;
     amount: string;
     description: string;
@@ -68,6 +69,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     payers: string[];
   }>({
     date: new Date().toISOString().split('T')[0],
+    time: '12:00',
     category: 'other',
     amount: '',
     description: '',
@@ -81,6 +83,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     location: string;
     startTime: string;
     endTime?: string;
+    date: string;
   } | null>(null);
 
   const currentExpenseRecord = selectedWishId ? 
@@ -202,6 +205,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       id: `expense-${Date.now()}`,
       wishId: currentExpenseRecord.wishId,
       date: newExpense.date,
+      time: newExpense.time,
       category: newExpense.category as ExpenseCategory,
       amount: parseFloat(newExpense.amount),
       description: newExpense.description,
@@ -343,11 +347,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const getActivityLocations = () => {
     if (!currentTripPlan) return [];
-    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string }> = [];
+    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string }> = [];
     
     currentTripPlan.days.forEach(day => {
       day.activities.forEach(activity => {
         if (activity.location) {
+          let activityDate = '';
+          if (currentTripPlan.startDate) {
+            const start = new Date(currentTripPlan.startDate);
+            start.setDate(start.getDate() + day.dayNumber - 1);
+            activityDate = start.toISOString().split('T')[0];
+          }
+          
           locations.push({
             location: activity.location,
             dayNumber: day.dayNumber,
@@ -355,6 +366,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             startTime: activity.startTime,
             endTime: activity.endTime,
             type: activity.type,
+            date: activityDate,
           });
         }
       });
@@ -377,7 +389,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       ...prev,
       location: activity.location,
       category: activity.type || prev.category,
-      date: new Date().toISOString().split('T')[0],
+      date: activity.date || prev.date,
+      time: activity.startTime || prev.time,
     }));
   };
 
@@ -587,13 +600,22 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <Label className="text-[#FFFFFF]/60 mb-2 block">日期</Label>
                     <Input
                       type="date"
                       value={newExpense.date}
                       onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
+                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-[#FFFFFF]/60 mb-2 block">时间</Label>
+                    <Input
+                      type="time"
+                      value={newExpense.time}
+                      onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
                       className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                     />
                   </div>
@@ -670,7 +692,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-[#FFFFFF]">{expense.description}</div>
                           <div className="text-sm text-[#FFFFFF]/60 mt-1">
-                            {expense.date} · {expenseCategories[expense.category] || expense.category}
+                            {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
                             {expense.payer && ` · ${expense.payer}`}
                           </div>
                         </div>
