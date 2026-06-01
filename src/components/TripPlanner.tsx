@@ -833,7 +833,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Label className="text-[#FFFFFF]/60">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   value={editingData.notes || ''}
-                  onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value || undefined })}
+                  onChange={(e) => setEditingActivityData({ ...editingActivityData, notes: e.target.value || undefined })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
                   placeholder="备注"
                 />
@@ -961,6 +961,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       ) : (
                         <span className="text-[#FFFFFF]/40 text-sm">点击创建规划</span>
                       )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDefaultTripId(String(wish.id));
+                        }}
+                        className={`p-2 rounded-full transition-colors ${isDefault ? 'text-[#CEA472] hover:bg-[#CEA472]/20' : 'text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-[#CEA472]/10'}`}
+                        title={isDefault ? '默认旅行' : '设为默认旅行'}
+                      >
+                        <Star className={`w-5 h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
+                      </button>
                     </div>
                   </div>
                 </div>
