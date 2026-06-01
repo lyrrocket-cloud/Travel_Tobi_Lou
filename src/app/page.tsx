@@ -836,13 +836,7 @@ export default function Home() {
 
           {/* 子标签页 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
-            <TabsList className="grid w-full max-w-4xl mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
-              <TabsTrigger
-                value="make-wish"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
-              >
-                抛硬币
-              </TabsTrigger>
+            <TabsList className="grid w-full grid-cols-1 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
               <TabsTrigger
                 value="wish-pool"
                 className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
