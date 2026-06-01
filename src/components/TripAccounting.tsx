@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -27,7 +27,7 @@ const expenseCategoryIcons: Record<string, React.ReactNode> = {
   attraction: <MapPin className="w-4 h-4" />,
   shopping: <ShoppingBag className="w-4 h-4" />,
   entertainment: <Gamepad2 className="w-4 h-4" />,
-  food: <span>🍽️</span>,
+  food: <UtensilsCrossed className="w-4 h-4" />,
   transportation: <Car className="w-4 h-4" />,
   other: <Clock className="w-4 h-4" />,
 };
