@@ -1,36 +1,33 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory } from '@/types';
 import { TripPlan } from '@/types';
 
-// 支出类别名称映射
-const CATEGORY_NAMES: Record<ExpenseCategory, string> = {
-  transportation: '交通',
+const expenseCategories: Record<string, string> = {
   accommodation: '住宿',
-  food: '餐饮',
-  entertainment: '娱乐',
+  attraction: '景点',
   shopping: '购物',
-  attraction: '景点门票',
+  entertainment: '娱乐',
+  transportation: '交通',
   other: '其他'
 };
 
-// 支出类别图标
-const CATEGORY_ICONS: Record<ExpenseCategory, string> = {
-  transportation: '🚗',
-  accommodation: '🏨',
-  food: '🍽️',
-  entertainment: '🎮',
-  shopping: '🛒',
-  attraction: '🎫',
-  other: '💰'
+const expenseCategoryIcons: Record<string, React.ReactNode> = {
+  accommodation: <BedDouble className="w-4 h-4" />,
+  attraction: <MapPin className="w-4 h-4" />,
+  shopping: <ShoppingBag className="w-4 h-4" />,
+  entertainment: <Gamepad2 className="w-4 h-4" />,
+  transportation: <Car className="w-4 h-4" />,
+  other: <Clock className="w-4 h-4" />,
 };
 
 interface TripAccountingProps {
@@ -50,6 +47,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
   const [showWishSelector, setShowWishSelector] = useState(false);
+  const [activeTab, setActiveTab] = useState('entry');
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showEditExpense, setShowEditExpense] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -59,25 +57,36 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
   
-  // 新增支出表单数据
   const [newExpense, setNewExpense] = useState<{
     date: string;
-    category: ExpenseCategory;
+    category: string;
     amount: string;
     description: string;
-    payer?: string;
+    location: string;
+    payers: string[];
   }>({
     date: new Date().toISOString().split('T')[0],
     category: 'other',
     amount: '',
     description: '',
+    location: '',
+    payers: [],
   });
 
-  // 当前选中的账单记录
+  const [selectedActivity, setSelectedActivity] = useState<{
+    dayNumber: number;
+    activityId: string;
+    location: string;
+    startTime: string;
+    endTime?: string;
+  } | null>(null);
+
   const currentExpenseRecord = selectedWishId ? 
     tripExpenses.find(record => record.wishId === selectedWishId) : null;
 
-  // 加载账单数据
+  const currentTripPlan = selectedWishId ?
+    tripPlans.find(p => p.wishId === selectedWishId) : null;
+
   const fetchExpenses = async () => {
     try {
       const response = await fetch('/api/trip-expenses');
@@ -90,7 +99,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   };
 
-  // 加载旅行规划数据
   const fetchTripPlans = async () => {
     try {
       const response = await fetch('/api/trip-plans');
@@ -101,7 +109,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   };
 
-  // 初始化：从localStorage读取上次选择的旅行
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedWishId = localStorage.getItem('travel-toolbox-accounting-wish-id');
@@ -119,21 +126,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   }, []);
 
-  // 保存选择的旅行到localStorage
   useEffect(() => {
     if (typeof window !== 'undefined' && selectedWishId && initializedFromStorage) {
       localStorage.setItem('travel-toolbox-accounting-wish-id', selectedWishId);
     }
   }, [selectedWishId, initializedFromStorage]);
 
-  // 保存默认旅行到localStorage
   useEffect(() => {
     if (typeof window !== 'undefined' && initializedFromStorage && defaultTripId) {
       localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
     }
   }, [defaultTripId, initializedFromStorage]);
 
-  // 初始加载数据
   useEffect(() => {
     Promise.all([
       fetchExpenses(),
@@ -141,10 +145,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     ]);
   }, []);
 
-  // 根据默认旅行选择逻辑
   useEffect(() => {
     if (!initializedFromStorage) return;
-    
     if (confirmedWishes.length === 0) return;
     
     const isSelectionValid = selectedWishId && confirmedWishes.some(wish => String(wish.id) === selectedWishId);
@@ -167,7 +169,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   }, [confirmedWishes, selectedWishId, initializedFromStorage, defaultTripId]);
 
-  // 创建账单记录
   const createExpenseRecord = async (wish: Wish) => {
     try {
       const response = await fetch('/api/trip-expenses', {
@@ -190,7 +191,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   };
 
-  // 添加支出
   const addExpense = async () => {
     if (!currentExpenseRecord || !newExpense.amount || !newExpense.description) {
       return;
@@ -200,10 +200,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       id: `expense-${Date.now()}`,
       wishId: currentExpenseRecord.wishId,
       date: newExpense.date,
-      category: newExpense.category,
+      category: newExpense.category as ExpenseCategory,
       amount: parseFloat(newExpense.amount),
       description: newExpense.description,
-      payer: newExpense.payer,
+      payer: newExpense.payers.join(','),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -226,14 +226,16 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           category: 'other',
           amount: '',
           description: '',
+          location: '',
+          payers: [],
         });
+        setSelectedActivity(null);
       }
     } catch (error) {
       console.error('[Trip Accounting] Error adding expense:', error);
     }
   };
 
-  // 保存编辑的支出
   const saveEditedExpense = async () => {
     if (!currentExpenseRecord || !editingExpense) return;
 
@@ -267,7 +269,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   };
 
-  // 删除支出
   const deleteExpense = async () => {
     if (!currentExpenseRecord || !deletingExpenseId) return;
 
@@ -295,26 +296,26 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
   };
 
-  // 计算统计数据
   const calculateStats = () => {
-    if (!currentExpenseRecord) return { total: 0, categories: {} as Record<ExpenseCategory, number> };
+    if (!currentExpenseRecord) return { total: 0, categories: {} as Record<string, number>, byPayer: {} as Record<string, number> };
 
     const stats = {
       total: 0,
-      categories: {
-        transportation: 0,
-        accommodation: 0,
-        food: 0,
-        entertainment: 0,
-        shopping: 0,
-        attraction: 0,
-        other: 0,
-      } as Record<ExpenseCategory, number>,
+      categories: {} as Record<string, number>,
+      byPayer: {} as Record<string, number>,
     };
 
     currentExpenseRecord.expenses.forEach(expense => {
       stats.total += expense.amount;
-      stats.categories[expense.category] += expense.amount;
+      stats.categories[expense.category] = (stats.categories[expense.category] || 0) + expense.amount;
+      if (expense.payer) {
+        expense.payer.split(',').forEach(payer => {
+          const trimmedPayer = payer.trim();
+          if (trimmedPayer) {
+            stats.byPayer[trimmedPayer] = (stats.byPayer[trimmedPayer] || 0) + expense.amount;
+          }
+        });
+      }
     });
 
     return stats;
@@ -322,13 +323,63 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const stats = calculateStats();
 
-  // 排序支出（按日期降序）
   const sortedExpenses = currentExpenseRecord ? 
     [...currentExpenseRecord.expenses].sort((a, b) => 
       new Date(b.date).getTime() - new Date(a.date).getTime()
     ) : [];
 
-  // 如果没有选中的旅行，显示选择界面
+  const getTravelDays = () => {
+    const plan = tripPlans?.find(p => p.wishId === selectedWishId);
+    if (plan) return plan.travelDays;
+    return 3;
+  };
+
+  const getTravelers = () => {
+    const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
+    return wish?.travelers?.split(',').map(t => t.trim()).filter(t => t) || [];
+  };
+
+  const getActivityLocations = () => {
+    if (!currentTripPlan) return [];
+    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string }> = [];
+    
+    currentTripPlan.days.forEach(day => {
+      day.activities.forEach(activity => {
+        if (activity.location) {
+          locations.push({
+            location: activity.location,
+            dayNumber: day.dayNumber,
+            activityId: activity.id,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
+            type: activity.type,
+          });
+        }
+      });
+    });
+    
+    return locations;
+  };
+
+  const handleActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {
+    setSelectedActivity(activity);
+    setNewExpense({
+      ...newExpense,
+      location: activity.location,
+      category: activity.type || 'other',
+      date: new Date().toISOString().split('T')[0],
+    });
+  };
+
+  const handlePayerToggle = (payer: string) => {
+    setNewExpense(prev => ({
+      ...prev,
+      payers: prev.payers.includes(payer)
+        ? prev.payers.filter(p => p !== payer)
+        : [...prev.payers, payer]
+    }));
+  };
+
   if (!selectedWishId || showWishSelector) {
     return (
       <div className="w-full">
@@ -396,17 +447,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   }
 
   const currentWish = confirmedWishes.find(wish => String(wish.id) === selectedWishId);
-  
-  // 获取旅行天数（如果有相关的旅行规划的话）
-  const getTravelDays = () => {
-    const plan = tripPlans?.find(p => p.wishId === selectedWishId);
-    if (plan) return plan.travelDays;
-    return 3; // 默认3天
-  };
+  const travelers = getTravelers();
+  const activityLocations = getActivityLocations();
 
   return (
     <div className="space-y-6">
-      {/* 标题和选择 */}
       <div className="flex justify-between items-center max-w-4xl mx-auto">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-semibold text-[#CEA472]">
@@ -425,7 +470,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </Button>
       </div>
 
-      {/* 行程简介框 */}
       <div 
         className={`mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg max-w-4xl mx-auto ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
         onClick={() => {
@@ -442,204 +486,272 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       >
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="text-[#FFFFFF] font-medium">
-              {currentWish?.destination}
-            </h4>
-            <p className="text-[#FFFFFF]/60 text-sm">
-              {getTravelDays()}天 · {currentWish?.travelers}
-            </p>
+            <h4 className="text-[#FFFFFF] font-medium">{currentWish?.destination}</h4>
+            <p className="text-[#FFFFFF]/60 text-sm">{getTravelDays()}天 · {currentWish?.travelers}</p>
           </div>
           {isAdminMode && <Edit2 className="w-4 h-4 text-[#CEA472]" />}
         </div>
       </div>
 
-      {/* 统计卡片 */}
-      <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/30">
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-[#CEA472]/10 rounded-lg border border-[#CEA472]/20">
-              <div className="text-2xl font-bold text-[#CEA472]">
-                ¥{stats.total.toLocaleString()}
-              </div>
-              <div className="text-sm text-[#FFFFFF]/60 mt-1">总支出</div>
-            </div>
-            {Object.entries(stats.categories).filter(([_, amount]) => amount > 0).slice(0, 3).map(([category, amount]) => (
-              <div key={category} className="text-center p-4 bg-black/40 rounded-lg border border-[#CEA472]/10">
-                <div className="text-lg font-semibold text-[#FFFFFF]">
-                  ¥{amount.toLocaleString()}
-                </div>
-                <div className="text-sm text-[#FFFFFF]/60 mt-1">
-                  {CATEGORY_NAMES[category as ExpenseCategory]}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto">
+        <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20">
+          <TabsTrigger 
+            value="entry"
+            className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60"
+          >
+            消费录入
+          </TabsTrigger>
+          <TabsTrigger 
+            value="query"
+            className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60"
+          >
+            消费查询
+          </TabsTrigger>
+          <TabsTrigger 
+            value="analysis"
+            className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60"
+          >
+            消费分析
+          </TabsTrigger>
+        </TabsList>
 
-      {/* 添加支出按钮 */}
-      <div className="max-w-4xl mx-auto">
-        <Button
-          onClick={() => setShowAddExpense(true)}
-          className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          添加支出
-        </Button>
-      </div>
+        <TabsContent value="entry" className="mt-6">
+          <Card className="border border-[#CEA472]/20 bg-black/30">
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-4">
+                  {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
+                  <span className="text-[#CEA472] font-medium">{expenseCategories[newExpense.category] || '其他'}</span>
+                </div>
 
-      {/* 支出列表 */}
-      <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/30">
-        <CardContent className="pt-6">
-          {currentExpenseRecord && sortedExpenses.length > 0 ? (
-            <div className="space-y-3">
-              {sortedExpenses.map(expense => (
-                <div
-                  key={expense.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-[#CEA472]/10 hover:bg-black/60 transition-colors"
-                >
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="text-2xl">
-                      {CATEGORY_ICONS[expense.category]}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-[#FFFFFF]">
-                        {expense.description}
-                      </div>
-                      <div className="text-sm text-[#FFFFFF]/60 mt-1">
-                        {expense.date} · {CATEGORY_NAMES[expense.category]}
-                        {expense.payer && ` · ${expense.payer} 支付`}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-semibold text-[#CEA472]">
-                        ¥{expense.amount.toLocaleString()}
-                      </div>
-                    </div>
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block">活动类型</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {Object.entries(expenseCategories).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setNewExpense({ ...newExpense, category: key })}
+                        className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                          newExpense.category === key
+                            ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
+                            : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {expenseCategoryIcons[key]}
+                        <span className="text-sm">{label}</span>
+                      </button>
+                    ))}
                   </div>
-                  {isAdminMode && (
-                    <div className="flex items-center gap-2 ml-4">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                          setEditingExpense(expense);
-                          setShowEditExpense(true);
-                        }}
-                        className="text-[#FFFFFF]/60 hover:text-[#CEA472] h-8 w-8"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                          setDeletingExpenseId(expense.id);
-                          setShowDeleteConfirm(true);
-                        }}
-                        className="text-[#FFFFFF]/60 hover:text-red-500 h-8 w-8"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                </div>
+
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block">活动地点</Label>
+                  {activityLocations.length > 0 && (
+                    <div className="mb-3">
+                      <div className="text-sm text-[#FFFFFF]/40 mb-2">从行程中选择：</div>
+                      <div className="flex flex-wrap gap-2">
+                        {activityLocations.map((activity, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleActivitySelect(activity)}
+                            className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                              selectedActivity?.activityId === activity.activityId
+                                ? 'bg-[#CEA472] text-[#0a0a0f]'
+                                : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            }`}
+                          >
+                            {activity.location}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
+                  <Input
+                    value={newExpense.location}
+                    onChange={(e) => {
+                      setNewExpense({ ...newExpense, location: e.target.value });
+                      setSelectedActivity(null);
+                    }}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                    placeholder="或直接输入地点"
+                  />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Receipt className="w-12 h-12 text-[#CEA472]/40 mx-auto mb-4" />
-              <p className="text-[#FFFFFF]/60">暂无支出记录</p>
-              <p className="text-sm text-[#FFFFFF]/40 mt-2">点击上方按钮添加第一笔支出</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* 添加支出对话框 */}
-      <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-          <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">添加支出</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label className="text-[#FFFFFF]">日期</Label>
-              <Input
-                type="date"
-                value={newExpense.date}
-                onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
-              />
-            </div>
-            <div>
-              <Label className="text-[#FFFFFF]">类别</Label>
-              <Select
-                value={newExpense.category}
-                onValueChange={(value) => setNewExpense({ ...newExpense, category: value as ExpenseCategory })}
-              >
-                <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                  {Object.entries(CATEGORY_NAMES).map(([category, name]) => (
-                    <SelectItem key={category} value={category}>
-                      {CATEGORY_ICONS[category as ExpenseCategory]} {name}
-                    </SelectItem>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-[#FFFFFF]/60 mb-2 block">日期</Label>
+                    <Input
+                      type="date"
+                      value={newExpense.date}
+                      onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
+                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-[#FFFFFF]/60 mb-2 block">消费金额</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={newExpense.amount}
+                      onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
+                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block">消费描述</Label>
+                  <Input
+                    value={newExpense.description}
+                    onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                    placeholder="输入消费描述"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block">消费人</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {travelers.map((traveler, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handlePayerToggle(traveler)}
+                        className={`px-4 py-2 rounded-full text-sm transition-all ${
+                          newExpense.payers.includes(traveler)
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {traveler}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <Button
+                  onClick={addExpense}
+                  disabled={!newExpense.amount || !newExpense.description}
+                  className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  保存消费
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="query" className="mt-6">
+          <Card className="border border-[#CEA472]/20 bg-black/30">
+            <CardContent className="pt-6">
+              {currentExpenseRecord && sortedExpenses.length > 0 ? (
+                <div className="space-y-3">
+                  {sortedExpenses.map(expense => (
+                    <div
+                      key={expense.id}
+                      className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-[#CEA472]/10 hover:bg-black/60 transition-colors"
+                    >
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="text-2xl">
+                          {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-[#FFFFFF]">{expense.description}</div>
+                          <div className="text-sm text-[#FFFFFF]/60 mt-1">
+                            {expense.date} · {expenseCategories[expense.category] || expense.category}
+                            {expense.payer && ` · ${expense.payer}`}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right flex items-center gap-4">
+                        <div className="text-lg font-semibold text-[#CEA472]">
+                          ¥{expense.amount.toLocaleString()}
+                        </div>
+                        {isAdminMode && (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => {
+                                setEditingExpense(expense);
+                                setShowEditExpense(true);
+                              }}
+                              className="text-[#FFFFFF]/60 hover:text-[#CEA472] h-8 w-8"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => {
+                                setDeletingExpenseId(expense.id);
+                                setShowDeleteConfirm(true);
+                              }}
+                              className="text-[#FFFFFF]/60 hover:text-red-500 h-8 w-8"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-[#FFFFFF]">金额</Label>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                value={newExpense.amount}
-                onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
-                placeholder="0.00"
-              />
-            </div>
-            <div>
-              <Label className="text-[#FFFFFF]">描述</Label>
-              <Input
-                value={newExpense.description}
-                onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
-                placeholder="支出描述"
-              />
-            </div>
-            <div>
-              <Label className="text-[#FFFFFF]">支付人（可选）</Label>
-              <Input
-                value={newExpense.payer || ''}
-                onChange={(e) => setNewExpense({ ...newExpense, payer: e.target.value })}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
-                placeholder="支付人姓名"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowAddExpense(false)}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-            >
-              取消
-            </Button>
-            <Button
-              onClick={addExpense}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-            >
-              添加
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Receipt className="w-12 h-12 text-[#CEA472]/40 mx-auto mb-4" />
+                  <p className="text-[#FFFFFF]/60">暂无支出记录</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* 编辑支出对话框 */}
+        <TabsContent value="analysis" className="mt-6">
+          <Card className="border border-[#CEA472]/20 bg-black/30">
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                <div className="text-center p-6 bg-[#CEA472]/10 rounded-lg border border-[#CEA472]/20">
+                  <div className="text-3xl font-bold text-[#CEA472]">¥{stats.total.toLocaleString()}</div>
+                  <div className="text-sm text-[#FFFFFF]/60 mt-2">总支出</div>
+                </div>
+
+                <div>
+                  <h4 className="text-[#FFFFFF] font-medium mb-3">按类别统计</h4>
+                  <div className="space-y-2">
+                    {Object.entries(stats.categories).map(([category, amount]) => (
+                      <div key={category} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          {expenseCategoryIcons[category]}
+                          <span className="text-[#FFFFFF]">{expenseCategories[category] || category}</span>
+                        </div>
+                        <div className="text-[#CEA472] font-medium">¥{amount.toLocaleString()}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {Object.keys(stats.byPayer).length > 0 && (
+                  <div>
+                    <h4 className="text-[#FFFFFF] font-medium mb-3">按人员统计</h4>
+                    <div className="space-y-2">
+                      {Object.entries(stats.byPayer).map(([payer, amount]) => (
+                        <div key={payer} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
+                          <span className="text-[#FFFFFF]">{payer}</span>
+                          <span className="text-[#CEA472] font-medium">¥{amount.toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
       <Dialog open={showEditExpense} onOpenChange={setShowEditExpense}>
         <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
@@ -666,9 +778,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                    {Object.entries(CATEGORY_NAMES).map(([category, name]) => (
+                    {Object.entries(expenseCategories).map(([category, name]) => (
                       <SelectItem key={category} value={category}>
-                        {CATEGORY_ICONS[category as ExpenseCategory]} {name}
+                        {expenseCategoryIcons[category]} {name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -694,7 +806,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">支付人（可选）</Label>
+                <Label className="text-[#FFFFFF]">支付人</Label>
                 <Input
                   value={editingExpense.payer || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, payer: e.target.value })}
@@ -710,7 +822,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 setShowEditExpense(false);
                 setEditingExpense(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -724,7 +836,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </DialogContent>
       </Dialog>
 
-      {/* 删除确认对话框 */}
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
@@ -740,7 +851,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 setShowDeleteConfirm(false);
                 setDeletingExpenseId(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -754,7 +865,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </DialogContent>
       </Dialog>
 
-      {/* 选择旅行对话框 */}
       <Dialog open={showWishSelector} onOpenChange={setShowWishSelector}>
         <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
@@ -791,9 +901,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
                         </div>
                         {!existingRecord && (
-                          <div className="text-xs text-[#CEA472]/80 mt-1">
-                            点击创建账单记录
-                          </div>
+                          <div className="text-xs text-[#CEA472]/80 mt-1">点击创建账单记录</div>
                         )}
                       </div>
                       <button
@@ -816,7 +924,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             <Button
               variant="outline"
               onClick={() => setShowWishSelector(false)}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
