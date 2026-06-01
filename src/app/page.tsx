@@ -836,14 +836,7 @@ export default function Home() {
 
           {/* 子标签页 */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto">
-            {/* 抛硬币按钮 - 独立于毛玻璃框外，与生成日程表按钮样式相同 */}
-            <Button
-              onClick={() => setActiveTab('make-wish')}
-              className={`w-full max-w-[500px] mx-auto mb-4 block ${activeTab === 'make-wish' ? 'bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80' : 'bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]/80 hover:bg-black/60'}`}
-            >
-              <Coins className="w-4 h-4 mr-2" />
-              抛硬币
-            </Button>
+            {/* 许愿池标签 */}
             <TabsList className="grid w-full grid-cols-1 lg:w-[500px] lg:mx-auto bg-black/40 backdrop-blur-sm border border-[#CEA472]/20">
               <TabsTrigger
                 value="wish-pool"
@@ -902,28 +895,28 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="flex justify-center mt-6">
-                    <Button
-                      onClick={handleMakeWish}
-                      disabled={isAnimating}
-                      className="w-64 h-11 border-0 bg-[#CEA472] text-[#0a0a0f] shadow-lg font-semibold px-8 hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
-                    >
-                      {isAnimating ? (
-                        <div className="flex items-center gap-3">
-                          <div className="relative w-6 h-6">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
-                              <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
-                            </div>
-                          </div>
-                          <span>抛硬币中...</span>
-                        </div>
-                      ) : (
-                        <span>抛硬币</span>
-                      )}
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
+
+              {/* 抛硬币按钮 - 独立于毛玻璃框外，与生成日程表按钮样式相同 */}
+              <Button
+                onClick={handleMakeWish}
+                disabled={isAnimating}
+                className="w-full max-w-[500px] mx-auto mt-6 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f]"
+              >
+                {isAnimating ? (
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-6 h-6">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#CEA472] to-[#CEA472]/80 animate-spin" style={{ animationDuration: '0.5s' }}>
+                        <div className="absolute inset-1 bg-[#0a0a0f] rounded-full" />
+                      </div>
+                    </div>
+                    <span>抛硬币中...</span>
+                  </div>
+                ) : (
+                  <span>抛硬币</span>
+                )}
+              </Button>
 
               {isAnimating && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
