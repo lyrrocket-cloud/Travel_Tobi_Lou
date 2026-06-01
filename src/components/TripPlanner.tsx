@@ -1046,26 +1046,15 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         <h3 className="text-xl font-semibold text-[#CEA472]">
           {currentTripPlan.destination} 旅行规划
         </h3>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setDefaultTripId(selectedWishId)}
-            className={`size-8 ${defaultTripId === selectedWishId ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/60 hover:bg-black/60'}`}
-            title="设为默认旅行"
-          >
-            <Star className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setShowWishSelector(true)}
-            className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
-            title="切换行程"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setShowWishSelector(true)}
+          className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+          title="切换行程"
+        >
+          <RefreshCw className="w-4 h-4" />
+        </Button>
       </div>
 
       {/* 旅行信息卡片 - 只有管理模式下可编辑 */}
