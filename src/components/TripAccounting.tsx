@@ -270,6 +270,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           description: '',
           location: '',
           payers: [],
+          payer: null,
         });
         setSelectedActivity(null);
       }
