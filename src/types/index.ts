@@ -27,10 +27,12 @@ export interface ExpenseItem {
   id: string;
   wishId: string;
   date: string;
+  time: string;
   category: ExpenseCategory;
   amount: number;
   description: string;
   payer?: string;
+  payers?: string[];
   createdAt: string;
   updatedAt: string;
 }

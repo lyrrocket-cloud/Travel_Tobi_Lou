@@ -1,0 +1,36 @@
+[
+  {
+    "id": "trip-expense-1780303935151",
+    "wishId": "in-memory-1",
+    "destination": "济州岛",
+    "startDate": "2026-06-17",
+    "expenses": [
+      {
+        "id": "expense-1780303970730",
+        "wishId": "in-memory-1",
+        "date": "2026-06-17",
+        "time": "09:00",
+        "category": "food",
+        "amount": 100,
+        "description": "",
+        "payer": "秦瑜贲",
+        "createdAt": "2026-06-01T08:52:50.730Z",
+        "updatedAt": "2026-06-01T08:52:50.730Z"
+      },
+      {
+        "id": "expense-1780303996523",
+        "wishId": "in-memory-1",
+        "date": "2026-06-17",
+        "time": "09:00",
+        "category": "food",
+        "amount": 100,
+        "description": "",
+        "payer": "秦瑜贲",
+        "createdAt": "2026-06-01T08:53:16.523Z",
+        "updatedAt": "2026-06-01T08:53:16.523Z"
+      }
+    ],
+    "createdAt": "2026-06-01T08:52:15.151Z",
+    "updatedAt": "2026-06-01T08:53:16.606Z"
+  }
+]

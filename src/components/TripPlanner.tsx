@@ -11,24 +11,20 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Wish, ActivityItem, TransportInfo, DayPlan, TripPlan } from '@/types';
 
 const activityTypes: Record<string, string> = {
-  breakfast: '早餐',
-  morning: '上午活动',
-  lunch: '午餐',
-  afternoon: '下午活动',
-  dinner: '晚餐',
-  evening: '晚间活动',
   accommodation: '住宿',
-  other: '其他',
+  attraction: '景点',
+  shopping: '购物',
+  entertainment: '娱乐',
+  food: '餐饮',
+  other: '其它',
 };
 
 const activityTypeIcons: Record<string, React.ReactNode> = {
-  breakfast: <Coffee className="w-4 h-4" />,
-  morning: <Sun className="w-4 h-4" />,
-  lunch: <UtensilsCrossed className="w-4 h-4" />,
-  afternoon: <Sun className="w-4 h-4" />,
-  dinner: <UtensilsCrossed className="w-4 h-4" />,
-  evening: <Moon className="w-4 h-4" />,
   accommodation: <BedDouble className="w-4 h-4" />,
+  attraction: <MapPin className="w-4 h-4" />,
+  shopping: <RefreshCw className="w-4 h-4" />,
+  entertainment: <Star className="w-4 h-4" />,
+  food: <UtensilsCrossed className="w-4 h-4" />,
   other: <Clock className="w-4 h-4" />,
 };
 
@@ -611,7 +607,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <option value="bus">大巴</option>
                   <option value="walk">步行</option>
                   <option value="car">自驾</option>
-                  <option value="other">其他</option>
+                  <option value="other">其它</option>
                 </select>
               </div>
               <div>
@@ -746,7 +742,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <option value="dinner">晚餐</option>
                   <option value="evening">晚间活动</option>
                   <option value="accommodation">住宿</option>
-                  <option value="other">其他</option>
+                  <option value="other">其它</option>
                 </select>
               </div>
               <div>
@@ -1478,14 +1474,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
                             className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
                           >
-                            <option value="breakfast">早餐</option>
-                            <option value="morning">上午活动</option>
-                            <option value="lunch">午餐</option>
-                            <option value="afternoon">下午活动</option>
-                            <option value="dinner">晚餐</option>
-                            <option value="evening">晚间活动</option>
                             <option value="accommodation">住宿</option>
-                            <option value="other">其他</option>
+                            <option value="attraction">景点</option>
+                            <option value="shopping">购物</option>
+                            <option value="entertainment">娱乐</option>
+                            <option value="food">餐饮</option>
+                            <option value="other">其它</option>
                           </select>
                         </div>
                         <div>
