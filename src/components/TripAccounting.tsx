@@ -88,6 +88,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     date: string;
   } | null>(null);
 
+  const [analysisConsumerFilter, setAnalysisConsumerFilter] = useState<string | null>(null);
+
   const currentExpenseRecord = selectedWishId ? 
     tripExpenses.find(record => String(record.wishId) === String(selectedWishId)) : null;
 
@@ -395,6 +397,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   const stats = calculateStats();
+
+  const filteredCategoriesStats = () => {
+    if (!currentExpenseRecord) return { total: 0, categories: {} as Record<string, number> };
+    if (!analysisConsumerFilter) return { total: stats.total, categories: stats.categories };
+
+    const filtered = { total: 0, categories: {} as Record<string, number> };
+    currentExpenseRecord.expenses.forEach(expense => {
+      if (expense.payers && expense.payers.includes(analysisConsumerFilter)) {
+        const perPersonAmount = expense.amount / expense.payers.length;
+        filtered.total += perPersonAmount;
+        filtered.categories[expense.category] = (filtered.categories[expense.category] || 0) + perPersonAmount;
+      }
+    });
+    return filtered;
+  };
+
+  const categoriesStats = filteredCategoriesStats();
 
   const sortedExpenses = currentExpenseRecord ? 
     [...currentExpenseRecord.expenses].sort((a, b) => 
@@ -862,15 +881,38 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           <Card className="border border-[#CEA472]/20 bg-black/30">
             <CardContent className="pt-6">
               <div className="space-y-6">
-                <div className="text-center p-6 bg-[#CEA472]/10 rounded-lg border border-[#CEA472]/20">
-                  <div className="text-3xl font-bold text-[#CEA472]">¥{stats.total.toLocaleString()}</div>
-                  <div className="text-sm text-[#FFFFFF]/60 mt-2">总支出</div>
-                </div>
-
                 <div>
                   <h4 className="text-[#FFFFFF] font-medium mb-3">按类别统计</h4>
+                  <div className="mb-3">
+                    <div className="text-sm text-[#FFFFFF]/40 mb-2">按消费人筛选：</div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => setAnalysisConsumerFilter(null)}
+                        className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                          analysisConsumerFilter === null
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        全部
+                      </button>
+                      {travelers.map((traveler) => (
+                        <button
+                          key={traveler}
+                          onClick={() => setAnalysisConsumerFilter(traveler)}
+                          className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                            analysisConsumerFilter === traveler
+                              ? 'bg-[#CEA472] text-[#0a0a0f]'
+                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          }`}
+                        >
+                          {traveler}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                    {Object.entries(stats.categories).map(([category, amount]) => (
+                    {Object.entries(categoriesStats.categories).map(([category, amount]) => (
                       <div key={category} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
                         <div className="flex items-center gap-3">
                           {expenseCategoryIcons[category]}
@@ -882,8 +924,22 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </div>
                 </div>
 
+                {Object.keys(stats.byPayer).length > 0 && (
+                  <div>
+                    <h4 className="text-[#FFFFFF] font-medium mb-3">按支付人统计</h4>
+                    <div className="space-y-2">
+                      {Object.entries(stats.byPayer).map(([payer, amount]) => (
+                        <div key={payer} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
+                          <span className="text-[#FFFFFF]">{payer}</span>
+                          <span className="text-[#CEA472] font-medium">¥{amount.toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div>
-                  <h4 className="text-[#FFFFFF] font-medium mb-3">收支差异结算</h4>
+                  <h4 className="text-[#FFFFFF] font-medium mb-3">收支结算</h4>
                   <div className="space-y-2">
                     {travelers.map((traveler) => {
                       const paid = stats.byPayer[traveler] || 0;
@@ -915,20 +971,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     })}
                   </div>
                 </div>
-
-                {Object.keys(stats.byPayer).length > 0 && (
-                  <div>
-                    <h4 className="text-[#FFFFFF] font-medium mb-3">按支付人统计</h4>
-                    <div className="space-y-2">
-                      {Object.entries(stats.byPayer).map(([payer, amount]) => (
-                        <div key={payer} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
-                          <span className="text-[#FFFFFF]">{payer}</span>
-                          <span className="text-[#CEA472] font-medium">¥{amount.toLocaleString()}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>
