@@ -906,35 +906,36 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             <CardContent className="pt-6">
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-[#FFFFFF] font-medium mb-3">按类别统计</h4>
-                  <div className="mb-3">
-                    <div className="text-sm text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="text-sm text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setAnalysisConsumerFilter(null)}
+                      className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                        analysisConsumerFilter === null
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    {travelers.map((traveler) => (
                       <button
-                        onClick={() => setAnalysisConsumerFilter(null)}
+                        key={traveler}
+                        onClick={() => setAnalysisConsumerFilter(traveler)}
                         className={`px-3 py-1.5 rounded-full text-sm transition-all ${
-                          analysisConsumerFilter === null
+                          analysisConsumerFilter === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
-                        全部
+                        {traveler}
                       </button>
-                      {travelers.map((traveler) => (
-                        <button
-                          key={traveler}
-                          onClick={() => setAnalysisConsumerFilter(traveler)}
-                          className={`px-3 py-1.5 rounded-full text-sm transition-all ${
-                            analysisConsumerFilter === traveler
-                              ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                          }`}
-                        >
-                          {traveler}
-                        </button>
-                      ))}
-                    </div>
+                    ))}
                   </div>
+                </div>
+
+                <div>
+                  <h4 className="text-[#FFFFFF] font-medium mb-3">按类别统计</h4>
                   <div className="space-y-2">
                     {Object.entries(filteredStats.categories).map(([category, amount]) => (
                       <div key={category} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
