@@ -69,4 +69,5 @@ export const DATA_FILES = {
   FOLLOWERS: 'followers.json',
   TRIP_PLANS: 'trip-plans.json',
   TRIP_EXPENSES: 'trip-expenses.json',
+  DEFAULT_TRIP: 'default-trip.json',
 } as const;
