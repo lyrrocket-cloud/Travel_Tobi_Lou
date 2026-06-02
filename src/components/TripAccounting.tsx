@@ -270,6 +270,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       category: newExpense.category as ExpenseCategory,
       amount: parseFloat(newExpense.amount),
       description: newExpense.description,
+      location: newExpense.location,
       payer: newExpense.payer,
       payers: newExpense.payers,
       createdAt: new Date().toISOString(),
@@ -994,6 +995,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   value={editingExpense.description}
                   onChange={(e) => setEditingExpense({ ...editingExpense, description: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-[#FFFFFF]">活动地点</Label>
+                <Input
+                  value={editingExpense.location || ''}
+                  onChange={(e) => setEditingExpense({ ...editingExpense, location: e.target.value })}
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  placeholder="输入活动地点"
                 />
               </div>
               <div>

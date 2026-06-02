@@ -31,6 +31,7 @@ export interface ExpenseItem {
   category: ExpenseCategory;
   amount: number;
   description: string;
+  location?: string;
   payer?: string;
   payers?: string[];
   createdAt: string;
