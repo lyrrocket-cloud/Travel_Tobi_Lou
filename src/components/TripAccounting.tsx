@@ -795,25 +795,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             <div className="font-medium text-[#FFFFFF]">{expense.description}</div>
                             <div className="text-sm text-[#FFFFFF]/60 mt-1">
                               {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
-                              {expense.location && (
-                                <span className="ml-2">· <MapPin className="w-3 h-3 inline" />{expense.location}</span>
-                              )}
                             </div>
-                            <div className="text-xs text-[#FFFFFF]/40 mt-1">
-                              消费人：{expense.payers ? expense.payers.join('、') : '未记录'} · 支付人：{expense.payer || '未记录'}
+                            <div className="text-xs text-[#FFFFFF]/40 mt-1 flex items-center gap-4">
+                              <span><MapPin className="w-3 h-3 inline mr-1" />{expense.location || '未记录'}</span>
+                              <span>消费人：{expense.payers ? expense.payers.join('、') : '未记录'}</span>
+                              <span>支付人：{expense.payer || '未记录'}</span>
                             </div>
                           </div>
                         </div>
                         <div className="text-right flex items-center gap-4">
                           <div>
+                            <div className="text-xs text-[#FFFFFF]/60">总金额</div>
                             <div className="text-lg font-semibold text-[#CEA472]">
                               ¥{expense.amount.toLocaleString()}
                             </div>
-                            {payerCount > 1 && (
-                              <div className="text-xs text-[#FFFFFF]/60">
-                                人均 ¥{perPersonAmount.toFixed(2)}
-                              </div>
-                            )}
+                            <div className="text-xs text-[#FFFFFF]/60">
+                              人均 ¥{perPersonAmount.toFixed(2)}
+                            </div>
                           </div>
                           {isAdminMode && (
                             <div className="flex items-center gap-2">
