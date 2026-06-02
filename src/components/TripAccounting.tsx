@@ -398,22 +398,46 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const stats = calculateStats();
 
-  const filteredCategoriesStats = () => {
-    if (!currentExpenseRecord) return { total: 0, categories: {} as Record<string, number> };
-    if (!analysisConsumerFilter) return { total: stats.total, categories: stats.categories };
+  const calculateFilteredStats = () => {
+    if (!currentExpenseRecord) {
+      return {
+        total: 0,
+        categories: {} as Record<string, number>,
+        byPayer: {} as Record<string, number>,
+        byConsumer: {} as Record<string, number>,
+      };
+    }
 
-    const filtered = { total: 0, categories: {} as Record<string, number> };
+    if (!analysisConsumerFilter) {
+      return stats;
+    }
+
+    const filtered = {
+      total: 0,
+      categories: {} as Record<string, number>,
+      byPayer: {} as Record<string, number>,
+      byConsumer: {} as Record<string, number>,
+    };
+
     currentExpenseRecord.expenses.forEach(expense => {
       if (expense.payers && expense.payers.includes(analysisConsumerFilter)) {
         const perPersonAmount = expense.amount / expense.payers.length;
         filtered.total += perPersonAmount;
         filtered.categories[expense.category] = (filtered.categories[expense.category] || 0) + perPersonAmount;
+        if (expense.payer) {
+          filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + perPersonAmount;
+        }
       }
     });
+
+    if (analysisConsumerFilter) {
+      filtered.byConsumer[analysisConsumerFilter] = filtered.total;
+    }
+
     return filtered;
   };
 
-  const categoriesStats = filteredCategoriesStats();
+  const filteredStats = calculateFilteredStats();
 
   const sortedExpenses = currentExpenseRecord ? 
     [...currentExpenseRecord.expenses].sort((a, b) => 
@@ -884,7 +908,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 <div>
                   <h4 className="text-[#FFFFFF] font-medium mb-3">按类别统计</h4>
                   <div className="mb-3">
-                    <div className="text-sm text-[#FFFFFF]/40 mb-2">按消费人筛选：</div>
+                    <div className="text-sm text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => setAnalysisConsumerFilter(null)}
@@ -912,7 +936,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     </div>
                   </div>
                   <div className="space-y-2">
-                    {Object.entries(categoriesStats.categories).map(([category, amount]) => (
+                    {Object.entries(filteredStats.categories).map(([category, amount]) => (
                       <div key={category} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
                         <div className="flex items-center gap-3">
                           {expenseCategoryIcons[category]}
@@ -924,11 +948,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </div>
                 </div>
 
-                {Object.keys(stats.byPayer).length > 0 && (
+                {Object.keys(filteredStats.byPayer).length > 0 && (
                   <div>
                     <h4 className="text-[#FFFFFF] font-medium mb-3">按支付人统计</h4>
                     <div className="space-y-2">
-                      {Object.entries(stats.byPayer).map(([payer, amount]) => (
+                      {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
                         <div key={payer} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
                           <span className="text-[#FFFFFF]">{payer}</span>
                           <span className="text-[#CEA472] font-medium">¥{amount.toLocaleString()}</span>
@@ -942,8 +966,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <h4 className="text-[#FFFFFF] font-medium mb-3">收支结算</h4>
                   <div className="space-y-2">
                     {travelers.map((traveler) => {
-                      const paid = stats.byPayer[traveler] || 0;
-                      const consumed = stats.byConsumer[traveler] || 0;
+                      const paid = filteredStats.byPayer[traveler] || 0;
+                      const consumed = filteredStats.byConsumer[traveler] || 0;
                       const difference = paid - consumed;
                       return (
                         <div key={traveler} className="p-3 bg-black/40 rounded-lg">
