@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonFile, writeJsonFile, DATA_FILES } from '@/lib/storage';
-import { TripExpenseRecord, ExpenseItem, ExpenseCategory } from '@/types';
-
-// 从文件读取数据
-function readFromFile(): TripExpenseRecord[] {
-  return readJsonFile<TripExpenseRecord[]>(DATA_FILES.TRIP_EXPENSES, []);
-}
-
-// 写入数据到文件
-function writeToFile(data: TripExpenseRecord[]) {
-  writeJsonFile(DATA_FILES.TRIP_EXPENSES, data);
-}
+import { TripExpenseDB } from '@/lib/database';
 
 // GET - 获取所有账单记录或根据wishId获取
 export async function GET(request: NextRequest) {
@@ -18,10 +7,12 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const wishId = searchParams.get('wishId');
     
-    let tripExpenses = readFromFile();
-    
+    let tripExpenses;
     if (wishId) {
-      tripExpenses = tripExpenses.filter(record => record.wishId === wishId);
+      const record = await TripExpenseDB.getByWishId(wishId);
+      tripExpenses = record ? [record] : [];
+    } else {
+      tripExpenses = await TripExpenseDB.getAll();
     }
     
     return NextResponse.json({ tripExpenses });
@@ -47,10 +38,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const tripExpenses = readFromFile();
-    
     // 检查是否已存在该愿望的账单记录
-    const existingRecord = tripExpenses.find(record => record.wishId === wishId);
+    const existingRecord = await TripExpenseDB.getByWishId(wishId);
     if (existingRecord) {
       return NextResponse.json(
         { error: 'Trip expense record already exists for this wish' },
@@ -59,19 +48,14 @@ export async function POST(request: NextRequest) {
     }
     
     // 创建新的账单记录
-    const newRecord: TripExpenseRecord = {
+    const newRecord = await TripExpenseDB.create({
       id: `trip-expense-${Date.now()}`,
       wishId,
       destination,
       startDate,
       endDate,
       expenses: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    tripExpenses.push(newRecord);
-    writeToFile(tripExpenses);
+    });
     
     return NextResponse.json({ tripExpense: newRecord });
   } catch (error) {
@@ -96,25 +80,16 @@ export async function PUT(request: NextRequest) {
       );
     }
     
-    const tripExpenses = readFromFile();
-    const recordIndex = tripExpenses.findIndex(record => record.id === id);
+    const updatedRecord = await TripExpenseDB.update(id, updateData);
     
-    if (recordIndex === -1) {
+    if (!updatedRecord) {
       return NextResponse.json(
         { error: 'Trip expense record not found' },
         { status: 404 }
       );
     }
     
-    tripExpenses[recordIndex] = {
-      ...tripExpenses[recordIndex],
-      ...updateData,
-      updatedAt: new Date().toISOString(),
-    };
-    
-    writeToFile(tripExpenses);
-    
-    return NextResponse.json({ tripExpense: tripExpenses[recordIndex] });
+    return NextResponse.json({ tripExpense: updatedRecord });
   } catch (error) {
     console.error('[Trip Expenses] Error in PUT:', error);
     return NextResponse.json(
@@ -137,10 +112,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
     
-    const tripExpenses = readFromFile();
-    const filteredExpenses = tripExpenses.filter(record => record.id !== id);
-    
-    writeToFile(filteredExpenses);
+    await TripExpenseDB.delete(id);
     
     return NextResponse.json({ success: true });
   } catch (error) {

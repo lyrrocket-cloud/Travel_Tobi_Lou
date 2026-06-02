@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readJsonFile, writeJsonFile, DATA_FILES } from '@/lib/storage';
+import { TripPlanDB } from '@/lib/database';
 
 // 活动项接口
 interface ActivityItem {
   id: string;
-  type: string; // 'breakfast' | 'morning' | 'lunch' | 'afternoon' | 'dinner' | 'evening' | 'accommodation' | 'other'
+  type: string;
   startTime: string;
   endTime?: string;
   content?: string;
@@ -15,7 +15,7 @@ interface ActivityItem {
 // 交通信息接口
 interface TransportInfo {
   id: string;
-  type: string; // 'flight' | 'train' | 'bus' | 'taxi' | 'walk' | 'car' | 'other'
+  type: string;
   from: string;
   to: string;
   departureTime?: string;
@@ -35,71 +35,6 @@ interface DayPlan {
   transport: TransportInfo[];
 }
 
-// 旅行规划接口
-interface TripPlan {
-  id: string;
-  wishId: string;
-  destination: string;
-  startDate?: string;
-  endDate?: string;
-  travelDays: number;
-  travelers: string;
-  days: DayPlan[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-// 数据迁移函数：将旧数据结构转换为新结构
-function migrateTripPlan(plan: any): TripPlan {
-  // 确保days存在
-  if (!plan.days) {
-    plan.days = [];
-  }
-
-  // 对每个day进行迁移
-  plan.days = plan.days.map((day: any) => {
-    // 如果有items但没有activities，进行迁移
-    if (day.items && !day.activities) {
-      console.log('[Trip Plan] Migrating items to activities for day', day.dayNumber);
-      day.activities = day.items
-        .filter((item: any) => item.content && item.content.trim())
-        .map((item: any) => ({
-          id: item.id,
-          type: item.time, // 原来的time字段用作type
-          startTime: '09:00', // 默认时间
-          endTime: '10:00',
-          content: item.content,
-          location: item.location,
-          notes: item.notes
-        }));
-      delete day.items; // 删除旧字段
-    } else if (!day.activities) {
-      day.activities = [];
-    }
-
-    // 确保transport存在
-    if (!day.transport) {
-      day.transport = [];
-    }
-
-    return day;
-  });
-
-  return plan as TripPlan;
-}
-
-// 从文件读取数据
-function readFromFile(): TripPlan[] {
-  const plans = readJsonFile<TripPlan[]>(DATA_FILES.TRIP_PLANS, []);
-  // 对每个计划进行迁移
-  return plans.map(migrateTripPlan);
-}
-
-// 写入数据到文件
-function writeToFile(data: TripPlan[]) {
-  writeJsonFile(DATA_FILES.TRIP_PLANS, data);
-}
-
 // 初始化空的DayPlan
 function createEmptyDayPlan(dayNumber: number): DayPlan {
   return {
@@ -116,10 +51,12 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const wishId = searchParams.get('wishId');
     
-    let tripPlans = readFromFile();
-    
+    let tripPlans;
     if (wishId) {
-      tripPlans = tripPlans.filter(plan => plan.wishId === wishId);
+      const plan = await TripPlanDB.getByWishId(wishId);
+      tripPlans = plan ? [plan] : [];
+    } else {
+      tripPlans = await TripPlanDB.getAll();
     }
     
     return NextResponse.json({ tripPlans });
@@ -145,10 +82,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const tripPlans = readFromFile();
-    
     // 检查是否已存在该愿望的旅行规划
-    const existingPlan = tripPlans.find(plan => plan.wishId === wishId);
+    const existingPlan = await TripPlanDB.getByWishId(wishId);
     if (existingPlan) {
       return NextResponse.json(
         { error: 'Trip plan already exists for this wish' },
@@ -157,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
     
     // 创建新的旅行规划
-    const newTripPlan: TripPlan = {
+    const newTripPlan = await TripPlanDB.create({
       id: `trip-plan-${Date.now()}`,
       wishId,
       destination,
@@ -166,12 +101,7 @@ export async function POST(request: NextRequest) {
       travelDays,
       travelers,
       days: Array.from({ length: travelDays }, (_, i) => createEmptyDayPlan(i + 1)),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    tripPlans.push(newTripPlan);
-    writeToFile(tripPlans);
+    });
     
     return NextResponse.json({ tripPlan: newTripPlan });
   } catch (error) {
@@ -196,25 +126,16 @@ export async function PUT(request: NextRequest) {
       );
     }
     
-    const tripPlans = readFromFile();
-    const planIndex = tripPlans.findIndex(plan => plan.id === id);
+    const updatedPlan = await TripPlanDB.update(id, updateData);
     
-    if (planIndex === -1) {
+    if (!updatedPlan) {
       return NextResponse.json(
         { error: 'Trip plan not found' },
         { status: 404 }
       );
     }
     
-    tripPlans[planIndex] = {
-      ...tripPlans[planIndex],
-      ...updateData,
-      updatedAt: new Date().toISOString(),
-    };
-    
-    writeToFile(tripPlans);
-    
-    return NextResponse.json({ tripPlan: tripPlans[planIndex] });
+    return NextResponse.json({ tripPlan: updatedPlan });
   } catch (error) {
     console.error('[Trip Plan] Error in PUT:', error);
     return NextResponse.json(

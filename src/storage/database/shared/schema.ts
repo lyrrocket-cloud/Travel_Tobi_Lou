@@ -1,10 +1,59 @@
-import { pgTable, serial, timestamp, varchar, integer, index } from "drizzle-orm/pg-core"
+import { pgTable, serial, timestamp, varchar, integer, index, json, text } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const healthCheck = pgTable("health_check", {
 	id: serial().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 });
+
+// 旅行规划表
+export const tripPlans = pgTable(
+	"trip_plans",
+	{
+		id: varchar("id", { length: 100 }).notNull().primaryKey(),
+		wishId: varchar("wish_id", { length: 100 }).notNull(),
+		destination: varchar("destination", { length: 255 }).notNull(),
+		startDate: varchar("start_date", { length: 20 }),
+		endDate: varchar("end_date", { length: 20 }),
+		travelDays: integer("travel_days").notNull(),
+		travelers: varchar("travelers", { length: 500 }).notNull(),
+		days: json("days").notNull().default('[]'),
+		createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("trip_plans_wish_id_idx").on(table.wishId),
+	]
+);
+
+// 旅行记账表
+export const tripExpenses = pgTable(
+	"trip_expenses",
+	{
+		id: varchar("id", { length: 100 }).notNull().primaryKey(),
+		wishId: varchar("wish_id", { length: 100 }).notNull(),
+		destination: varchar("destination", { length: 255 }).notNull(),
+		startDate: varchar("start_date", { length: 20 }),
+		endDate: varchar("end_date", { length: 20 }),
+		expenses: json("expenses").notNull().default('[]'),
+		createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	},
+	(table) => [
+		index("trip_expenses_wish_id_idx").on(table.wishId),
+	]
+);
+
+// 默认旅行设置表
+export const defaultTrip = pgTable(
+	"default_trip",
+	{
+		id: serial().notNull().primaryKey(),
+		wishId: varchar("wish_id", { length: 100 }).notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	}
+);
 
 export const wishes = pgTable(
 	"wishes",

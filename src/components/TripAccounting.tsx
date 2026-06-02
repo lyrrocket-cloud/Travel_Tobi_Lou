@@ -117,18 +117,22 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   useEffect(() => {
-    const savedWishId = localStorage.getItem('travel-toolbox-accounting-wish-id');
-    const savedDefaultId = localStorage.getItem('travel-toolbox-default-trip-id');
+    // 从数据库获取默认旅行
+    const fetchDefaultTrip = async () => {
+      try {
+        const response = await fetch('/api/default-trip');
+        const data = await response.json();
+        if (data.wishId) {
+          setDefaultTripId(data.wishId);
+        }
+      } catch (error) {
+        console.error('[Trip Accounting] Failed to fetch default trip:', error);
+      } finally {
+        setInitializedFromStorage(true);
+      }
+    };
     
-    if (savedWishId) {
-      setSelectedWishId(savedWishId);
-    }
-    
-    if (savedDefaultId) {
-      setDefaultTripId(savedDefaultId);
-    }
-    
-    setInitializedFromStorage(true);
+    fetchDefaultTrip();
   }, []);
 
   useEffect(() => {
@@ -153,28 +157,16 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     });
   }, []);
 
-  // 监听storage事件和自定义事件，确保同步更新
+  // 监听自定义事件，确保同步更新
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'travel-toolbox-default-trip-id') {
-        if (e.newValue) {
-          setDefaultTripId(e.newValue);
-        } else {
-          setDefaultTripId(null);
-        }
-      }
-    };
-
     const handleDefaultTripChanged = (e: any) => {
       if (e.detail && e.detail.defaultTripId) {
         setDefaultTripId(e.detail.defaultTripId);
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
     window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
     };
   }, []);
@@ -520,6 +512,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           e.stopPropagation();
                           const newDefaultId = String(wish.id);
                           setDefaultTripId(newDefaultId);
+                          // 保存到数据库
+                          fetch('/api/default-trip', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ wishId: newDefaultId }),
+                          });
                           // 触发自定义事件，通知其他组件
                           window.dispatchEvent(new CustomEvent('default-trip-changed', { 
                             detail: { defaultTripId: newDefaultId } 
@@ -1080,6 +1078,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           e.stopPropagation();
                           const newDefaultId = String(wish.id);
                           setDefaultTripId(newDefaultId);
+                          // 保存到数据库
+                          fetch('/api/default-trip', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ wishId: newDefaultId }),
+                          });
                           // 触发自定义事件，通知其他组件
                           window.dispatchEvent(new CustomEvent('default-trip-changed', { 
                             detail: { defaultTripId: newDefaultId } 

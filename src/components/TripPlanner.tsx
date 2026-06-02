@@ -95,13 +95,23 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedDefaultTripId = localStorage.getItem('travel-toolbox-default-trip-id');
     const savedDay = localStorage.getItem('travel-toolbox-selected-day');
     const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
     
-    if (savedDefaultTripId) {
-      setDefaultTripId(savedDefaultTripId);
-    }
+    // 从数据库获取默认旅行
+    const fetchDefaultTrip = async () => {
+      try {
+        const response = await fetch('/api/default-trip');
+        const data = await response.json();
+        if (data.wishId) {
+          setDefaultTripId(data.wishId);
+        }
+      } catch (error) {
+        console.error('[Trip Planner] Failed to fetch default trip:', error);
+      } finally {
+        setInitializedFromStorage(true);
+      }
+    };
     
     if (savedDay) {
       setSelectedDay(parseInt(savedDay, 10));
@@ -112,7 +122,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       setShowTripEditor(false);
     }
     
-    setInitializedFromStorage(true);
+    fetchDefaultTrip();
   }, []);
 
   useEffect(() => {
@@ -182,28 +192,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     fetchTripPlans();
   }, []);
 
-  // 监听storage事件和自定义事件，确保同步更新
+  // 监听自定义事件，确保同步更新
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'travel-toolbox-default-trip-id') {
-        if (e.newValue) {
-          setDefaultTripId(e.newValue);
-        } else {
-          setDefaultTripId(null);
-        }
-      }
-    };
-
     const handleDefaultTripChanged = (e: any) => {
       if (e.detail && e.detail.defaultTripId) {
         setDefaultTripId(e.detail.defaultTripId);
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
     window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
     };
   }, []);
@@ -924,6 +922,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           e.stopPropagation();
                           const newDefaultId = String(wish.id);
                           setDefaultTripId(newDefaultId);
+                          // 保存到数据库
+                          fetch('/api/default-trip', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ wishId: newDefaultId }),
+                          });
                           // 触发自定义事件，通知其他组件
                           window.dispatchEvent(new CustomEvent('default-trip-changed', { 
                             detail: { defaultTripId: newDefaultId } 
