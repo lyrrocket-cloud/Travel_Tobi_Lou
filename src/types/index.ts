@@ -32,6 +32,7 @@ export interface ExpenseItem {
   amount: number;
   description: string;
   payer?: string;
+  payers?: string[];
   createdAt: string;
   updatedAt: string;
 }

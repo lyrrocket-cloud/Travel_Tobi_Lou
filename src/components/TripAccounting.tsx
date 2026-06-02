@@ -67,6 +67,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     description: string;
     location: string;
     payers: string[];
+    payer: string | null;
   }>({
     date: new Date().toISOString().split('T')[0],
     time: '12:00',
@@ -75,6 +76,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     description: '',
     location: '',
     payers: [],
+    payer: null,
   });
 
   const [selectedActivity, setSelectedActivity] = useState<{
@@ -228,6 +230,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       console.error('[Trip Accounting] Payers are required');
       return;
     }
+    if (!newExpense.payer) {
+      console.error('[Trip Accounting] Payer is required');
+      return;
+    }
 
     const expenseItem: ExpenseItem = {
       id: `expense-${Date.now()}`,
@@ -237,7 +243,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       category: newExpense.category as ExpenseCategory,
       amount: parseFloat(newExpense.amount),
       description: newExpense.description,
-      payer: newExpense.payers.join(','),
+      payer: newExpense.payer,
+      payers: newExpense.payers,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -344,12 +351,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       stats.total += expense.amount;
       stats.categories[expense.category] = (stats.categories[expense.category] || 0) + expense.amount;
       if (expense.payer) {
-        expense.payer.split(',').forEach(payer => {
-          const trimmedPayer = payer.trim();
-          if (trimmedPayer) {
-            stats.byPayer[trimmedPayer] = (stats.byPayer[trimmedPayer] || 0) + expense.amount;
-          }
-        });
+        stats.byPayer[expense.payer] = (stats.byPayer[expense.payer] || 0) + expense.amount;
       }
     });
 
@@ -691,16 +693,35 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </div>
                 </div>
 
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block">支付人</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {travelers.map((traveler, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setNewExpense({ ...newExpense, payer: traveler })}
+                        className={`px-4 py-2 rounded-full text-sm transition-all ${
+                          newExpense.payer === traveler
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {traveler}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <Button
                   onClick={addExpense}
-                  disabled={!newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0)}
+                  disabled={!newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0) || !newExpense.payer}
                   className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   保存消费
                 </Button>
                 <p className="text-[#FFFFFF]/40 text-xs mt-2 text-center">
-                  请填写消费金额、日期，并选择消费人
+                  请填写消费金额、日期，并选择消费人和支付人
                 </p>
               </div>
             </CardContent>
@@ -725,7 +746,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           <div className="font-medium text-[#FFFFFF]">{expense.description}</div>
                           <div className="text-sm text-[#FFFFFF]/60 mt-1">
                             {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
-                            {expense.payer && ` · ${expense.payer}`}
+                          </div>
+                          <div className="text-xs text-[#FFFFFF]/40 mt-1">
+                            消费人：{expense.payers ? expense.payers.join('、') : '未记录'} · 支付人：{expense.payer || '未记录'}
                           </div>
                         </div>
                       </div>
@@ -833,6 +856,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 />
               </div>
               <div>
+                <Label className="text-[#FFFFFF]">时间</Label>
+                <Input
+                  type="time"
+                  value={editingExpense.time || ''}
+                  onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                />
+              </div>
+              <div>
                 <Label className="text-[#FFFFFF]">类别</Label>
                 <Select
                   value={editingExpense.category}
@@ -870,12 +902,46 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 />
               </div>
               <div>
+                <Label className="text-[#FFFFFF]">消费人</Label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {travelers.map((traveler, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        const currentPayers = editingExpense.payers || [];
+                        const newPayers = currentPayers.includes(traveler)
+                          ? currentPayers.filter(p => p !== traveler)
+                          : [...currentPayers, traveler];
+                        setEditingExpense({ ...editingExpense, payers: newPayers });
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm transition-all ${
+                        (editingExpense.payers || []).includes(traveler)
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      {traveler}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
                 <Label className="text-[#FFFFFF]">支付人</Label>
-                <Input
-                  value={editingExpense.payer || ''}
-                  onChange={(e) => setEditingExpense({ ...editingExpense, payer: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
-                />
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {travelers.map((traveler, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setEditingExpense({ ...editingExpense, payer: traveler })}
+                      className={`px-4 py-2 rounded-full text-sm transition-all ${
+                        editingExpense.payer === traveler
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      {traveler}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
