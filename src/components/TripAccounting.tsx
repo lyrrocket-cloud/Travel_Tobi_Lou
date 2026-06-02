@@ -797,7 +797,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
                             </div>
                             <div className="text-xs text-[#FFFFFF]/40 mt-1 flex items-center gap-4">
-                              <span><MapPin className="w-3 h-3 inline mr-1" />{expense.location || '未记录'}</span>
+                              <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60">
+                                <MapPin className="w-3 h-3" />
+                                {expense.location || '未记录地点'}
+                              </span>
                               <span>消费人：{expense.payers ? expense.payers.join('、') : '未记录'}</span>
                               <span>支付人：{expense.payer || '未记录'}</span>
                             </div>

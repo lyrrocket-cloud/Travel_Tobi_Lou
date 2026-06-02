@@ -19,9 +19,24 @@
         ],
         "createdAt": "2026-06-02T07:13:49.506Z",
         "updatedAt": "2026-06-02T07:13:49.506Z"
+      },
+      {
+        "id": "expense-1780385543577",
+        "wishId": "in-memory-1",
+        "date": "2026-06-17",
+        "time": "09:00",
+        "category": "food",
+        "amount": 50,
+        "description": "LYT",
+        "payer": "秦瑜贲",
+        "payers": [
+          "秦瑜贲"
+        ],
+        "createdAt": "2026-06-02T07:32:23.577Z",
+        "updatedAt": "2026-06-02T07:32:23.577Z"
       }
     ],
     "createdAt": "2026-06-01T08:52:15.151Z",
-    "updatedAt": "2026-06-02T07:26:39.760Z"
+    "updatedAt": "2026-06-02T07:32:23.755Z"
   }
 ]
