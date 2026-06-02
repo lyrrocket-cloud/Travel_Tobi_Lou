@@ -367,12 +367,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   const calculateStats = () => {
-    if (!currentExpenseRecord) return { total: 0, categories: {} as Record<string, number>, byPayer: {} as Record<string, number> };
+    if (!currentExpenseRecord) return { total: 0, categories: {} as Record<string, number>, byPayer: {} as Record<string, number>, byConsumer: {} as Record<string, number> };
 
     const stats = {
       total: 0,
       categories: {} as Record<string, number>,
       byPayer: {} as Record<string, number>,
+      byConsumer: {} as Record<string, number>,
     };
 
     currentExpenseRecord.expenses.forEach(expense => {
@@ -380,6 +381,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       stats.categories[expense.category] = (stats.categories[expense.category] || 0) + expense.amount;
       if (expense.payer) {
         stats.byPayer[expense.payer] = (stats.byPayer[expense.payer] || 0) + expense.amount;
+      }
+      if (expense.payers && expense.payers.length > 0) {
+        const perPersonAmount = expense.amount / expense.payers.length;
+        expense.payers.forEach(payer => {
+          stats.byConsumer[payer] = (stats.byConsumer[payer] || 0) + perPersonAmount;
+        });
       }
     });
 
@@ -772,58 +779,72 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             <CardContent className="pt-6">
               {currentExpenseRecord && sortedExpenses.length > 0 ? (
                 <div className="space-y-3">
-                  {sortedExpenses.map(expense => (
-                    <div
-                      key={expense.id}
-                      className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-[#CEA472]/10 hover:bg-black/60 transition-colors"
-                    >
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="text-2xl">
-                          {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
+                  {sortedExpenses.map(expense => {
+                    const payerCount = expense.payers?.length || 1;
+                    const perPersonAmount = expense.amount / payerCount;
+                    return (
+                      <div
+                        key={expense.id}
+                        className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-[#CEA472]/10 hover:bg-black/60 transition-colors"
+                      >
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <div className="text-2xl">
+                            {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-[#FFFFFF]">{expense.description}</div>
+                            <div className="text-sm text-[#FFFFFF]/60 mt-1">
+                              {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
+                              {expense.location && (
+                                <span className="ml-2">· <MapPin className="w-3 h-3 inline" />{expense.location}</span>
+                              )}
+                            </div>
+                            <div className="text-xs text-[#FFFFFF]/40 mt-1">
+                              消费人：{expense.payers ? expense.payers.join('、') : '未记录'} · 支付人：{expense.payer || '未记录'}
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-[#FFFFFF]">{expense.description}</div>
-                          <div className="text-sm text-[#FFFFFF]/60 mt-1">
-                            {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
+                        <div className="text-right flex items-center gap-4">
+                          <div>
+                            <div className="text-lg font-semibold text-[#CEA472]">
+                              ¥{expense.amount.toLocaleString()}
+                            </div>
+                            {payerCount > 1 && (
+                              <div className="text-xs text-[#FFFFFF]/60">
+                                人均 ¥{perPersonAmount.toFixed(2)}
+                              </div>
+                            )}
                           </div>
-                          <div className="text-xs text-[#FFFFFF]/40 mt-1">
-                            消费人：{expense.payers ? expense.payers.join('、') : '未记录'} · 支付人：{expense.payer || '未记录'}
-                          </div>
+                          {isAdminMode && (
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                  setEditingExpense(expense);
+                                  setShowEditExpense(true);
+                                }}
+                                className="text-[#FFFFFF]/60 hover:text-[#CEA472] h-8 w-8"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                  setDeletingExpenseId(expense.id);
+                                  setShowDeleteConfirm(true);
+                                }}
+                                className="text-[#FFFFFF]/60 hover:text-red-500 h-8 w-8"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="text-right flex items-center gap-4">
-                        <div className="text-lg font-semibold text-[#CEA472]">
-                          ¥{expense.amount.toLocaleString()}
-                        </div>
-                        {isAdminMode && (
-                          <div className="flex items-center gap-2">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => {
-                                setEditingExpense(expense);
-                                setShowEditExpense(true);
-                              }}
-                              className="text-[#FFFFFF]/60 hover:text-[#CEA472] h-8 w-8"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => {
-                                setDeletingExpenseId(expense.id);
-                                setShowDeleteConfirm(true);
-                              }}
-                              className="text-[#FFFFFF]/60 hover:text-red-500 h-8 w-8"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-12">
@@ -859,9 +880,43 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </div>
                 </div>
 
+                <div>
+                  <h4 className="text-[#FFFFFF] font-medium mb-3">收支差异结算</h4>
+                  <div className="space-y-2">
+                    {travelers.map((traveler) => {
+                      const paid = stats.byPayer[traveler] || 0;
+                      const consumed = stats.byConsumer[traveler] || 0;
+                      const difference = paid - consumed;
+                      return (
+                        <div key={traveler} className="p-3 bg-black/40 rounded-lg">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[#FFFFFF]">{traveler}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-[#FFFFFF]/60">支付: ¥{paid.toFixed(2)}</span>
+                            <span className="text-[#FFFFFF]/60">消费: ¥{consumed.toFixed(2)}</span>
+                          </div>
+                          <div className="mt-2 pt-2 border-t border-[#CEA472]/20">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[#FFFFFF]/60 text-sm">结算</span>
+                              <span className={`font-medium ${difference > 0 ? 'text-green-400' : difference < 0 ? 'text-red-400' : 'text-[#CEA472]'}`}>
+                                {difference > 0 
+                                  ? `应收 ¥${difference.toFixed(2)}` 
+                                  : difference < 0 
+                                    ? `应付 ¥${Math.abs(difference).toFixed(2)}` 
+                                    : '已平账'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {Object.keys(stats.byPayer).length > 0 && (
                   <div>
-                    <h4 className="text-[#FFFFFF] font-medium mb-3">按人员统计</h4>
+                    <h4 className="text-[#FFFFFF] font-medium mb-3">按支付人统计</h4>
                     <div className="space-y-2">
                       {Object.entries(stats.byPayer).map(([payer, amount]) => (
                         <div key={payer} className="flex items-center justify-between p-3 bg-black/40 rounded-lg">
