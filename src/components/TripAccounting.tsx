@@ -211,7 +211,28 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     if (firstWishWithRecord) {
       setSelectedWishId(String(firstWishWithRecord.id));
     } else {
-      setSelectedWishId(String(confirmedWishes[0].id));
+      // 如果第一个旅行没有expense record，先创建一个
+      const firstWish = confirmedWishes[0];
+      const hasRecord = tripExpenses.some(record => String(record.wishId) === String(firstWish.id));
+      if (!hasRecord) {
+        // 自动创建expense record
+        fetch('/api/trip-expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            wishId: String(firstWish.id),
+            destination: firstWish.destination,
+            startDate: firstWish.confirmed_date,
+          }),
+        }).then(response => {
+          if (response.ok) {
+            fetchExpenses();
+          }
+        }).catch(error => {
+          console.error('[Trip Accounting] Error creating expense record:', error);
+        });
+      }
+      setSelectedWishId(String(firstWish.id));
     }
   }, [confirmedWishes, tripExpenses, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
@@ -243,10 +264,47 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     console.debug('[Trip Accounting] tripExpenses:', tripExpenses);
     console.debug('[Trip Accounting] currentExpenseRecord:', currentExpenseRecord);
     
-    if (!currentExpenseRecord) {
-      console.error('[Trip Accounting] No expense record selected');
+    // 如果没有expense record，先创建一个
+    if (!currentExpenseRecord && selectedWishId) {
+      console.log('[Trip Accounting] No expense record, creating one...');
+      const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
+      if (wish) {
+        try {
+          const response = await fetch('/api/trip-expenses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              wishId: String(wish.id),
+              destination: wish.destination,
+              startDate: wish.confirmed_date,
+            }),
+          });
+
+          if (response.ok) {
+            await fetchExpenses();
+            // 继续添加支出，但需要重新获取currentExpenseRecord
+            // 由于fetchExpenses已经调用，tripExpenses应该已更新
+          } else {
+            console.error('[Trip Accounting] Failed to create expense record');
+            return;
+          }
+        } catch (error) {
+          console.error('[Trip Accounting] Error creating expense record:', error);
+          return;
+        }
+      } else {
+        console.error('[Trip Accounting] Wish not found for selectedWishId:', selectedWishId);
+        return;
+      }
+    }
+    
+    // 重新获取currentExpenseRecord（可能刚创建）
+    const recordToAdd = tripExpenses.find(r => String(r.wishId) === String(selectedWishId));
+    if (!recordToAdd) {
+      console.error('[Trip Accounting] No expense record available');
       return;
     }
+    
     if (!newExpense.amount) {
       console.error('[Trip Accounting] Amount is required');
       return;
@@ -266,7 +324,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
     const expenseItem: ExpenseItem = {
       id: `expense-${Date.now()}`,
-      wishId: currentExpenseRecord.wishId,
+      wishId: recordToAdd.wishId,
       date: newExpense.date,
       time: newExpense.time,
       category: newExpense.category as ExpenseCategory,
@@ -284,8 +342,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: currentExpenseRecord.id,
-          expenses: [...currentExpenseRecord.expenses, expenseItem],
+          id: recordToAdd.id,
+          expenses: [...recordToAdd.expenses, expenseItem],
         }),
       });
 
