@@ -153,6 +153,32 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     });
   }, []);
 
+  // 监听storage事件和自定义事件，确保同步更新
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'travel-toolbox-default-trip-id') {
+        if (e.newValue) {
+          setDefaultTripId(e.newValue);
+        } else {
+          setDefaultTripId(null);
+        }
+      }
+    };
+
+    const handleDefaultTripChanged = (e: any) => {
+      if (e.detail && e.detail.defaultTripId) {
+        setDefaultTripId(e.detail.defaultTripId);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+    };
+  }, []);
+
   useEffect(() => {
     if (selectedWishId) {
       console.debug('[Trip Accounting] selectedWishId changed:', selectedWishId);
@@ -164,27 +190,36 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   useEffect(() => {
     if (!initializedFromStorage) return;
+    if (loading) return;
     if (confirmedWishes.length === 0) return;
     
-    const isSelectionValid = selectedWishId && confirmedWishes.some(wish => String(wish.id) === selectedWishId);
-    
-    if (!isSelectionValid) {
-      localStorage.removeItem('travel-toolbox-accounting-wish-id');
-      
-      if (defaultTripId) {
-        const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
-        if (defaultWishExists) {
-          setSelectedWishId(defaultTripId);
-          return;
-        }
+    // 首先尝试使用已选中的wishId（如果存在且有效）
+    if (selectedWishId) {
+      const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
+      if (wishExists) {
+        return;
       }
-      
-      if (confirmedWishes.length > 0) {
-        setSelectedWishId(String(confirmedWishes[0].id));
-      }
-      return;
     }
-  }, [confirmedWishes, selectedWishId, initializedFromStorage, defaultTripId]);
+    
+    // 然后尝试使用默认旅行ID
+    if (defaultTripId) {
+      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
+      if (defaultWishExists) {
+        setSelectedWishId(defaultTripId);
+        return;
+      }
+    }
+    
+    // 最后选择第一个有记录的旅行或第一个旅行
+    const firstWishWithRecord = confirmedWishes.find(wish => 
+      tripExpenses.some(record => String(record.wishId) === String(wish.id))
+    );
+    if (firstWishWithRecord) {
+      setSelectedWishId(String(firstWishWithRecord.id));
+    } else {
+      setSelectedWishId(String(confirmedWishes[0].id));
+    }
+  }, [confirmedWishes, tripExpenses, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
   const createExpenseRecord = async (wish: Wish) => {
     try {
@@ -483,7 +518,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setDefaultTripId(String(wish.id));
+                          const newDefaultId = String(wish.id);
+                          setDefaultTripId(newDefaultId);
+                          // 触发自定义事件，通知其他组件
+                          window.dispatchEvent(new CustomEvent('default-trip-changed', { 
+                            detail: { defaultTripId: newDefaultId } 
+                          }));
                         }}
                         className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
                         title={isDefault ? '默认旅行' : '设为默认旅行'}
@@ -1038,7 +1078,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setDefaultTripId(String(wish.id));
+                          const newDefaultId = String(wish.id);
+                          setDefaultTripId(newDefaultId);
+                          // 触发自定义事件，通知其他组件
+                          window.dispatchEvent(new CustomEvent('default-trip-changed', { 
+                            detail: { defaultTripId: newDefaultId } 
+                          }));
                         }}
                         className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
                         title={isDefault ? '默认旅行' : '设为默认旅行'}

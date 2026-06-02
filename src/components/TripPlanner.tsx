@@ -95,38 +95,25 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-      const savedDay = localStorage.getItem('travel-toolbox-selected-day');
-      const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
-      const savedDefaultTripId = localStorage.getItem('travel-toolbox-default-trip-id');
-      
-      if (savedWishId) {
-        setSelectedWishId(savedWishId);
-      }
-      
-      if (savedDay) {
-        setSelectedDay(parseInt(savedDay, 10));
-      }
-      
-      if (savedShowSchedule === 'true') {
-        setShowSchedule(true);
-        setShowTripEditor(false);
-      }
-      
-      if (savedDefaultTripId) {
-        setDefaultTripId(savedDefaultTripId);
-      }
-      
-      setInitializedFromStorage(true);
+    const savedDefaultTripId = localStorage.getItem('travel-toolbox-default-trip-id');
+    const savedDay = localStorage.getItem('travel-toolbox-selected-day');
+    const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
+    
+    if (savedDefaultTripId) {
+      setDefaultTripId(savedDefaultTripId);
     }
+    
+    if (savedDay) {
+      setSelectedDay(parseInt(savedDay, 10));
+    }
+    
+    if (savedShowSchedule === 'true') {
+      setShowSchedule(true);
+      setShowTripEditor(false);
+    }
+    
+    setInitializedFromStorage(true);
   }, []);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && selectedWishId) {
-      localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
-    }
-  }, [selectedWishId]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -141,48 +128,41 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   }, [showSchedule]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (defaultTripId) {
-        localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
-      } else {
-        localStorage.removeItem('travel-toolbox-default-trip-id');
-      }
+    if (typeof window !== 'undefined' && initializedFromStorage && defaultTripId) {
+      localStorage.setItem('travel-toolbox-default-trip-id', defaultTripId);
     }
-  }, [defaultTripId]);
+  }, [defaultTripId, initializedFromStorage]);
 
   useEffect(() => {
     if (!initializedFromStorage) return;
     if (loading) return;
+    if (confirmedWishes.length === 0) return;
     
+    // 首先尝试使用已选中的wishId（如果存在且有效）
     if (selectedWishId) {
       const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
       if (wishExists) {
         return;
-      } else {
-        localStorage.removeItem('travel-toolbox-selected-wish-id');
-        setSelectedWishId(null);
       }
     }
     
+    // 然后尝试使用默认旅行ID
     if (defaultTripId) {
       const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
       if (defaultWishExists) {
         setSelectedWishId(defaultTripId);
         return;
-      } else {
-        setDefaultTripId(null);
       }
     }
     
-    if (confirmedWishes.length > 0) {
-      const firstWishWithPlan = confirmedWishes.find(wish => 
-        tripPlans.some(plan => plan.wishId === String(wish.id))
-      );
-      if (firstWishWithPlan) {
-        setSelectedWishId(String(firstWishWithPlan.id));
-      } else {
-        setSelectedWishId(String(confirmedWishes[0].id));
-      }
+    // 最后选择第一个有行程计划的旅行或第一个旅行
+    const firstWishWithPlan = confirmedWishes.find(wish => 
+      tripPlans.some(plan => plan.wishId === String(wish.id))
+    );
+    if (firstWishWithPlan) {
+      setSelectedWishId(String(firstWishWithPlan.id));
+    } else {
+      setSelectedWishId(String(confirmedWishes[0].id));
     }
   }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
@@ -200,6 +180,32 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
   useEffect(() => {
     fetchTripPlans();
+  }, []);
+
+  // 监听storage事件和自定义事件，确保同步更新
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'travel-toolbox-default-trip-id') {
+        if (e.newValue) {
+          setDefaultTripId(e.newValue);
+        } else {
+          setDefaultTripId(null);
+        }
+      }
+    };
+
+    const handleDefaultTripChanged = (e: any) => {
+      if (e.detail && e.detail.defaultTripId) {
+        setDefaultTripId(e.detail.defaultTripId);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+    };
   }, []);
 
   useEffect(() => {
@@ -916,7 +922,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setDefaultTripId(String(wish.id));
+                          const newDefaultId = String(wish.id);
+                          setDefaultTripId(newDefaultId);
+                          // 触发自定义事件，通知其他组件
+                          window.dispatchEvent(new CustomEvent('default-trip-changed', { 
+                            detail: { defaultTripId: newDefaultId } 
+                          }));
                         }}
                         className={`p-2 rounded-full transition-colors ${isDefault ? 'text-[#CEA472] hover:bg-[#CEA472]/20' : 'text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-[#CEA472]/10'}`}
                         title={isDefault ? '默认旅行' : '设为默认旅行'}
