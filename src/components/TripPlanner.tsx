@@ -1250,6 +1250,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <div className="h-12 border-b border-[#CEA472]/20 p-1.5 sm:p-2 text-center">
                             <div className="text-[#CEA472] font-medium text-xs">Day {day.dayNumber}</div>
                             {date && <div className="text-[#FFFFFF]/60 text-[10px] sm:text-xs">{date}</div>}
+                            {/* 手机端显示时间范围 */}
+                            <div className="sm:hidden text-[#FFFFFF]/40 text-[10px] mt-0.5">
+                              {(() => {
+                                const times = sortedActivities.map(a => a.startTime).filter(Boolean);
+                                if (times.length === 0) return null;
+                                const earliest = times.reduce((min, t) => t < min ? t : min);
+                                const latest = times.reduce((max, t) => t > max ? t : max);
+                                return `${earliest}~${latest}`;
+                              })()}
+                            </div>
                           </div>
                           <div className="flex-1 relative">
                             {Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour).map(hour => (
@@ -1315,6 +1325,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                       {icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
+                                      {/* 手机端显示时间 */}
+                                      <div className="sm:hidden text-[#CEA472]/80 text-[10px] mb-0.5">{item.startTime}</div>
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
                                       {subtitle && (
                                         <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
