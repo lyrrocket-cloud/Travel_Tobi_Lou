@@ -12,8 +12,14 @@ import path from 'path';
 export function getDataDir(): string {
   const env = process.env.COZE_PROJECT_ENV;
   
-  // 生产环境使用 /tmp 目录
+  // 生产环境优先使用数据卷目录
   if (env === 'PROD') {
+    // 优先使用持久化存储路径
+    const persistPath = process.env.DATA_STORAGE_PATH;
+    if (persistPath) {
+      return persistPath;
+    }
+    // 备选使用 /tmp（临时存储，数据会丢失）
     return '/tmp';
   }
   
