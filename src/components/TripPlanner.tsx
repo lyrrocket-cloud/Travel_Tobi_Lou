@@ -1054,7 +1054,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               <div className="overflow-y-auto max-h-[600px] sm:max-h-[900px] schedule-scroll">
                 <div className="flex min-w-max">
                   {/* 时间轴 - 仅桌面端显示 */}
-                  <div className="hidden sm:block w-16 flex-shrink-0 flex flex-col">
+                  <div className="w-12 sm:w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
                     {(() => {
                       let earliestHour = 7;
