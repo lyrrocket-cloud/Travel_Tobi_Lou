@@ -849,21 +849,21 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={activity.id}
-        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-4 cursor-pointer hover:bg-black/40 transition-colors"
+        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors"
         onClick={() => {
           setEditingActivity({ dayNumber: day, activityId: activity.id });
           setEditingActivityData({ ...activity });
         }}
       >
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#CEA472]/20 flex items-center justify-center">
+        <div className="flex items-start gap-2.5 sm:gap-3">
+          <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#CEA472]/20 flex items-center justify-center">
             {activityTypeIcons[activity.type] || activityTypeIcons['other']}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-[#CEA472] font-medium">{activityTypes[activity.type]}</span>
-                <span className="text-[#FFFFFF]/60 text-sm">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="text-[#CEA472] font-medium text-sm sm:text-base">{activityTypes[activity.type]}</span>
+                <span className="text-[#FFFFFF]/60 text-xs sm:text-sm">
                   {activity.startTime}
                   {activity.endTime && ` - ${activity.endTime}`}
                 </span>
@@ -876,19 +876,19 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   setEditingActivity({ dayNumber: day, activityId: activity.id });
                   setEditingActivityData({ ...activity });
                 }}
-                className="text-[#FFFFFF]/40 hover:text-[#CEA472] h-8 w-8"
+                className="text-[#FFFFFF]/40 hover:text-[#CEA472] h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0"
               >
-                <Edit2 className="w-4 h-4" />
+                <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
             </div>
             {activity.content && (
-              <p className="text-[#FFFFFF] mt-1">{activity.content}</p>
+              <p className="text-[#FFFFFF] mt-1 text-sm">{activity.content}</p>
             )}
             {activity.location && (
-              <p className="text-[#FFFFFF]/60 text-sm mt-1"><MapPin className="w-3 h-3 inline mr-1" /> {activity.location}</p>
+              <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-1"><MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" /> {activity.location}</p>
             )}
             {activity.notes && (
-              <p className="text-[#FFFFFF]/40 text-xs mt-1">{activity.notes}</p>
+              <p className="text-[#FFFFFF]/40 text-[10px] sm:text-xs mt-1 truncate">{activity.notes}</p>
             )}
           </div>
         </div>
@@ -906,62 +906,60 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
   if (!currentTripPlan || showWishSelector) {
     return (
-      <div className="w-full">
-        <div className="flex items-center mb-6">
-          <h3 className="text-xl font-semibold text-[#CEA472]">选择旅行</h3>
+      <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
+        <div className="flex items-center mb-5">
+          <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472]">选择旅行</h3>
         </div>
 
         {confirmedWishes.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-[#FFFFFF]/60">暂无已确认成行的愿望</div>
+            <div className="text-[#FFFFFF]/60 text-sm sm:text-base">暂无已确认成行的愿望</div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {confirmedWishes.map(wish => {
               const hasPlan = tripPlans.some(plan => plan.wishId === String(wish.id));
               const isDefault = defaultTripId === String(wish.id);
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/30 border rounded-lg p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  className={`bg-black/30 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
                   onClick={() => selectWish(wish)}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-[#FFFFFF] font-medium">{wish.destination}</h4>
-                        {isDefault && <Star className="w-4 h-4 text-[#CEA472] fill-[#CEA472]" />}
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h4 className="text-[#FFFFFF] font-medium text-sm sm:text-base truncate">{wish.destination}</h4>
+                        {isDefault && <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
                       </div>
-                      <p className="text-[#FFFFFF]/60 text-sm">
+                      <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-1">
                         {wish.confirmed_date} · {wish.travelers}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
                       {hasPlan ? (
-                        <span className="text-[#CEA472] text-sm">已有规划</span>
+                        <span className="text-[#CEA472] text-xs sm:text-sm">已有规划</span>
                       ) : (
-                        <span className="text-[#FFFFFF]/40 text-sm">点击创建规划</span>
+                        <span className="text-[#FFFFFF]/40 text-xs sm:text-sm">点击创建</span>
                       )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           const newDefaultId = String(wish.id);
                           setDefaultTripId(newDefaultId);
-                          // 保存到数据库
                           fetch('/api/default-trip', {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ wishId: newDefaultId }),
                           });
-                          // 触发自定义事件，通知其他组件
                           window.dispatchEvent(new CustomEvent('default-trip-changed', { 
                             detail: { defaultTripId: newDefaultId } 
                           }));
                         }}
-                        className={`p-2 rounded-full transition-colors ${isDefault ? 'text-[#CEA472] hover:bg-[#CEA472]/20' : 'text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-[#CEA472]/10'}`}
+                        className={`p-1.5 sm:p-2 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${isDefault ? 'text-[#CEA472] hover:bg-[#CEA472]/20' : 'text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-[#CEA472]/10'}`}
                         title={isDefault ? '默认旅行' : '设为默认旅行'}
                       >
-                        <Star className={`w-5 h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
+                        <Star className={`w-4.5 h-4.5 sm:w-5 sm:h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
                       </button>
                     </div>
                   </div>
@@ -977,27 +975,27 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const sortedActivities = currentDayPlan ? getSortedActivities(currentDayPlan.activities) : [];
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
-          <h3 className="text-xl font-semibold text-[#CEA472]">
+    <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
+      <div className="flex justify-between items-center mb-5">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {currentTripPlan.destination} 旅行规划
           </h3>
-          {defaultTripId === selectedWishId && <Star className="w-5 h-5 text-[#CEA472] fill-[#CEA472]" />}
+          {defaultTripId === selectedWishId && <Star className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
         </div>
         <Button
           variant="outline"
           size="icon"
           onClick={() => setShowWishSelector(true)}
-          className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10"
+          className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 min-h-[44px] min-w-[44px]"
           title="切换行程"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </Button>
       </div>
 
       <div 
-        className={`mb-4 p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && onEditTripInfo) {
             onEditTripInfo({
@@ -1010,16 +1008,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           }
         }}
       >
-        <div className="flex justify-between items-center">
-          <div>
-            <h4 className="text-[#FFFFFF] font-medium">
+        <div className="flex justify-between items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <h4 className="text-[#FFFFFF] font-medium text-sm sm:text-base truncate">
               {currentTripPlan.destination}
             </h4>
-            <p className="text-[#FFFFFF]/60 text-sm">
+            <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-0.5">
               {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
-          {isAdminMode && <Edit2 className="w-4 h-4 text-[#CEA472]" />}
+          {isAdminMode && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
         </div>
       </div>
 
@@ -1376,16 +1374,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
       {showTripEditor && (
         <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
-        <TabsList className="inline-flex h-[72px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
+        <TabsList className="inline-flex h-auto sm:h-[72px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
             <TabsTrigger
               key={day}
               value={String(day)}
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-2 px-4 rounded-md transition-all duration-300 min-w-[80px]"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-2 px-3 sm:px-4 rounded-md transition-all duration-300 min-w-[70px] sm:min-w-[80px] min-h-[44px]"
             >
               <span className="text-sm font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
-                <span className="text-xs opacity-70 whitespace-nowrap">{getDateDisplay(day)}</span>
+                <span className="text-xs opacity-70 whitespace-nowrap hidden sm:inline">{getDateDisplay(day)}</span>
               )}
             </TabsTrigger>
           ))}
@@ -1393,8 +1391,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">
-            <div className="bg-black/30 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-6">
-              <div className="space-y-4">
+            <div className="bg-black/30 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+              <div className="space-y-3.5 sm:space-y-4">
                 {day === 1 && (
                   <div className="space-y-2">
                     {currentDayPlan && getArrivalTransport(currentDayPlan) ? (
