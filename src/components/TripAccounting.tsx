@@ -704,7 +704,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const filteredLocations = getFilteredLocations();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
@@ -770,7 +770,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="entry" className="mt-6">
+        <TabsContent value="entry" className="mt-4">
           <Card className="border border-[#CEA472]/20 bg-black/30">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-4 sm:space-y-5">
@@ -927,7 +927,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           </div>
         </TabsContent>
 
-        <TabsContent value="query" className="mt-6">
+        <TabsContent value="query" className="mt-4">
           <Card className="border border-[#CEA472]/20 bg-black/30">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               {currentExpenseRecord && sortedExpenses.length > 0 ? (
@@ -1014,7 +1014,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           </Card>
         </TabsContent>
 
-        <TabsContent value="analysis" className="mt-6">
+        <TabsContent value="analysis" className="mt-4">
           <Card className="border border-[#CEA472]/20 bg-black/30">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-5 sm:space-y-6">
