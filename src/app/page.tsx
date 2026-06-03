@@ -842,13 +842,13 @@ export default function Home() {
             <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-2 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 gap-0.5 h-[48px] sm:h-[44px]">
               <TabsTrigger
                 value="make-wish"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-sm sm:text-base h-full flex items-center justify-center"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs h-full flex items-center justify-center"
               >
                 抛硬币
               </TabsTrigger>
               <TabsTrigger
                 value="wish-pool"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-sm sm:text-base h-full flex items-center justify-center"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs h-full flex items-center justify-center"
               >
                 许愿池
               </TabsTrigger>
@@ -946,13 +946,13 @@ export default function Home() {
                     </div>
                     {animationComplete ? (
                       <div className="space-y-3">
-                        <div className="text-3xl font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
-                        <p className="text-lg text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
+                        <div className="text-xl font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
+                        <p className="text-sm text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <p className="text-2xl font-semibold text-[#CEA472]">正在抛硬币...</p>
-                        <p className="text-lg text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
+                        <p className="text-base font-semibold text-[#CEA472]">正在抛硬币...</p>
+                        <p className="text-sm text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
                       </div>
                     )}
                   </div>
