@@ -946,13 +946,13 @@ export default function Home() {
                     </div>
                     {animationComplete ? (
                       <div className="space-y-3">
-                        <div className="text-xl font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
-                        <p className="text-sm text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
+                        <div className="text-sm font-bold text-[#CEA472] animate-bounce">✨ 抛硬币成功 ✨</div>
+                        <p className="text-xs text-[#FFFFFF]/80">你的愿望已经飘向许愿池...</p>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <p className="text-base font-semibold text-[#CEA472]">正在抛硬币...</p>
-                        <p className="text-sm text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
+                        <p className="text-xs font-semibold text-[#CEA472]">正在抛硬币...</p>
+                        <p className="text-xs text-[#FFFFFF]/60">闭上眼睛，许下心愿</p>
                       </div>
                     )}
                   </div>
