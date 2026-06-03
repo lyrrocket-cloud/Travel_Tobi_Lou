@@ -1032,10 +1032,29 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <h4 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h4>
               </div>
             </div>
+            {/* Day切换按钮 - 手机端 */}
+            {currentTripPlan && (
+              <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-thin sm:hidden">
+                {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
+                  <button
+                    key={day}
+                    onClick={() => setSelectedDay(day)}
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                      selectedDay === day
+                        ? 'bg-[#CEA472] text-[#0a0a0f]'
+                        : 'bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]/60 hover:border-[#CEA472]/60'
+                    }`}
+                  >
+                    Day {day}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="overflow-x-auto scrollbar-thin">
               <div className="overflow-y-auto max-h-[600px] sm:max-h-[900px] schedule-scroll">
                 <div className="flex min-w-max">
-                  <div className="w-12 sm:w-16 flex-shrink-0 flex flex-col">
+                  {/* 时间轴 - 仅桌面端显示 */}
+                  <div className="hidden sm:block w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
                     {(() => {
                       let earliestHour = 7;
@@ -1085,7 +1104,15 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     })()}
                   </div>
                   <div className="flex-1 flex">
-                    {currentTripPlan?.days.map(day => {
+                    {currentTripPlan?.days
+                      .filter(day => {
+                        // 手机端只显示选中的Day，桌面端显示所有
+                        if (typeof window !== 'undefined' && window.innerWidth < 640) {
+                          return day.dayNumber === selectedDay;
+                        }
+                        return true;
+                      })
+                      .map(day => {
                       const sortedActivities = getSortedActivities(day.activities);
                       const date = getDateDisplay(day.dayNumber);
                       
