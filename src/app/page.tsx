@@ -684,7 +684,7 @@ export default function Home() {
   const renderMainContent = () => {
     if (mainTab === 'wish') {
       return (
-        <div className="space-y-5">
+        <div className="space-y-5 px-2.5 sm:px-0">
           {/* 年度时间轴 */}
           {wishes.some(w => w.is_confirmed === 1) && (
             <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-5">
@@ -1185,19 +1185,23 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
+        <div className="px-2.5 sm:px-0">
+          <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
+        </div>
       );
     } else if (mainTab === 'account') {
       return (
-        <TripAccounting 
-          confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
-          isAdminMode={isAdminMode} 
-          onEditTripInfo={handleOpenTripInfoEdit}
-        />
+        <div className="px-2.5 sm:px-0">
+          <TripAccounting 
+            confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
+            isAdminMode={isAdminMode} 
+            onEditTripInfo={handleOpenTripInfoEdit}
+          />
+        </div>
       );
     } else if (mainTab === 'drive') {
       return (
-        <div className="space-y-6">
+        <div className="space-y-6 px-2.5 sm:px-0">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="text-center py-12">
