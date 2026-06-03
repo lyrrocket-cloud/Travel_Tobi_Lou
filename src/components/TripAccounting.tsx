@@ -749,22 +749,22 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto px-2.5 sm:px-0">
-        <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20">
+        <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 py-3 sm:py-2 min-h-[44px]"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center"
           >
             <span className="text-sm">消费录入</span>
           </TabsTrigger>
           <TabsTrigger 
             value="query"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 py-3 sm:py-2 min-h-[44px]"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center"
           >
             <span className="text-sm">消费查询</span>
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 py-3 sm:py-2 min-h-[44px]"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center"
           >
             <span className="text-sm">消费分析</span>
           </TabsTrigger>

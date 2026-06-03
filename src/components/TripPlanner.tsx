@@ -1374,12 +1374,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
       {showTripEditor && (
         <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
-        <TabsList className="inline-flex h-auto sm:h-[72px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
+        <TabsList className="inline-flex h-[48px] sm:h-[56px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
             <TabsTrigger
               key={day}
               value={String(day)}
-              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center py-2 px-3 sm:px-4 rounded-md transition-all duration-300 min-w-[70px] sm:min-w-[80px] min-h-[44px]"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center px-3 sm:px-4 rounded-md transition-all duration-300 min-w-[70px] sm:min-w-[80px] h-full"
             >
               <span className="text-sm font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
