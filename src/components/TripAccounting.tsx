@@ -938,7 +938,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     return (
                       <div
                         key={expense.id}
-                        className="p-3.5 sm:p-4 rounded-lg bg-black/40 border border-[#CEA472]/10 hover:bg-black/60 transition-colors"
+                        className="p-3.5 sm:p-4 rounded-lg bg-black/40 border border-[#CEA472]/20 hover:bg-black/60 transition-colors"
                       >
                         <div className="flex flex-col gap-3">
                           <div className="flex items-start justify-between gap-3">

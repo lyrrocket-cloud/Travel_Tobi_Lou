@@ -687,7 +687,7 @@ export default function Home() {
         <div className="space-y-5 px-2.5 sm:px-0">
           {/* 年度时间轴 */}
           {wishes.some(w => w.is_confirmed === 1) && (
-            <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm mb-5">
+            <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm mb-5">
               <CardContent className="pt-3.5 sm:pt-6 px-2.5 sm:px-6">
                 {/* 年度切换 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 mb-3.5 sm:mb-6">
@@ -856,7 +856,7 @@ export default function Home() {
 
             {/* Make Wish Tab */}
             <TabsContent value="make-wish" className="space-y-4.5 sm:space-y-6 min-h-[400px]">
-              <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+              <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
                 <CardContent className="space-y-4.5 pt-3.5 sm:pt-6 px-3.5 sm:px-6">
                   <div className="space-y-1.5 sm:space-y-2">
                     <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-base">
@@ -962,7 +962,7 @@ export default function Home() {
 
             {/* Wish Pool Tab */}
             <TabsContent value="wish-pool" className="space-y-5 min-h-[400px]">
-              <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+              <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
                 <CardContent className="pt-5 sm:pt-6 px-2.5 sm:px-6">
                   {loading ? (
                     <div className="text-center py-12">
@@ -1202,7 +1202,7 @@ export default function Home() {
     } else if (mainTab === 'drive') {
       return (
         <div className="space-y-6 px-2.5 sm:px-0">
-          <Card className="max-w-4xl mx-auto border border-[#CEA472]/10 bg-black/40 backdrop-blur-sm">
+          <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="text-center py-12">
                 <Car className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
