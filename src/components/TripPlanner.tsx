@@ -725,7 +725,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <span className="font-medium">{transportNames[transport.type] || '未设置'}</span>
         </div>
         {(transport.from || transport.to) && (
-          <div className="text-[#FFFFFF]/80 text-sm mt-1 flex items-center gap-2">
+          <div className="text-[#FFFFFF]/80 text-xs mt-1 flex items-center gap-2">
             {transport.from && <span>{transport.from}</span>}
             {transport.from && transport.to && <ArrowRight className="w-3 h-3" />}
             {transport.to && <span>{transport.to}</span>}
@@ -862,8 +862,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <span className="text-[#CEA472] font-medium text-sm sm:text-base">{activityTypes[activity.type]}</span>
-                <span className="text-[#FFFFFF]/60 text-xs sm:text-sm">
+                <span className="text-[#CEA472] font-medium text-xs">{activityTypes[activity.type]}</span>
+                <span className="text-[#FFFFFF]/60 text-xs">
                   {activity.startTime}
                   {activity.endTime && ` - ${activity.endTime}`}
                 </span>
@@ -882,10 +882,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               </Button>
             </div>
             {activity.content && (
-              <p className="text-[#FFFFFF] mt-1 text-sm">{activity.content}</p>
+              <p className="text-[#FFFFFF] mt-1 text-xs">{activity.content}</p>
             )}
             {activity.location && (
-              <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-1"><MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" /> {activity.location}</p>
+              <p className="text-[#FFFFFF]/60 text-xs mt-1"><MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" /> {activity.location}</p>
             )}
             {activity.notes && (
               <p className="text-[#FFFFFF]/40 text-[10px] sm:text-xs mt-1 truncate">{activity.notes}</p>
@@ -913,7 +913,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
         {confirmedWishes.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-[#FFFFFF]/60 text-sm sm:text-base">暂无已确认成行的愿望</div>
+            <div className="text-[#FFFFFF]/60 text-xs">暂无已确认成行的愿望</div>
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-4">
@@ -929,18 +929,18 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-[#FFFFFF] font-medium text-sm sm:text-base truncate">{wish.destination}</h4>
+                        <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
                         {isDefault && <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
                       </div>
-                      <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-1">
+                      <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {hasPlan ? (
-                        <span className="text-[#CEA472] text-xs sm:text-sm">已有规划</span>
+                        <span className="text-[#CEA472] text-xs">已有规划</span>
                       ) : (
-                        <span className="text-[#FFFFFF]/40 text-xs sm:text-sm">点击创建</span>
+                        <span className="text-[#FFFFFF]/40 text-xs">点击创建</span>
                       )}
                       <button
                         onClick={(e) => {
@@ -1010,10 +1010,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       >
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
-            <h4 className="text-[#FFFFFF] font-medium text-sm sm:text-base truncate">
+            <h4 className="text-[#FFFFFF] font-medium text-xs truncate">
               {currentTripPlan.destination}
             </h4>
-            <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-0.5">
+            <p className="text-[#FFFFFF]/60 text-xs mt-0.5">
               {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
@@ -1221,7 +1221,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       return (
                         <div key={day.id} className="flex-1 min-w-[180px] max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
                           <div className="h-12 border-b border-[#CEA472]/20 p-2 text-center">
-                            <div className="text-[#CEA472] font-medium text-sm">Day {day.dayNumber}</div>
+                            <div className="text-[#CEA472] font-medium text-xs">Day {day.dayNumber}</div>
                             {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
                           </div>
                           <div className="flex-1 relative">
@@ -1325,7 +1325,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     onClick={() => {
                       setDefaultTripId(selectedWishId);
                     }}
-                    className={`text-sm ${defaultTripId === selectedWishId ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]/60'}`}
+                    className={`text-xs ${defaultTripId === selectedWishId ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]/60'}`}
                   >
                     <Star className="w-4 h-4 mr-1" />
                     {defaultTripId === selectedWishId ? '已设为默认' : '设为默认'}
@@ -1359,7 +1359,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           {wish.destination}
                           {isDefault && <Star className="w-4 h-4 fill-[#CEA472]" />}
                         </div>
-                        <div className="text-sm text-[#FFFFFF]/50">
+                        <div className="text-xs text-[#FFFFFF]/50">
                           {wish.confirmed_date} · {wish.travelers}
                         </div>
                       </div>
@@ -1381,7 +1381,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               value={String(day)}
               className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center px-3 sm:px-4 rounded-md transition-all duration-300 min-w-[70px] sm:min-w-[80px] h-full"
             >
-              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Day {day}</span>
+              <span className="text-xs font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
                 <span className="text-[10px] sm:text-xs opacity-70 whitespace-nowrap hidden sm:inline">{getDateDisplay(day)}</span>
               )}
@@ -1401,7 +1401,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <Button
                         onClick={() => addTransport(day, 'arrival')}
                         variant="outline"
-                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-sm sm:text-base"
+                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加到达
@@ -1415,7 +1415,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <Button
                             onClick={() => addTransport(day, 'between', 'arrival', sortedActivities[0].id)}
                             variant="outline"
-                            className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-sm sm:text-base"
+                            className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                           >
                             <Plus className="w-4 h-4 mr-2" />
                             添加交通
@@ -1428,7 +1428,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
                 <div className="space-y-4">
                   {sortedActivities.length === 0 ? (
-                    <div className="text-center py-8 text-[#FFFFFF]/40 text-sm sm:text-base">
+                    <div className="text-center py-8 text-[#FFFFFF]/40 text-xs">
                       暂无活动，点击下方按钮添加
                     </div>
                   ) : (
@@ -1442,7 +1442,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               <Button
                                 onClick={() => addTransport(day, 'between', sortedActivities[index - 1].id, activity.id)}
                                 variant="outline"
-                                className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-sm sm:text-base"
+                                className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
                                 <Plus className="w-4 h-4 mr-2" />
                                 添加交通
@@ -1465,7 +1465,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <Button
                         onClick={() => addTransport(day, 'between', sortedActivities[sortedActivities.length - 1].id, 'departure')}
                         variant="outline"
-                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-sm sm:text-base"
+                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加交通
@@ -1481,7 +1481,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <Button
                         onClick={() => addTransport(day, 'departure')}
                         variant="outline"
-                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-sm sm:text-base"
+                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加离开

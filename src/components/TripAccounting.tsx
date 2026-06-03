@@ -633,7 +633,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
         {confirmedWishes.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-[#FFFFFF]/60 text-sm sm:text-base">暂无已确认成行的愿望</div>
+            <div className="text-[#FFFFFF]/60 text-xs">暂无已确认成行的愿望</div>
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-4">
@@ -656,18 +656,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-[#FFFFFF] font-medium text-sm sm:text-base truncate">{wish.destination}</h4>
+                        <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
                         {isDefault && <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
                       </div>
-                      <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-1">
+                      <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {hasRecord ? (
-                        <span className="text-[#CEA472] text-xs sm:text-sm">已有记录</span>
+                        <span className="text-[#CEA472] text-xs">已有记录</span>
                       ) : (
-                        <span className="text-[#FFFFFF]/40 text-xs sm:text-sm">点击创建记录</span>
+                        <span className="text-[#FFFFFF]/40 text-xs">点击创建记录</span>
                       )}
                       <button
                         onClick={(e) => {
@@ -740,8 +740,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         <div className="px-1">
           <div className="flex justify-between items-start gap-2">
             <div className="min-w-0 flex-1">
-              <h4 className="text-[#FFFFFF] font-medium text-sm sm:text-base">{currentWish?.destination}</h4>
-              <p className="text-[#FFFFFF]/60 text-xs sm:text-sm mt-0.5">{getTravelDays()}天 · {currentWish?.travelers}</p>
+              <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
+              <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{getTravelDays()}天 · {currentWish?.travelers}</p>
             </div>
             {isAdminMode && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
           </div>
@@ -752,19 +752,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs sm:text-sm"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
           >
             消费录入
           </TabsTrigger>
           <TabsTrigger 
             value="query"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs sm:text-sm"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
           >
             消费查询
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs sm:text-sm"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
           >
             消费分析
           </TabsTrigger>
@@ -776,17 +776,17 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
                   {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
-                  <span className="text-[#CEA472] font-medium text-sm sm:text-base">{expenseCategories[newExpense.category] || '其他'}</span>
+                  <span className="text-[#CEA472] font-medium text-xs">{expenseCategories[newExpense.category] || '其他'}</span>
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">活动类型</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动类型</Label>
                   <div className="grid grid-cols-3 gap-2">
                     {Object.entries(expenseCategories).map(([key, label]) => (
                       <button
                         key={key}
                         onClick={() => setNewExpense({ ...newExpense, category: key })}
-                        className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-sm sm:text-base ${
+                        className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-xs ${
                           newExpense.category === key
                             ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
                             : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -800,10 +800,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">活动地点</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
                   {filteredLocations.length > 0 && (
                     <div className="mb-3">
-                      <div className="text-xs sm:text-sm text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
+                      <div className="text-xs text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
                       <div className="flex flex-wrap gap-2">
                         {filteredLocations.map((activity, idx) => (
                           <button
@@ -827,56 +827,56 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       setNewExpense({ ...newExpense, location: e.target.value });
                       setSelectedActivity(null);
                     }}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                     placeholder="或直接输入地点"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">日期</Label>
+                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
                           <Input
                             type="date"
                             value={newExpense.date}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">时间</Label>
+                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
                           <Input
                             type="time"
                             value={newExpense.time}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">消费金额</Label>
+                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费金额</Label>
                           <Input
                             type="number"
                             min="0"
                             step="0.01"
                             value={newExpense.amount}
                             onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                             placeholder="0.00"
                           />
                         </div>
                       </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">消费描述</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费描述</Label>
                   <Input
                     value={newExpense.description}
                     onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                     placeholder="输入消费描述"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">消费人</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费人</Label>
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
@@ -895,7 +895,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">支付人</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">支付人</Label>
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
@@ -947,15 +947,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                 {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="font-medium text-[#FFFFFF] text-sm sm:text-base">{expense.description}</div>
-                                <div className="text-xs sm:text-sm text-[#FFFFFF]/60 mt-0.5">
+                                <div className="font-medium text-[#FFFFFF] text-xs">{expense.description}</div>
+                                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">
                                   {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
                                 </div>
                               </div>
                             </div>
                             <div className="text-right flex-shrink-0">
                               <div className="text-xs text-[#FFFFFF]/60">总金额</div>
-                              <div className="text-base sm:text-lg font-semibold text-[#CEA472]">
+                              <div className="text-xs font-semibold text-[#CEA472]">
                                 ¥{expense.amount.toLocaleString()}
                               </div>
                               <div className="text-xs text-[#FFFFFF]/60">
@@ -1007,7 +1007,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               ) : (
                 <div className="text-center py-12">
                   <Receipt className="w-12 h-12 text-[#CEA472]/40 mx-auto mb-4" />
-                  <p className="text-[#FFFFFF]/60 text-sm sm:text-base">暂无支出记录</p>
+                  <p className="text-[#FFFFFF]/60 text-xs">暂无支出记录</p>
                 </div>
               )}
             </CardContent>
@@ -1048,15 +1048,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </div>
 
                 <div>
-                  <h4 className="text-[#FFFFFF] font-medium mb-3 text-sm sm:text-base">按类别统计</h4>
+                  <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按类别统计</h4>
                   <div className="space-y-2">
                     {Object.entries(filteredStats.categories).map(([category, amount]) => (
                       <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
                         <div className="flex items-center gap-3">
                           {expenseCategoryIcons[category]}
-                          <span className="text-[#FFFFFF] text-sm sm:text-base">{expenseCategories[category] || category}</span>
+                          <span className="text-[#FFFFFF] text-xs">{expenseCategories[category] || category}</span>
                         </div>
-                        <div className="text-[#CEA472] font-medium text-sm sm:text-base">¥{amount.toLocaleString()}</div>
+                        <div className="text-[#CEA472] font-medium text-xs">¥{amount.toLocaleString()}</div>
                       </div>
                     ))}
                   </div>
@@ -1064,12 +1064,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 {Object.keys(filteredStats.byPayer).length > 0 && (
                   <div>
-                    <h4 className="text-[#FFFFFF] font-medium mb-3 text-sm sm:text-base">按支付人统计</h4>
+                    <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按支付人统计</h4>
                     <div className="space-y-2">
                       {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
                         <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
-                          <span className="text-[#FFFFFF] text-sm sm:text-base">{payer}</span>
-                          <span className="text-[#CEA472] font-medium text-sm sm:text-base">¥{amount.toLocaleString()}</span>
+                          <span className="text-[#FFFFFF] text-xs">{payer}</span>
+                          <span className="text-[#CEA472] font-medium text-xs">¥{amount.toLocaleString()}</span>
                         </div>
                       ))}
                     </div>
@@ -1077,7 +1077,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 )}
 
                 <div>
-                  <h4 className="text-[#FFFFFF] font-medium mb-3 text-sm sm:text-base">收支结算</h4>
+                  <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">收支结算</h4>
                   <div className="space-y-2">
                     {travelers
                       .filter(traveler => !analysisConsumerFilter || traveler === analysisConsumerFilter)
@@ -1088,16 +1088,16 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         return (
                           <div key={traveler} className="p-3 sm:p-3 bg-black/40 rounded-lg">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-[#FFFFFF] text-sm sm:text-base">{traveler}</span>
+                              <span className="text-[#FFFFFF] text-xs">{traveler}</span>
                             </div>
-                            <div className="flex items-center justify-between text-xs sm:text-sm">
+                            <div className="flex items-center justify-between text-xs">
                               <span className="text-[#FFFFFF]/60">支付: ¥{paid.toFixed(2)}</span>
                               <span className="text-[#FFFFFF]/60">消费: ¥{consumed.toFixed(2)}</span>
                             </div>
                             <div className="mt-2 pt-2 border-t border-[#CEA472]/20">
                               <div className="flex items-center justify-between">
-                                <span className="text-[#FFFFFF]/60 text-xs sm:text-sm">结算</span>
-                                <span className={`font-medium text-sm sm:text-base ${difference > 0 ? 'text-green-400' : difference < 0 ? 'text-red-400' : 'text-[#CEA472]'}`}>
+                                <span className="text-[#FFFFFF]/60 text-xs">结算</span>
+                                <span className={`font-medium text-xs ${difference > 0 ? 'text-green-400' : difference < 0 ? 'text-red-400' : 'text-[#CEA472]'}`}>
                                   {difference > 0 
                                     ? `应收 ¥${difference.toFixed(2)}` 
                                     : difference < 0 
