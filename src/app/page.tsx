@@ -684,7 +684,7 @@ export default function Home() {
   const renderMainContent = () => {
     if (mainTab === 'wish') {
       return (
-        <div className="space-y-5 px-2.5 sm:px-0">
+        <div className="space-y-5">
           {/* 年度时间轴 */}
           {wishes.some(w => w.is_confirmed === 1) && (
             <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm mb-5">
@@ -1185,23 +1185,19 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <div className="px-2.5 sm:px-0">
-          <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
-        </div>
+        <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
       );
     } else if (mainTab === 'account') {
       return (
-        <div className="px-2.5 sm:px-0">
-          <TripAccounting 
-            confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
-            isAdminMode={isAdminMode} 
-            onEditTripInfo={handleOpenTripInfoEdit}
-          />
-        </div>
+        <TripAccounting 
+          confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
+          isAdminMode={isAdminMode} 
+          onEditTripInfo={handleOpenTripInfoEdit}
+        />
       );
     } else if (mainTab === 'drive') {
       return (
-        <div className="space-y-6 px-2.5 sm:px-0">
+        <div className="space-y-6">
           <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
             <CardContent className="pt-6">
               <div className="text-center py-12">
@@ -1265,8 +1261,9 @@ export default function Home() {
         </div>
 
         {/* 主标签页 */}
-        <Tabs value={mainTab} onValueChange={setMainTab} className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
-          <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px]">
+        <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
+          <Tabs value={mainTab} onValueChange={setMainTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px]">
               <TabsTrigger
                 value="wish"
                 className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
@@ -1296,10 +1293,11 @@ export default function Home() {
                 <span className="truncate leading-tight">旅行驾驶</span>
               </TabsTrigger>
             </TabsList>
+          </Tabs>
 
           {/* 主标签页内容 */}
           {renderMainContent()}
-        </Tabs>
+        </div>
       </div>
 
       {/* 密码对话框 */}

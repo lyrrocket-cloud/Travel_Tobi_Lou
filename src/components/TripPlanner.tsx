@@ -975,7 +975,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const sortedActivities = currentDayPlan ? getSortedActivities(currentDayPlan.activities) : [];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
+    <div className="w-full">
       <div className="flex justify-between items-center mb-5">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">

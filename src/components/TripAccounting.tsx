@@ -705,7 +705,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center max-w-4xl mx-auto px-2.5 sm:px-0">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {currentWish?.destination} 旅行记账
@@ -724,7 +724,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg max-w-4xl mx-auto px-2.5 sm:px-0 ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && onEditTripInfo && currentWish) {
             onEditTripInfo({
