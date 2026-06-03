@@ -86,5 +86,14 @@
     ],
     "createdAt": "2026-06-01T08:52:15.151Z",
     "updatedAt": "2026-06-03T02:55:58.224Z"
+  },
+  {
+    "id": "trip-expense-1780408697379",
+    "wishId": "13",
+    "destination": "安吉",
+    "startDate": "2026-07-01",
+    "expenses": [],
+    "createdAt": "2026-06-02T13:58:17.408Z",
+    "updatedAt": "2026-06-02T13:58:17.408Z"
   }
 ]
