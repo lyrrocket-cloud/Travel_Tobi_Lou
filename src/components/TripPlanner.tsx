@@ -714,7 +714,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={transport.id}
-        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/40 transition-colors"
+        className="bg-black/20 backdrop-blur-md border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/30 transition-colors"
         onClick={() => {
           setEditingTransport({ dayNumber: day, transportId: transport.id });
           setEditingTransportData({ ...transport });
@@ -849,7 +849,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={activity.id}
-        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-4 cursor-pointer hover:bg-black/40 transition-colors"
+        className="bg-black/20 backdrop-blur-md border border-[#CEA472]/20 rounded-md p-4 cursor-pointer hover:bg-black/30 transition-colors"
         onClick={() => {
           setEditingActivity({ dayNumber: day, activityId: activity.id });
           setEditingActivityData({ ...activity });
