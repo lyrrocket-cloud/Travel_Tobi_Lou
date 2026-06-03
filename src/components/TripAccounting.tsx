@@ -1091,8 +1091,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               <span className="text-[#FFFFFF] text-xs">{traveler}</span>
                             </div>
                             <div className="flex items-center justify-between text-xs">
-                              <span className="text-[#FFFFFF]/60">支付: ¥{paid.toFixed(2)}</span>
-                              <span className="text-[#FFFFFF]/60">消费: ¥{consumed.toFixed(2)}</span>
+                              <span className="text-[#FFFFFF]/60 text-xs">支付: ¥{paid.toFixed(2)}</span>
+                              <span className="text-[#FFFFFF]/60 text-xs">消费: ¥{consumed.toFixed(2)}</span>
                             </div>
                             <div className="mt-2 pt-2 border-t border-[#CEA472]/20">
                               <div className="flex items-center justify-between">

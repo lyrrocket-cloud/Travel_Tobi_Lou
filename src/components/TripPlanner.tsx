@@ -624,11 +624,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-[#FFFFFF]/60">交通方式</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">交通方式</Label>
                 <select
                   value={editingData.type}
                   onChange={(e) => setEditingTransportData({ ...editingData, type: e.target.value })}
-                  className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
+                  className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                 >
                   <option value="taxi">出租车</option>
                   <option value="flight">飞机</option>
@@ -640,47 +640,47 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 </select>
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">出发地</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">出发地</Label>
                 <Input
                   value={editingData.from}
                   onChange={(e) => setEditingTransportData({ ...editingData, from: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                   placeholder="从哪里出发"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">目的地</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">目的地</Label>
                 <Input
                   value={editingData.to}
                   onChange={(e) => setEditingTransportData({ ...editingData, to: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                   placeholder="到哪里去"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">出发时间</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">出发时间</Label>
                 <Input
                   type="time"
                   value={editingData.departureTime || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, departureTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">到达时间</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">到达时间</Label>
                 <Input
                   type="time"
                   value={editingData.arrivalTime || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, arrivalTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label className="text-[#FFFFFF]/60">备注</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">备注</Label>
                 <Input
                   value={editingData.details || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, details: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                   placeholder="其他说明信息"
                 />
               </div>
@@ -758,11 +758,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-[#FFFFFF]/60">活动类型</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">活动类型</Label>
                 <select
                   value={editingData.type}
                   onChange={(e) => setEditingActivityData({ ...editingData, type: e.target.value })}
-                  className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
+                  className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                 >
                   <option value="breakfast">早餐</option>
                   <option value="morning">上午活动</option>
@@ -775,47 +775,47 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 </select>
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">地点</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">地点</Label>
                 <Input
                   value={editingData.location || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, location: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                   placeholder="活动地点"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">开始时间</Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">开始时间</Label>
                 <Input
                   type="time"
                   value={editingData.startTime}
                   onChange={(e) => setEditingActivityData({ ...editingData, startTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   type="time"
                   value={editingData.endTime || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label className="text-[#FFFFFF]/60">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   value={editingData.content || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                   placeholder="活动内容"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label className="text-[#FFFFFF]/60">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                <Label className="text-[#FFFFFF]/60 text-xs">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                 <Input
                   value={editingData.notes || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                   placeholder="备注"
                 />
               </div>
@@ -825,7 +825,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 size="icon"
                 variant="destructive"
                 onClick={() => deleteActivity(day, activity.id)}
-                className="bg-red-500/20 text-red-500 hover:bg-red-500/30 border border-red-500/30"
+                className="bg-red-500/20 text-red-500 hover:bg-red-500/30 border border-red-500/30 text-xs"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
