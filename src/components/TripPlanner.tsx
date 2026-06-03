@@ -1571,11 +1571,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       </div>
                       <div className="mt-4 flex justify-end">
                         <Button
+                          size="icon"
                           onClick={addActivity}
-                          className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                          className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 min-h-[44px] min-w-[44px]"
                         >
-                          <Save className="w-4 h-4 mr-2" />
-                          保存活动
+                          <Save className="w-4 h-4" />
                         </Button>
                       </div>
                     </CardContent>

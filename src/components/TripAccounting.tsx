@@ -704,7 +704,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const filteredLocations = getFilteredLocations();
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto px-2.5 sm:px-0">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
