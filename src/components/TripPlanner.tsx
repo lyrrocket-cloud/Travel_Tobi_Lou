@@ -722,7 +722,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       >
         <div className="flex items-center gap-2 text-[#CEA472]">
           {transportIcons[transport.type] || transportIcons['other']}
-          <span className="font-medium">{transportNames[transport.type] || '未设置'}</span>
+          <span className="font-medium text-xs">{transportNames[transport.type] || '未设置'}</span>
         </div>
         {(transport.from || transport.to) && (
           <div className="text-[#FFFFFF]/80 text-xs mt-1 flex items-center gap-2">
