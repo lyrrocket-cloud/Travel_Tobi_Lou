@@ -699,19 +699,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20">
           <TabsTrigger 
             value="entry"
-            className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
           >
             消费录入
           </TabsTrigger>
           <TabsTrigger 
             value="query"
-            className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
           >
             消费查询
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="data-[state=active]:bg-[#CEA472] data-[state=active]:text-[#0a0a0f] text-[#FFFFFF]/60"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300"
           >
             消费分析
           </TabsTrigger>
