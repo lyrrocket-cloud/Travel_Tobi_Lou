@@ -972,7 +972,7 @@ export default function Home() {
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-12">
                       <Droplets className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
-                      <p className="text-xl text-[#FFFFFF]/60">许愿池还是空的</p>
+                      <p className="text-sm text-[#FFFFFF]/60">许愿池还是空的</p>
                       <p className="text-[#FFFFFF]/40 mt-2">成为第一个许愿的人吧！</p>
                     </div>
                   ) : (
