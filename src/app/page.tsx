@@ -859,7 +859,7 @@ export default function Home() {
               <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
                 <CardContent className="space-y-4.5 pt-3.5 sm:pt-6 px-3.5 sm:px-6">
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-base">
+                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-xs">
                       <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       目的地
                     </Label>
@@ -868,13 +868,13 @@ export default function Home() {
                       placeholder="例如：巴黎、东京、马尔代夫..."
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-base"
+                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-base">
+                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-xs">
                       <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       希望出行年月
                     </Label>
@@ -883,13 +883,13 @@ export default function Home() {
                       placeholder="YYYY-MM（如：2026-03）"
                       value={travelYearMonth}
                       onChange={(e) => setTravelYearMonth(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-base"
+                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-base">
+                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-xs">
                       <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       许愿人姓名
                     </Label>
@@ -898,7 +898,7 @@ export default function Home() {
                       placeholder="请输入您的姓名"
                       value={wisherName}
                       onChange={(e) => setWisherName(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-base"
+                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
@@ -910,7 +910,7 @@ export default function Home() {
               <Button
                 onClick={handleMakeWish}
                 disabled={isAnimating}
-                className="w-full max-w-4xl mx-auto -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-sm sm:text-base"
+                className="w-full max-w-4xl mx-auto -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-sm sm:text-xs"
               >
                 {isAnimating ? (
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -993,7 +993,7 @@ export default function Home() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start gap-1.5 mb-2 flex-wrap">
                                 <MapPin className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#CEA472] mt-0.5 flex-shrink-0" />
-                                <h3 className="text-sm sm:text-lg font-bold text-[#FFFFFF] truncate">
+                                <h3 className="text-xs font-bold text-[#FFFFFF] truncate">
                                   {wish.destination}
                                 </h3>
                                 {wish.is_expired === 1 ? (
@@ -1012,11 +1012,11 @@ export default function Home() {
                                 <div className="space-y-1.5 pl-4.5 sm:pl-6 text-[#FFFFFF]/80 mb-2.5">
                                   <div className="flex items-center gap-1">
                                     <Calendar className={`w-3 h-3 sm:w-4 sm:h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'} flex-shrink-0`} />
-                                    <span className="text-[11px] sm:text-sm truncate">{wish.confirmed_date || ''}</span>
+                                    <span className="text-xs truncate">{wish.confirmed_date || ''}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <User className={`w-3 h-3 sm:w-4 sm:h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'} flex-shrink-0`} />
-                                    <span className="text-[11px] sm:text-sm truncate">{wish.travelers}</span>
+                                    <span className="text-xs truncate">{wish.travelers}</span>
                                   </div>
                                 </div>
                               ) : (
@@ -1024,11 +1024,11 @@ export default function Home() {
                                   <div className="space-y-1.5 pl-4.5 sm:pl-6 text-[#FFFFFF]/80 mb-2">
                                     <div className="flex items-center gap-1">
                                       <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0" />
-                                      <span className="text-[11px] sm:text-sm truncate">{formatDateToYYYYMM(wish.travel_year, months.indexOf(wish.travel_month) + 1)}</span>
+                                      <span className="text-xs truncate">{formatDateToYYYYMM(wish.travel_year, months.indexOf(wish.travel_month) + 1)}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                       <User className="w-3 h-3 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0" />
-                                      <span className="text-[11px] sm:text-sm truncate">{wish.wisher_name}</span>
+                                      <span className="text-xs truncate">{wish.wisher_name}</span>
                                     </div>
                                   </div>
                                 </>
@@ -1204,7 +1204,7 @@ export default function Home() {
                 <Car className="w-16 h-16 text-[#CEA472]/50 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-[#FFFFFF] mb-2">旅行驾驶</h3>
                 <p className="text-[#FFFFFF]/60 mb-2">此功能正在开发中...</p>
-                <p className="text-sm text-[#FFFFFF]/40">即将支持：路线规划、油耗计算、沿途景点</p>
+                <p className="text-xs text-[#FFFFFF]/40">即将支持：路线规划、油耗计算、沿途景点</p>
               </div>
             </CardContent>
           </Card>

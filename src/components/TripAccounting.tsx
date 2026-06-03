@@ -809,7 +809,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           <button
                             key={idx}
                             onClick={() => handleActivitySelect(activity)}
-                            className={`px-3 py-1.5 rounded-full text-sm transition-all ${
+                            className={`px-3 py-1.5 rounded-full text-xs transition-all ${
                               selectedActivity?.activityId === activity.activityId
                                 ? 'bg-[#CEA472] text-[#0a0a0f]'
                                 : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -882,7 +882,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={idx}
                         onClick={() => handlePayerToggle(traveler)}
-                        className={`px-4 py-2 rounded-full text-sm transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payers.includes(traveler)
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -901,7 +901,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={idx}
                         onClick={() => setNewExpense({ ...newExpense, payer: traveler })}
-                        className={`px-4 py-2 rounded-full text-sm transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payer === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1019,11 +1019,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-5 sm:space-y-6">
                 <div>
-                  <div className="text-sm text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
+                  <div className="text-xs text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setAnalysisConsumerFilter(null)}
-                      className={`px-3 py-2 rounded-full text-sm transition-all min-h-[44px] min-w-[60px] ${
+                      className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
                         analysisConsumerFilter === null
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1035,7 +1035,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={traveler}
                         onClick={() => setAnalysisConsumerFilter(traveler)}
-                        className={`px-3 py-2 rounded-full text-sm transition-all min-h-[44px] min-w-[60px] ${
+                        className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
                           analysisConsumerFilter === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1201,7 +1201,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           : [...currentPayers, traveler];
                         setEditingExpense({ ...editingExpense, payers: newPayers });
                       }}
-                      className={`px-4 py-2 rounded-full text-sm transition-all ${
+                      className={`px-4 py-2 rounded-full text-xs transition-all ${
                         (editingExpense.payers || []).includes(traveler)
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1219,7 +1219,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <button
                       key={idx}
                       onClick={() => setEditingExpense({ ...editingExpense, payer: traveler })}
-                      className={`px-4 py-2 rounded-full text-sm transition-all ${
+                      className={`px-4 py-2 rounded-full text-xs transition-all ${
                         editingExpense.payer === traveler
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1314,7 +1314,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           {wish.destination}
                           {isDefault && <Star className="w-4 h-4 fill-[#CEA472]" />}
                         </div>
-                        <div className="text-sm text-[#FFFFFF]/60 mt-1">
+                        <div className="text-xs text-[#FFFFFF]/60 mt-1">
                           {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
                         </div>
                         {!existingRecord && (
