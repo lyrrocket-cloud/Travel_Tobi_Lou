@@ -1497,7 +1497,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <Card className="border border-[#CEA472]/20 bg-black/30">
                     <CardContent className="pt-4">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-[#CEA472] font-medium">添加新活动</h4>
+                        <h4 className="text-[#CEA472] font-medium text-xs">添加新活动</h4>
                         <Button
                           size="icon"
                           variant="ghost"
@@ -1509,11 +1509,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-[#FFFFFF]/60">活动类型</Label>
+                          <Label className="text-[#FFFFFF]/60 text-xs">活动类型</Label>
                           <select
                             value={newActivity.type}
                             onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
-                            className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
+                            className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                           >
                             <option value="accommodation">住宿</option>
                             <option value="attraction">景点</option>
@@ -1524,47 +1524,47 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           </select>
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60">地点</Label>
+                          <Label className="text-[#FFFFFF]/60 text-xs">地点</Label>
                           <Input
                             value={newActivity.location || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, location: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                             placeholder="活动地点"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60">开始时间</Label>
+                          <Label className="text-[#FFFFFF]/60 text-xs">开始时间</Label>
                           <Input
                             type="time"
                             value={newActivity.startTime}
                             onChange={(e) => setNewActivity({ ...newActivity, startTime: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                          <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                           <Input
                             type="time"
                             value={newActivity.endTime || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value || undefined })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <Label className="text-[#FFFFFF]/60">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                          <Label className="text-[#FFFFFF]/60 text-xs">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                           <Input
                             value={newActivity.content || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, content: e.target.value || undefined })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                             placeholder="活动内容"
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <Label className="text-[#FFFFFF]/60">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                          <Label className="text-[#FFFFFF]/60 text-xs">备注 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
                           <Input
                             value={newActivity.notes || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, notes: e.target.value || undefined })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                             placeholder="备注"
                           />
                         </div>
