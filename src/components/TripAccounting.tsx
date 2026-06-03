@@ -1038,34 +1038,36 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 <div>
                   <h4 className="text-[#FFFFFF] font-medium mb-3">收支结算</h4>
                   <div className="space-y-2">
-                    {travelers.map((traveler) => {
-                      const paid = filteredStats.byPayer[traveler] || 0;
-                      const consumed = filteredStats.byConsumer[traveler] || 0;
-                      const difference = paid - consumed;
-                      return (
-                        <div key={traveler} className="p-3 bg-black/40 rounded-lg">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[#FFFFFF]">{traveler}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-[#FFFFFF]/60">支付: ¥{paid.toFixed(2)}</span>
-                            <span className="text-[#FFFFFF]/60">消费: ¥{consumed.toFixed(2)}</span>
-                          </div>
-                          <div className="mt-2 pt-2 border-t border-[#CEA472]/20">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[#FFFFFF]/60 text-sm">结算</span>
-                              <span className={`font-medium ${difference > 0 ? 'text-green-400' : difference < 0 ? 'text-red-400' : 'text-[#CEA472]'}`}>
-                                {difference > 0 
-                                  ? `应收 ¥${difference.toFixed(2)}` 
-                                  : difference < 0 
-                                    ? `应付 ¥${Math.abs(difference).toFixed(2)}` 
-                                    : '已平账'}
-                              </span>
+                    {travelers
+                      .filter(traveler => !analysisConsumerFilter || traveler === analysisConsumerFilter)
+                      .map((traveler) => {
+                        const paid = stats.byPayer[traveler] || 0;
+                        const consumed = stats.byConsumer[traveler] || 0;
+                        const difference = paid - consumed;
+                        return (
+                          <div key={traveler} className="p-3 bg-black/40 rounded-lg">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[#FFFFFF]">{traveler}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-[#FFFFFF]/60">支付: ¥{paid.toFixed(2)}</span>
+                              <span className="text-[#FFFFFF]/60">消费: ¥{consumed.toFixed(2)}</span>
+                            </div>
+                            <div className="mt-2 pt-2 border-t border-[#CEA472]/20">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[#FFFFFF]/60 text-sm">结算</span>
+                                <span className={`font-medium ${difference > 0 ? 'text-green-400' : difference < 0 ? 'text-red-400' : 'text-[#CEA472]'}`}>
+                                  {difference > 0 
+                                    ? `应收 ¥${difference.toFixed(2)}` 
+                                    : difference < 0 
+                                      ? `应付 ¥${Math.abs(difference).toFixed(2)}` 
+                                      : '已平账'}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </div>
               </div>
