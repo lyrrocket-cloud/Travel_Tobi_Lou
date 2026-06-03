@@ -491,14 +491,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       byConsumer: {} as Record<string, number>,
     };
 
+    // 处理按类别、总支出、按消费人的统计（使用分摊金额）
     currentExpenseRecord.expenses.forEach(expense => {
       if (expense.payers && expense.payers.includes(analysisConsumerFilter)) {
         const perPersonAmount = expense.amount / expense.payers.length;
         filtered.total += perPersonAmount;
         filtered.categories[expense.category] = (filtered.categories[expense.category] || 0) + perPersonAmount;
-        if (expense.payer) {
-          filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + perPersonAmount;
-        }
+      }
+    });
+
+    // 处理按支付人的统计（只包含筛选出行人作为支付人的完整金额）
+    currentExpenseRecord.expenses.forEach(expense => {
+      if (expense.payer === analysisConsumerFilter) {
+        filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + expense.amount;
       }
     });
 
@@ -908,20 +913,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </div>
                 </div>
 
-                <Button
-                  onClick={addExpense}
-                  disabled={!newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0) || !newExpense.payer}
-                  className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  保存消费
-                </Button>
-                <p className="text-[#FFFFFF]/40 text-xs mt-2 text-center">
-                  请填写消费金额、日期，并选择消费人和支付人
-                </p>
               </div>
             </CardContent>
           </Card>
+          <div className="mt-4">
+            <Button
+              onClick={addExpense}
+              disabled={!newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0) || !newExpense.payer}
+              className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50"
+            >
+              保存消费
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="query" className="mt-6">
