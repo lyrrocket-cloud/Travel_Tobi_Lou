@@ -1022,20 +1022,20 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       </div>
 
       {showSchedule && (
-        <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
-          <CardContent className="pt-4">
-            <div className="flex items-center mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
-                  <Calendar className="w-5 h-5 text-[#0a0a0f]" />
+        <Card className="mb-4 sm:mb-6 border border-[#CEA472]/20 bg-black/30">
+          <CardContent className="pt-3 sm:pt-4">
+            <div className="flex items-center mb-3 sm:mb-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#0a0a0f]" />
                 </div>
-                <h4 className="text-[#CEA472] font-medium">旅行日程表</h4>
+                <h4 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h4>
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <div className="overflow-y-auto max-h-[900px] schedule-scroll">
+            <div className="overflow-x-auto scrollbar-thin">
+              <div className="overflow-y-auto max-h-[600px] sm:max-h-[900px] schedule-scroll">
                 <div className="flex min-w-max">
-                  <div className="w-16 flex-shrink-0 flex flex-col">
+                  <div className="w-12 sm:w-16 flex-shrink-0 flex flex-col">
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
                     {(() => {
                       let earliestHour = 7;
@@ -1219,10 +1219,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       }
                       
                       return (
-                        <div key={day.id} className="flex-1 min-w-[180px] max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
-                          <div className="h-12 border-b border-[#CEA472]/20 p-2 text-center">
+                        <div key={day.id} className="flex-1 min-w-[140px] sm:min-w-[160px] max-w-[180px] sm:max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
+                          <div className="h-12 border-b border-[#CEA472]/20 p-1.5 sm:p-2 text-center">
                             <div className="text-[#CEA472] font-medium text-xs">Day {day.dayNumber}</div>
-                            {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
+                            {date && <div className="text-[#FFFFFF]/60 text-[10px] sm:text-xs">{date}</div>}
                           </div>
                           <div className="flex-1 relative">
                             {Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour).map(hour => (
@@ -1276,7 +1276,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               return (
                                 <div
                                   key={item.id}
-                                  className={`absolute left-1 right-1 ${bgColor} border ${borderColor} rounded-md p-1 overflow-hidden`}
+                                  className={`absolute left-0.5 right-0.5 sm:left-1 sm:right-1 ${bgColor} border ${borderColor} rounded-md p-1 sm:p-1.5 overflow-hidden`}
                                   style={{
                                     top: `${top}px`,
                                     height: `${height}px`,
