@@ -557,12 +557,46 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     return locations;
   };
 
+  const getTransportLocations = () => {
+    if (!currentTripPlan) return [];
+    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string }> = [];
+    
+    currentTripPlan.days.forEach(day => {
+      day.transport.forEach(transport => {
+        if (transport.from && transport.to) {
+          let transportDate = '';
+          if (currentTripPlan.startDate) {
+            const start = new Date(currentTripPlan.startDate);
+            start.setDate(start.getDate() + day.dayNumber - 1);
+            transportDate = start.toISOString().split('T')[0];
+          }
+          
+          locations.push({
+            location: `${transport.from}-${transport.to}`,
+            dayNumber: day.dayNumber,
+            activityId: transport.id,
+            startTime: transport.departureTime || '',
+            endTime: transport.arrivalTime,
+            type: 'transportation',
+            date: transportDate,
+          });
+        }
+      });
+    });
+    
+    return locations;
+  };
+
   const getFilteredLocations = () => {
-    const allLocations = getActivityLocations();
     if (!newExpense.category) {
-      return allLocations;
+      return getActivityLocations();
     }
-    return allLocations.filter(loc => loc.type === newExpense.category);
+    
+    if (newExpense.category === 'transportation') {
+      return getTransportLocations();
+    }
+    
+    return getActivityLocations().filter(loc => loc.type === newExpense.category);
   };
 
   const handleActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {
