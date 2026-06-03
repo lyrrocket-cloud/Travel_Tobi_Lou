@@ -702,5 +702,35 @@
     ],
     "createdAt": "2026-05-31T12:42:04.506Z",
     "updatedAt": "2026-05-31T12:42:04.506Z"
+  },
+  {
+    "id": "trip-plan-1780467480561",
+    "wishId": "test-123",
+    "destination": "测试目的地",
+    "startDate": "2026-07-01",
+    "travelDays": 3,
+    "travelers": "测试用户",
+    "days": [
+      {
+        "id": "day-1-1780467480562",
+        "dayNumber": 1,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-2-1780467480562",
+        "dayNumber": 2,
+        "activities": [],
+        "transport": []
+      },
+      {
+        "id": "day-3-1780467480562",
+        "dayNumber": 3,
+        "activities": [],
+        "transport": []
+      }
+    ],
+    "createdAt": "2026-06-03T06:18:00.587Z",
+    "updatedAt": "2026-06-03T06:18:00.587Z"
   }
 ]

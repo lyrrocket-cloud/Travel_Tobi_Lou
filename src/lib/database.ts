@@ -71,7 +71,12 @@ export const TripPlanDB = {
         return data.map(item => ({
           ...item,
           wishId: item.wish_id,
-          days: typeof item.days === 'string' ? JSON.parse(item.days) : item.days
+          startDate: item.start_date,
+          endDate: item.end_date,
+          travelDays: item.travel_days,
+          days: typeof item.days === 'string' ? JSON.parse(item.days) : item.days,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at
         }));
       } catch (error) {
         console.error('[Database] Error fetching trip plans from DB:', error);
@@ -102,7 +107,12 @@ export const TripPlanDB = {
         return {
           ...data,
           wishId: data.wish_id,
-          days: typeof data.days === 'string' ? JSON.parse(data.days) : data.days
+          startDate: data.start_date,
+          endDate: data.end_date,
+          travelDays: data.travel_days,
+          days: typeof data.days === 'string' ? JSON.parse(data.days) : data.days,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
         };
       } catch (error) {
         console.error('[Database] Error fetching trip plan from DB:', error);
@@ -119,13 +129,22 @@ export const TripPlanDB = {
     if (dbAvailable) {
       try {
         const client = getSupabaseClient();
+        const dbRecord: any = {
+          id: plan.id || `trip-plan-${Date.now()}`,
+          wish_id: plan.wishId,
+          destination: plan.destination,
+          start_date: plan.startDate || null,
+          end_date: plan.endDate || null,
+          travel_days: plan.travelDays,
+          travelers: plan.travelers,
+          days: JSON.stringify(plan.days || []),
+          created_at: plan.createdAt || new Date().toISOString(),
+          updated_at: plan.updatedAt || new Date().toISOString()
+        };
+        
         const { data, error } = await client
           .from('trip_plans')
-          .insert({
-            ...plan,
-            wish_id: plan.wishId,
-            days: JSON.stringify(plan.days)
-          })
+          .insert(dbRecord)
           .select()
           .single();
         
@@ -135,7 +154,12 @@ export const TripPlanDB = {
         return {
           ...data,
           wishId: data.wish_id,
-          days: typeof data.days === 'string' ? JSON.parse(data.days) : data.days
+          startDate: data.start_date,
+          endDate: data.end_date,
+          travelDays: data.travel_days,
+          days: typeof data.days === 'string' ? JSON.parse(data.days) : data.days,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
         };
       } catch (error) {
         console.error('[Database] Error saving trip plan to DB:', error);
@@ -190,7 +214,12 @@ export const TripPlanDB = {
         return {
           ...data,
           wishId: data.wish_id,
-          days: typeof data.days === 'string' ? JSON.parse(data.days) : data.days
+          startDate: data.start_date,
+          endDate: data.end_date,
+          travelDays: data.travel_days,
+          days: typeof data.days === 'string' ? JSON.parse(data.days) : data.days,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
         };
       } catch (error) {
         console.error('[Database] Error updating trip plan in DB:', error);
@@ -249,7 +278,11 @@ export const TripExpenseDB = {
         return data.map(item => ({
           ...item,
           wishId: item.wish_id,
-          expenses: typeof item.expenses === 'string' ? JSON.parse(item.expenses) : item.expenses
+          startDate: item.start_date,
+          endDate: item.end_date,
+          expenses: typeof item.expenses === 'string' ? JSON.parse(item.expenses) : item.expenses,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at
         }));
       } catch (error) {
         console.error('[Database] Error fetching trip expenses from DB:', error);
@@ -280,7 +313,11 @@ export const TripExpenseDB = {
         return {
           ...data,
           wishId: data.wish_id,
-          expenses: typeof data.expenses === 'string' ? JSON.parse(data.expenses) : data.expenses
+          startDate: data.start_date,
+          endDate: data.end_date,
+          expenses: typeof data.expenses === 'string' ? JSON.parse(data.expenses) : data.expenses,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
         };
       } catch (error) {
         console.error('[Database] Error fetching trip expense from DB:', error);
@@ -300,8 +337,11 @@ export const TripExpenseDB = {
         const { data, error } = await client
           .from('trip_expenses')
           .insert({
-            ...record,
+            id: record.id,
             wish_id: record.wishId,
+            destination: record.destination,
+            start_date: record.startDate,
+            end_date: record.endDate,
             expenses: JSON.stringify(record.expenses)
           })
           .select()
@@ -313,7 +353,11 @@ export const TripExpenseDB = {
         return {
           ...data,
           wishId: data.wish_id,
-          expenses: typeof data.expenses === 'string' ? JSON.parse(data.expenses) : data.expenses
+          startDate: data.start_date,
+          endDate: data.end_date,
+          expenses: typeof data.expenses === 'string' ? JSON.parse(data.expenses) : data.expenses,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
         };
       } catch (error) {
         console.error('[Database] Error saving trip expense to DB:', error);
@@ -368,7 +412,11 @@ export const TripExpenseDB = {
         return {
           ...data,
           wishId: data.wish_id,
-          expenses: typeof data.expenses === 'string' ? JSON.parse(data.expenses) : data.expenses
+          startDate: data.start_date,
+          endDate: data.end_date,
+          expenses: typeof data.expenses === 'string' ? JSON.parse(data.expenses) : data.expenses,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
         };
       } catch (error) {
         console.error('[Database] Error updating trip expense in DB:', error);
