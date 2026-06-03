@@ -1533,27 +1533,27 @@ export default function Home() {
       <Dialog open={tripInfoEditModalOpen} onOpenChange={setTripInfoEditModalOpen}>
         <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">编辑旅行信息</DialogTitle>
+            <DialogTitle className="text-[#FFFFFF] text-base">编辑旅行信息</DialogTitle>
             {editingTripInfo?.destination && (
-              <DialogDescription className="text-[#CEA472]">
+              <DialogDescription className="text-[#CEA472] text-xs">
                 {editingTripInfo.destination}
               </DialogDescription>
             )}
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <Label htmlFor="trip-info-date" className="text-[#FFFFFF]">出发日期</Label>
+              <Label htmlFor="trip-info-date" className="text-[#FFFFFF] text-xs">出发日期</Label>
               <Input
                 id="trip-info-date"
                 type="text"
                 placeholder="YYYY-MM-DD"
                 value={editingTripInfo?.confirmed_date || ''}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, confirmed_date: e.target.value } : null)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs"
               />
             </div>
             <div>
-              <Label htmlFor="trip-info-days" className="text-[#FFFFFF]">旅行天数</Label>
+              <Label htmlFor="trip-info-days" className="text-[#FFFFFF] text-xs">旅行天数</Label>
               <Input
                 id="trip-info-days"
                 type="number"
@@ -1561,16 +1561,16 @@ export default function Home() {
                 max="30"
                 value={editingTripInfo?.travelDays || 3}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelDays: parseInt(e.target.value) || 1 } : null)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs"
               />
             </div>
             <div>
-              <Label htmlFor="trip-info-travelers" className="text-[#FFFFFF]">同行人员</Label>
+              <Label htmlFor="trip-info-travelers" className="text-[#FFFFFF] text-xs">同行人员</Label>
               <Input
                 id="trip-info-travelers"
                 value={editingTripInfo?.travelers || ''}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelers: e.target.value } : null)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs"
                 placeholder="例如：张三、李四、王五"
               />
             </div>
@@ -1582,13 +1582,13 @@ export default function Home() {
                 setTripInfoEditModalOpen(false);
                 setEditingTripInfo(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
             >
               取消
             </Button>
             <Button
               onClick={handleSaveTripInfo}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 text-xs"
             >
               保存
             </Button>
@@ -1600,24 +1600,24 @@ export default function Home() {
       <Dialog open={editTripModalOpen} onOpenChange={setEditTripModalOpen}>
         <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
           <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">编辑行程</DialogTitle>
+            <DialogTitle className="text-[#FFFFFF] text-base">编辑行程</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <Label htmlFor="edit-trip-date" className="text-[#FFFFFF]">出发日期</Label>
+            <Label htmlFor="edit-trip-date" className="text-[#FFFFFF] text-xs">出发日期</Label>
             <Input
               id="edit-trip-date"
               type="text"
               placeholder="YYYY-MM-DD"
               value={editingTrip?.confirmed_date || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, confirmed_date: e.target.value })}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] text-xs"
             />
-            <Label htmlFor="edit-trip-travelers" className="text-[#FFFFFF]">同行人员</Label>
+            <Label htmlFor="edit-trip-travelers" className="text-[#FFFFFF] text-xs">同行人员</Label>
             <Input
               id="edit-trip-travelers"
               value={editingTrip?.travelers || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, travelers: e.target.value })}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] text-xs"
               placeholder="例如：张三、李四、王五"
             />
           </div>
@@ -1628,13 +1628,13 @@ export default function Home() {
                 setEditTripModalOpen(false);
                 setEditingTrip(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
             >
               取消
             </Button>
             <Button
               onClick={handleEditTrip}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 text-xs"
             >
               保存
             </Button>
