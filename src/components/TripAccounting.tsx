@@ -491,14 +491,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       byConsumer: {} as Record<string, number>,
     };
 
+    // 处理按类别、总支出、按消费人的统计（使用分摊金额）
     currentExpenseRecord.expenses.forEach(expense => {
       if (expense.payers && expense.payers.includes(analysisConsumerFilter)) {
         const perPersonAmount = expense.amount / expense.payers.length;
         filtered.total += perPersonAmount;
         filtered.categories[expense.category] = (filtered.categories[expense.category] || 0) + perPersonAmount;
-        if (expense.payer) {
-          filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + perPersonAmount;
-        }
+      }
+    });
+
+    // 处理按支付人的统计（只包含筛选出行人作为支付人的完整金额）
+    currentExpenseRecord.expenses.forEach(expense => {
+      if (expense.payer === analysisConsumerFilter) {
+        filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + expense.amount;
       }
     });
 
