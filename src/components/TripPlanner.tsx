@@ -1381,9 +1381,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               value={String(day)}
               className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 flex flex-col items-center justify-center px-3 sm:px-4 rounded-md transition-all duration-300 min-w-[70px] sm:min-w-[80px] h-full"
             >
-              <span className="text-sm font-medium whitespace-nowrap">Day {day}</span>
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
-                <span className="text-xs opacity-70 whitespace-nowrap hidden sm:inline">{getDateDisplay(day)}</span>
+                <span className="text-[10px] sm:text-xs opacity-70 whitespace-nowrap hidden sm:inline">{getDateDisplay(day)}</span>
               )}
             </TabsTrigger>
           ))}

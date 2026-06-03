@@ -1265,30 +1265,30 @@ export default function Home() {
           <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px]">
               <TabsTrigger
                 value="wish"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-[10px] sm:text-xs md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
-                <Plane className="w-4.5 h-4.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
+                <Plane className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行许愿</span>
               </TabsTrigger>
               <TabsTrigger
                 value="plan"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-[10px] sm:text-xs md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
-                <Map className="w-4.5 h-4.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
+                <Map className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行规划</span>
               </TabsTrigger>
               <TabsTrigger
                 value="account"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-[10px] sm:text-xs md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
-                <Receipt className="w-4.5 h-4.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
+                <Receipt className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行记账</span>
               </TabsTrigger>
               <TabsTrigger
                 value="drive"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-[10px] sm:text-xs md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
-                <Car className="w-4.5 h-4.5 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
+                <Car className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行驾驶</span>
               </TabsTrigger>
             </TabsList>

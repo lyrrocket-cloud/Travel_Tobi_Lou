@@ -752,21 +752,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs sm:text-sm"
           >
-            <span className="text-sm">消费录入</span>
+            消费录入
           </TabsTrigger>
           <TabsTrigger 
             value="query"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs sm:text-sm"
           >
-            <span className="text-sm">消费查询</span>
+            消费查询
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center"
+            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs sm:text-sm"
           >
-            <span className="text-sm">消费分析</span>
+            消费分析
           </TabsTrigger>
         </TabsList>
 
