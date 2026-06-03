@@ -542,18 +542,20 @@ export default function Home() {
         
         if (planData.tripPlans && planData.tripPlans.length > 0) {
           const plan = planData.tripPlans[0];
+          // 兼容数据库返回的 snake_case 和 camelCase 格式
+          const currentTravelDays = plan.travelDays || plan.travel_days || 3;
           
           // 如果天数不同，需要调整days数组
-          if (plan.travelDays !== editingTripInfo.travelDays) {
-            let updatedDays = plan.days;
+          if (currentTravelDays !== editingTripInfo.travelDays) {
+            let updatedDays = [...plan.days];
             
-            if (editingTripInfo.travelDays! > plan.travelDays) {
+            if (editingTripInfo.travelDays! > currentTravelDays) {
               // 增加天数
-              const daysToAdd = editingTripInfo.travelDays! - plan.travelDays;
+              const daysToAdd = editingTripInfo.travelDays! - currentTravelDays;
               for (let i = 0; i < daysToAdd; i++) {
                 updatedDays.push({
-                  id: `day-${plan.travelDays + i + 1}-${Date.now()}`,
-                  dayNumber: plan.travelDays + i + 1,
+                  id: `day-${currentTravelDays + i + 1}-${Date.now()}`,
+                  dayNumber: currentTravelDays + i + 1,
                   activities: [],
                   transport: [],
                 });

@@ -190,9 +190,22 @@ export const TripPlanDB = {
         const client = getSupabaseClient();
         const processedData: any = { ...updateData };
         
-        if (processedData.wishId) {
+        // 转换 camelCase 到 snake_case
+        if (processedData.wishId !== undefined) {
           processedData.wish_id = processedData.wishId;
           delete processedData.wishId;
+        }
+        if (processedData.startDate !== undefined) {
+          processedData.start_date = processedData.startDate;
+          delete processedData.startDate;
+        }
+        if (processedData.endDate !== undefined) {
+          processedData.end_date = processedData.endDate;
+          delete processedData.endDate;
+        }
+        if (processedData.travelDays !== undefined) {
+          processedData.travel_days = processedData.travelDays;
+          delete processedData.travelDays;
         }
         if (processedData.days) {
           processedData.days = JSON.stringify(processedData.days);
