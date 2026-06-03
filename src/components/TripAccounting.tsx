@@ -704,7 +704,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const filteredLocations = getFilteredLocations();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto px-2.5 sm:px-0">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
@@ -748,7 +748,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto px-2.5 sm:px-0">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
