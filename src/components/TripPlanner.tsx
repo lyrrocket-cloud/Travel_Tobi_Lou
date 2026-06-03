@@ -1587,7 +1587,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     onClick={() => setShowAddActivity(true)}
                     className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
                     添加活动
                   </Button>
                 )}
