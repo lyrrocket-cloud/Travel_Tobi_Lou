@@ -773,37 +773,37 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         <TabsContent value="entry" className="mt-6">
           <Card className="border border-[#CEA472]/20 bg-black/30">
             <CardContent className="pt-6 px-3.5 sm:px-6">
-              <div className="space-y-5 sm:space-y-6">
+              <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
                   {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
-                  <span className="text-[#CEA472] font-medium">{expenseCategories[newExpense.category] || '其他'}</span>
+                  <span className="text-[#CEA472] font-medium text-sm sm:text-base">{expenseCategories[newExpense.category] || '其他'}</span>
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block">活动类型</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">活动类型</Label>
                   <div className="grid grid-cols-3 gap-2">
                     {Object.entries(expenseCategories).map(([key, label]) => (
                       <button
                         key={key}
                         onClick={() => setNewExpense({ ...newExpense, category: key })}
-                        className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                        className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-sm sm:text-base ${
                           newExpense.category === key
                             ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
                             : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
                         {expenseCategoryIcons[key]}
-                        <span className="text-sm">{label}</span>
+                        <span>{label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block">活动地点</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">活动地点</Label>
                   {filteredLocations.length > 0 && (
                     <div className="mb-3">
-                      <div className="text-sm text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
+                      <div className="text-xs sm:text-sm text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
                       <div className="flex flex-wrap gap-2">
                         {filteredLocations.map((activity, idx) => (
                           <button
@@ -827,56 +827,56 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       setNewExpense({ ...newExpense, location: e.target.value });
                       setSelectedActivity(null);
                     }}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
                     placeholder="或直接输入地点"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">日期</Label>
+                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">日期</Label>
                           <Input
                             type="date"
                             value={newExpense.date}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">时间</Label>
+                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">时间</Label>
                           <Input
                             type="time"
                             value={newExpense.time}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">消费金额</Label>
+                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">消费金额</Label>
                           <Input
                             type="number"
                             min="0"
                             step="0.01"
                             value={newExpense.amount}
                             onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
                             placeholder="0.00"
                           />
                         </div>
                       </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">消费描述</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">消费描述</Label>
                   <Input
                     value={newExpense.description}
                     onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]"
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-sm sm:text-base"
                     placeholder="输入消费描述"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">消费人</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">消费人</Label>
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
@@ -895,7 +895,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-sm">支付人</Label>
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs sm:text-sm">支付人</Label>
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
