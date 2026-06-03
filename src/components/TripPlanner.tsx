@@ -1393,7 +1393,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">
-            <div className="bg-black/20 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-6">
+            <div className="bg-black/30 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-6">
               <div className="space-y-4">
                 {day === 1 && (
                   <div className="space-y-2">
