@@ -425,12 +425,37 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const addTransport = async (dayNumber: number, position: 'arrival' | 'departure' | 'between', beforeActivityId?: string, afterActivityId?: string) => {
     if (!currentTripPlan) return;
 
+    let from = '';
+    let to = '';
+    const dayPlan = currentTripPlan.days.find(d => d.dayNumber === dayNumber);
+
+    if (position === 'arrival') {
+      to = currentTripPlan.destination;
+    } else if (position === 'departure') {
+      from = currentTripPlan.destination;
+    } else if (position === 'between' && dayPlan) {
+      if (beforeActivityId === 'arrival') {
+        from = '';
+        const firstActivity = dayPlan.activities.find(a => a.id === afterActivityId);
+        to = firstActivity?.location || '';
+      } else if (afterActivityId === 'departure') {
+        const lastActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
+        from = lastActivity?.location || '';
+        to = '';
+      } else {
+        const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
+        const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
+        from = beforeActivity?.location || '';
+        to = afterActivity?.location || '';
+      }
+    }
+
     const transportId = `transport-${Date.now()}`;
     const newTransport: TransportInfo = {
       id: transportId,
       type: 'taxi',
-      from: '',
-      to: '',
+      from,
+      to,
       departureTime: '',
       arrivalTime: '',
       details: '',
