@@ -1032,24 +1032,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <h4 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h4>
               </div>
             </div>
-            {/* Day切换按钮 - 手机端 */}
-            {currentTripPlan && (
-              <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-thin sm:hidden">
-                {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDay(day)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                      selectedDay === day
-                        ? 'bg-[#CEA472] text-[#0a0a0f]'
-                        : 'bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF]/60 hover:border-[#CEA472]/60'
-                    }`}
-                  >
-                    Day {day}
-                  </button>
-                ))}
-              </div>
-            )}
+            
             <div className="overflow-x-auto scrollbar-thin">
               <div className="overflow-y-auto max-h-[600px] sm:max-h-[900px] schedule-scroll">
                 <div className="flex min-w-max">
@@ -1104,15 +1087,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     })()}
                   </div>
                   <div className="flex-1 flex">
-                    {currentTripPlan?.days
-                      .filter(day => {
-                        // 手机端只显示选中的Day，桌面端显示所有
-                        if (typeof window !== 'undefined' && window.innerWidth < 640) {
-                          return day.dayNumber === selectedDay;
-                        }
-                        return true;
-                      })
-                      .map(day => {
+                    {currentTripPlan?.days.map(day => {
                       const sortedActivities = getSortedActivities(day.activities);
                       const date = getDateDisplay(day.dayNumber);
                       
@@ -1250,16 +1225,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <div className="h-12 border-b border-[#CEA472]/20 p-1.5 sm:p-2 text-center">
                             <div className="text-[#CEA472] font-medium text-xs">Day {day.dayNumber}</div>
                             {date && <div className="text-[#FFFFFF]/60 text-[10px] sm:text-xs">{date}</div>}
-                            {/* 手机端显示时间范围 */}
-                            <div className="sm:hidden text-[#FFFFFF]/40 text-[10px] mt-0.5">
-                              {(() => {
-                                const times = sortedActivities.map(a => a.startTime).filter(Boolean);
-                                if (times.length === 0) return null;
-                                const earliest = times.reduce((min, t) => t < min ? t : min);
-                                const latest = times.reduce((max, t) => t > max ? t : max);
-                                return `${earliest}~${latest}`;
-                              })()}
-                            </div>
                           </div>
                           <div className="flex-1 relative">
                             {Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour).map(hour => (
@@ -1325,8 +1290,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                       {icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      {/* 手机端显示时间 */}
-                                      <div className="sm:hidden text-[#CEA472]/80 text-[10px] mb-0.5">{item.startTime}</div>
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
                                       {subtitle && (
                                         <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
