@@ -839,7 +839,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             type="date"
                             value={newExpense.date}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                           />
                         </div>
                         <div>
@@ -848,7 +848,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             type="time"
                             value={newExpense.time}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                           />
                         </div>
                         <div>
@@ -1125,21 +1125,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           {editingExpense && (
             <div className="space-y-4 py-4">
               <div>
-                <Label className="text-[#FFFFFF]">日期</Label>
+                <Label className="text-[#FFFFFF] text-xs">日期</Label>
                 <Input
                   type="date"
                   value={editingExpense.date}
                   onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">时间</Label>
+                <Label className="text-[#FFFFFF] text-xs">时间</Label>
                 <Input
                   type="time"
                   value={editingExpense.time || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
                 />
               </div>
               <div>
