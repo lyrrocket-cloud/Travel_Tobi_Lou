@@ -643,7 +643,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/40 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  className={`bg-black/50 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
                   onClick={() => {
                     if (hasRecord) {
                       setSelectedWishId(String(wish.id));
@@ -716,7 +716,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           variant="outline"
           size="icon"
           onClick={() => setShowWishSelector(true)}
-          className="bg-black/40 border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 min-h-[44px] min-w-[44px]"
+          className="bg-black/50 border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 min-h-[44px] min-w-[44px]"
           title="切换旅行"
         >
           <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -724,7 +724,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/40 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/50 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && onEditTripInfo && currentWish) {
             onEditTripInfo({
@@ -749,7 +749,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
+        <TabsList className="grid w-full grid-cols-3 bg-black/50 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
             className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
@@ -771,7 +771,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsList>
 
         <TabsContent value="entry" className="mt-4">
-          <Card className="border border-[#CEA472]/20 bg-black/40">
+          <Card className="border border-[#CEA472]/20 bg-black/50">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
@@ -789,7 +789,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-xs ${
                           newExpense.category === key
                             ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
-                            : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'border-[#CEA472]/20 bg-black/50 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
                         {expenseCategoryIcons[key]}
@@ -812,7 +812,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             className={`px-3 py-1.5 rounded-full text-xs transition-all ${
                               selectedActivity?.activityId === activity.activityId
                                 ? 'bg-[#CEA472] text-[#0a0a0f]'
-                                : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                                : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                             }`}
                           >
                             {activity.location}
@@ -827,7 +827,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       setNewExpense({ ...newExpense, location: e.target.value });
                       setSelectedActivity(null);
                     }}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+                    className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                     placeholder="或直接输入地点"
                   />
                 </div>
@@ -839,7 +839,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             type="date"
                             value={newExpense.date}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                            className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                           />
                         </div>
                         <div>
@@ -848,7 +848,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             type="time"
                             value={newExpense.time}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                            className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                           />
                         </div>
                         <div>
@@ -859,7 +859,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             step="0.01"
                             value={newExpense.amount}
                             onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+                            className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                             placeholder="0.00"
                           />
                         </div>
@@ -870,7 +870,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <Input
                     value={newExpense.description}
                     onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+                    className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
                     placeholder="输入消费描述"
                   />
                 </div>
@@ -885,7 +885,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payers.includes(traveler)
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
                         {traveler}
@@ -904,7 +904,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payer === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
                         {traveler}
@@ -928,7 +928,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
 
         <TabsContent value="query" className="mt-4">
-          <Card className="border border-[#CEA472]/20 bg-black/40">
+          <Card className="border border-[#CEA472]/20 bg-black/50">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               {currentExpenseRecord && sortedExpenses.length > 0 ? (
                 <div className="space-y-3 sm:space-y-3">
@@ -938,7 +938,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     return (
                       <div
                         key={expense.id}
-                        className="p-3.5 sm:p-4 rounded-lg bg-black/40 border border-[#CEA472]/20 hover:bg-black/60 transition-colors"
+                        className="p-3.5 sm:p-4 rounded-lg bg-black/50 border border-[#CEA472]/20 hover:bg-black/70 transition-colors"
                       >
                         <div className="flex flex-col gap-3">
                           <div className="flex items-start justify-between gap-3">
@@ -965,7 +965,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           </div>
                           <div className="text-xs text-[#FFFFFF]/40 flex flex-wrap gap-2">
                             {expense.location && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60">
                                 <MapPin className="w-3 h-3" />
                                 {expense.location}
                               </span>
@@ -1015,7 +1015,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
 
         <TabsContent value="analysis" className="mt-4">
-          <Card className="border border-[#CEA472]/20 bg-black/40">
+          <Card className="border border-[#CEA472]/20 bg-black/50">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-5 sm:space-y-6">
                 <div>
@@ -1026,7 +1026,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
                         analysisConsumerFilter === null
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                       }`}
                     >
                       全部
@@ -1038,7 +1038,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
                           analysisConsumerFilter === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
                         {traveler}
@@ -1051,7 +1051,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按类别统计</h4>
                   <div className="space-y-2">
                     {Object.entries(filteredStats.categories).map(([category, amount]) => (
-                      <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
+                      <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/50 rounded-lg">
                         <div className="flex items-center gap-3">
                           {expenseCategoryIcons[category]}
                           <span className="text-[#FFFFFF] text-xs">{expenseCategories[category] || category}</span>
@@ -1067,7 +1067,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按支付人统计</h4>
                     <div className="space-y-2">
                       {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
-                        <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
+                        <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/50 rounded-lg">
                           <span className="text-[#FFFFFF] text-xs">{payer}</span>
                           <span className="text-[#CEA472] font-medium text-xs">¥{amount.toLocaleString()}</span>
                         </div>
@@ -1086,7 +1086,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         const consumed = stats.byConsumer[traveler] || 0;
                         const difference = paid - consumed;
                         return (
-                          <div key={traveler} className="p-3 sm:p-3 bg-black/40 rounded-lg">
+                          <div key={traveler} className="p-3 sm:p-3 bg-black/50 rounded-lg">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-[#FFFFFF] text-xs">{traveler}</span>
                             </div>
@@ -1130,7 +1130,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   type="date"
                   value={editingExpense.date}
                   onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
+                  className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
                 />
               </div>
               <div>
@@ -1139,7 +1139,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   type="time"
                   value={editingExpense.time || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
+                  className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
                 />
               </div>
               <div>
@@ -1148,7 +1148,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   value={editingExpense.category}
                   onValueChange={(value) => setEditingExpense({ ...editingExpense, category: value as ExpenseCategory })}
                 >
-                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1">
+                  <SelectTrigger className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
@@ -1168,7 +1168,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   step="0.01"
                   value={String(editingExpense.amount)}
                   onChange={(e) => setEditingExpense({ ...editingExpense, amount: parseFloat(e.target.value) || 0 })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
                 />
               </div>
               <div>
@@ -1176,7 +1176,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 <Input
                   value={editingExpense.description}
                   onChange={(e) => setEditingExpense({ ...editingExpense, description: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
                 />
               </div>
               <div>
@@ -1184,7 +1184,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 <Input
                   value={editingExpense.location || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, location: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
                   placeholder="输入活动地点"
                 />
               </div>
@@ -1204,7 +1204,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       className={`px-4 py-2 rounded-full text-xs transition-all ${
                         (editingExpense.payers || []).includes(traveler)
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                       }`}
                     >
                       {traveler}
@@ -1222,7 +1222,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       className={`px-4 py-2 rounded-full text-xs transition-all ${
                         editingExpense.payer === traveler
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                       }`}
                     >
                       {traveler}
@@ -1239,7 +1239,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 setShowEditExpense(false);
                 setEditingExpense(null);
               }}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1268,7 +1268,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 setShowDeleteConfirm(false);
                 setDeletingExpenseId(null);
               }}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1305,7 +1305,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     className={`w-full p-4 rounded-lg text-left transition-all ${
                       String(wish.id) === selectedWishId
                         ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                        : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/60'
+                        : 'bg-black/50 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/70'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -1352,7 +1352,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             <Button
               variant="outline"
               onClick={() => setShowWishSelector(false)}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/50 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
