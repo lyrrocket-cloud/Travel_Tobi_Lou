@@ -86,6 +86,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     startTime: string;
     endTime?: string;
     date: string;
+    content?: string;
   } | null>(null);
 
   const [analysisConsumerFilter, setAnalysisConsumerFilter] = useState<string | null>(null);
@@ -543,7 +544,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const getActivityLocations = () => {
     if (!currentTripPlan) return [];
-    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string }> = [];
+    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string; content?: string }> = [];
     
     currentTripPlan.days.forEach(day => {
       day.activities.forEach(activity => {
@@ -563,6 +564,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             endTime: activity.endTime,
             type: activity.type,
             date: activityDate,
+            content: activity.content,
           });
         }
       });
@@ -620,7 +622,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     if (activity.type === 'transportation') {
       description = activity.location;
     } else {
-      description = `在 ${activity.location} 的活动`;
+      description = activity.content || `在 ${activity.location} 的活动`;
     }
     
     setNewExpense(prev => ({
