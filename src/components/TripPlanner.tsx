@@ -447,7 +447,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         const departureTransport = dayPlan.transport.find(t => t.position === 'departure');
 
         if (beforeActivityId === 'arrival') {
-          from = arrivalTransport?.from || '';
+          // 到达→活动：出发地为到达交通的目的地，目的地为活动地点
+          from = arrivalTransport?.to || '';
           const firstActivity = dayPlan.activities.find(a => a.id === afterActivityId);
           to = firstActivity?.location || '';
           if (firstActivity) {
@@ -456,9 +457,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             }
           }
         } else if (afterActivityId === 'departure') {
+          // 活动→离开：出发地为活动地点，目的地为离开交通的出发地
           const lastActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
           from = lastActivity?.location || '';
-          to = departureTransport?.to || '';
+          to = departureTransport?.from || '';
           if (lastActivity) {
             if (lastActivity.endTime) {
               departureTime = lastActivity.endTime;
@@ -467,6 +469,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             }
           }
         } else if (afterActivityId === 'arrival') {
+          // 活动→到达：出发地为活动地点，目的地为到达交通的出发地
           const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
           from = beforeActivity?.location || '';
           to = arrivalTransport?.from || '';
@@ -478,6 +481,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             }
           }
         } else if (beforeActivityId === 'departure') {
+          // 离开→活动：出发地为离开交通的目的地，目的地为活动地点
           const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
           from = departureTransport?.to || '';
           to = afterActivity?.location || '';
