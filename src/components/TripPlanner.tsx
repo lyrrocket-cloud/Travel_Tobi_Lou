@@ -976,7 +976,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-4 mb-5">
+      <div className="flex justify-between items-center mb-5">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {currentTripPlan.destination} 旅行规划
@@ -995,7 +995,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/40 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && onEditTripInfo) {
             onEditTripInfo({
