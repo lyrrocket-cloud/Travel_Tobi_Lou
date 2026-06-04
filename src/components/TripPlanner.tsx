@@ -1182,7 +1182,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           allItems.push({
                             id: 'arrival',
                             type: 'arrival',
-                            startTime: arrivalStartTime,
+                            startTime: arrivalEndTime, // 使用到达时间进行排序
                             endTime: arrivalEndTime,
                             activity: null,
                             transportBefore: null,
