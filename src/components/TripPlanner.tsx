@@ -862,26 +862,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             {activityTypeIcons[activity.type] || activityTypeIcons['other']}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <span className="text-[#CEA472] font-medium text-xs">{activityTypes[activity.type]}</span>
-                <span className="text-[#FFFFFF]/60 text-xs">
-                  {activity.startTime}
-                  {activity.endTime && ` - ${activity.endTime}`}
-                </span>
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingActivity({ dayNumber: day, activityId: activity.id });
-                  setEditingActivityData({ ...activity });
-                }}
-                className="text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-transparent h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0"
-              >
-                <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </Button>
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <span className="text-[#CEA472] font-medium text-xs">{activityTypes[activity.type]}</span>
+              <span className="text-[#FFFFFF]/60 text-xs">
+                {activity.startTime}
+                {activity.endTime && ` - ${activity.endTime}`}
+              </span>
             </div>
             {activity.content && (
               <p className="text-[#FFFFFF] mt-1 text-xs">{activity.content}</p>
