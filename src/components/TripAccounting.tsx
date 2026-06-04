@@ -835,7 +835,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         <div>
                           <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
                           <Input
-                            type="date"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="\d{4}-\d{2}-\d{2}"
+                            placeholder="YYYY-MM-DD"
                             value={newExpense.date}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
                             className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
@@ -1121,7 +1124,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               <div>
                 <Label className="text-[#FFFFFF] text-xs">日期</Label>
                 <Input
-                  type="date"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="\d{4}-\d{2}-\d{2}"
+                  placeholder="YYYY-MM-DD"
                   value={editingExpense.date}
                   onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
