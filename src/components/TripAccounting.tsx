@@ -850,7 +850,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             type="time"
                             value={newExpense.time}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                           />
                         </div>
                         <div>
@@ -1139,7 +1139,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   type="time"
                   value={editingExpense.time || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10 w-full"
                 />
               </div>
               <div>

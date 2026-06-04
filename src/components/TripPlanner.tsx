@@ -663,7 +663,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.departureTime || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, departureTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               <div>
@@ -672,7 +672,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.arrivalTime || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, arrivalTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               <div className="md:col-span-2">
@@ -789,7 +789,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.startTime}
                   onChange={(e) => setEditingActivityData({ ...editingData, startTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               <div>
@@ -798,7 +798,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.endTime || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               <div className="md:col-span-2">
@@ -1566,7 +1566,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             type="time"
                             value={newActivity.startTime}
                             onChange={(e) => setNewActivity({ ...newActivity, startTime: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                           />
                         </div>
                         <div>
@@ -1575,7 +1575,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             type="time"
                             value={newActivity.endTime || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value || undefined })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                           />
                         </div>
                         <div className="md:col-span-2">
