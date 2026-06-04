@@ -422,11 +422,20 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
+  const addMinutesToTime = (time: string, minutes: number): string => {
+    const [hours, mins] = time.split(':').map(Number);
+    let totalMinutes = hours * 60 + mins + minutes;
+    const newHours = Math.floor(totalMinutes / 60);
+    const newMins = totalMinutes % 60;
+    return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
+  };
+
   const addTransport = async (dayNumber: number, position: 'arrival' | 'departure' | 'between', beforeActivityId?: string, afterActivityId?: string) => {
     if (!currentTripPlan) return;
 
     let from = '';
     let to = '';
+    let departureTime = '';
     const dayPlan = currentTripPlan.days.find(d => d.dayNumber === dayNumber);
 
     if (position === 'arrival') {
@@ -442,11 +451,25 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         const lastActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
         from = lastActivity?.location || '';
         to = '';
+        if (lastActivity) {
+          if (lastActivity.endTime) {
+            departureTime = lastActivity.endTime;
+          } else if (lastActivity.startTime) {
+            departureTime = addMinutesToTime(lastActivity.startTime, 1);
+          }
+        }
       } else {
         const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
         const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
         from = beforeActivity?.location || '';
         to = afterActivity?.location || '';
+        if (beforeActivity) {
+          if (beforeActivity.endTime) {
+            departureTime = beforeActivity.endTime;
+          } else if (beforeActivity.startTime) {
+            departureTime = addMinutesToTime(beforeActivity.startTime, 1);
+          }
+        }
       }
     }
 
@@ -456,7 +479,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       type: 'taxi',
       from,
       to,
-      departureTime: '',
+      departureTime,
       arrivalTime: '',
       details: '',
       position,
@@ -666,15 +689,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
-              <div>
-                <Label className="text-[#FFFFFF]/60 text-xs">到达时间</Label>
-                <Input
-                  type="time"
-                  value={editingData.arrivalTime || ''}
-                  onChange={(e) => setEditingTransportData({ ...editingData, arrivalTime: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
-                />
-              </div>
               <div className="md:col-span-2">
                 <Label className="text-[#FFFFFF]/60 text-xs">备注</Label>
                 <Input
@@ -732,11 +746,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             {transport.to && <span>{transport.to}</span>}
           </div>
         )}
-        {(transport.departureTime || transport.arrivalTime) && (
+        {transport.departureTime && (
           <div className="text-[#FFFFFF]/60 text-xs mt-1">
-            {transport.departureTime && <span>出发: {transport.departureTime}</span>}
-            {transport.departureTime && transport.arrivalTime && <span> | </span>}
-            {transport.arrivalTime && <span>到达: {transport.arrivalTime}</span>}
+            <span>出发: {transport.departureTime}</span>
           </div>
         )}
         {transport.details && (
