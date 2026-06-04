@@ -1182,7 +1182,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           allItems.push({
                             id: 'arrival',
                             type: 'arrival',
-                            startTime: arrivalEndTime, // 使用到达时间进行排序
+                            startTime: arrivalStartTime,
                             endTime: arrivalEndTime,
                             activity: null,
                             transportBefore: null,
@@ -1460,55 +1460,83 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">
             <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
-              <div className="space-y-3 sm:space-y-4">
-                {day === 1 && (
-                  <div className="space-y-2">
-                    {currentDayPlan && getArrivalTransport(currentDayPlan) ? (
-                      renderTransportItem(getArrivalTransport(currentDayPlan)!, day)
-                    ) : (
-                      <Button
-                        onClick={() => addTransport(day, 'arrival')}
-                        variant="outline"
-                        className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        添加到达
-                      </Button>
-                    )}
-                    {currentDayPlan && sortedActivities.length > 0 && (
-                      <div className="pl-8 space-y-2">
-                        {getBetweenTransport(currentDayPlan, 'arrival', sortedActivities[0].id) ? (
-                          renderTransportItem(getBetweenTransport(currentDayPlan, 'arrival', sortedActivities[0].id)!, day)
-                        ) : (
-                          <Button
-                            onClick={() => addTransport(day, 'between', 'arrival', sortedActivities[0].id)}
-                            variant="outline"
-                            className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            添加交通
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  {sortedActivities.length === 0 ? (
+              {/* 构建按时间排序的统一列表 */}
+              {(() => {
+                type ItemType = 'arrival' | 'departure' | 'activity';
+                type SortableItem = {
+                  type: ItemType;
+                  sortTime: string;
+                  activity?: ActivityItem;
+                  transport?: TransportInfo;
+                  beforeActivityId?: string;
+                  afterActivityId?: string;
+                };
+                
+                const items: SortableItem[] = [];
+                const dayPlan = currentTripPlan?.days.find(d => d.dayNumber === day);
+                
+                // 添加到达行程（第1天）
+                if (day === 1) {
+                  const arrival = dayPlan ? getArrivalTransport(dayPlan) : null;
+                  if (arrival) {
+                    items.push({
+                      type: 'arrival',
+                      sortTime: arrival.departureTime || arrival.arrivalTime || '00:00',
+                      transport: arrival,
+                      afterActivityId: sortedActivities[0]?.id,
+                    });
+                  }
+                }
+                
+                // 添加活动
+                sortedActivities.forEach((activity, index) => {
+                  items.push({
+                    type: 'activity',
+                    sortTime: activity.startTime,
+                    activity: activity,
+                    beforeActivityId: index > 0 ? sortedActivities[index - 1].id : (day === 1 ? 'arrival' : undefined),
+                    afterActivityId: index < sortedActivities.length - 1 ? sortedActivities[index + 1].id : (day === currentTripPlan.travelDays ? 'departure' : undefined),
+                  });
+                });
+                
+                // 添加离开行程（最后一天）
+                if (day === currentTripPlan.travelDays) {
+                  const departure = dayPlan ? getDepartureTransport(dayPlan) : null;
+                  if (departure) {
+                    items.push({
+                      type: 'departure',
+                      sortTime: departure.departureTime || '23:00',
+                      transport: departure,
+                      beforeActivityId: sortedActivities[sortedActivities.length - 1]?.id,
+                    });
+                  }
+                }
+                
+                // 按时间排序
+                items.sort((a, b) => a.sortTime.localeCompare(b.sortTime));
+                
+                if (items.length === 0) {
+                  return (
                     <div className="text-center py-8 text-[#FFFFFF]/40 text-xs">
                       暂无活动，点击下方按钮添加
                     </div>
-                  ) : (
-                    sortedActivities.map((activity, index) => (
-                      <div key={activity.id} className="space-y-4">
-                        {index > 0 && (
+                  );
+                }
+                
+                return items.map((item, index) => {
+                  if (item.type === 'arrival') {
+                    const transport = item.transport!;
+                    return (
+                      <div key="arrival" className="space-y-2">
+                        {renderTransportItem(transport, day)}
+                        {/* 到达后的交通 */}
+                        {item.afterActivityId && dayPlan && (
                           <div className="pl-8 space-y-2">
-                            {currentDayPlan && getBetweenTransport(currentDayPlan, sortedActivities[index - 1].id, activity.id) ? (
-                              renderTransportItem(getBetweenTransport(currentDayPlan, sortedActivities[index - 1].id, activity.id)!, day)
+                            {getBetweenTransport(dayPlan, 'arrival', item.afterActivityId) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, 'arrival', item.afterActivityId)!, day)
                             ) : (
                               <Button
-                                onClick={() => addTransport(day, 'between', sortedActivities[index - 1].id, activity.id)}
+                                onClick={() => addTransport(day, 'between', 'arrival', item.afterActivityId)}
                                 variant="outline"
                                 className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
@@ -1518,46 +1546,88 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             )}
                           </div>
                         )}
-
+                      </div>
+                    );
+                  } else if (item.type === 'departure') {
+                    return (
+                      <div key="departure" className="space-y-2 mt-4">
+                        {/* 离开前的交通 */}
+                        {item.beforeActivityId && dayPlan && (
+                          <div className="pl-8 space-y-2">
+                            {getBetweenTransport(dayPlan, item.beforeActivityId, 'departure') ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, item.beforeActivityId, 'departure')!, day)
+                            ) : (
+                              <Button
+                                onClick={() => addTransport(day, 'between', item.beforeActivityId, 'departure')}
+                                variant="outline"
+                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                              >
+                                <Plus className="w-4 h-4 mr-2" />
+                                添加交通
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                        {renderTransportItem(item.transport!, day)}
+                      </div>
+                    );
+                  } else if (item.activity) {
+                    const activity = item.activity;
+                    const prevItem = items[index - 1];
+                    const isFirst = index === 0 || (prevItem && prevItem.type === 'arrival' && !items.some((i, idx) => idx > 0 && idx < index));
+                    
+                    return (
+                      <div key={activity.id} className="space-y-4">
+                        {/* 活动前的交通 */}
+                        {prevItem && (prevItem.type === 'activity' || (prevItem.type === 'arrival' && index > 0)) && (
+                          <div className="pl-8 space-y-2">
+                            {dayPlan && prevItem.type === 'activity' && prevItem.activity && getBetweenTransport(dayPlan, prevItem.activity.id, activity.id) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, prevItem.activity.id, activity.id)!, day)
+                            ) : dayPlan && prevItem.type === 'arrival' && getBetweenTransport(dayPlan, 'arrival', activity.id) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, 'arrival', activity.id)!, day)
+                            ) : (
+                              <Button
+                                onClick={() => addTransport(day, 'between', prevItem.type === 'arrival' ? 'arrival' : prevItem.activity!.id, activity.id)}
+                                variant="outline"
+                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                              >
+                                <Plus className="w-4 h-4 mr-2" />
+                                添加交通
+                              </Button>
+                            )}
+                          </div>
+                        )}
                         {renderActivityItem(activity, day)}
                       </div>
-                    ))
-                  )}
-                </div>
-
-                {day === currentTripPlan.travelDays && currentDayPlan && sortedActivities.length > 0 && (
-                  <div className="pl-8 space-y-2 mt-6">
-                    {getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure') ? (
-                      renderTransportItem(getBetweenTransport(currentDayPlan, sortedActivities[sortedActivities.length - 1].id, 'departure')!, day)
-                    ) : (
-                      <Button
-                        onClick={() => addTransport(day, 'between', sortedActivities[sortedActivities.length - 1].id, 'departure')}
-                        variant="outline"
-                        className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        添加交通
-                      </Button>
-                    )}
-                  </div>
-                )}
-                {day === currentTripPlan.travelDays && (
-                  <div className="space-y-2 mt-4">
-                    {currentDayPlan && getDepartureTransport(currentDayPlan) ? (
-                      renderTransportItem(getDepartureTransport(currentDayPlan)!, day)
-                    ) : (
-                      <Button
-                        onClick={() => addTransport(day, 'departure')}
-                        variant="outline"
-                        className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        添加离开
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
+                    );
+                  }
+                  return null;
+                });
+              })()}
+              
+              {/* 添加到达按钮（第1天，如果没有到达） */}
+              {day === 1 && (!currentDayPlan || !getArrivalTransport(currentDayPlan)) && (
+                <Button
+                  onClick={() => addTransport(day, 'arrival')}
+                  variant="outline"
+                  className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  添加到达
+                </Button>
+              )}
+              
+              {/* 添加离开按钮（最后一天，如果没有离开） */}
+              {day === currentTripPlan.travelDays && (!currentDayPlan || !getDepartureTransport(currentDayPlan)) && (
+                <Button
+                  onClick={() => addTransport(day, 'departure')}
+                  variant="outline"
+                  className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  添加离开
+                </Button>
+              )}
             </div>
 
             <div className="mt-6">

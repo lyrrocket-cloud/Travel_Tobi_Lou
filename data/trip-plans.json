@@ -134,11 +134,22 @@
         "id": "day-4-1780282115925",
         "dayNumber": 4,
         "activities": [],
-        "transport": []
+        "transport": [
+          {
+            "id": "transport-1780559487672",
+            "type": "taxi",
+            "from": "济州岛",
+            "to": "",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "departure"
+          }
+        ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-04T07:47:56.581Z"
+    "updatedAt": "2026-06-04T07:51:27.758Z"
   },
   {
     "id": "trip-plan-1780193545980",
