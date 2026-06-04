@@ -443,35 +443,40 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     } else if (position === 'departure') {
       from = currentTripPlan.destination;
     } else if (position === 'between' && dayPlan) {
-      if (beforeActivityId === 'arrival') {
-        from = '';
-        const firstActivity = dayPlan.activities.find(a => a.id === afterActivityId);
-        to = firstActivity?.location || '';
-      } else if (afterActivityId === 'departure') {
-        const lastActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
-        from = lastActivity?.location || '';
-        to = '';
-        if (lastActivity) {
-          if (lastActivity.endTime) {
-            departureTime = lastActivity.endTime;
-          } else if (lastActivity.startTime) {
-            departureTime = addMinutesToTime(lastActivity.startTime, 1);
+        if (beforeActivityId === 'arrival') {
+          from = currentTripPlan.destination;
+          const firstActivity = dayPlan.activities.find(a => a.id === afterActivityId);
+          to = firstActivity?.location || '';
+          if (firstActivity) {
+            if (firstActivity.startTime) {
+              departureTime = addMinutesToTime(firstActivity.startTime, -30);
+            }
           }
-        }
-      } else {
-        const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
-        const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
-        from = beforeActivity?.location || '';
-        to = afterActivity?.location || '';
-        if (beforeActivity) {
-          if (beforeActivity.endTime) {
-            departureTime = beforeActivity.endTime;
-          } else if (beforeActivity.startTime) {
-            departureTime = addMinutesToTime(beforeActivity.startTime, 1);
+        } else if (afterActivityId === 'departure') {
+          const lastActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
+          from = lastActivity?.location || '';
+          to = currentTripPlan.destination;
+          if (lastActivity) {
+            if (lastActivity.endTime) {
+              departureTime = lastActivity.endTime;
+            } else if (lastActivity.startTime) {
+              departureTime = addMinutesToTime(lastActivity.startTime, 1);
+            }
+          }
+        } else {
+          const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
+          const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
+          from = beforeActivity?.location || '';
+          to = afterActivity?.location || '';
+          if (beforeActivity) {
+            if (beforeActivity.endTime) {
+              departureTime = beforeActivity.endTime;
+            } else if (beforeActivity.startTime) {
+              departureTime = addMinutesToTime(beforeActivity.startTime, 1);
+            }
           }
         }
       }
-    }
 
     const transportId = `transport-${Date.now()}`;
     const newTransport: TransportInfo = {
