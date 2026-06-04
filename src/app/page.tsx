@@ -859,7 +859,7 @@ export default function Home() {
               <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
                 <CardContent className="space-y-4.5 pt-3.5 sm:pt-6 px-3.5 sm:px-6">
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-xs">
+                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
                       <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       目的地
                     </Label>
@@ -868,13 +868,13 @@ export default function Home() {
                       placeholder="例如：巴黎、东京、马尔代夫..."
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-xs sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-xs">
+                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
                       <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       希望出行年月
                     </Label>
@@ -883,13 +883,13 @@ export default function Home() {
                       placeholder="YYYY-MM（如：2026-03）"
                       value={travelYearMonth}
                       onChange={(e) => setTravelYearMonth(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-xs sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF] text-sm sm:text-xs">
+                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
                       <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       许愿人姓名
                     </Label>
@@ -898,7 +898,7 @@ export default function Home() {
                       placeholder="请输入您的姓名"
                       value={wisherName}
                       onChange={(e) => setWisherName(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-sm sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-xs sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
@@ -910,7 +910,7 @@ export default function Home() {
               <Button
                 onClick={handleMakeWish}
                 disabled={isAnimating}
-                className="w-full max-w-4xl mx-auto -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-sm sm:text-xs"
+                className="w-full max-w-4xl mx-auto -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs sm:text-xs"
               >
                 {isAnimating ? (
                   <div className="flex items-center gap-2 sm:gap-3">
