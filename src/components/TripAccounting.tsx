@@ -960,66 +960,70 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         key={expense.id}
                         className="p-3.5 sm:p-4 rounded-lg bg-black/40 border border-[#CEA472]/20 hover:bg-black/70 transition-colors"
                       >
-                        <div className="flex flex-col gap-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                              <div className="text-xl sm:text-2xl flex-shrink-0">
-                                {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
+                        <div className="flex gap-3">
+                          <div className="text-xl sm:text-2xl text-[#FFFFFF] flex-shrink-0 pt-0.5">
+                            {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[#CEA472] font-medium text-xs">{expenseCategories[expense.category] || expense.category}</span>
+                                <span className="text-[#FFFFFF]/60 text-xs">{expense.date} {expense.time || ''}</span>
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-[#FFFFFF] text-xs">{expense.description}</div>
-                                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">
-                                  {expense.date} {expense.time || ''} · {expenseCategories[expense.category] || expense.category}
-                                </div>
+                              <div className="text-right flex-shrink-0">
+                                <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
+                                <span className="text-[#CEA472] font-semibold text-xs">¥{expense.amount.toLocaleString()}</span>
                               </div>
                             </div>
-                            <div className="text-right flex-shrink-0">
-                              <div className="text-xs text-[#FFFFFF]/60">总金额</div>
-                              <div className="text-xs font-semibold text-[#CEA472]">
-                                ¥{expense.amount.toLocaleString()}
+                            <div className="flex items-center justify-between gap-4 mt-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-[#FFFFFF] text-xs truncate">{expense.location || ''}</span>
+                                {expense.location && expense.description && <span className="text-[#FFFFFF]/40 text-xs">·</span>}
+                                <span className="text-[#FFFFFF] text-xs truncate">{expense.description || ''}</span>
                               </div>
-                              <div className="text-xs text-[#FFFFFF]/60">
-                                人均 ¥{perPersonAmount.toFixed(2)}
+                              <div className="text-right flex-shrink-0">
+                                <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
+                                <span className="text-[#CEA472] font-semibold text-xs">¥{perPersonAmount.toFixed(2)}</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-4 mt-2">
+                              <div className="flex items-center">
+                                <span className="text-[#FFFFFF]/60 text-xs">消费人：</span>
+                                <span className="text-[#FFFFFF] text-xs">{expense.payers ? expense.payers.join('、') : '未记录'}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-[#FFFFFF]/60 text-xs">支付人：</span>
+                                <span className="text-[#FFFFFF] text-xs">{expense.payer || '未记录'}</span>
                               </div>
                             </div>
                           </div>
-                          <div className="text-xs text-[#FFFFFF]/40 flex flex-wrap gap-2">
-                            {expense.location && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60">
-                                <MapPin className="w-3 h-3" />
-                                {expense.location}
-                              </span>
-                            )}
-                            <span>消费人：{expense.payers ? expense.payers.join('、') : '未记录'}</span>
-                            <span>支付人：{expense.payer || '未记录'}</span>
-                          </div>
-                          {isAdminMode && (
-                            <div className="flex items-center justify-end gap-2">
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => {
-                                  setEditingExpense(expense);
-                                  setShowEditExpense(true);
-                                }}
-                                className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => {
-                                  setDeletingExpenseId(expense.id);
-                                  setShowDeleteConfirm(true);
-                                }}
-                                className="text-red-500 hover:text-red-500 hover:bg-transparent"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          )}
                         </div>
+                        {isAdminMode && (
+                          <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#CEA472]/20">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => {
+                                setEditingExpense(expense);
+                                setShowEditExpense(true);
+                              }}
+                              className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => {
+                                setDeletingExpenseId(expense.id);
+                                setShowDeleteConfirm(true);
+                              }}
+                              className="text-red-500 hover:text-red-500 hover:bg-transparent"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
