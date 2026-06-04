@@ -982,7 +982,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                   setEditingExpense(expense);
                                   setShowEditExpense(true);
                                 }}
-                                className="text-[#FFFFFF]/60 hover:text-[#CEA472] hover:bg-transparent"
+                                className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </Button>
@@ -993,7 +993,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                   setDeletingExpenseId(expense.id);
                                   setShowDeleteConfirm(true);
                                 }}
-                                className="text-[#FFFFFF]/60 hover:text-red-500 hover:bg-transparent"
+                                className="text-red-500 hover:text-red-500 hover:bg-transparent"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -1122,7 +1122,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           {editingExpense && (
             <div className="space-y-4 py-4">
               <div>
-                <Label className="text-[#FFFFFF] text-xs">日期</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
                 <Input
                   type="text"
                   inputMode="numeric"
@@ -1130,20 +1130,20 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   placeholder="YYYY-MM-DD"
                   value={editingExpense.date}
                   onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF] text-xs">时间</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
                 <Input
                   type="time"
                   value={editingExpense.time || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs h-10 w-full"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">类别</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">类别</Label>
                 <Select
                   value={editingExpense.category}
                   onValueChange={(value) => setEditingExpense({ ...editingExpense, category: value as ExpenseCategory })}
@@ -1161,35 +1161,35 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </Select>
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">金额</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">金额</Label>
                 <Input
                   type="number"
                   min="0"
                   step="0.01"
                   value={String(editingExpense.amount)}
                   onChange={(e) => setEditingExpense({ ...editingExpense, amount: parseFloat(e.target.value) || 0 })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">描述</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">描述</Label>
                 <Input
                   value={editingExpense.description}
                   onChange={(e) => setEditingExpense({ ...editingExpense, description: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">活动地点</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
                 <Input
                   value={editingExpense.location || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, location: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                   placeholder="输入活动地点"
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">消费人</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费人</Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {travelers.map((traveler, idx) => (
                     <button
@@ -1213,7 +1213,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </div>
               </div>
               <div>
-                <Label className="text-[#FFFFFF]">支付人</Label>
+                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">支付人</Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {travelers.map((traveler, idx) => (
                     <button
