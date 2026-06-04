@@ -765,13 +765,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   onChange={(e) => setEditingActivityData({ ...editingData, type: e.target.value })}
                   className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                 >
-                  <option value="breakfast">早餐</option>
-                  <option value="morning">上午活动</option>
-                  <option value="lunch">午餐</option>
-                  <option value="afternoon">下午活动</option>
-                  <option value="dinner">晚餐</option>
-                  <option value="evening">晚间活动</option>
                   <option value="accommodation">住宿</option>
+                  <option value="attraction">景点</option>
+                  <option value="shopping">购物</option>
+                  <option value="entertainment">娱乐</option>
+                  <option value="food">餐饮</option>
                   <option value="other">其它</option>
                 </select>
               </div>
