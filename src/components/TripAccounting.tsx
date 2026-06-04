@@ -965,35 +965,43 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-start justify-between gap-2">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{expenseCategories[expense.category] || expense.category}</span>
-                                <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{expense.date} {expense.time || ''}</span>
+                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4">
+                              {/* 左侧内容 */}
+                              <div className="sm:col-span-8">
+                                {/* 第一行 */}
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{expenseCategories[expense.category] || expense.category}</span>
+                                  <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{expense.date} {expense.time || ''}</span>
+                                </div>
+                                {/* 第二行 */}
+                                <div className="mt-1.5">
+                                  <span className="text-[#FFFFFF] text-xs">{expense.location || ''}</span>
+                                  {expense.location && expense.description && <span className="text-[#FFFFFF]/40 text-xs">·</span>}
+                                  <span className="text-[#FFFFFF] text-xs">{expense.description || ''}</span>
+                                </div>
+                                {/* 第三行 */}
+                                <div className="mt-1.5 flex items-center gap-1">
+                                  <span className="text-[#FFFFFF]/60 text-xs">消费人：</span>
+                                  <span className="text-[#FFFFFF] text-xs">{expense.payers ? expense.payers.join('、') : '未记录'}</span>
+                                </div>
+                                {/* 第四行 */}
+                                <div className="mt-1 flex items-center gap-1">
+                                  <span className="text-[#FFFFFF]/60 text-xs">支付人：</span>
+                                  <span className="text-[#FFFFFF] text-xs">{expense.payer || '未记录'}</span>
+                                </div>
                               </div>
-                              <div className="text-right flex-shrink-0 min-w-[100px] sm:min-w-[120px]">
-                                <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
-                                <span className="text-[#CEA472] font-semibold text-xs">¥{expense.amount.toLocaleString()}</span>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap items-start justify-between gap-2 mt-2">
-                              <div className="flex-1 min-w-0">
-                                <span className="text-[#FFFFFF] text-xs">{expense.location || ''}</span>
-                                {expense.location && expense.description && <span className="text-[#FFFFFF]/40 text-xs">·</span>}
-                                <span className="text-[#FFFFFF] text-xs truncate">{expense.description || ''}</span>
-                              </div>
-                              <div className="text-right flex-shrink-0 min-w-[100px] sm:min-w-[120px]">
-                                <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
-                                <span className="text-[#CEA472] font-semibold text-xs">¥{perPersonAmount.toFixed(2)}</span>
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
-                              <div className="flex items-center gap-1">
-                                <span className="text-[#FFFFFF]/60 text-xs">消费人：</span>
-                                <span className="text-[#FFFFFF] text-xs truncate">{expense.payers ? expense.payers.join('、') : '未记录'}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <span className="text-[#FFFFFF]/60 text-xs">支付人：</span>
-                                <span className="text-[#FFFFFF] text-xs">{expense.payer || '未记录'}</span>
+                              {/* 右侧金额 */}
+                              <div className="sm:col-span-4 sm:text-right">
+                                {/* 总金额 */}
+                                <div className="flex items-center justify-end gap-1">
+                                  <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
+                                  <span className="text-[#CEA472] font-semibold text-xs">¥{expense.amount.toLocaleString()}</span>
+                                </div>
+                                {/* 人均金额 */}
+                                <div className="mt-1 flex items-center justify-end gap-1">
+                                  <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
+                                  <span className="text-[#CEA472] font-semibold text-xs">¥{perPersonAmount.toFixed(2)}</span>
+                                </div>
                               </div>
                             </div>
                           </div>
