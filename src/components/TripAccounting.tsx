@@ -54,6 +54,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [showEditExpense, setShowEditExpense] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
+  const [editingSelectedActivity, setEditingSelectedActivity] = useState<ReturnType<typeof getActivityLocations>[0] | null>(null);
   const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
@@ -409,6 +410,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         await fetchExpenses();
         setShowEditExpense(false);
         setEditingExpense(null);
+        setEditingSelectedActivity(null);
       }
     } catch (error) {
       console.error('[Trip Accounting] Error saving edited expense:', error);
@@ -633,6 +635,28 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       time: activity.startTime || prev.time,
       description: description,
     }));
+  };
+
+  const handleEditActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {
+    if (!editingExpense) return;
+    
+    setEditingSelectedActivity(activity);
+    
+    let description = '';
+    if (activity.type === 'transportation') {
+      description = activity.location;
+    } else {
+      description = activity.content || `在 ${activity.location} 的活动`;
+    }
+    
+    setEditingExpense({
+      ...editingExpense,
+      location: activity.location,
+      category: (activity.type || editingExpense.category) as ExpenseCategory,
+      date: activity.date || editingExpense.date,
+      time: activity.startTime || editingExpense.time,
+      description: description,
+    });
   };
 
   const handlePayerToggle = (payer: string) => {
@@ -1213,12 +1237,47 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
-                <Input
-                  value={editingExpense.location || ''}
-                  onChange={(e) => setEditingExpense({ ...editingExpense, location: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
-                  placeholder="输入活动地点"
-                />
+                {(() => {
+                  const editFilteredLocations = currentTripPlan
+                    ? [...getActivityLocations(), ...getTransportLocations()].filter(loc => 
+                        loc.type === editingExpense.category
+                      )
+                    : [];
+                  
+                  return (
+                    <>
+                      {editFilteredLocations.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-xs text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
+                          <div className="flex flex-wrap gap-2">
+                            {editFilteredLocations.map((activity, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => handleEditActivitySelect(activity)}
+                                className={`px-3 py-1.5 rounded-full text-xs transition-all ${
+                                  editingSelectedActivity?.activityId === activity.activityId
+                                    ? 'bg-[#CEA472] text-[#0a0a0f]'
+                                    : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                                }`}
+                              >
+                                {activity.location}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <Input
+                        value={editingExpense.location || ''}
+                        onChange={(e) => {
+                          setEditingExpense({ ...editingExpense, location: e.target.value });
+                          setEditingSelectedActivity(null);
+                        }}
+                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                        placeholder="或直接输入地点"
+                      />
+                    </>
+                  );
+                })()}
               </div>
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费人</Label>
@@ -1270,6 +1329,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               onClick={() => {
                 setShowEditExpense(false);
                 setEditingExpense(null);
+                setEditingSelectedActivity(null);
               }}
               className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
