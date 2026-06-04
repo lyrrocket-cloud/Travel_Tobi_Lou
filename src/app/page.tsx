@@ -1075,10 +1075,10 @@ export default function Home() {
                                     e.stopPropagation();
                                     handleOpenFollowDialog(wish.id);
                                   }}
-                                  variant="outline"
+                                  variant="ghost"
                                   size="icon"
                                   title="跟随"
-                                  className="size-6.5 sm:size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50 min-h-[36px]"
+                                  className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
                                 >
                                   <Heart className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
@@ -1108,10 +1108,10 @@ export default function Home() {
                                               });
                                             });
                                         }}
-                                        variant="outline"
+                                        variant="ghost"
                                         size="icon"
                                         title="编辑行程"
-                                        className="size-6.5 sm:size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50 min-h-[36px]"
+                                        className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
                                       >
                                         <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                       </Button>
@@ -1120,10 +1120,10 @@ export default function Home() {
                                           e.stopPropagation();
                                           handleOpenCancelConfirmDialog(String(wish.id));
                                         }}
-                                        variant="outline"
+                                        variant="ghost"
                                         size="icon"
                                         title="取消成行"
-                                        className="size-6.5 sm:size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500 min-h-[36px]"
+                                        className="text-red-500 hover:text-red-500 hover:bg-transparent min-h-[36px]"
                                       >
                                         <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                       </Button>
@@ -1136,10 +1136,10 @@ export default function Home() {
                                           e.stopPropagation();
                                           handleOpenEditDialog(wish);
                                         }}
-                                        variant="outline"
+                                        variant="ghost"
                                         size="icon"
                                         title="编辑"
-                                        className="size-6.5 sm:size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50 min-h-[36px]"
+                                        className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
                                       >
                                         <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                       </Button>
@@ -1148,10 +1148,10 @@ export default function Home() {
                                           e.stopPropagation();
                                           handleOpenConfirmDialog(String(wish.id));
                                         }}
-                                        variant="outline"
+                                        variant="ghost"
                                         size="icon"
                                         title="确定成行"
-                                        className="size-6.5 sm:size-8 bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/20 hover:border-[#CEA472]/50 min-h-[36px]"
+                                        className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
                                       >
                                         <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                       </Button>
@@ -1162,10 +1162,10 @@ export default function Home() {
                                       e.stopPropagation();
                                       handleOpenDeleteDialog(wish.id);
                                     }}
-                                    variant="outline"
+                                    variant="ghost"
                                     size="icon"
                                     title="删除"
-                                    className="size-7 sm:size-8 bg-black/40 border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
+                                    className="text-red-500 hover:text-red-500 hover:bg-transparent"
                                   >
                                     <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                   </Button>
