@@ -19,24 +19,15 @@
             "departureTime": "",
             "arrivalTime": "",
             "details": ""
-          },
-          {
-            "id": "transport-1780561038111",
-            "type": "taxi",
-            "from": "",
-            "to": "济州岛",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "arrival"
           }
         ],
         "activities": [
           {
             "type": "other",
             "startTime": "09:00",
-            "location": "",
-            "id": "activity-1780561072760"
+            "content": "A",
+            "location": "A",
+            "id": "activity-1780561664739"
           }
         ]
       },
@@ -138,7 +129,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-04T08:22:10.411Z"
+    "updatedAt": "2026-06-04T08:27:44.828Z"
   },
   {
     "id": "trip-plan-1780193545980",

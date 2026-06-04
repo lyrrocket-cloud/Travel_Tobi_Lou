@@ -615,12 +615,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const handleActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {
     setSelectedActivity(activity);
+    
+    let description = '';
+    if (activity.type === 'transportation') {
+      description = activity.location;
+    } else {
+      description = `在 ${activity.location} 的活动`;
+    }
+    
     setNewExpense(prev => ({
       ...prev,
       location: activity.location,
       category: activity.type || prev.category,
       date: activity.date || prev.date,
       time: activity.startTime || prev.time,
+      description: description,
     }));
   };
 
