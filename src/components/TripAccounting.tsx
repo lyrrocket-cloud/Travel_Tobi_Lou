@@ -643,7 +643,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/30 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  className={`bg-black/40 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
                   onClick={() => {
                     if (hasRecord) {
                       setSelectedWishId(String(wish.id));
@@ -724,7 +724,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/40 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && onEditTripInfo && currentWish) {
             onEditTripInfo({
@@ -771,7 +771,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsList>
 
         <TabsContent value="entry" className="mt-4">
-          <Card className="border border-[#CEA472]/20 bg-black/30">
+          <Card className="border border-[#CEA472]/20 bg-black/40">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
@@ -928,7 +928,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
 
         <TabsContent value="query" className="mt-4">
-          <Card className="border border-[#CEA472]/20 bg-black/30">
+          <Card className="border border-[#CEA472]/20 bg-black/40">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               {currentExpenseRecord && sortedExpenses.length > 0 ? (
                 <div className="space-y-3 sm:space-y-3">
@@ -1015,7 +1015,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
 
         <TabsContent value="analysis" className="mt-4">
-          <Card className="border border-[#CEA472]/20 bg-black/30">
+          <Card className="border border-[#CEA472]/20 bg-black/40">
             <CardContent className="pt-6 px-3.5 sm:px-6">
               <div className="space-y-5 sm:space-y-6">
                 <div>

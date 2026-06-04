@@ -620,7 +620,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
     if (isEditing) {
       return (
-        <Card key={transport.id} className="border border-[#CEA472]/20 bg-black/30">
+        <Card key={transport.id} className="border border-[#CEA472]/20 bg-black/40">
           <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -714,7 +714,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={transport.id}
-        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/40 transition-colors"
+        className="bg-black/40 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/50 transition-colors"
         onClick={() => {
           setEditingTransport({ dayNumber: day, transportId: transport.id });
           setEditingTransportData({ ...transport });
@@ -754,7 +754,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
     if (isEditing) {
       return (
-        <Card key={activity.id} className="border border-[#CEA472]/20 bg-black/30">
+        <Card key={activity.id} className="border border-[#CEA472]/20 bg-black/40">
           <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -849,7 +849,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={activity.id}
-        className="bg-black/30 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors"
+        className="bg-black/40 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors"
         onClick={() => {
           setEditingActivity({ dayNumber: day, activityId: activity.id });
           setEditingActivityData({ ...activity });
@@ -923,7 +923,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/30 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  className={`bg-black/40 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
                   onClick={() => selectWish(wish)}
                 >
                   <div className="flex items-start justify-between gap-2.5">
@@ -995,7 +995,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/30 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/40 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/40 border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && onEditTripInfo) {
             onEditTripInfo({
@@ -1022,7 +1022,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       </div>
 
       {showSchedule && (
-        <Card className="mb-4 sm:mb-6 border border-[#CEA472]/20 bg-black/30">
+        <Card className="mb-4 sm:mb-6 border border-[#CEA472]/20 bg-black/40">
           <CardContent className="pt-3 sm:pt-4">
             <div className="flex items-center mb-3 sm:mb-4">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -1341,7 +1341,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       )}
 
       {showWishSelector && (
-        <Card className="mb-6 border border-[#CEA472]/20 bg-black/30">
+        <Card className="mb-6 border border-[#CEA472]/20 bg-black/40">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-[#CEA472] font-medium">选择愿望</h4>
@@ -1379,7 +1379,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       setSelectedWishId(wish.id);
                       setShowWishSelector(false);
                     }}
-                    className={`w-full text-left p-3 rounded-md border transition-colors ${selectedWishId === wish.id ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/30 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'}`}
+                    className={`w-full text-left p-3 rounded-md border transition-colors ${selectedWishId === wish.id ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'}`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -1419,7 +1419,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">
-            <div className="bg-black/30 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+            <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
               <div className="space-y-3 sm:space-y-4">
                 {day === 1 && (
                   <div className="space-y-2">
@@ -1429,7 +1429,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <Button
                         onClick={() => addTransport(day, 'arrival')}
                         variant="outline"
-                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                        className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加到达
@@ -1443,7 +1443,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <Button
                             onClick={() => addTransport(day, 'between', 'arrival', sortedActivities[0].id)}
                             variant="outline"
-                            className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                            className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                           >
                             <Plus className="w-4 h-4 mr-2" />
                             添加交通
@@ -1470,7 +1470,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               <Button
                                 onClick={() => addTransport(day, 'between', sortedActivities[index - 1].id, activity.id)}
                                 variant="outline"
-                                className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
                                 <Plus className="w-4 h-4 mr-2" />
                                 添加交通
@@ -1493,7 +1493,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <Button
                         onClick={() => addTransport(day, 'between', sortedActivities[sortedActivities.length - 1].id, 'departure')}
                         variant="outline"
-                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                        className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加交通
@@ -1509,7 +1509,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <Button
                         onClick={() => addTransport(day, 'departure')}
                         variant="outline"
-                        className="w-full justify-start bg-black/30 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                        className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         添加离开
@@ -1522,7 +1522,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
             <div className="mt-6">
                 {showAddActivity ? (
-                  <Card className="border border-[#CEA472]/20 bg-black/30">
+                  <Card className="border border-[#CEA472]/20 bg-black/40">
                     <CardContent className="pt-4">
                       <div className="flex items-center justify-between mb-4">
                         <h4 className="text-[#CEA472] font-medium text-xs">添加新活动</h4>

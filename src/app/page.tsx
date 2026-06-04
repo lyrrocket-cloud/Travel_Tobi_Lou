@@ -1044,7 +1044,7 @@ export default function Home() {
                                     </div>
                                     <div className="flex flex-wrap gap-1 overflow-hidden">
                                       {wish.followers.map((name, idx) => (
-                                        <div key={idx} className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${wish.is_expired === 1 ? 'bg-gray-500/20 border-gray-500/20' : 'bg-black/30 border border-[#CEA472]/20'}`}>
+                                        <div key={idx} className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${wish.is_expired === 1 ? 'bg-gray-500/20 border-gray-500/20' : 'bg-black/40 border border-[#CEA472]/20'}`}>
                                           <span className={`text-[9px] sm:text-xs truncate max-w-[60px] sm:max-w-none ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
                                           {isAdminMode && (
                                             <button
