@@ -463,6 +463,26 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               departureTime = addMinutesToTime(lastActivity.startTime, 1);
             }
           }
+        } else if (afterActivityId === 'arrival') {
+          const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
+          from = beforeActivity?.location || '';
+          to = currentTripPlan.destination;
+          if (beforeActivity) {
+            if (beforeActivity.endTime) {
+              departureTime = beforeActivity.endTime;
+            } else if (beforeActivity.startTime) {
+              departureTime = addMinutesToTime(beforeActivity.startTime, 1);
+            }
+          }
+        } else if (beforeActivityId === 'departure') {
+          const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
+          from = currentTripPlan.destination;
+          to = afterActivity?.location || '';
+          if (afterActivity) {
+            if (afterActivity.startTime) {
+              departureTime = addMinutesToTime(afterActivity.startTime, -30);
+            }
+          }
         } else {
           const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
           const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
