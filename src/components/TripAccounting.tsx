@@ -517,9 +517,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const filteredStats = calculateFilteredStats();
 
   const sortedExpenses = currentExpenseRecord ? 
-    [...currentExpenseRecord.expenses].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    ) : [];
+    [...currentExpenseRecord.expenses].sort((a, b) => {
+      // 先比较日期
+      const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (dateCompare !== 0) return dateCompare;
+      // 日期相同则比较时间
+      if (a.time && b.time) {
+        return a.time.localeCompare(b.time);
+      }
+      if (a.time) return 1; // 有时间的排后面
+      if (b.time) return -1;
+      return 0;
+    }) : [];
 
   const getTravelDays = () => {
     const plan = tripPlans?.find(p => String(p.wishId) === String(selectedWishId));
