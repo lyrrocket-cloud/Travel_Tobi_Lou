@@ -717,6 +717,17 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
+              {(transport.position === 'arrival' || transport.position === 'departure') && (
+                <div>
+                  <Label className="text-[#FFFFFF]/60 text-xs">到达时间</Label>
+                  <Input
+                    type="time"
+                    value={editingData.arrivalTime || ''}
+                    onChange={(e) => setEditingTransportData({ ...editingData, arrivalTime: e.target.value })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  />
+                </div>
+              )}
               <div className="md:col-span-2">
                 <Label className="text-[#FFFFFF]/60 text-xs">备注</Label>
                 <Input
@@ -777,6 +788,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         {transport.departureTime && (
           <div className="text-[#FFFFFF]/60 text-xs mt-1">
             <span>出发: {transport.departureTime}</span>
+            {transport.arrivalTime && (transport.position === 'arrival' || transport.position === 'departure') && (
+              <span className="ml-2">到达: {transport.arrivalTime}</span>
+            )}
           </div>
         )}
         {transport.details && (
