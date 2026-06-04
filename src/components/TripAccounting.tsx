@@ -965,33 +965,33 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             {expenseCategoryIcons[expense.category] || expenseCategoryIcons.other}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-4">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[#CEA472] font-medium text-xs">{expenseCategories[expense.category] || expense.category}</span>
-                                <span className="text-[#FFFFFF]/60 text-xs">{expense.date} {expense.time || ''}</span>
+                            <div className="flex flex-wrap items-start justify-between gap-2">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{expenseCategories[expense.category] || expense.category}</span>
+                                <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{expense.date} {expense.time || ''}</span>
                               </div>
-                              <div className="text-right flex-shrink-0">
+                              <div className="text-right flex-shrink-0 min-w-[100px] sm:min-w-[120px]">
                                 <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
                                 <span className="text-[#CEA472] font-semibold text-xs">¥{expense.amount.toLocaleString()}</span>
                               </div>
                             </div>
-                            <div className="flex items-center justify-between gap-4 mt-2">
-                              <div className="flex items-center gap-2 min-w-0">
-                                <span className="text-[#FFFFFF] text-xs truncate">{expense.location || ''}</span>
+                            <div className="flex flex-wrap items-start justify-between gap-2 mt-2">
+                              <div className="flex-1 min-w-0">
+                                <span className="text-[#FFFFFF] text-xs">{expense.location || ''}</span>
                                 {expense.location && expense.description && <span className="text-[#FFFFFF]/40 text-xs">·</span>}
                                 <span className="text-[#FFFFFF] text-xs truncate">{expense.description || ''}</span>
                               </div>
-                              <div className="text-right flex-shrink-0">
+                              <div className="text-right flex-shrink-0 min-w-[100px] sm:min-w-[120px]">
                                 <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
                                 <span className="text-[#CEA472] font-semibold text-xs">¥{perPersonAmount.toFixed(2)}</span>
                               </div>
                             </div>
-                            <div className="flex flex-wrap items-center gap-4 mt-2">
-                              <div className="flex items-center">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
+                              <div className="flex items-center gap-1">
                                 <span className="text-[#FFFFFF]/60 text-xs">消费人：</span>
-                                <span className="text-[#FFFFFF] text-xs">{expense.payers ? expense.payers.join('、') : '未记录'}</span>
+                                <span className="text-[#FFFFFF] text-xs truncate">{expense.payers ? expense.payers.join('、') : '未记录'}</span>
                               </div>
-                              <div className="flex items-center">
+                              <div className="flex items-center gap-1">
                                 <span className="text-[#FFFFFF]/60 text-xs">支付人：</span>
                                 <span className="text-[#FFFFFF] text-xs">{expense.payer || '未记录'}</span>
                               </div>
