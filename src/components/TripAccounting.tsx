@@ -713,10 +713,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           {defaultTripId === selectedWishId && <Star className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
         </div>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           onClick={() => setShowWishSelector(true)}
-          className="bg-black/40 border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 min-h-[44px] min-w-[44px]"
+          className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
           title="切换旅行"
         >
           <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -982,7 +982,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                   setEditingExpense(expense);
                                   setShowEditExpense(true);
                                 }}
-                                className="text-[#FFFFFF]/60 hover:text-[#CEA472] min-h-[40px] min-w-[40px]"
+                                className="text-[#FFFFFF]/60 hover:text-[#CEA472] hover:bg-transparent"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </Button>
@@ -993,7 +993,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                   setDeletingExpenseId(expense.id);
                                   setShowDeleteConfirm(true);
                                 }}
-                                className="text-[#FFFFFF]/60 hover:text-red-500 min-h-[40px] min-w-[40px]"
+                                className="text-[#FFFFFF]/60 hover:text-red-500 hover:bg-transparent"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>

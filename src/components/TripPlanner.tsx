@@ -688,20 +688,21 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             <div className="mt-4 flex justify-end gap-2">
               <Button
                 size="icon"
-                variant="destructive"
+                variant="ghost"
                 onClick={() => deleteTransport(day, transport.id)}
-                className="bg-red-500/20 text-red-500 hover:bg-red-500/30 border border-red-500/30"
+                className="text-red-500 hover:text-red-400 hover:bg-transparent"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
               <Button
                 size="icon"
+                variant="ghost"
                 onClick={() => {
                   if (editingTransportData) {
                     updateTransportData(day, transport.id, editingTransportData);
                   }
                 }}
-                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
               >
                 <Save className="w-4 h-4" />
               </Button>
@@ -823,20 +824,21 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             <div className="mt-4 flex justify-end gap-2">
               <Button
                 size="icon"
-                variant="destructive"
+                variant="ghost"
                 onClick={() => deleteActivity(day, activity.id)}
-                className="bg-red-500/20 text-red-500 hover:bg-red-500/30 border border-red-500/30 text-xs"
+                className="text-red-500 hover:text-red-400 hover:bg-transparent"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
               <Button
                 size="icon"
+                variant="ghost"
                 onClick={() => {
                   if (editingActivityData) {
                     updateActivityData(day, activity.id, editingActivityData);
                   }
                 }}
-                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
               >
                 <Save className="w-4 h-4" />
               </Button>
@@ -876,7 +878,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   setEditingActivity({ dayNumber: day, activityId: activity.id });
                   setEditingActivityData({ ...activity });
                 }}
-                className="text-[#FFFFFF]/40 hover:text-[#CEA472] h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0"
+                className="text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-transparent h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0"
               >
                 <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Button>
@@ -984,10 +986,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           {defaultTripId === selectedWishId && <Star className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
         </div>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           onClick={() => setShowWishSelector(true)}
-          className="bg-black/40 border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 min-h-[44px] min-w-[44px]"
+          className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
           title="切换行程"
         >
           <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -1363,7 +1365,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   size="icon"
                   variant="ghost"
                   onClick={() => setShowWishSelector(false)}
-                  className="text-[#FFFFFF]/60"
+                  className="text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 hover:bg-transparent"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -1530,7 +1532,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           size="icon"
                           variant="ghost"
                           onClick={() => setShowAddActivity(false)}
-                          className="text-[#FFFFFF]/60"
+                          className="text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 hover:bg-transparent"
                         >
                           <X className="w-4 h-4" />
                         </Button>
@@ -1600,8 +1602,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <div className="mt-4 flex justify-end">
                         <Button
                           size="icon"
+                          variant="ghost"
                           onClick={addActivity}
-                          className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 min-h-[44px] min-w-[44px]"
+                          className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
                         >
                           <Save className="w-4 h-4" />
                         </Button>
