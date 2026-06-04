@@ -838,8 +838,8 @@ export default function Home() {
           )}
 
           {/* 子标签页 */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
-            <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-2 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 gap-0.5 h-[48px] sm:h-[44px]">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 gap-0.5 h-[48px] sm:h-[44px]">
               <TabsTrigger
                 value="make-wish"
                 className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs h-full flex items-center justify-center"
@@ -856,7 +856,7 @@ export default function Home() {
 
             {/* Make Wish Tab */}
             <TabsContent value="make-wish" className="space-y-4.5 sm:space-y-6 min-h-[400px]">
-              <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
+              <Card className="border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
                 <CardContent className="space-y-4.5 pt-3.5 sm:pt-6 px-3.5 sm:px-6">
                   <div className="space-y-1.5 sm:space-y-2">
                     <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
@@ -910,7 +910,7 @@ export default function Home() {
               <Button
                 onClick={handleMakeWish}
                 disabled={isAnimating}
-                className="w-full max-w-4xl mx-auto -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs sm:text-xs"
+                className="w-full -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs sm:text-xs"
               >
                 {isAnimating ? (
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -962,7 +962,7 @@ export default function Home() {
 
             {/* Wish Pool Tab */}
             <TabsContent value="wish-pool" className="space-y-5 min-h-[400px]">
-              <Card className="max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
+              <Card className="border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
                 <CardContent className="pt-5 sm:pt-6 px-2.5 sm:px-6">
                   {loading ? (
                     <div className="text-center py-12">
