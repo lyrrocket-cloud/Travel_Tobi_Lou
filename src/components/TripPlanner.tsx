@@ -443,8 +443,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     } else if (position === 'departure') {
       from = currentTripPlan.destination;
     } else if (position === 'between' && dayPlan) {
+        const arrivalTransport = dayPlan.transport.find(t => t.position === 'arrival');
+        const departureTransport = dayPlan.transport.find(t => t.position === 'departure');
+
         if (beforeActivityId === 'arrival') {
-          from = currentTripPlan.destination;
+          from = arrivalTransport?.from || '';
           const firstActivity = dayPlan.activities.find(a => a.id === afterActivityId);
           to = firstActivity?.location || '';
           if (firstActivity) {
@@ -455,7 +458,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         } else if (afterActivityId === 'departure') {
           const lastActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
           from = lastActivity?.location || '';
-          to = currentTripPlan.destination;
+          to = departureTransport?.to || '';
           if (lastActivity) {
             if (lastActivity.endTime) {
               departureTime = lastActivity.endTime;
@@ -466,7 +469,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         } else if (afterActivityId === 'arrival') {
           const beforeActivity = dayPlan.activities.find(a => a.id === beforeActivityId);
           from = beforeActivity?.location || '';
-          to = currentTripPlan.destination;
+          to = arrivalTransport?.from || '';
           if (beforeActivity) {
             if (beforeActivity.endTime) {
               departureTime = beforeActivity.endTime;
@@ -476,7 +479,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           }
         } else if (beforeActivityId === 'departure') {
           const afterActivity = dayPlan.activities.find(a => a.id === afterActivityId);
-          from = currentTripPlan.destination;
+          from = departureTransport?.to || '';
           to = afterActivity?.location || '';
           if (afterActivity) {
             if (afterActivity.startTime) {
