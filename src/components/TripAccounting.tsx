@@ -749,7 +749,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-black/50 border border-[#CEA472]/20 h-[48px] sm:h-[44px]">
+        <TabsList className="grid w-full grid-cols-3 bg-black/50 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
             className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
