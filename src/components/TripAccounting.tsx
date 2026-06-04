@@ -705,7 +705,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-4">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {currentWish?.destination} 旅行记账
