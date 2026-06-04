@@ -1162,6 +1162,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         transportAfter: TransportInfo | null;
                       }> = [];
                       
+                      const allItems: Array<{
+                        id: string;
+                        type: 'arrival' | 'departure' | 'activity';
+                        startTime: string;
+                        endTime?: string;
+                        activity: ActivityItem | null;
+                        transportBefore: TransportInfo | null;
+                        transportAfter: TransportInfo | null;
+                      }> = [];
+                      
                       if (day.dayNumber === 1) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
@@ -1169,16 +1179,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           const arrivalStartTime = arrival.departureTime || arrival.arrivalTime || '00:00';
                           const arrivalEndTime = arrival.arrivalTime || firstActivity?.startTime || arrivalStartTime;
                           
-                          mergedItems.push({
+                          allItems.push({
                             id: 'arrival',
                             type: 'arrival',
                             startTime: arrivalStartTime,
                             endTime: arrivalEndTime,
                             activity: null,
                             transportBefore: null,
-                            transportAfter: sortedActivities.length > 0 
-                              ? (getBetweenTransport(day, 'arrival', sortedActivities[0].id) || null)
-                              : null,
+                            transportAfter: null,
                           });
                         }
                       }
@@ -1202,7 +1210,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           transportAfter = getBetweenTransport(day, activity.id, 'departure') || null;
                         }
                         
-                        mergedItems.push({
+                        allItems.push({
                           id: activity.id,
                           type: 'activity',
                           startTime: activity.startTime,
@@ -1217,22 +1225,66 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         const departure = getDepartureTransport(day);
                         if (departure) {
                           const lastActivity = sortedActivities[sortedActivities.length - 1];
-                          const departureStartTime = lastActivity && lastActivity.endTime ? lastActivity.endTime : (departure.departureTime || '23:00');
+                          const departureStartTime = departure.departureTime || lastActivity?.endTime || '23:00';
                           const departureEndTime = departure.departureTime || '23:00';
                           
-                          mergedItems.push({
+                          allItems.push({
                             id: 'departure',
                             type: 'departure',
                             startTime: departureStartTime,
                             endTime: departureEndTime,
                             activity: null,
-                            transportBefore: sortedActivities.length > 0 
-                              ? (getBetweenTransport(day, sortedActivities[sortedActivities.length - 1].id, 'departure') || null)
-                              : null,
+                            transportBefore: null,
                             transportAfter: null,
                           });
                         }
                       }
+                      
+                      allItems.sort((a, b) => {
+                        return a.startTime.localeCompare(b.startTime);
+                      });
+                      
+                      allItems.forEach((item, index) => {
+                        let transportBefore = item.transportBefore;
+                        let transportAfter = item.transportAfter;
+                        
+                        if (item.type === 'arrival') {
+                          const nextItem = allItems[index + 1];
+                          if (nextItem && nextItem.type === 'activity') {
+                            transportAfter = getBetweenTransport(day, 'arrival', nextItem.activity!.id) || null;
+                          }
+                        } else if (item.type === 'departure') {
+                          const prevItem = allItems[index - 1];
+                          if (prevItem && prevItem.type === 'activity') {
+                            transportBefore = getBetweenTransport(day, prevItem.activity!.id, 'departure') || null;
+                          }
+                        } else if (item.type === 'activity') {
+                          const prevItem = allItems[index - 1];
+                          const nextItem = allItems[index + 1];
+                          
+                          if (prevItem) {
+                            if (prevItem.type === 'activity') {
+                              transportBefore = getBetweenTransport(day, prevItem.activity!.id, item.activity!.id) || null;
+                            } else if (prevItem.type === 'arrival') {
+                              transportBefore = getBetweenTransport(day, 'arrival', item.activity!.id) || null;
+                            }
+                          }
+                          
+                          if (nextItem) {
+                            if (nextItem.type === 'activity') {
+                              transportAfter = getBetweenTransport(day, item.activity!.id, nextItem.activity!.id) || null;
+                            } else if (nextItem.type === 'departure') {
+                              transportAfter = getBetweenTransport(day, item.activity!.id, 'departure') || null;
+                            }
+                          }
+                        }
+                        
+                        mergedItems.push({
+                          ...item,
+                          transportBefore,
+                          transportAfter,
+                        });
+                      });
                       
                       return (
                         <div key={day.id} className="flex-1 min-w-[140px] sm:min-w-[160px] max-w-[180px] sm:max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
