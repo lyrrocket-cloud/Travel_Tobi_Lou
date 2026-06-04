@@ -21,16 +21,26 @@
             "details": ""
           },
           {
-            "id": "transport-1780561830874",
+            "id": "transport-1780563832912",
             "type": "taxi",
             "from": "A",
-            "to": "A",
+            "to": "济州岛",
+            "departureTime": "13:00",
+            "arrivalTime": "",
+            "details": "",
+            "position": "arrival"
+          },
+          {
+            "id": "transport-1780564615743",
+            "type": "taxi",
+            "from": "",
+            "to": "",
             "departureTime": "",
             "arrivalTime": "",
             "details": "",
             "position": "between",
-            "beforeActivityId": "activity-1780561664739",
-            "afterActivityId": "activity-1780561824409"
+            "beforeActivityId": "arrival",
+            "afterActivityId": "activity-1780564613388"
           }
         ],
         "activities": [
@@ -43,10 +53,9 @@
           },
           {
             "type": "other",
-            "startTime": "09:00",
-            "content": "A",
-            "location": "A",
-            "id": "activity-1780561824409"
+            "startTime": "20:00",
+            "location": "",
+            "id": "activity-1780564613388"
           }
         ]
       },
@@ -143,12 +152,30 @@
       {
         "id": "day-4-1780282115925",
         "dayNumber": 4,
-        "activities": [],
-        "transport": []
+        "activities": [
+          {
+            "type": "other",
+            "startTime": "17:00",
+            "location": "B",
+            "id": "activity-1780563892861"
+          }
+        ],
+        "transport": [
+          {
+            "id": "transport-1780563874405",
+            "type": "taxi",
+            "from": "济州岛",
+            "to": "B",
+            "departureTime": "14:00",
+            "arrivalTime": "",
+            "details": "",
+            "position": "departure"
+          }
+        ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-04T08:32:42.296Z"
+    "updatedAt": "2026-06-04T09:16:57.942Z"
   },
   {
     "id": "trip-plan-1780193545980",
