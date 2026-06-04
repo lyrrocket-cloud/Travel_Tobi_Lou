@@ -1579,7 +1579,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   if (item.type === 'arrival') {
                     const transport = item.transport!;
                     return (
-                      <div key="arrival" className="space-y-2">
+                      <div key="arrival" className="space-y-4">
                         {renderTransportItem(transport, day)}
                         {/* 到达后的交通 */}
                         {item.afterActivityId && dayPlan && (
@@ -1602,7 +1602,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     );
                   } else if (item.type === 'departure') {
                     return (
-                      <div key="departure" className="space-y-2 mt-4">
+                      <div key="departure" className="space-y-4 mt-4">
                         {/* 离开前的交通 */}
                         {item.beforeActivityId && dayPlan && (
                           <div className="pl-8 space-y-2">
