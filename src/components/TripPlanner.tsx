@@ -1626,6 +1626,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   } else if (item.activity) {
                     const activity = item.activity;
                     const prevItem = items[index - 1];
+                    const nextItem = items[index + 1];
                     
                     return (
                       <div key={activity.id} className="space-y-4">
@@ -1649,6 +1650,23 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           </div>
                         )}
                         {renderActivityItem(activity, day)}
+                        {/* 活动后的交通（当下一个是到达或离开时） */}
+                        {nextItem && dayPlan && (nextItem.type === 'arrival' || nextItem.type === 'departure') && (
+                          <div className="pl-8 space-y-2">
+                            {getBetweenTransport(dayPlan, activity.id, nextItem.type) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, activity.id, nextItem.type)!, day)
+                            ) : (
+                              <Button
+                                onClick={() => addTransport(day, 'between', activity.id, nextItem.type)}
+                                variant="outline"
+                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                              >
+                                <Plus className="w-4 h-4 mr-2" />
+                                添加交通
+                              </Button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   }
