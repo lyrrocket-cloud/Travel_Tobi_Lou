@@ -1697,41 +1697,40 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   添加离开
                 </Button>
               )}
-            </div>
-
-            <div className="mt-6">
-                {showAddActivity ? (
-                  <Card className="border border-[#CEA472]/20 bg-black/40">
-                    <CardContent className="pt-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-[#CEA472] font-medium text-xs">添加新活动</h4>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => setShowAddActivity(false)}
-                          className="text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 hover:bg-transparent"
+              
+              {/* 添加活动按钮 */}
+              {showAddActivity ? (
+                <div className="mt-4">
+                  <div className="border border-[#CEA472]/20 bg-black/40 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-[#CEA472] font-medium text-xs">添加新活动</h4>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setShowAddActivity(false)}
+                        className="text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 hover:bg-transparent"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-[#FFFFFF]/60 text-xs">活动类型</Label>
+                        <select
+                          value={newActivity.type}
+                          onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
+                          className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                         >
-                          <X className="w-4 h-4" />
-                        </Button>
+                          <option value="accommodation">住宿</option>
+                          <option value="attraction">景点</option>
+                          <option value="shopping">购物</option>
+                          <option value="entertainment">娱乐</option>
+                          <option value="food">餐饮</option>
+                          <option value="other">其它</option>
+                        </select>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-[#FFFFFF]/60 text-xs">活动类型</Label>
-                          <select
-                            value={newActivity.type}
-                            onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
-                            className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
-                          >
-                            <option value="accommodation">住宿</option>
-                            <option value="attraction">景点</option>
-                            <option value="shopping">购物</option>
-                            <option value="entertainment">娱乐</option>
-                            <option value="food">餐饮</option>
-                            <option value="other">其它</option>
-                          </select>
-                        </div>
-                        <div>
-                          <Label className="text-[#FFFFFF]/60 text-xs">地点</Label>
+                      <div>
+                        <Label className="text-[#FFFFFF]/60 text-xs">地点</Label>
                           <Input
                             value={newActivity.location || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, location: e.target.value })}
@@ -1786,17 +1785,19 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <Save className="w-4 h-4" />
                         </Button>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ) : (
                   <Button
                     onClick={() => setShowAddActivity(true)}
-                    className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                    variant="outline"
+                    className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
                   >
+                    <Plus className="w-4 h-4 mr-2" />
                     添加活动
                   </Button>
                 )}
-              </div>
+            </div>
           </TabsContent>
         ))}
 </Tabs>
