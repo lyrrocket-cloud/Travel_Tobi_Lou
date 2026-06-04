@@ -1575,7 +1575,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   );
                 }
                 
-                return items.map((item, index) => {
+                return <div className="space-y-4">{items.map((item, index) => {
                   if (item.type === 'arrival') {
                     const transport = item.transport!;
                     return (
@@ -1602,7 +1602,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     );
                   } else if (item.type === 'departure') {
                     return (
-                      <div key="departure" className="space-y-4 mt-4">
+                      <div key="departure" className="space-y-4">
                         {/* 离开前的交通 */}
                         {item.beforeActivityId && dayPlan && (
                           <div className="pl-8 space-y-2">
@@ -1671,7 +1671,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     );
                   }
                   return null;
-                });
+                })}</div>;
               })()}
               
               {/* 添加到达按钮（第1天，如果没有到达） */}
