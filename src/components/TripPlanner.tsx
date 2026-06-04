@@ -1577,47 +1577,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   if (item.type === 'arrival') {
                     const transport = item.transport!;
                     return (
-                      <div key="arrival" className="space-y-4">
+                      <div key="arrival">
                         {renderTransportItem(transport, day)}
-                        {/* 到达后的交通 */}
-                        {item.afterActivityId && dayPlan && (
-                          <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, 'arrival', item.afterActivityId) ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, 'arrival', item.afterActivityId)!, day)
-                            ) : (
-                              <Button
-                                onClick={() => addTransport(day, 'between', 'arrival', item.afterActivityId)}
-                                variant="outline"
-                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                              >
-                                <Plus className="w-4 h-4 mr-2" />
-                                添加交通
-                              </Button>
-                            )}
-                          </div>
-                        )}
                       </div>
                     );
                   } else if (item.type === 'departure') {
                     return (
-                      <div key="departure" className="space-y-4">
-                        {/* 离开前的交通 */}
-                        {item.beforeActivityId && dayPlan && (
-                          <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, item.beforeActivityId, 'departure') ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, item.beforeActivityId, 'departure')!, day)
-                            ) : (
-                              <Button
-                                onClick={() => addTransport(day, 'between', item.beforeActivityId, 'departure')}
-                                variant="outline"
-                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                              >
-                                <Plus className="w-4 h-4 mr-2" />
-                                添加交通
-                              </Button>
-                            )}
-                          </div>
-                        )}
+                      <div key="departure">
                         {renderTransportItem(item.transport!, day)}
                       </div>
                     );
