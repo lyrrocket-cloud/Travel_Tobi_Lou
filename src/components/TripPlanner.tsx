@@ -1494,8 +1494,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     type: 'activity',
                     sortTime: activity.startTime,
                     activity: activity,
-                    beforeActivityId: index > 0 ? sortedActivities[index - 1].id : (day === 1 ? 'arrival' : undefined),
-                    afterActivityId: index < sortedActivities.length - 1 ? sortedActivities[index + 1].id : (day === currentTripPlan.travelDays ? 'departure' : undefined),
+                    beforeActivityId: index > 0 ? sortedActivities[index - 1].id : (day === 1 && dayPlan && getArrivalTransport(dayPlan) ? 'arrival' : undefined),
+                    afterActivityId: index < sortedActivities.length - 1 ? sortedActivities[index + 1].id : (day === currentTripPlan.travelDays && dayPlan && getDepartureTransport(dayPlan) ? 'departure' : undefined),
                   });
                 });
                 
@@ -1514,6 +1514,58 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 
                 // 按时间排序
                 items.sort((a, b) => a.sortTime.localeCompare(b.sortTime));
+                
+                // 排序后重新计算前后关系
+                items.forEach((item, index) => {
+                  if (item.type === 'activity') {
+                    // 找排序后的前一个 item
+                    for (let i = index - 1; i >= 0; i--) {
+                      const prevItem = items[i];
+                      if (prevItem.type === 'activity') {
+                        item.beforeActivityId = prevItem.activity!.id;
+                        break;
+                      } else if (prevItem.type === 'arrival') {
+                        item.beforeActivityId = 'arrival';
+                        break;
+                      }
+                    }
+                    // 找排序后的后一个 item
+                    for (let i = index + 1; i < items.length; i++) {
+                      const nextItem = items[i];
+                      if (nextItem.type === 'activity') {
+                        item.afterActivityId = nextItem.activity!.id;
+                        break;
+                      } else if (nextItem.type === 'departure') {
+                        item.afterActivityId = 'departure';
+                        break;
+                      }
+                    }
+                  } else if (item.type === 'arrival') {
+                    // 找排序后的后一个 item
+                    for (let i = index + 1; i < items.length; i++) {
+                      const nextItem = items[i];
+                      if (nextItem.type === 'activity') {
+                        item.afterActivityId = nextItem.activity!.id;
+                        break;
+                      } else if (nextItem.type === 'departure') {
+                        item.afterActivityId = 'departure';
+                        break;
+                      }
+                    }
+                  } else if (item.type === 'departure') {
+                    // 找排序后的前一个 item
+                    for (let i = index - 1; i >= 0; i--) {
+                      const prevItem = items[i];
+                      if (prevItem.type === 'activity') {
+                        item.beforeActivityId = prevItem.activity!.id;
+                        break;
+                      } else if (prevItem.type === 'arrival') {
+                        item.beforeActivityId = 'arrival';
+                        break;
+                      }
+                    }
+                  }
+                });
                 
                 if (items.length === 0) {
                   return (
@@ -1574,16 +1626,15 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   } else if (item.activity) {
                     const activity = item.activity;
                     const prevItem = items[index - 1];
-                    const isFirst = index === 0 || (prevItem && prevItem.type === 'arrival' && !items.some((i, idx) => idx > 0 && idx < index));
                     
                     return (
                       <div key={activity.id} className="space-y-4">
                         {/* 活动前的交通 */}
-                        {prevItem && (prevItem.type === 'activity' || (prevItem.type === 'arrival' && index > 0)) && (
+                        {prevItem && dayPlan && (
                           <div className="pl-8 space-y-2">
-                            {dayPlan && prevItem.type === 'activity' && prevItem.activity && getBetweenTransport(dayPlan, prevItem.activity.id, activity.id) ? (
+                            {prevItem.type === 'activity' && prevItem.activity && getBetweenTransport(dayPlan, prevItem.activity.id, activity.id) ? (
                               renderTransportItem(getBetweenTransport(dayPlan, prevItem.activity.id, activity.id)!, day)
-                            ) : dayPlan && prevItem.type === 'arrival' && getBetweenTransport(dayPlan, 'arrival', activity.id) ? (
+                            ) : prevItem.type === 'arrival' && getBetweenTransport(dayPlan, 'arrival', activity.id) ? (
                               renderTransportItem(getBetweenTransport(dayPlan, 'arrival', activity.id)!, day)
                             ) : (
                               <Button

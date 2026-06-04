@@ -21,24 +21,17 @@
             "details": ""
           },
           {
-            "id": "transport-1780559116054",
+            "id": "transport-1780559707029",
             "type": "taxi",
             "from": "",
             "to": "济州岛",
-            "departureTime": "13:00",
-            "arrivalTime": "15:00",
+            "departureTime": "",
+            "arrivalTime": "",
             "details": "",
             "position": "arrival"
           }
         ],
-        "activities": [
-          {
-            "type": "attraction",
-            "startTime": "09:00",
-            "location": "",
-            "id": "activity-1780558733026"
-          }
-        ]
+        "activities": []
       },
       {
         "id": "day-2-1780192503997",
@@ -134,22 +127,11 @@
         "id": "day-4-1780282115925",
         "dayNumber": 4,
         "activities": [],
-        "transport": [
-          {
-            "id": "transport-1780559487672",
-            "type": "taxi",
-            "from": "济州岛",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "departure"
-          }
-        ]
+        "transport": []
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-04T07:51:27.758Z"
+    "updatedAt": "2026-06-04T07:55:07.112Z"
   },
   {
     "id": "trip-plan-1780193545980",
