@@ -991,14 +991,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                 </div>
                               </div>
                               {/* 右侧金额 */}
-                              <div className="sm:col-span-4 sm:text-right">
+                              <div className="sm:col-span-4 text-left sm:text-right">
                                 {/* 总金额 */}
-                                <div className="flex items-center justify-end gap-1">
+                                <div className="flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
                                   <span className="text-[#CEA472] font-semibold text-xs">¥{expense.amount.toLocaleString()}</span>
                                 </div>
                                 {/* 人均金额 */}
-                                <div className="mt-1 flex items-center justify-end gap-1">
+                                <div className="mt-1 flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
                                   <span className="text-[#CEA472] font-semibold text-xs">¥{perPersonAmount.toFixed(2)}</span>
                                 </div>
