@@ -1658,16 +1658,18 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       </div>
                     );
                   } else if (item.type === 'departure') {
+                    const prevItem = items[index - 1];
                     return (
                       <div key="departure" className="space-y-4">
-                        {/* 离开前的交通（当有 beforeActivityId 时） */}
-                        {item.beforeActivityId && item.beforeActivityId !== 'arrival' && dayPlan && (
+                        {renderTransportItem(item.transport!, day)}
+                        {/* 离开后的交通（当有活动在离开时间之后时） */}
+                        {item.afterActivityId && dayPlan && (
                           <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, item.beforeActivityId, 'departure') ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, item.beforeActivityId, 'departure')!, day)
+                            {getBetweenTransport(dayPlan, 'departure', item.afterActivityId) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, 'departure', item.afterActivityId)!, day)
                             ) : (
                               <Button
-                                onClick={() => addTransport(day, 'between', item.beforeActivityId, 'departure')}
+                                onClick={() => addTransport(day, 'between', 'departure', item.afterActivityId)}
                                 variant="outline"
                                 className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
@@ -1677,7 +1679,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             )}
                           </div>
                         )}
-                        {renderTransportItem(item.transport!, day)}
                       </div>
                     );
                   } else if (item.activity) {
