@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory } from '@/types';
+import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory, CurrencyCode, ExchangeRateRecord } from '@/types';
 import { TripPlan } from '@/types';
 
 const expenseCategories: Record<string, string> = {
@@ -42,6 +42,36 @@ const expenseCategoryIcons: Record<string, React.ReactNode> = {
   other: <Clock className="w-4 h-4" />,
 };
 
+const currencyNames: Record<CurrencyCode, string> = {
+  CNY: '人民币',
+  USD: '美元',
+  EUR: '欧元',
+  GBP: '英镑',
+  JPY: '日元',
+  KRW: '韩元',
+  HKD: '港币',
+  TWD: '新台币',
+  THB: '泰铢',
+  SGD: '新加坡元',
+  MYR: '马来西亚林吉特',
+  VND: '越南盾',
+};
+
+const currencySymbols: Record<CurrencyCode, string> = {
+  CNY: '¥',
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  JPY: '¥',
+  KRW: '₩',
+  HKD: 'HK$',
+  TWD: 'NT$',
+  THB: '฿',
+  SGD: 'S$',
+  MYR: 'RM',
+  VND: '₫',
+};
+
 interface TripAccountingProps {
   confirmedWishes: Wish[];
   isAdminMode?: boolean;
@@ -69,12 +99,31 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
+  const [exchangeRates, setExchangeRates] = useState<Record<CurrencyCode, number>>({
+    CNY: 1,
+    USD: 7.2,
+    EUR: 7.8,
+    GBP: 9.0,
+    JPY: 0.048,
+    KRW: 0.0052,
+    HKD: 0.92,
+    TWD: 0.22,
+    THB: 0.20,
+    SGD: 5.3,
+    MYR: 1.55,
+    VND: 0.00029,
+  });
+  const [activeCurrencies, setActiveCurrencies] = useState<CurrencyCode[]>(['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'KRW']);
+  const [editingActiveCurrencies, setEditingActiveCurrencies] = useState<CurrencyCode[]>([]);
+  const [newCurrencyCode, setNewCurrencyCode] = useState<CurrencyCode | ''>('');
+  const [newCurrencyRate, setNewCurrencyRate] = useState<string>('');
   
   const [newExpense, setNewExpense] = useState<{
     date: string;
     time: string;
     category: string;
     amount: string;
+    currency: CurrencyCode;
     description: string;
     location: string;
     payers: string[];
@@ -84,6 +133,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     time: '12:00',
     category: 'other',
     amount: '',
+    currency: 'CNY',
     description: '',
     location: '',
     payers: [],
@@ -101,6 +151,37 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   } | null>(null);
 
   const [analysisConsumerFilter, setAnalysisConsumerFilter] = useState<string | null>(null);
+  const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
+  const [editingExchangeRates, setEditingExchangeRates] = useState<Record<CurrencyCode, number>>(exchangeRates);
+
+  const saveExchangeRates = async () => {
+    try {
+      const response = await fetch('/api/exchange-rates', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rates: editingExchangeRates,
+          activeCurrencies: editingActiveCurrencies,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.rates) {
+          const ratesMap: Record<CurrencyCode, number> = {} as Record<CurrencyCode, number>;
+          data.rates.forEach((record: ExchangeRateRecord) => {
+            ratesMap[record.code] = record.rate;
+          });
+          setExchangeRates(ratesMap);
+        }
+        if (data.activeCurrencies) {
+          setActiveCurrencies(data.activeCurrencies);
+        }
+        setShowExchangeRateEditor(false);
+      }
+    } catch (error) {
+      console.error('[Trip Accounting] Error saving exchange rates:', error);
+    }
+  };
 
   const currentExpenseRecord = selectedWishId ? 
     tripExpenses.find(record => String(record.wishId) === String(selectedWishId)) : null;
@@ -131,6 +212,29 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     } catch (error) {
       console.error('[Trip Accounting] Error fetching trip plans:', error);
     }
+  };
+
+  const fetchExchangeRates = async () => {
+    try {
+      const response = await fetch('/api/exchange-rates');
+      const data = await response.json();
+      if (data.rates) {
+        const ratesMap: Record<CurrencyCode, number> = {} as Record<CurrencyCode, number>;
+        data.rates.forEach((record: ExchangeRateRecord) => {
+          ratesMap[record.code] = record.rate;
+        });
+        setExchangeRates(ratesMap);
+      }
+      if (data.activeCurrencies) {
+        setActiveCurrencies(data.activeCurrencies);
+      }
+    } catch (error) {
+      console.error('[Trip Accounting] Error fetching exchange rates:', error);
+    }
+  };
+
+  const convertToCNY = (amount: number, currency?: CurrencyCode): number => {
+    return amount * (exchangeRates[currency || 'CNY'] || 1);
   };
 
   useEffect(() => {
@@ -168,7 +272,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     console.debug('[Trip Accounting] Initializing...');
     Promise.all([
       fetchExpenses(),
-      fetchTripPlans()
+      fetchTripPlans(),
+      fetchExchangeRates(),
     ]).then(() => {
       console.debug('[Trip Accounting] Data loaded');
     });
@@ -355,6 +460,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       time: newExpense.time,
       category: newExpense.category as ExpenseCategory,
       amount: parseFloat(newExpense.amount),
+      currency: newExpense.currency,
       description: newExpense.description,
       location: newExpense.location,
       payer: newExpense.payer,
@@ -381,6 +487,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           time: '12:00',
           category: 'other',
           amount: '',
+          currency: 'CNY',
           description: '',
           location: '',
           payers: [],
@@ -465,13 +572,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     };
 
     currentExpenseRecord.expenses.forEach(expense => {
-      stats.total += expense.amount;
-      stats.categories[expense.category] = (stats.categories[expense.category] || 0) + expense.amount;
+      const convertedAmount = convertToCNY(expense.amount, expense.currency);
+      stats.total += convertedAmount;
+      stats.categories[expense.category] = (stats.categories[expense.category] || 0) + convertedAmount;
       if (expense.payer) {
-        stats.byPayer[expense.payer] = (stats.byPayer[expense.payer] || 0) + expense.amount;
+        stats.byPayer[expense.payer] = (stats.byPayer[expense.payer] || 0) + convertedAmount;
       }
       if (expense.payers && expense.payers.length > 0) {
-        const perPersonAmount = expense.amount / expense.payers.length;
+        const perPersonAmount = convertedAmount / expense.payers.length;
         expense.payers.forEach(payer => {
           stats.byConsumer[payer] = (stats.byConsumer[payer] || 0) + perPersonAmount;
         });
@@ -507,7 +615,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     // 处理按类别、总支出、按消费人的统计（使用分摊金额）
     currentExpenseRecord.expenses.forEach(expense => {
       if (expense.payers && expense.payers.includes(analysisConsumerFilter)) {
-        const perPersonAmount = expense.amount / expense.payers.length;
+        const convertedAmount = convertToCNY(expense.amount, expense.currency);
+        const perPersonAmount = convertedAmount / expense.payers.length;
         filtered.total += perPersonAmount;
         filtered.categories[expense.category] = (filtered.categories[expense.category] || 0) + perPersonAmount;
       }
@@ -516,7 +625,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     // 处理按支付人的统计（只包含筛选出行人作为支付人的完整金额）
     currentExpenseRecord.expenses.forEach(expense => {
       if (expense.payer === analysisConsumerFilter) {
-        filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + expense.amount;
+        filtered.byPayer[expense.payer] = (filtered.byPayer[expense.payer] || 0) + convertToCNY(expense.amount, expense.currency);
       }
     });
 
@@ -836,6 +945,25 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsList>
 
         <TabsContent value="entry" className="mt-4">
+          {isAdminMode && (
+            <div className="mb-4 flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEditingExchangeRates(exchangeRates);
+                  setEditingActiveCurrencies(activeCurrencies);
+                  setNewCurrencyCode('');
+                  setNewCurrencyRate('');
+                  setShowExchangeRateEditor(true);
+                }}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 text-xs"
+              >
+                <Coins className="w-3.5 h-3.5 mr-1.5" />
+                汇率管理
+              </Button>
+            </div>
+          )}
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
@@ -920,15 +1048,32 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         </div>
                         <div>
                           <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费金额</Label>
-                          <Input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={newExpense.amount}
-                            onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
-                            placeholder="0.00"
-                          />
+                          <div className="flex gap-2">
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={newExpense.amount}
+                              onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
+                              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs flex-1"
+                              placeholder="0.00"
+                            />
+                            <Select
+                              value={newExpense.currency}
+                              onValueChange={(value) => setNewExpense({ ...newExpense, currency: value as CurrencyCode })}
+                            >
+                              <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-[120px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                                {activeCurrencies.map((code) => (
+                                  <SelectItem key={code} value={code}>
+                                    {currencySymbols[code]} {code}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
                       </div>
 
@@ -1040,12 +1185,16 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                 {/* 总金额 */}
                                 <div className="flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
-                                  <span className="text-[#CEA472] font-semibold text-xs">¥{expense.amount.toFixed(2)}</span>
+                                  <span className="text-[#CEA472] font-semibold text-xs">
+                                    {currencySymbols[expense.currency || 'CNY']}{expense.amount.toFixed(2)}{expense.currency && expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount, expense.currency).toFixed(2)})` : ''}
+                                  </span>
                                 </div>
                                 {/* 人均金额 */}
                                 <div className="mt-1 flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
-                                  <span className="text-[#CEA472] font-semibold text-xs">¥{perPersonAmount.toFixed(2)}</span>
+                                  <span className="text-[#CEA472] font-semibold text-xs">
+                                    {currencySymbols[expense.currency || 'CNY']}{(expense.amount / (expense.payers?.length || 1)).toFixed(2)}{expense.currency && expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount / (expense.payers?.length || 1), expense.currency).toFixed(2)})` : ''}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -1468,6 +1617,170 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showExchangeRateEditor && isAdminMode} onOpenChange={(open) => {
+        if (!open) {
+          setShowExchangeRateEditor(false);
+        }
+      }}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">汇率管理</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              管理活跃货币和汇率设置
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4 max-h-80 overflow-y-auto">
+            {/* 活跃货币列表 */}
+            <div>
+              <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
+              <div className="space-y-2">
+                {editingActiveCurrencies.map((code) => (
+                  <div key={code} className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#CEA472] font-medium text-xs w-20">{currencySymbols[code]}</span>
+                      <span className="text-[#FFFFFF] text-xs">{currencyNames[code]}</span>
+                      <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.0001"
+                        value={editingExchangeRates[code]}
+                        onChange={(e) => setEditingExchangeRates({
+                          ...editingExchangeRates,
+                          [code]: parseFloat(e.target.value) || 0
+                        })}
+                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
+                      />
+                      <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                      {code !== 'CNY' && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setEditingActiveCurrencies(prev => prev.filter(c => c !== code))}
+                          className="text-red-500 hover:text-red-500 hover:bg-transparent h-8 w-8"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 添加新货币 */}
+            <div className="border-t border-[#CEA472]/20 pt-4">
+              <div className="text-xs text-[#CEA472] mb-2 font-medium">添加货币</div>
+              <div className="flex items-center gap-2">
+                <Select
+                  value={newCurrencyCode}
+                  onValueChange={(value) => {
+                    const code = value as CurrencyCode;
+                    setNewCurrencyCode(code);
+                    if (exchangeRates[code] !== undefined) {
+                      setNewCurrencyRate(String(exchangeRates[code]));
+                    }
+                  }}
+                >
+                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-32">
+                    <SelectValue placeholder="选择货币" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                    {(Object.keys(currencyNames) as CurrencyCode[])
+                      .filter(code => !editingActiveCurrencies.includes(code))
+                      .map((code) => (
+                        <SelectItem key={code} value={code}>
+                          {currencySymbols[code]} {code}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.0001"
+                  value={newCurrencyRate}
+                  onChange={(e) => setNewCurrencyRate(e.target.value)}
+                  placeholder="汇率"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-28"
+                />
+                <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    if (newCurrencyCode && newCurrencyRate) {
+                      const rate = parseFloat(newCurrencyRate);
+                      if (rate > 0) {
+                        setEditingExchangeRates({
+                          ...editingExchangeRates,
+                          [newCurrencyCode]: rate,
+                        });
+                        setEditingActiveCurrencies(prev => [...prev, newCurrencyCode as CurrencyCode]);
+                        setNewCurrencyCode('');
+                        setNewCurrencyRate('');
+                      }
+                    }
+                  }}
+                  disabled={!newCurrencyCode || !newCurrencyRate}
+                  className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 h-8"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* 非活跃货币汇率编辑 */}
+            <div className="border-t border-[#CEA472]/20 pt-4">
+              <div className="text-xs text-[#FFFFFF]/40 mb-2">其他货币汇率（仅供参考）</div>
+              <div className="space-y-2">
+                {(Object.keys(currencyNames) as CurrencyCode[])
+                  .filter(code => !editingActiveCurrencies.includes(code))
+                  .map((code) => (
+                    <div key={code} className="flex items-center justify-between gap-4 p-2 bg-black/20 rounded-lg opacity-60">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FFFFFF]/60 font-medium text-xs w-20">{currencySymbols[code]}</span>
+                        <span className="text-[#FFFFFF]/60 text-xs">{currencyNames[code]}</span>
+                        <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.0001"
+                          value={editingExchangeRates[code]}
+                          onChange={(e) => setEditingExchangeRates({
+                            ...editingExchangeRates,
+                            [code]: parseFloat(e.target.value) || 0
+                          })}
+                          className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
+                        />
+                        <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowExchangeRateEditor(false)}
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={saveExchangeRates}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+            >
+              保存
             </Button>
           </DialogFooter>
         </DialogContent>
