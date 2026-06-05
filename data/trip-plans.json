@@ -180,16 +180,6 @@
         ],
         "transport": [
           {
-            "id": "transport-1780563874405",
-            "type": "taxi",
-            "from": "济州岛",
-            "to": "B",
-            "departureTime": "14:00",
-            "arrivalTime": "15:00",
-            "details": "",
-            "position": "departure"
-          },
-          {
             "id": "transport-1780566987658",
             "type": "taxi",
             "from": "B",
@@ -200,12 +190,22 @@
             "position": "between",
             "beforeActivityId": "departure",
             "afterActivityId": "activity-1780563892861"
+          },
+          {
+            "id": "transport-1780638663939",
+            "type": "taxi",
+            "from": "济州岛",
+            "to": "",
+            "departureTime": "15:00",
+            "arrivalTime": "",
+            "details": "",
+            "position": "departure"
           }
         ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-05T01:45:46.443Z"
+    "updatedAt": "2026-06-05T05:51:16.942Z"
   },
   {
     "id": "trip-plan-1780193545980",
