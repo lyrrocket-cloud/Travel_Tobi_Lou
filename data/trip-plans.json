@@ -190,18 +190,6 @@
             "position": "departure"
           },
           {
-            "id": "transport-1780642673580",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "16:30",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "departure",
-            "afterActivityId": "activity-1780642626306"
-          },
-          {
             "id": "transport-1780643225644",
             "type": "taxi",
             "from": "E",
@@ -212,12 +200,24 @@
             "position": "between",
             "beforeActivityId": "activity-1780642634797",
             "afterActivityId": "departure"
+          },
+          {
+            "id": "transport-1780643281862",
+            "type": "taxi",
+            "from": "F",
+            "to": "G",
+            "departureTime": "16:30",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "departure",
+            "afterActivityId": "activity-1780642626306"
           }
         ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-05T07:07:10.408Z"
+    "updatedAt": "2026-06-05T07:09:05.319Z"
   },
   {
     "id": "trip-plan-1780193545980",

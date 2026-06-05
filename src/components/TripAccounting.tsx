@@ -23,17 +23,13 @@ const expenseCategories: Record<string, string> = {
 };
 
 const transportTypeMap: Record<string, string> = {
-  plane: '飞机',
-  train: '高铁',
-  highSpeedRail: '高铁',
-  bulletTrain: '动车',
+  flight: '飞机',
+  train: '火车',
   bus: '大巴',
   taxi: '出租车',
-  subway: '地铁',
   walk: '步行',
-  driving: '自驾',
-  ship: '轮船',
-  ferry: '轮渡'
+  car: '自驾',
+  other: '其他'
 };
 
 const expenseCategoryIcons: Record<string, React.ReactNode> = {
