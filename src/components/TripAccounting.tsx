@@ -628,9 +628,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
     
     return locations.sort((a, b) => {
-      const dateCompare = (a.date || '').localeCompare(b.date || '');
-      if (dateCompare !== 0) return dateCompare;
-      return (a.startTime || '').localeCompare(b.startTime || '');
+      const aDate = a.date ? new Date(a.date + 'T' + (a.startTime || '00:00')) : new Date(0);
+      const bDate = b.date ? new Date(b.date + 'T' + (b.startTime || '00:00')) : new Date(0);
+      return aDate.getTime() - bDate.getTime();
     });
   };
 
