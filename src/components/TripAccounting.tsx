@@ -577,7 +577,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const getTransportLocations = () => {
     if (!currentTripPlan) return [];
-    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string }> = [];
+    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string; transportType?: string }> = [];
     
     currentTripPlan.days.forEach(day => {
       day.transport.forEach(transport => {
@@ -597,6 +597,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             endTime: transport.arrivalTime,
             type: 'transportation',
             date: transportDate,
+            transportType: transport.type,
           });
         }
       });
@@ -621,8 +622,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     setSelectedActivity(activity);
     
     let description = '';
+    const transportActivity = activity as { transportType?: string };
     if (activity.type === 'transportation') {
-      description = activity.location;
+      description = transportActivity.transportType || activity.location;
     } else {
       description = activity.content || `在 ${activity.location} 的活动`;
     }
@@ -643,8 +645,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     setEditingSelectedActivity(activity);
     
     let description = '';
+    const transportActivity = activity as { transportType?: string };
     if (activity.type === 'transportation') {
-      description = activity.location;
+      description = transportActivity.transportType || activity.location;
     } else {
       description = activity.content || `在 ${activity.location} 的活动`;
     }

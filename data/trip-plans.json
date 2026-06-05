@@ -23,12 +23,36 @@
           {
             "id": "transport-1780566194692",
             "type": "taxi",
-            "from": "A",
+            "from": "B",
             "to": "济州岛",
             "departureTime": "16:00",
             "arrivalTime": "18:00",
             "details": "",
             "position": "arrival"
+          },
+          {
+            "id": "transport-1780642966871",
+            "type": "taxi",
+            "from": "A",
+            "to": "B",
+            "departureTime": "19:00",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780639292649",
+            "afterActivityId": "arrival"
+          },
+          {
+            "id": "transport-1780642980144",
+            "type": "taxi",
+            "from": "济州岛",
+            "to": "C",
+            "departureTime": "17:30",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "arrival",
+            "afterActivityId": "activity-1780642978344"
           }
         ],
         "activities": [
@@ -36,8 +60,14 @@
             "type": "other",
             "startTime": "09:00",
             "endTime": "19:00",
-            "location": "",
+            "location": "A",
             "id": "activity-1780639292649"
+          },
+          {
+            "type": "other",
+            "startTime": "18:00",
+            "location": "C",
+            "id": "activity-1780642978344"
           }
         ]
       },
@@ -137,16 +167,15 @@
         "activities": [
           {
             "type": "other",
-            "startTime": "09:00",
-            "endTime": "13:00",
+            "startTime": "17:00",
             "location": "",
-            "id": "activity-1780639307168"
+            "id": "activity-1780642626306"
           },
           {
             "type": "other",
-            "startTime": "17:00",
+            "startTime": "13:00",
             "location": "",
-            "id": "activity-1780639318284"
+            "id": "activity-1780642634797"
           }
         ],
         "transport": [
@@ -159,12 +188,36 @@
             "arrivalTime": "",
             "details": "",
             "position": "departure"
+          },
+          {
+            "id": "transport-1780642668707",
+            "type": "taxi",
+            "from": "",
+            "to": "济州岛",
+            "departureTime": "13:01",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780642634797",
+            "afterActivityId": "departure"
+          },
+          {
+            "id": "transport-1780642673580",
+            "type": "taxi",
+            "from": "",
+            "to": "",
+            "departureTime": "16:30",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "departure",
+            "afterActivityId": "activity-1780642626306"
           }
         ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-05T06:02:37.516Z"
+    "updatedAt": "2026-06-05T07:03:02.104Z"
   },
   {
     "id": "trip-plan-1780193545980",
