@@ -6,86 +6,25 @@
     "startDate": "2026-06-17",
     "expenses": [
       {
-        "id": "expense-1780384429506",
+        "id": "expense-1780651250603",
         "wishId": "in-memory-1",
         "date": "2026-06-17",
         "time": "09:00",
-        "category": "food",
-        "amount": 100,
-        "description": "lll",
+        "category": "other",
+        "amount": 10000,
+        "currency": "KRW",
+        "description": "在 A 的活动",
+        "location": "A",
         "payer": "秦瑜贲",
         "payers": [
-          "秦瑜贲"
-        ],
-        "createdAt": "2026-06-02T07:13:49.506Z",
-        "updatedAt": "2026-06-02T07:13:49.506Z"
-      },
-      {
-        "id": "expense-1780385543577",
-        "wishId": "in-memory-1",
-        "date": "2026-06-17",
-        "time": "09:00",
-        "category": "food",
-        "amount": 50,
-        "description": "LYT",
-        "payer": "秦瑜贲",
-        "payers": [
-          "秦瑜贲"
-        ],
-        "createdAt": "2026-06-02T07:32:23.577Z",
-        "updatedAt": "2026-06-02T07:32:23.577Z"
-      },
-      {
-        "id": "expense-1780385754767",
-        "wishId": "in-memory-1",
-        "date": "2026-06-17",
-        "time": "09:00",
-        "category": "food",
-        "amount": 50,
-        "description": "1",
-        "payer": "秦瑜贲",
-        "payers": [
-          "秦瑜贲"
-        ],
-        "createdAt": "2026-06-02T07:35:54.767Z",
-        "updatedAt": "2026-06-02T07:35:54.767Z"
-      },
-      {
-        "id": "expense-1780385879795",
-        "wishId": "in-memory-1",
-        "date": "2026-06-17",
-        "time": "09:00",
-        "category": "food",
-        "amount": 67,
-        "description": "23",
-        "location": "abc",
-        "payer": "秦瑜贲",
-        "payers": [
-          "秦瑜贲"
-        ],
-        "createdAt": "2026-06-02T07:37:59.795Z",
-        "updatedAt": "2026-06-02T07:37:59.795Z"
-      },
-      {
-        "id": "expense-1780455358066",
-        "wishId": "in-memory-1",
-        "date": "2026-06-17",
-        "time": "15:35",
-        "category": "transportation",
-        "amount": 5000,
-        "description": "",
-        "location": "上海浦东-济州岛",
-        "payer": "秦瑜贲",
-        "payers": [
-          "秦瑜贲",
           "楼宜人"
         ],
-        "createdAt": "2026-06-03T02:55:58.066Z",
-        "updatedAt": "2026-06-03T02:55:58.066Z"
+        "createdAt": "2026-06-05T09:20:50.603Z",
+        "updatedAt": "2026-06-05T09:20:50.603Z"
       }
     ],
     "createdAt": "2026-06-01T08:52:15.151Z",
-    "updatedAt": "2026-06-03T02:55:58.224Z"
+    "updatedAt": "2026-06-05T09:21:29.822Z"
   },
   {
     "id": "trip-expense-1780408697379",

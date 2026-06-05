@@ -1186,14 +1186,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                 <div className="flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
                                   <span className="text-[#CEA472] font-semibold text-xs">
-                                    {currencySymbols[expense.currency]}{expense.amount.toFixed(2)} ({expense.currency !== 'CNY' ? `¥${convertToCNY(expense.amount, expense.currency).toFixed(2)})` : ''}
+                                    {currencySymbols[expense.currency]}{expense.amount.toFixed(2)}{expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount, expense.currency).toFixed(2)})` : ''}
                                   </span>
                                 </div>
                                 {/* 人均金额 */}
                                 <div className="mt-1 flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
                                   <span className="text-[#CEA472] font-semibold text-xs">
-                                    {currencySymbols[expense.currency]}{(expense.amount / (expense.payers?.length || 1)).toFixed(2)} ({expense.currency !== 'CNY' ? `¥${convertToCNY(expense.amount / (expense.payers?.length || 1), expense.currency).toFixed(2)})` : ''}
+                                    {currencySymbols[expense.currency]}{(expense.amount / (expense.payers?.length || 1)).toFixed(2)}{expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount / (expense.payers?.length || 1), expense.currency).toFixed(2)})` : ''}
                                   </span>
                                 </div>
                               </div>
