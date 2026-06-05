@@ -1110,7 +1110,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           {expenseCategoryIcons[category]}
                           <span className="text-[#FFFFFF] text-xs">{expenseCategories[category] || category}</span>
                         </div>
-                        <div className="text-[#CEA472] font-medium text-xs">¥{amount.toLocaleString()}</div>
+                        <div className="text-[#CEA472] font-medium text-xs">¥{amount.toFixed(2)}</div>
                       </div>
                     ))}
                   </div>
@@ -1123,7 +1123,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
                         <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
                           <span className="text-[#FFFFFF] text-xs">{payer}</span>
-                          <span className="text-[#CEA472] font-medium text-xs">¥{amount.toLocaleString()}</span>
+                          <span className="text-[#CEA472] font-medium text-xs">¥{amount.toFixed(2)}</span>
                         </div>
                       ))}
                     </div>
