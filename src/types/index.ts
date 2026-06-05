@@ -12,6 +12,25 @@ export interface Wish {
   followers: string[];
 }
 
+// 货币类型
+export type CurrencyCode = 'CNY' | 'USD' | 'EUR' | 'GBP' | 'JPY' | 'KRW' | 'HKD' | 'TWD' | 'THB' | 'SGD' | 'MYR' | 'VND';
+
+// 货币信息接口
+export interface Currency {
+  code: CurrencyCode;
+  name: string;
+  symbol: string;
+  exchangeRate: number; // 相对于人民币的汇率
+  updatedAt: string;
+}
+
+// 汇率记录接口
+export interface ExchangeRateRecord {
+  code: CurrencyCode;
+  rate: number; // 1 外币 = ? 人民币
+  updatedAt: string;
+}
+
 // 支出类别
 export type ExpenseCategory = 
   | 'transportation'  // 交通
@@ -30,6 +49,7 @@ export interface ExpenseItem {
   time: string;
   category: ExpenseCategory;
   amount: number;
+  currency: CurrencyCode; // 货币类型
   description: string;
   location?: string;
   payer?: string;
