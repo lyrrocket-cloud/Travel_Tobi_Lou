@@ -1620,6 +1620,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         break;
                       }
                     }
+                    // 找排序后的后一个 item（活动在离开之后时）
+                    for (let i = index + 1; i < items.length; i++) {
+                      const nextItem = items[i];
+                      if (nextItem.type === 'activity') {
+                        item.afterActivityId = nextItem.activity!.id;
+                        break;
+                      }
+                    }
                   }
                 });
                 
@@ -1706,14 +1714,27 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           </div>
                         )}
                         {renderActivityItem(activity, day)}
-                        {/* 活动后的交通（仅当下一个是活动时） */}
-                        {nextItem && nextItem.type === 'activity' && dayPlan && (
+                        {/* 活动后的交通（当下一个是活动或离开时） */}
+                        {nextItem && (nextItem.type === 'activity' || nextItem.type === 'departure') && dayPlan && (
                           <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, activity.id, nextItem.activity!.id) ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, activity.id, nextItem.activity!.id)!, day)
+                            {(nextItem.type === 'activity' 
+                              ? getBetweenTransport(dayPlan, activity.id, nextItem.activity!.id) 
+                              : getBetweenTransport(dayPlan, activity.id, 'departure')
+                            ) ? (
+                              renderTransportItem(
+                                nextItem.type === 'activity' 
+                                  ? getBetweenTransport(dayPlan, activity.id, nextItem.activity!.id)! 
+                                  : getBetweenTransport(dayPlan, activity.id, 'departure')!,
+                                day
+                              )
                             ) : (
                               <Button
-                                onClick={() => addTransport(day, 'between', activity.id, nextItem.activity!.id)}
+                                onClick={() => addTransport(
+                                  day, 
+                                  'between', 
+                                  activity.id, 
+                                  nextItem.type === 'activity' ? nextItem.activity!.id : 'departure'
+                                )}
                                 variant="outline"
                                 className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
