@@ -22,6 +22,20 @@ const expenseCategories: Record<string, string> = {
   other: '其它'
 };
 
+const transportTypeMap: Record<string, string> = {
+  plane: '飞机',
+  train: '高铁',
+  highSpeedRail: '高铁',
+  bulletTrain: '动车',
+  bus: '大巴',
+  taxi: '出租车',
+  subway: '地铁',
+  walk: '步行',
+  driving: '自驾',
+  ship: '轮船',
+  ferry: '轮渡'
+};
+
 const expenseCategoryIcons: Record<string, React.ReactNode> = {
   accommodation: <BedDouble className="w-4 h-4" />,
   attraction: <MapPin className="w-4 h-4" />,
@@ -624,7 +638,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     let description = '';
     const transportActivity = activity as { transportType?: string };
     if (activity.type === 'transportation') {
-      description = transportActivity.transportType || activity.location;
+      const transportType = transportActivity.transportType;
+      description = transportTypeMap[transportType || ''] || transportType || activity.location;
     } else {
       description = activity.content || `在 ${activity.location} 的活动`;
     }
@@ -647,7 +662,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     let description = '';
     const transportActivity = activity as { transportType?: string };
     if (activity.type === 'transportation') {
-      description = transportActivity.transportType || activity.location;
+      const transportType = transportActivity.transportType;
+      description = transportTypeMap[transportType || ''] || transportType || activity.location;
     } else {
       description = activity.content || `在 ${activity.location} 的活动`;
     }
