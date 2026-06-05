@@ -22,6 +22,16 @@ const expenseCategories: Record<string, string> = {
   other: '其它'
 };
 
+const transportTypeMap: Record<string, string> = {
+  flight: '飞机',
+  train: '火车',
+  bus: '大巴',
+  taxi: '出租车',
+  walk: '步行',
+  car: '自驾',
+  other: '其他'
+};
+
 const expenseCategoryIcons: Record<string, React.ReactNode> = {
   accommodation: <BedDouble className="w-4 h-4" />,
   attraction: <MapPin className="w-4 h-4" />,
@@ -577,7 +587,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const getTransportLocations = () => {
     if (!currentTripPlan) return [];
-    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string }> = [];
+    const locations: Array<{ location: string; dayNumber: number; activityId: string; startTime: string; endTime?: string; type: string; date: string; transportType?: string }> = [];
     
     currentTripPlan.days.forEach(day => {
       day.transport.forEach(transport => {
@@ -597,6 +607,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             endTime: transport.arrivalTime,
             type: 'transportation',
             date: transportDate,
+            transportType: transport.type,
           });
         }
       });
@@ -606,23 +617,31 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   const getFilteredLocations = () => {
+    let locations;
+    
     if (!newExpense.category) {
-      return getActivityLocations();
+      locations = [...getActivityLocations(), ...getTransportLocations()];
+    } else if (newExpense.category === 'transportation') {
+      locations = getTransportLocations();
+    } else {
+      locations = getActivityLocations().filter(loc => loc.type === newExpense.category);
     }
     
-    if (newExpense.category === 'transportation') {
-      return getTransportLocations();
-    }
-    
-    return getActivityLocations().filter(loc => loc.type === newExpense.category);
+    return locations.sort((a, b) => {
+      const aDate = a.date ? new Date(a.date + 'T' + (a.startTime || '00:00')) : new Date(0);
+      const bDate = b.date ? new Date(b.date + 'T' + (b.startTime || '00:00')) : new Date(0);
+      return aDate.getTime() - bDate.getTime();
+    });
   };
 
   const handleActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {
     setSelectedActivity(activity);
     
     let description = '';
+    const transportActivity = activity as { transportType?: string };
     if (activity.type === 'transportation') {
-      description = activity.location;
+      const transportType = transportActivity.transportType;
+      description = transportTypeMap[transportType || ''] || transportType || activity.location;
     } else {
       description = activity.content || `在 ${activity.location} 的活动`;
     }
@@ -643,8 +662,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     setEditingSelectedActivity(activity);
     
     let description = '';
+    const transportActivity = activity as { transportType?: string };
     if (activity.type === 'transportation') {
-      description = activity.location;
+      const transportType = transportActivity.transportType;
+      description = transportTypeMap[transportType || ''] || transportType || activity.location;
     } else {
       description = activity.content || `在 ${activity.location} 的活动`;
     }

@@ -23,7 +23,7 @@
           {
             "id": "transport-1780566194692",
             "type": "taxi",
-            "from": "A",
+            "from": "B",
             "to": "济州岛",
             "departureTime": "16:00",
             "arrivalTime": "18:00",
@@ -31,49 +31,43 @@
             "position": "arrival"
           },
           {
-            "id": "transport-1780566966059",
-            "type": "taxi",
+            "id": "transport-1780642966871",
+            "type": "bus",
             "from": "A",
-            "to": "BB",
-            "departureTime": "19:30",
+            "to": "B",
+            "departureTime": "19:00",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780639292649",
+            "afterActivityId": "arrival"
+          },
+          {
+            "id": "transport-1780642980144",
+            "type": "walk",
+            "from": "济州岛",
+            "to": "C",
+            "departureTime": "17:30",
             "arrivalTime": "",
             "details": "",
             "position": "between",
             "beforeActivityId": "arrival",
-            "afterActivityId": "activity-1780564613388"
-          },
-          {
-            "id": "transport-1780567017237",
-            "type": "taxi",
-            "from": "A",
-            "to": "A",
-            "departureTime": "09:01",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780561664739",
-            "afterActivityId": "arrival"
+            "afterActivityId": "activity-1780642978344"
           }
         ],
         "activities": [
           {
             "type": "other",
             "startTime": "09:00",
-            "content": "A",
+            "endTime": "19:00",
             "location": "A",
-            "id": "activity-1780561664739"
+            "id": "activity-1780639292649"
           },
           {
             "type": "other",
-            "startTime": "20:00",
-            "location": "BB",
-            "id": "activity-1780564613388"
-          },
-          {
-            "type": "other",
-            "startTime": "09:00",
-            "location": "",
-            "id": "activity-1780623946368"
+            "startTime": "18:00",
+            "location": "C",
+            "id": "activity-1780642978344"
           }
         ]
       },
@@ -174,38 +168,56 @@
           {
             "type": "other",
             "startTime": "17:00",
-            "location": "B",
-            "id": "activity-1780563892861"
+            "location": "G",
+            "id": "activity-1780642626306"
+          },
+          {
+            "type": "other",
+            "startTime": "13:00",
+            "location": "E",
+            "id": "activity-1780642634797"
           }
         ],
         "transport": [
           {
-            "id": "transport-1780563874405",
+            "id": "transport-1780639351447",
             "type": "taxi",
             "from": "济州岛",
-            "to": "B",
-            "departureTime": "14:00",
-            "arrivalTime": "15:00",
+            "to": "F",
+            "departureTime": "15:00",
+            "arrivalTime": "",
             "details": "",
             "position": "departure"
           },
           {
-            "id": "transport-1780566987658",
-            "type": "taxi",
-            "from": "B",
-            "to": "B",
+            "id": "transport-1780643225644",
+            "type": "flight",
+            "from": "E",
+            "to": "济州岛",
+            "departureTime": "13:01",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780642634797",
+            "afterActivityId": "departure"
+          },
+          {
+            "id": "transport-1780643281862",
+            "type": "train",
+            "from": "F",
+            "to": "G",
             "departureTime": "16:30",
             "arrivalTime": "",
             "details": "",
             "position": "between",
             "beforeActivityId": "departure",
-            "afterActivityId": "activity-1780563892861"
+            "afterActivityId": "activity-1780642626306"
           }
         ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-05T01:45:46.443Z"
+    "updatedAt": "2026-06-05T07:11:18.509Z"
   },
   {
     "id": "trip-plan-1780193545980",

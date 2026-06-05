@@ -1620,6 +1620,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         break;
                       }
                     }
+                    // 找排序后的后一个 item（活动在离开之后时）
+                    for (let i = index + 1; i < items.length; i++) {
+                      const nextItem = items[i];
+                      if (nextItem.type === 'activity') {
+                        item.afterActivityId = nextItem.activity!.id;
+                        break;
+                      }
+                    }
                   }
                 });
                 
@@ -1658,9 +1666,27 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       </div>
                     );
                   } else if (item.type === 'departure') {
+                    const prevItem = items[index - 1];
                     return (
                       <div key="departure" className="space-y-4">
                         {renderTransportItem(item.transport!, day)}
+                        {/* 离开后的交通（当有活动在离开时间之后时） */}
+                        {item.afterActivityId && dayPlan && (
+                          <div className="pl-8 space-y-2">
+                            {getBetweenTransport(dayPlan, 'departure', item.afterActivityId) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, 'departure', item.afterActivityId)!, day)
+                            ) : (
+                              <Button
+                                onClick={() => addTransport(day, 'between', 'departure', item.afterActivityId)}
+                                variant="outline"
+                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                              >
+                                <Plus className="w-4 h-4 mr-2" />
+                                添加交通
+                              </Button>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   } else if (item.activity) {
