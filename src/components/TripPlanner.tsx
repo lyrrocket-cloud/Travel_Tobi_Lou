@@ -1658,8 +1658,26 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       </div>
                     );
                   } else if (item.type === 'departure') {
+                    const prevItem = items[index - 1];
                     return (
                       <div key="departure" className="space-y-4">
+                        {/* 离开前的交通（当前一个是活动时） */}
+                        {prevItem && prevItem.type === 'activity' && prevItem.activity && dayPlan && (
+                          <div className="pl-8 space-y-2">
+                            {getBetweenTransport(dayPlan, prevItem.activity.id, 'departure') ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, prevItem.activity.id, 'departure')!, day)
+                            ) : (
+                              <Button
+                                onClick={() => addTransport(day, 'between', prevItem.activity!.id, 'departure')}
+                                variant="outline"
+                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                              >
+                                <Plus className="w-4 h-4 mr-2" />
+                                添加交通
+                              </Button>
+                            )}
+                          </div>
+                        )}
                         {renderTransportItem(item.transport!, day)}
                       </div>
                     );
