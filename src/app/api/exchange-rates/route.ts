@@ -17,13 +17,18 @@ const defaultExchangeRates: Record<CurrencyCode, number> = {
   VND: 0.00029, // 越南盾
 };
 
-// 存储用户自定义汇率（简单使用内存存储，实际应该用数据库）
+// 默认活跃货币列表
+const defaultActiveCurrencies: CurrencyCode[] = ['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'KRW'];
+
+// 存储用户自定义汇率
 let customExchangeRates: Record<CurrencyCode, number> | null = null;
+// 存储活跃货币列表
+let activeCurrencies: CurrencyCode[] = [...defaultActiveCurrencies];
 let lastUpdated: string = new Date().toISOString();
 
 export async function GET() {
   try {
-    // 合并默认汇率和自定义汇率
+    // 返回所有汇率和活跃货币列表
     const rates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
       code,
       rate: customExchangeRates?.[code] || defaultExchangeRates[code],
@@ -32,6 +37,7 @@ export async function GET() {
 
     return NextResponse.json({
       rates,
+      activeCurrencies,
       updatedAt: lastUpdated,
     });
   } catch (error) {
@@ -43,31 +49,42 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rates } = body as { rates: Partial<Record<CurrencyCode, number>> };
+    const { rates, activeCurrencies: newActiveCurrencies } = body as {
+      rates?: Partial<Record<CurrencyCode, number>>;
+      activeCurrencies?: CurrencyCode[];
+    };
 
-    if (!rates || typeof rates !== 'object') {
-      return NextResponse.json({ error: 'Invalid rates data' }, { status: 400 });
+    // 更新汇率
+    if (rates && typeof rates === 'object') {
+      customExchangeRates = { ...defaultExchangeRates };
+      for (const [code, rate] of Object.entries(rates)) {
+        if (typeof rate === 'number' && rate > 0) {
+          customExchangeRates[code as CurrencyCode] = rate;
+        }
+      }
     }
 
-    // 更新自定义汇率
-    customExchangeRates = { ...defaultExchangeRates };
-    for (const [code, rate] of Object.entries(rates)) {
-      if (typeof rate === 'number' && rate > 0) {
-        customExchangeRates[code as CurrencyCode] = rate;
+    // 更新活跃货币列表
+    if (newActiveCurrencies && Array.isArray(newActiveCurrencies)) {
+      // 确保 CNY 始终在列表中
+      if (!newActiveCurrencies.includes('CNY')) {
+        newActiveCurrencies.unshift('CNY');
       }
+      activeCurrencies = newActiveCurrencies;
     }
 
     lastUpdated = new Date().toISOString();
 
-    // 返回更新后的汇率
-    const updatedRates: ExchangeRateRecord[] = (Object.keys(customExchangeRates) as CurrencyCode[]).map(code => ({
+    // 返回更新后的数据
+    const updatedRates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
       code,
-      rate: customExchangeRates![code],
+      rate: customExchangeRates?.[code] || defaultExchangeRates[code],
       updatedAt: lastUpdated,
     }));
 
     return NextResponse.json({
       rates: updatedRates,
+      activeCurrencies,
       updatedAt: lastUpdated,
     });
   } catch (error) {

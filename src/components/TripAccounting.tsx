@@ -113,6 +113,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     MYR: 1.55,
     VND: 0.00029,
   });
+  const [activeCurrencies, setActiveCurrencies] = useState<CurrencyCode[]>(['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'KRW']);
+  const [editingActiveCurrencies, setEditingActiveCurrencies] = useState<CurrencyCode[]>([]);
+  const [newCurrencyCode, setNewCurrencyCode] = useState<CurrencyCode | ''>('');
+  const [newCurrencyRate, setNewCurrencyRate] = useState<string>('');
   
   const [newExpense, setNewExpense] = useState<{
     date: string;
@@ -155,10 +159,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       const response = await fetch('/api/exchange-rates', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rates: editingExchangeRates }),
+        body: JSON.stringify({
+          rates: editingExchangeRates,
+          activeCurrencies: editingActiveCurrencies,
+        }),
       });
       if (response.ok) {
-        setExchangeRates(editingExchangeRates);
+        const data = await response.json();
+        if (data.rates) {
+          const ratesMap: Record<CurrencyCode, number> = {} as Record<CurrencyCode, number>;
+          data.rates.forEach((record: ExchangeRateRecord) => {
+            ratesMap[record.code] = record.rate;
+          });
+          setExchangeRates(ratesMap);
+        }
+        if (data.activeCurrencies) {
+          setActiveCurrencies(data.activeCurrencies);
+        }
         setShowExchangeRateEditor(false);
       }
     } catch (error) {
@@ -207,6 +224,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           ratesMap[record.code] = record.rate;
         });
         setExchangeRates(ratesMap);
+      }
+      if (data.activeCurrencies) {
+        setActiveCurrencies(data.activeCurrencies);
       }
     } catch (error) {
       console.error('[Trip Accounting] Error fetching exchange rates:', error);
@@ -932,6 +952,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 size="sm"
                 onClick={() => {
                   setEditingExchangeRates(exchangeRates);
+                  setEditingActiveCurrencies(activeCurrencies);
+                  setNewCurrencyCode('');
+                  setNewCurrencyRate('');
                   setShowExchangeRateEditor(true);
                 }}
                 className="bg-black/40 border border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 text-xs"
@@ -1043,7 +1066,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                                {(Object.keys(currencyNames) as CurrencyCode[]).map((code) => (
+                                {activeCurrencies.map((code) => (
                                   <SelectItem key={code} value={code}>
                                     {currencySymbols[code]} {code}
                                   </SelectItem>
@@ -1608,33 +1631,142 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">汇率管理</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">
-              设置各货币兑换人民币的汇率
+              管理活跃货币和汇率设置
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 py-4 max-h-80 overflow-y-auto">
-            {(Object.keys(currencyNames) as CurrencyCode[]).map((code) => (
-              <div key={code} className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#CEA472] font-medium text-xs w-20">{currencySymbols[code]}</span>
-                  <span className="text-[#FFFFFF] text-xs">{currencyNames[code]}</span>
-                  <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.0001"
-                    value={editingExchangeRates[code]}
-                    onChange={(e) => setEditingExchangeRates({
-                      ...editingExchangeRates,
-                      [code]: parseFloat(e.target.value) || 0
-                    })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
-                  />
-                  <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
-                </div>
+          <div className="space-y-4 py-4 max-h-80 overflow-y-auto">
+            {/* 活跃货币列表 */}
+            <div>
+              <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
+              <div className="space-y-2">
+                {editingActiveCurrencies.map((code) => (
+                  <div key={code} className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#CEA472] font-medium text-xs w-20">{currencySymbols[code]}</span>
+                      <span className="text-[#FFFFFF] text-xs">{currencyNames[code]}</span>
+                      <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.0001"
+                        value={editingExchangeRates[code]}
+                        onChange={(e) => setEditingExchangeRates({
+                          ...editingExchangeRates,
+                          [code]: parseFloat(e.target.value) || 0
+                        })}
+                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
+                      />
+                      <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                      {code !== 'CNY' && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setEditingActiveCurrencies(prev => prev.filter(c => c !== code))}
+                          className="text-red-500 hover:text-red-500 hover:bg-transparent h-8 w-8"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* 添加新货币 */}
+            <div className="border-t border-[#CEA472]/20 pt-4">
+              <div className="text-xs text-[#CEA472] mb-2 font-medium">添加货币</div>
+              <div className="flex items-center gap-2">
+                <Select
+                  value={newCurrencyCode}
+                  onValueChange={(value) => {
+                    const code = value as CurrencyCode;
+                    setNewCurrencyCode(code);
+                    if (exchangeRates[code] !== undefined) {
+                      setNewCurrencyRate(String(exchangeRates[code]));
+                    }
+                  }}
+                >
+                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-32">
+                    <SelectValue placeholder="选择货币" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                    {(Object.keys(currencyNames) as CurrencyCode[])
+                      .filter(code => !editingActiveCurrencies.includes(code))
+                      .map((code) => (
+                        <SelectItem key={code} value={code}>
+                          {currencySymbols[code]} {code}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.0001"
+                  value={newCurrencyRate}
+                  onChange={(e) => setNewCurrencyRate(e.target.value)}
+                  placeholder="汇率"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-28"
+                />
+                <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    if (newCurrencyCode && newCurrencyRate) {
+                      const rate = parseFloat(newCurrencyRate);
+                      if (rate > 0) {
+                        setEditingExchangeRates({
+                          ...editingExchangeRates,
+                          [newCurrencyCode]: rate,
+                        });
+                        setEditingActiveCurrencies(prev => [...prev, newCurrencyCode as CurrencyCode]);
+                        setNewCurrencyCode('');
+                        setNewCurrencyRate('');
+                      }
+                    }
+                  }}
+                  disabled={!newCurrencyCode || !newCurrencyRate}
+                  className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 h-8"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* 非活跃货币汇率编辑 */}
+            <div className="border-t border-[#CEA472]/20 pt-4">
+              <div className="text-xs text-[#FFFFFF]/40 mb-2">其他货币汇率（仅供参考）</div>
+              <div className="space-y-2">
+                {(Object.keys(currencyNames) as CurrencyCode[])
+                  .filter(code => !editingActiveCurrencies.includes(code))
+                  .map((code) => (
+                    <div key={code} className="flex items-center justify-between gap-4 p-2 bg-black/20 rounded-lg opacity-60">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#FFFFFF]/60 font-medium text-xs w-20">{currencySymbols[code]}</span>
+                        <span className="text-[#FFFFFF]/60 text-xs">{currencyNames[code]}</span>
+                        <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.0001"
+                          value={editingExchangeRates[code]}
+                          onChange={(e) => setEditingExchangeRates({
+                            ...editingExchangeRates,
+                            [code]: parseFloat(e.target.value) || 0
+                          })}
+                          className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
+                        />
+                        <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button
