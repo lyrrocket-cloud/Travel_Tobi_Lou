@@ -617,15 +617,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   };
 
   const getFilteredLocations = () => {
+    let locations;
+    
     if (!newExpense.category) {
-      return getActivityLocations();
+      locations = [...getActivityLocations(), ...getTransportLocations()];
+    } else if (newExpense.category === 'transportation') {
+      locations = getTransportLocations();
+    } else {
+      locations = getActivityLocations().filter(loc => loc.type === newExpense.category);
     }
     
-    if (newExpense.category === 'transportation') {
-      return getTransportLocations();
-    }
-    
-    return getActivityLocations().filter(loc => loc.type === newExpense.category);
+    return locations.sort((a, b) => {
+      const dateCompare = (a.date || '').localeCompare(b.date || '');
+      if (dateCompare !== 0) return dateCompare;
+      return (a.startTime || '').localeCompare(b.startTime || '');
+    });
   };
 
   const handleActivitySelect = (activity: typeof getActivityLocations extends () => infer R ? R extends Array<infer T> ? T : never : never) => {

@@ -32,7 +32,7 @@
           },
           {
             "id": "transport-1780642966871",
-            "type": "taxi",
+            "type": "bus",
             "from": "A",
             "to": "B",
             "departureTime": "19:00",
@@ -44,7 +44,7 @@
           },
           {
             "id": "transport-1780642980144",
-            "type": "taxi",
+            "type": "walk",
             "from": "济州岛",
             "to": "C",
             "departureTime": "17:30",
@@ -191,7 +191,7 @@
           },
           {
             "id": "transport-1780643225644",
-            "type": "taxi",
+            "type": "flight",
             "from": "E",
             "to": "济州岛",
             "departureTime": "13:01",
@@ -203,7 +203,7 @@
           },
           {
             "id": "transport-1780643281862",
-            "type": "taxi",
+            "type": "train",
             "from": "F",
             "to": "G",
             "departureTime": "16:30",
@@ -217,7 +217,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-05T07:09:05.319Z"
+    "updatedAt": "2026-06-05T07:11:18.509Z"
   },
   {
     "id": "trip-plan-1780193545980",
