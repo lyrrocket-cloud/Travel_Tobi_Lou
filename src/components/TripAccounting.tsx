@@ -147,6 +147,24 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   } | null>(null);
 
   const [analysisConsumerFilter, setAnalysisConsumerFilter] = useState<string | null>(null);
+  const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
+  const [editingExchangeRates, setEditingExchangeRates] = useState<Record<CurrencyCode, number>>(exchangeRates);
+
+  const saveExchangeRates = async () => {
+    try {
+      const response = await fetch('/api/exchange-rates', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rates: editingExchangeRates }),
+      });
+      if (response.ok) {
+        setExchangeRates(editingExchangeRates);
+        setShowExchangeRateEditor(false);
+      }
+    } catch (error) {
+      console.error('[Trip Accounting] Error saving exchange rates:', error);
+    }
+  };
 
   const currentExpenseRecord = selectedWishId ? 
     tripExpenses.find(record => String(record.wishId) === String(selectedWishId)) : null;
@@ -907,6 +925,22 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsList>
 
         <TabsContent value="entry" className="mt-4">
+          {isAdminMode && (
+            <div className="mb-4 flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEditingExchangeRates(exchangeRates);
+                  setShowExchangeRateEditor(true);
+                }}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 text-xs"
+              >
+                <Coins className="w-3.5 h-3.5 mr-1.5" />
+                汇率管理
+              </Button>
+            </div>
+          )}
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
@@ -1560,6 +1594,61 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showExchangeRateEditor && isAdminMode} onOpenChange={(open) => {
+        if (!open) {
+          setShowExchangeRateEditor(false);
+        }
+      }}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">汇率管理</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              设置各货币兑换人民币的汇率
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-4 max-h-80 overflow-y-auto">
+            {(Object.keys(currencyNames) as CurrencyCode[]).map((code) => (
+              <div key={code} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#CEA472] font-medium text-xs w-20">{currencySymbols[code]}</span>
+                  <span className="text-[#FFFFFF] text-xs">{currencyNames[code]}</span>
+                  <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.0001"
+                    value={editingExchangeRates[code]}
+                    onChange={(e) => setEditingExchangeRates({
+                      ...editingExchangeRates,
+                      [code]: parseFloat(e.target.value) || 0
+                    })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
+                  />
+                  <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowExchangeRateEditor(false)}
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={saveExchangeRates}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+            >
+              保存
             </Button>
           </DialogFooter>
         </DialogContent>
