@@ -1635,7 +1635,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   if (item.type === 'arrival') {
                     const transport = item.transport!;
                     const prevItem = items[index - 1];
-                    const nextItem = items[index + 1];
                     return (
                       <div key="arrival" className="space-y-4">
                         {/* 到达前的交通（当前一个是活动时） */}
@@ -1656,65 +1655,12 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           </div>
                         )}
                         {renderTransportItem(transport, day)}
-                        {/* 到达后的交通（当下一个是活动时） */}
-                        {nextItem && nextItem.type === 'activity' && nextItem.activity && dayPlan && (
-                          <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, 'arrival', nextItem.activity.id) ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, 'arrival', nextItem.activity.id)!, day)
-                            ) : (
-                              <Button
-                                onClick={() => addTransport(day, 'between', 'arrival', nextItem.activity!.id)}
-                                variant="outline"
-                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                              >
-                                <Plus className="w-4 h-4 mr-2" />
-                                添加交通
-                              </Button>
-                            )}
-                          </div>
-                        )}
                       </div>
                     );
                   } else if (item.type === 'departure') {
-                    const prevItem = items[index - 1];
-                    const nextItem = items[index + 1];
                     return (
                       <div key="departure" className="space-y-4">
-                        {/* 离开前的交通（当前一个是活动时） */}
-                        {prevItem && prevItem.type === 'activity' && prevItem.activity && dayPlan && (
-                          <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, prevItem.activity.id, 'departure') ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, prevItem.activity.id, 'departure')!, day)
-                            ) : (
-                              <Button
-                                onClick={() => addTransport(day, 'between', prevItem.activity!.id, 'departure')}
-                                variant="outline"
-                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                              >
-                                <Plus className="w-4 h-4 mr-2" />
-                                添加交通
-                              </Button>
-                            )}
-                          </div>
-                        )}
                         {renderTransportItem(item.transport!, day)}
-                        {/* 离开后的交通（当下一个是活动时） */}
-                        {nextItem && nextItem.type === 'activity' && nextItem.activity && dayPlan && (
-                          <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, 'departure', nextItem.activity.id) ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, 'departure', nextItem.activity.id)!, day)
-                            ) : (
-                              <Button
-                                onClick={() => addTransport(day, 'between', 'departure', nextItem.activity!.id)}
-                                variant="outline"
-                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                              >
-                                <Plus className="w-4 h-4 mr-2" />
-                                添加交通
-                              </Button>
-                            )}
-                          </div>
-                        )}
                       </div>
                     );
                   } else if (item.activity) {
@@ -1724,14 +1670,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     
                     return (
                       <div key={activity.id} className="space-y-4">
-                        {/* 活动前的交通（仅当前一个是活动时） */}
-                        {prevItem && prevItem.type === 'activity' && prevItem.activity && dayPlan && (
+                        {/* 活动前的交通（仅当前一个是到达时） */}
+                        {prevItem && prevItem.type === 'arrival' && dayPlan && (
                           <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, prevItem.activity.id, activity.id) ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, prevItem.activity.id, activity.id)!, day)
+                            {getBetweenTransport(dayPlan, 'arrival', activity.id) ? (
+                              renderTransportItem(getBetweenTransport(dayPlan, 'arrival', activity.id)!, day)
                             ) : (
                               <Button
-                                onClick={() => addTransport(day, 'between', prevItem.activity!.id, activity.id)}
+                                onClick={() => addTransport(day, 'between', 'arrival', activity.id)}
                                 variant="outline"
                                 className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
@@ -1742,14 +1688,27 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           </div>
                         )}
                         {renderActivityItem(activity, day)}
-                        {/* 活动后的交通（仅当下一个是活动时） */}
-                        {nextItem && nextItem.type === 'activity' && nextItem.activity && dayPlan && (
+                        {/* 活动后的交通（当下一个是活动或离开时） */}
+                        {nextItem && (nextItem.type === 'activity' || nextItem.type === 'departure') && dayPlan && (
                           <div className="pl-8 space-y-2">
-                            {getBetweenTransport(dayPlan, activity.id, nextItem.activity.id) ? (
-                              renderTransportItem(getBetweenTransport(dayPlan, activity.id, nextItem.activity.id)!, day)
+                            {(nextItem.type === 'activity' 
+                              ? getBetweenTransport(dayPlan, activity.id, nextItem.activity!.id) 
+                              : getBetweenTransport(dayPlan, activity.id, 'departure')
+                            ) ? (
+                              renderTransportItem(
+                                nextItem.type === 'activity' 
+                                  ? getBetweenTransport(dayPlan, activity.id, nextItem.activity!.id)! 
+                                  : getBetweenTransport(dayPlan, activity.id, 'departure')!,
+                                day
+                              )
                             ) : (
                               <Button
-                                onClick={() => addTransport(day, 'between', activity.id, nextItem.activity!.id)}
+                                onClick={() => addTransport(
+                                  day, 
+                                  'between', 
+                                  activity.id, 
+                                  nextItem.type === 'activity' ? nextItem.activity!.id : 'departure'
+                                )}
                                 variant="outline"
                                 className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
