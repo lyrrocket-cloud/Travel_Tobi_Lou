@@ -21,10 +21,27 @@
         ],
         "createdAt": "2026-06-05T09:20:50.603Z",
         "updatedAt": "2026-06-05T09:20:50.603Z"
+      },
+      {
+        "id": "expense-1780652469508",
+        "wishId": "in-memory-1",
+        "date": "2026-06-20",
+        "time": "13:00",
+        "category": "other",
+        "amount": 1000,
+        "currency": "CNY",
+        "description": "在 E 的活动",
+        "location": "E",
+        "payer": "楼宜人",
+        "payers": [
+          "楼宜人"
+        ],
+        "createdAt": "2026-06-05T09:41:09.508Z",
+        "updatedAt": "2026-06-05T09:41:09.508Z"
       }
     ],
     "createdAt": "2026-06-01T08:52:15.151Z",
-    "updatedAt": "2026-06-05T09:21:29.822Z"
+    "updatedAt": "2026-06-05T09:41:11.046Z"
   },
   {
     "id": "trip-expense-1780408697379",
