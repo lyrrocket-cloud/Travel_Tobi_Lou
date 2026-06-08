@@ -392,42 +392,45 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   };
 
   const calculateDriverStatistics = (): DriverStatistics[] => {
-    if (!currentDrivingRecord) return [];
+    if (tripDrivingRecords.length === 0) return [];
 
     const statsMap = new Map<string, DriverStatistics>();
 
-    currentDrivingRecord.records.forEach(record => {
-      if (!statsMap.has(record.driver)) {
-        statsMap.set(record.driver, {
-          driver: record.driver,
-          totalScore: 0,
-          totalDistance: 0,
-          totalDuration: 0,
-          totalTrips: 0,
-          behaviorCounts: {
-            normal: 0,
-            speeding: 0,
-            harsh_brake: 0,
-            rapid_accelerate: 0,
-            fatigue: 0,
-            phone_use: 0,
-            lane_violation: 0,
-            red_light: 0,
-            safe_driving: 0,
-          },
-        });
-      }
-
-      const stats = statsMap.get(record.driver)!;
-      stats.totalScore += record.score;
-      stats.totalDistance += record.distance || 0;
-      stats.totalDuration += record.duration || 0;
-      stats.totalTrips += 1;
-
-      record.behaviors.forEach(behavior => {
-        if (stats.behaviorCounts[behavior.type] !== undefined) {
-          stats.behaviorCounts[behavior.type] += 1;
+    // 聚合所有旅行的驾驶记录
+    tripDrivingRecords.forEach(tripRecord => {
+      tripRecord.records.forEach(record => {
+        if (!statsMap.has(record.driver)) {
+          statsMap.set(record.driver, {
+            driver: record.driver,
+            totalScore: 0,
+            totalDistance: 0,
+            totalDuration: 0,
+            totalTrips: 0,
+            behaviorCounts: {
+              normal: 0,
+              speeding: 0,
+              harsh_brake: 0,
+              rapid_accelerate: 0,
+              fatigue: 0,
+              phone_use: 0,
+              lane_violation: 0,
+              red_light: 0,
+              safe_driving: 0,
+            },
+          });
         }
+
+        const stats = statsMap.get(record.driver)!;
+        stats.totalScore += record.score;
+        stats.totalDistance += record.distance || 0;
+        stats.totalDuration += record.duration || 0;
+        stats.totalTrips += 1;
+
+        record.behaviors.forEach(behavior => {
+          if (stats.behaviorCounts[behavior.type] !== undefined) {
+            stats.behaviorCounts[behavior.type] += 1;
+          }
+        });
       });
     });
 
