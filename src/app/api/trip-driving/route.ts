@@ -1,13 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// 延迟初始化 Supabase 客户端，避免构建时环境变量不存在
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    return null;
+  }
+  
+  return createClient(supabaseUrl, supabaseKey);
+}
 
 // 获取所有驾驶记录
 export async function GET() {
   try {
+    const supabase = getSupabaseClient();
+    
+    if (!supabase) {
+      console.error('[API] Supabase client not initialized');
+      return NextResponse.json({ tripDrivingRecords: [] });
+    }
+    
     const { data, error } = await supabase
       .from('trip_driving_records')
       .select('*')
@@ -38,6 +53,13 @@ export async function GET() {
 // 创建新的驾驶记录
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
+    
+    if (!supabase) {
+      console.error('[API] Supabase client not initialized');
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    }
+    
     const body = await request.json();
     const { wishId, destination, startDate } = body;
 
@@ -90,6 +112,13 @@ export async function POST(request: NextRequest) {
 // 更新驾驶记录
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
+    
+    if (!supabase) {
+      console.error('[API] Supabase client not initialized');
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    }
+    
     const body = await request.json();
     const { id, records } = body;
 
