@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory, CurrencyCode, ExchangeRateRecord } from '@/types';
@@ -1341,13 +1340,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
       </Tabs>
 
-      <Sheet open={showEditExpense} onOpenChange={setShowEditExpense}>
-        <SheetContent className="bg-[#0a0a0f] border border-[#CEA472]/20 w-full max-w-md mx-auto overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle className="text-[#FFFFFF]">编辑支出</SheetTitle>
-          </SheetHeader>
+      <Dialog open={showEditExpense} onOpenChange={setShowEditExpense}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">编辑支出</DialogTitle>
+          </DialogHeader>
           {editingExpense && (
-            <div className="flex-1 overflow-y-auto py-4 space-y-4">
+            <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
                 <Input
@@ -1494,69 +1493,63 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
             </div>
           )}
-          <SheetFooter className="pt-4 flex-shrink-0 border-t border-[#CEA472]/20">
-            <div className="flex gap-2 w-full">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowEditExpense(false);
-                  setEditingExpense(null);
-                  setEditingSelectedActivity(null);
-                }}
-                className="flex-1 bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-              >
-                取消
-              </Button>
-              <Button
-                onClick={saveEditedExpense}
-                className="flex-1 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-              >
-                保存
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowEditExpense(false);
+                setEditingExpense(null);
+                setEditingSelectedActivity(null);
+              }}
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={saveEditedExpense}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+            >
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <Sheet open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <SheetContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-          <SheetHeader>
-            <SheetTitle className="text-[#FFFFFF]">删除支出</SheetTitle>
-          </SheetHeader>
-          <div className="py-4">
-            <p className="text-[#FFFFFF]/60 text-xs">
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">删除支出</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
               确定要删除这条支出记录吗？此操作不可撤销。
-            </p>
-          </div>
-          <SheetFooter className="pt-4 flex-shrink-0 border-t border-[#CEA472]/20">
-            <div className="flex gap-2 w-full">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeletingExpenseId(null);
-                }}
-                className="flex-1 bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-              >
-                取消
-              </Button>
-              <Button
-                onClick={deleteExpense}
-                className="flex-1 bg-red-500 text-white hover:bg-red-500/80"
-              >
-                删除
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowDeleteConfirm(false);
+                setDeletingExpenseId(null);
+              }}
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={deleteExpense}
+              className="bg-red-500 text-white hover:bg-red-500/80"
+            >
+              删除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <Sheet open={showWishSelector} onOpenChange={setShowWishSelector}>
-        <SheetContent className="bg-[#0a0a0f] border border-[#CEA472]/20 w-full max-w-md mx-auto overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle className="text-[#FFFFFF]">选择旅行</SheetTitle>
-          </SheetHeader>
-          <div className="flex-1 overflow-y-auto py-4 space-y-3">
+      <Dialog open={showWishSelector} onOpenChange={setShowWishSelector}>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">选择旅行</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-4 max-h-[50vh] overflow-y-auto flex-1">
             {confirmedWishes.map(wish => {
               const existingRecord = tripExpenses.find(record => record.wishId === String(wish.id));
               const isDefault = defaultTripId === String(wish.id);
@@ -1617,7 +1610,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               );
             })}
           </div>
-          <SheetFooter className="pt-4 flex-shrink-0 border-t border-[#CEA472]/20">
+          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
             <Button
               variant="outline"
               onClick={() => setShowWishSelector(false)}
@@ -1625,20 +1618,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             >
               取消
             </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <Sheet open={showExchangeRateEditor && isAdminMode} onOpenChange={(open) => {
+      <Dialog open={showExchangeRateEditor && isAdminMode} onOpenChange={(open) => {
         if (!open) {
           setShowExchangeRateEditor(false);
         }
       }}>
-        <SheetContent className="bg-[#0a0a0f] border border-[#CEA472]/20 w-full max-w-md mx-auto overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle className="text-[#FFFFFF]">汇率管理</SheetTitle>
-          </SheetHeader>
-          <div className="flex-1 overflow-y-auto py-4 space-y-4">
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">汇率管理</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">
+              管理活跃货币和汇率设置
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto flex-1">
             {/* 活跃货币列表 */}
             <div>
               <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
@@ -1772,25 +1768,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
             </div>
           </div>
-          <SheetFooter className="pt-4 flex-shrink-0 border-t border-[#CEA472]/20">
-            <div className="flex gap-2 w-full">
-              <Button
-                variant="outline"
-                onClick={() => setShowExchangeRateEditor(false)}
-                className="flex-1 bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-              >
-                取消
-              </Button>
-              <Button
-                onClick={saveExchangeRates}
-                className="flex-1 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-              >
-                保存
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
+            <Button
+              variant="outline"
+              onClick={() => setShowExchangeRateEditor(false)}
+              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+            >
+              取消
+            </Button>
+            <Button
+              onClick={saveExchangeRates}
+              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+            >
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
