@@ -118,3 +118,64 @@ export interface TripPlan {
   createdAt: string;
   updatedAt: string;
 }
+
+// 驾驶行为类型
+export type DrivingBehavior = 
+  | 'normal'           // 正常驾驶
+  | 'speeding'         // 超速
+  | 'harsh_brake'      // 急刹车
+  | 'rapid_accelerate' // 急加速
+  | 'fatigue'          // 疲劳驾驶
+  | 'phone_use'        // 使用手机
+  | 'lane_violation'   // 变道违规
+  | 'red_light'        // 闯红灯
+  | 'safe_driving';    // 安全驾驶（加分项）
+
+// 驾驶积分规则
+export interface DrivingScoreRule {
+  behavior: DrivingBehavior;
+  score: number; // 正数加分，负数扣分
+  description: string;
+}
+
+// 驾驶记录项接口
+export interface DrivingRecordItem {
+  id: string;
+  wishId: string;
+  date: string;
+  time: string;
+  driver: string;
+  startLocation: string;
+  endLocation: string;
+  distance?: number; // 行驶里程（公里）
+  duration?: number; // 行驶时长（分钟）
+  score: number; // 本次积分
+  behaviors: Array<{
+    type: DrivingBehavior;
+    timestamp?: string;
+    notes?: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 旅行驾驶记录接口
+export interface TripDrivingRecord {
+  id: string;
+  wishId: string;
+  destination: string;
+  startDate?: string;
+  records: DrivingRecordItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 驾驶员统计信息
+export interface DriverStatistics {
+  driver: string;
+  totalScore: number;
+  totalDistance: number;
+  totalDuration: number;
+  totalTrips: number;
+  behaviorCounts: Record<DrivingBehavior, number>;
+}

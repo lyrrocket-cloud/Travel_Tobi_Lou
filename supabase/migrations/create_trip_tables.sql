@@ -82,3 +82,29 @@ BEGIN
     END IF;
 END
 $$;
+
+-- 旅行驾驶记录表
+CREATE TABLE IF NOT EXISTS trip_driving_records (
+  id VARCHAR(100) PRIMARY KEY NOT NULL,
+  wish_id VARCHAR(100) NOT NULL,
+  destination VARCHAR(255) NOT NULL,
+  start_date VARCHAR(20),
+  records JSONB NOT NULL DEFAULT '[]',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- 创建索引
+CREATE INDEX IF NOT EXISTS trip_driving_records_wish_id_idx ON trip_driving_records(wish_id);
+
+-- 为 trip_driving_records 表添加更新触发器
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trip_driving_records_updated_at') THEN
+        CREATE TRIGGER trip_driving_records_updated_at
+            BEFORE UPDATE ON trip_driving_records
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END
+$$;
