@@ -269,7 +269,9 @@ export default function Home() {
 
 
   const handleAdminLogin = () => {
-    if (adminPassword === 'tobi7758258') {
+    // 支持多个管理员密码
+    const validPasswords = ['tobi7758258', 'foto1234'];
+    if (validPasswords.includes(adminPassword)) {
       setIsAdminMode(true);
       setPasswordModalOpen(false);
       setAdminPassword('');
