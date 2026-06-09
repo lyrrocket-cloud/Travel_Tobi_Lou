@@ -813,7 +813,7 @@ export default function Home() {
                                 return (
                                   <div
                                     key={wish.id}
-                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/10 border border-dashed border-gray-500/30 hover:bg-gray-500/20 opacity-60"
+                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/5 border-2 border-dashed border-gray-500/50 hover:bg-gray-500/10"
                                   >
                                     <div className="font-semibold truncate text-[10px] sm:text-xs text-gray-400">{wish.destination}</div>
                                     <div className="text-gray-500 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
@@ -864,7 +864,7 @@ export default function Home() {
                           <div
                             key={wish.id}
                             onClick={() => navigateToPlan(wish.id)}
-                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 bg-gray-500/10 border border-dashed border-gray-500/30 hover:bg-gray-500/20 opacity-60"
+                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 bg-gray-500/5 border-2 border-dashed border-gray-500/50 hover:bg-gray-500/10"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span className="font-semibold truncate text-gray-400">{wish.destination}</span>
