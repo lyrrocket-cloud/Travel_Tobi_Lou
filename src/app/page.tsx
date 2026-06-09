@@ -21,6 +21,12 @@ const months = [
 
 const monthsShort = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
 
+// 中文月份名称到数字的映射
+const monthNameToNum: Record<string, number> = {
+  '一月': 1, '二月': 2, '三月': 3, '四月': 4, '五月': 5, '六月': 6,
+  '七月': 7, '八月': 8, '九月': 9, '十月': 10, '十一月': 11, '十二月': 12
+};
+
 // 统一日期格式化函数 - 格式化为YYYY-MM
 const formatDateToYYYYMM = (year: number | string, month: number | string): string => {
   const yearStr = typeof year === 'number' ? String(year) : year;
@@ -751,7 +757,8 @@ export default function Home() {
                       const unconfirmedWishes = wishes.filter(w => {
                         if (w.is_confirmed === 1) return false;
                         if (!w.travel_year || !w.travel_month) return false;
-                        return w.travel_year === selectedYear && parseInt(w.travel_month) === monthNum;
+                        const wishMonthNum = monthNameToNum[w.travel_month] || parseInt(w.travel_month);
+                        return w.travel_year === selectedYear && wishMonthNum === monthNum;
                       });
                       
                       const hasTrips = confirmedTrips.length > 0;
@@ -808,7 +815,8 @@ export default function Home() {
                               })}
                               {/* 未成行愿望 */}
                               {unconfirmedWishes.map(wish => {
-                                const formattedDate = `${wish.travel_year}-${String(wish.travel_month).padStart(2, '0')}`;
+                                const wishMonthNum = monthNameToNum[wish.travel_month] || parseInt(wish.travel_month);
+                                const formattedDate = `${wish.travel_year}-${String(wishMonthNum).padStart(2, '0')}`;
 
                                 return (
                                   <div
@@ -856,9 +864,14 @@ export default function Home() {
                       })}
                     {/* 未成行愿望 */}
                     {wishes.filter(w => w.is_confirmed !== 1 && w.travel_year === selectedYear)
-                      .sort((a, b) => (a.travel_year * 12 + parseInt(a.travel_month)) - (b.travel_year * 12 + parseInt(b.travel_month)))
+                      .sort((a, b) => {
+                        const aMonthNum = monthNameToNum[a.travel_month] || parseInt(a.travel_month);
+                        const bMonthNum = monthNameToNum[b.travel_month] || parseInt(b.travel_month);
+                        return (a.travel_year * 12 + aMonthNum) - (b.travel_year * 12 + bMonthNum);
+                      })
                       .map(wish => {
-                        const formattedDate = `${wish.travel_year}-${String(wish.travel_month).padStart(2, '0')}`;
+                        const wishMonthNum = monthNameToNum[wish.travel_month] || parseInt(wish.travel_month);
+                        const formattedDate = `${wish.travel_year}-${String(wishMonthNum).padStart(2, '0')}`;
 
                         return (
                           <div
