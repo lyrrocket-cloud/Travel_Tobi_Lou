@@ -689,21 +689,19 @@ export default function Home() {
       return (
         <div className="space-y-5">
           {/* 年度时间轴 */}
-          {wishes.some(w => w.is_confirmed === 1) && (
+          {wishes.length > 0 && (
             <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm mb-5">
               <CardContent className="pt-3.5 sm:pt-6 px-2.5 sm:px-6">
                 {/* 年度切换 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 mb-3.5 sm:mb-6">
                   <button
                     onClick={() => {
-                      const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
-                      const currentYearIndex = years.indexOf(selectedYear);
-                      if (currentYearIndex > 0) {
-                        setSelectedYear(years[currentYearIndex - 1]);
+                      if (selectedYear > 2025) {
+                        setSelectedYear(selectedYear - 1);
                       }
                     }}
                     className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                    disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y < selectedYear).length}
+                    disabled={selectedYear <= 2025}
                   >
                     <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -715,14 +713,12 @@ export default function Home() {
                   </h3>
                   <button
                     onClick={() => {
-                      const years = [...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort();
-                      const currentYearIndex = years.indexOf(selectedYear);
-                      if (currentYearIndex < years.length - 1) {
-                        setSelectedYear(years[currentYearIndex + 1]);
+                      if (selectedYear < 2030) {
+                        setSelectedYear(selectedYear + 1);
                       }
                     }}
                     className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                    disabled={![...new Set(wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date).map(w => new Date(w.confirmed_date!).getFullYear()))].sort().filter(y => y > selectedYear).length}
+                    disabled={selectedYear >= 2030}
                   >
                     <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -750,7 +746,17 @@ export default function Home() {
                         const date = new Date(w.confirmed_date);
                         return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
                       });
+                      
+                      // 获取未成行的愿望（根据预计出行年月）
+                      const unconfirmedWishes = wishes.filter(w => {
+                        if (w.is_confirmed === 1 || !w.travel_date) return false;
+                        const date = new Date(w.travel_date);
+                        return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
+                      });
+                      
                       const hasTrips = confirmedTrips.length > 0;
+                      const hasUnconfirmed = unconfirmedWishes.length > 0;
+                      const hasAnyWishes = hasTrips || hasUnconfirmed;
                       const hasExpiredTrips = confirmedTrips.some(trip => trip.is_expired === 1);
                       const showGray = isPastMonth || hasExpiredTrips;
                       
@@ -759,7 +765,7 @@ export default function Home() {
                           {/* 月份节点 */}
                           <div 
                             className={`w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
-                              hasTrips 
+                              hasAnyWishes 
                                 ? showGray
                                   ? 'bg-gray-400 shadow-lg shadow-gray-400/30' 
                                   : 'bg-[#CEA472] shadow-lg shadow-[#CEA472]/50'
@@ -770,14 +776,14 @@ export default function Home() {
                           />
                           {/* 月份标签 */}
                           <span className={`text-[8px] sm:text-xs mt-2 sm:mt-4 ${
-                            hasTrips
+                            hasAnyWishes
                               ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold'
                               : isPastMonth ? 'text-gray-400/50' : 'text-[#FFFFFF]/40'
                           }`}>
                             {month}
                           </span>
                           {/* 已成行旅行标注 - 仅在sm及以上屏幕显示 */}
-                          {hasTrips && (
+                          {(hasTrips || hasUnconfirmed) && (
                             <div className="hidden sm:block mt-2 space-y-1 w-full">
                               {confirmedTrips.map(trip => {
                                 // 格式化日期为YYYY-MM
@@ -800,6 +806,21 @@ export default function Home() {
                                   </div>
                                 );
                               })}
+                              {/* 未成行愿望 */}
+                              {unconfirmedWishes.map(wish => {
+                                const dateStr = wish.travel_date || '';
+                                const formattedDate = extractYYYYMMFromDate(dateStr);
+
+                                return (
+                                  <div
+                                    key={wish.id}
+                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/10 border border-dashed border-gray-500/30 hover:bg-gray-500/20 opacity-60"
+                                  >
+                                    <div className="font-semibold truncate text-[10px] sm:text-xs text-gray-400">{wish.destination}</div>
+                                    <div className="text-gray-500 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>
@@ -807,7 +828,7 @@ export default function Home() {
                     })}
                   </div>
                   
-                  {/* 手机端：已确认旅行列表 */}
+                  {/* 手机端：已确认旅行和未成行愿望列表 */}
                   <div className="sm:hidden mt-3.5 space-y-2">
                     {wishes.filter(w => w.is_confirmed === 1 && w.confirmed_date && new Date(w.confirmed_date).getFullYear() === selectedYear)
                       .sort((a, b) => new Date(a.confirmed_date!).getTime() - new Date(b.confirmed_date!).getTime())
@@ -831,6 +852,26 @@ export default function Home() {
                               <span className={`font-semibold truncate ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</span>
                             </div>
                             <span className="text-[#FFFFFF]/60 text-xs flex-shrink-0 ml-2">{formattedDate}</span>
+                          </div>
+                        );
+                      })}
+                    {/* 未成行愿望 */}
+                    {wishes.filter(w => w.is_confirmed !== 1 && w.travel_date && new Date(w.travel_date).getFullYear() === selectedYear)
+                      .sort((a, b) => new Date(a.travel_date!).getTime() - new Date(b.travel_date!).getTime())
+                      .map(wish => {
+                        const dateStr = wish.travel_date || '';
+                        const formattedDate = extractYYYYMMFromDate(dateStr);
+
+                        return (
+                          <div
+                            key={wish.id}
+                            onClick={() => navigateToPlan(wish.id)}
+                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 bg-gray-500/10 border border-dashed border-gray-500/30 hover:bg-gray-500/20 opacity-60"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="font-semibold truncate text-gray-400">{wish.destination}</span>
+                            </div>
+                            <span className="text-gray-500 text-xs flex-shrink-0 ml-2">{formattedDate}</span>
                           </div>
                         );
                       })}
