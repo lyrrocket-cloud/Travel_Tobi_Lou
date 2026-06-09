@@ -749,9 +749,9 @@ export default function Home() {
                       
                       // 获取未成行的愿望（根据预计出行年月）
                       const unconfirmedWishes = wishes.filter(w => {
-                        if (w.is_confirmed === 1 || !w.travel_date) return false;
-                        const date = new Date(w.travel_date);
-                        return date.getFullYear() === selectedYear && date.getMonth() + 1 === monthNum;
+                        if (w.is_confirmed === 1) return false;
+                        if (!w.travel_year || !w.travel_month) return false;
+                        return w.travel_year === selectedYear && parseInt(w.travel_month) === monthNum;
                       });
                       
                       const hasTrips = confirmedTrips.length > 0;
@@ -808,8 +808,7 @@ export default function Home() {
                               })}
                               {/* 未成行愿望 */}
                               {unconfirmedWishes.map(wish => {
-                                const dateStr = wish.travel_date || '';
-                                const formattedDate = extractYYYYMMFromDate(dateStr);
+                                const formattedDate = `${wish.travel_year}-${String(wish.travel_month).padStart(2, '0')}`;
 
                                 return (
                                   <div
@@ -856,11 +855,10 @@ export default function Home() {
                         );
                       })}
                     {/* 未成行愿望 */}
-                    {wishes.filter(w => w.is_confirmed !== 1 && w.travel_date && new Date(w.travel_date).getFullYear() === selectedYear)
-                      .sort((a, b) => new Date(a.travel_date!).getTime() - new Date(b.travel_date!).getTime())
+                    {wishes.filter(w => w.is_confirmed !== 1 && w.travel_year === selectedYear)
+                      .sort((a, b) => (a.travel_year * 12 + parseInt(a.travel_month)) - (b.travel_year * 12 + parseInt(b.travel_month)))
                       .map(wish => {
-                        const dateStr = wish.travel_date || '';
-                        const formattedDate = extractYYYYMMFromDate(dateStr);
+                        const formattedDate = `${wish.travel_year}-${String(wish.travel_month).padStart(2, '0')}`;
 
                         return (
                           <div
