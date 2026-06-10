@@ -97,6 +97,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   useEffect(() => {
     const savedDay = localStorage.getItem('travel-toolbox-selected-day');
     const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
+    // 读取保存的选中愿望ID（从时间轴点击导航过来时设置）
+    const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
     
     // 从数据库获取默认旅行
     const fetchDefaultTrip = async () => {
@@ -109,6 +111,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       } catch (error) {
         console.error('[Trip Planner] Failed to fetch default trip:', error);
       } finally {
+        // 如果有保存的愿望ID，先设置它
+        if (savedWishId) {
+          setSelectedWishId(savedWishId);
+        }
         setInitializedFromStorage(true);
       }
     };
