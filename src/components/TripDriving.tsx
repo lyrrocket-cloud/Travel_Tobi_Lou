@@ -108,8 +108,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   useEffect(() => {
     // 读取保存的选中愿望ID（与 TripPlanner/TripAccounting 共享）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-    // 检查是否是刷新页面（通过检查 sessionStorage 标记）
-    const isPageRefresh = !sessionStorage.getItem('travel-toolbox-has-visited');
+    // 使用 performance API 判断是否是刷新页面
+    const isPageRefresh = typeof window !== 'undefined' && 
+      (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)?.type === 'reload';
     
     const fetchDefaultTrip = async () => {
       try {
@@ -128,8 +129,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           // 如果是切换标签页回来，恢复之前选中的旅行
           setSelectedWishId(savedWishId);
         }
-        // 设置标记表示已经访问过
-        sessionStorage.setItem('travel-toolbox-has-visited', 'true');
         setInitializedFromStorage(true);
       }
     };

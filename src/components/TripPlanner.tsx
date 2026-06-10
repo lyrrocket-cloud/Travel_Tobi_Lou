@@ -99,8 +99,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
     // 读取保存的选中愿望ID（从时间轴点击导航过来时设置，或切换标签页时保存）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-    // 检查是否是刷新页面（通过检查 sessionStorage 标记）
-    const isPageRefresh = !sessionStorage.getItem('travel-toolbox-has-visited');
+    // 使用 performance API 判断是否是刷新页面
+    const isPageRefresh = typeof window !== 'undefined' && 
+      (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming)?.type === 'reload';
     
     // 从数据库获取默认旅行
     const fetchDefaultTrip = async () => {
@@ -120,8 +121,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           // 如果是切换标签页回来，恢复之前选中的旅行
           setSelectedWishId(savedWishId);
         }
-        // 设置标记表示已经访问过
-        sessionStorage.setItem('travel-toolbox-has-visited', 'true');
         setInitializedFromStorage(true);
       }
     };
