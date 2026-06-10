@@ -621,8 +621,8 @@ export default function Home() {
   };
 
   // 处理时间轴中点击未成行愿望：跳转到许愿池并打开跟随对话框
-  const handleUnconfirmedWishClick = (wishId: number) => {
-    setFollowingWishId(String(wishId));
+  const handleUnconfirmedWishClick = (wishId: string) => {
+    setFollowingWishId(wishId);
     setFollowerName('');
     setActiveTab('wish-pool');
     // 延迟打开跟随对话框，确保标签页已切换
