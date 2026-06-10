@@ -106,10 +106,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     tripPlans.find(p => String(p.wishId) === String(selectedWishId)) : null;
 
   useEffect(() => {
-    // 读取保存的选中愿望ID（与 TripPlanner/TripAccounting 共享）
+    // 读取保存的选中愿望ID（与 TripPlanner/TripAccounting 共享，保留上一次的行程）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-    // 检查是否是刷新页面（通过检查 sessionStorage 标记）
-    const isPageRefresh = !sessionStorage.getItem('travel-toolbox-has-visited');
     
     const fetchDefaultTrip = async () => {
       try {
@@ -121,15 +119,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       } catch (error) {
         console.error('[Trip Driving] Failed to fetch default trip:', error);
       } finally {
-        // 如果是刷新页面，清除保存的愿望ID，恢复默认旅行
-        if (isPageRefresh) {
-          localStorage.removeItem('travel-toolbox-selected-wish-id');
-        } else if (savedWishId) {
-          // 如果是切换标签页回来，恢复之前选中的旅行
+        // 如果有保存的愿望ID，使用它（包括刷新页面）
+        if (savedWishId) {
           setSelectedWishId(savedWishId);
         }
-        // 设置标记表示已经访问过
-        sessionStorage.setItem('travel-toolbox-has-visited', 'true');
         setInitializedFromStorage(true);
       }
     };
@@ -541,25 +534,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       ) : (
                         <span className="text-[#FFFFFF]/40 text-xs">点击创建记录</span>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newDefaultId = String(wish.id);
-                          setDefaultTripId(newDefaultId);
-                          fetch('/api/default-trip', {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ wishId: newDefaultId }),
-                          });
-                          window.dispatchEvent(new CustomEvent('default-trip-changed', { 
-                            detail: { defaultTripId: newDefaultId } 
-                          }));
-                        }}
-                        className={`p-1.5 sm:p-2 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${isDefault ? 'text-[#CEA472] hover:bg-[#CEA472]/20' : 'text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-[#CEA472]/10'}`}
-                        title={isDefault ? '默认旅行' : '设为默认旅行'}
-                      >
-                        <Star className={`w-4.5 h-4.5 sm:w-5 sm:h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1199,7 +1173,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       <div>
                         <div className="font-medium flex items-center gap-2">
                           {wish.destination}
-                          {isDefault && <Star className="w-4 h-4 fill-[#CEA472]" />}
                         </div>
                         <div className="text-xs text-[#FFFFFF]/60 mt-1">
                           {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
@@ -1208,25 +1181,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                           <div className="text-xs text-[#CEA472]/80 mt-1">点击创建驾驶记录</div>
                         )}
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newDefaultId = String(wish.id);
-                          setDefaultTripId(newDefaultId);
-                          fetch('/api/default-trip', {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ wishId: newDefaultId }),
-                          });
-                          window.dispatchEvent(new CustomEvent('default-trip-changed', { 
-                            detail: { defaultTripId: newDefaultId } 
-                          }));
-                        }}
-                        className={`p-1 hover:bg-[#CEA472]/20 rounded transition-colors ${isDefault ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
-                        title={isDefault ? '默认旅行' : '设为默认旅行'}
-                      >
-                        <Star className={`w-5 h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
-                      </button>
                     </div>
                   </button>
                 </div>
