@@ -97,8 +97,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   useEffect(() => {
     const savedDay = localStorage.getItem('travel-toolbox-selected-day');
     const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
-    // 读取保存的选中愿望ID（从时间轴点击导航过来时设置）
+    // 读取保存的选中愿望ID（从时间轴点击导航过来时设置，或切换标签页时保存）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
+    // 检查是否是刷新页面（通过检查 sessionStorage 标记）
+    const isPageRefresh = !sessionStorage.getItem('travel-toolbox-has-visited');
     
     // 从数据库获取默认旅行
     const fetchDefaultTrip = async () => {
@@ -111,10 +113,15 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       } catch (error) {
         console.error('[Trip Planner] Failed to fetch default trip:', error);
       } finally {
-        // 如果有保存的愿望ID，先设置它
-        if (savedWishId) {
+        // 如果是刷新页面，清除保存的愿望ID，恢复默认旅行
+        if (isPageRefresh) {
+          localStorage.removeItem('travel-toolbox-selected-wish-id');
+        } else if (savedWishId) {
+          // 如果是切换标签页回来，恢复之前选中的旅行
           setSelectedWishId(savedWishId);
         }
+        // 设置标记表示已经访问过
+        sessionStorage.setItem('travel-toolbox-has-visited', 'true');
         setInitializedFromStorage(true);
       }
     };
@@ -136,6 +143,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       localStorage.setItem('travel-toolbox-selected-day', String(selectedDay));
     }
   }, [selectedDay]);
+
+  // 保存选中的旅行到 localStorage（用于切换标签页后恢复）
+  useEffect(() => {
+    if (typeof window !== 'undefined' && selectedWishId) {
+      localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+    }
+  }, [selectedWishId]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
