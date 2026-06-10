@@ -618,6 +618,17 @@ export default function Home() {
     setFollowModalOpen(true);
   };
 
+  // 处理时间轴中点击未成行愿望：跳转到许愿池并打开跟随对话框
+  const handleUnconfirmedWishClick = (wishId: number) => {
+    setFollowingWishId(String(wishId));
+    setFollowerName('');
+    setActiveTab('wish-pool');
+    // 延迟打开跟随对话框，确保标签页已切换
+    setTimeout(() => {
+      setFollowModalOpen(true);
+    }, 100);
+  };
+
   const handleFollow = async () => {
     if (!followingWishId || !followerName) {
       alert('请输入跟随者姓名');
@@ -821,6 +832,7 @@ export default function Home() {
                                 return (
                                   <div
                                     key={wish.id}
+                                    onClick={() => handleUnconfirmedWishClick(wish.id)}
                                     className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/5 border-2 border-dashed border-gray-500/50 hover:bg-gray-500/10"
                                   >
                                     <div className="font-semibold truncate text-[10px] sm:text-xs text-gray-400">{wish.destination}</div>
@@ -876,7 +888,7 @@ export default function Home() {
                         return (
                           <div
                             key={wish.id}
-                            onClick={() => navigateToPlan(wish.id)}
+                            onClick={() => handleUnconfirmedWishClick(wish.id)}
                             className="flex items-center justify-between text-sm px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 bg-gray-500/5 border-2 border-dashed border-gray-500/50 hover:bg-gray-500/10"
                           >
                             <div className="flex items-center gap-2 min-w-0">
