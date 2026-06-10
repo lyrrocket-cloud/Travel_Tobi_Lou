@@ -106,6 +106,8 @@ export default function Home() {
     setMainTab('plan');
     // 保存当前标签页选择
     localStorage.setItem('travel-toolbox-main-tab', 'plan');
+    // 通知 TripPlanner 切换到对应的愿望
+    window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: String(wishId) } }));
   };
 
   const [activeTab, setActiveTab] = useState(() => {

@@ -200,9 +200,17 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       }
     };
 
+    const handleSelectedWishChanged = (e: any) => {
+      if (e.detail && e.detail.wishId) {
+        setSelectedWishId(e.detail.wishId);
+      }
+    };
+
     window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+    window.addEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
     return () => {
       window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+      window.removeEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
     };
   }, []);
 
