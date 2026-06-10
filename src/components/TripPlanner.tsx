@@ -999,7 +999,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
-                        {isDefault && <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
                       </div>
                       <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
@@ -1011,25 +1010,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       ) : (
                         <span className="text-[#FFFFFF]/40 text-xs">点击创建</span>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newDefaultId = String(wish.id);
-                          setDefaultTripId(newDefaultId);
-                          fetch('/api/default-trip', {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ wishId: newDefaultId }),
-                          });
-                          window.dispatchEvent(new CustomEvent('default-trip-changed', { 
-                            detail: { defaultTripId: newDefaultId } 
-                          }));
-                        }}
-                        className={`p-1.5 sm:p-2 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${isDefault ? 'text-[#CEA472] hover:bg-[#CEA472]/20' : 'text-[#FFFFFF]/40 hover:text-[#CEA472] hover:bg-[#CEA472]/10'}`}
-                        title={isDefault ? '默认旅行' : '设为默认旅行'}
-                      >
-                        <Star className={`w-4.5 h-4.5 sm:w-5 sm:h-5 ${isDefault ? 'fill-[#CEA472]' : ''}`} />
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1050,7 +1030,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {currentTripPlan.destination} 旅行规划
           </h3>
-          {defaultTripId === selectedWishId && <Star className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
         </div>
         <Button
           variant="ghost"
@@ -1493,7 +1472,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       <div>
                         <div className="font-medium flex items-center gap-2">
                           {wish.destination}
-                          {isDefault && <Star className="w-4 h-4 fill-[#CEA472]" />}
                         </div>
                         <div className="text-xs text-[#FFFFFF]/50">
                           {wish.confirmed_date} · {wish.travelers}
