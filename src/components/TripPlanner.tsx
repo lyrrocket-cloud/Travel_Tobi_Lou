@@ -147,15 +147,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     if (!initializedFromStorage) return;
     if (loading) return;
     if (confirmedWishes.length === 0) return;
-    
-    // 首先尝试使用已选中的wishId（如果存在且有效）
+
+    // 如果已经有有效的 selectedWishId，不覆盖它
+    // 这是为了支持从外部（如时间轴）导航到特定的旅行
     if (selectedWishId) {
-      const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
-      if (wishExists) {
-        return;
-      }
+      return;
     }
-    
+
     // 然后尝试使用默认旅行ID
     if (defaultTripId) {
       const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
@@ -164,9 +162,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         return;
       }
     }
-    
+
     // 最后选择第一个有行程计划的旅行或第一个旅行
-    const firstWishWithPlan = confirmedWishes.find(wish => 
+    const firstWishWithPlan = confirmedWishes.find(wish =>
       tripPlans.some(plan => plan.wishId === String(wish.id))
     );
     if (firstWishWithPlan) {
@@ -174,7 +172,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     } else {
       setSelectedWishId(String(confirmedWishes[0].id));
     }
-  }, [confirmedWishes, tripPlans, selectedWishId, initializedFromStorage, loading, defaultTripId]);
+  }, [initializedFromStorage, loading, confirmedWishes, defaultTripId, tripPlans]);
 
   const fetchTripPlans = async () => {
     try {
@@ -202,7 +200,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
     const handleSelectedWishChanged = (e: any) => {
       if (e.detail && e.detail.wishId) {
-        setSelectedWishId(e.detail.wishId);
+        const wishId = e.detail.wishId;
+        // 直接信任外部设置的 selectedWishId
+        setSelectedWishId(wishId);
+        // 确保初始化完成
+        if (!initializedFromStorage) {
+          setInitializedFromStorage(true);
+        }
       }
     };
 
@@ -212,7 +216,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
       window.removeEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
     };
-  }, []);
+  }, [initializedFromStorage, confirmedWishes]);
 
   useEffect(() => {
     const handleTripPlansUpdated = () => {
