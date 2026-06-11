@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -150,6 +150,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   const [creatingTrip, setCreatingTrip] = useState(false);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
+  const [expandEarlyMorning, setExpandEarlyMorning] = useState(false); // 是否展开0-7点时段
 
   useEffect(() => {
     const savedDay = localStorage.getItem('travel-toolbox-selected-day');
@@ -1156,13 +1157,34 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       {showSchedule && (
         <Card className="mb-4 sm:mb-6 border border-[#CEA472]/20 bg-black/40">
           <CardContent className="pt-3 sm:pt-4">
-            <div className="flex items-center mb-3 sm:mb-4">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#0a0a0f]" />
                 </div>
                 <h4 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h4>
               </div>
+              {/* 折叠/展开凌晨时段按钮 */}
+              <button
+                onClick={() => setExpandEarlyMorning(!expandEarlyMorning)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  expandEarlyMorning
+                    ? 'bg-[#CEA472]/20 text-[#CEA472] border border-[#CEA472]/40'
+                    : 'bg-black/40 text-[#FFFFFF]/60 border border-[#CEA472]/20 hover:border-[#CEA472]/40 hover:text-[#FFFFFF]/80'
+                }`}
+              >
+                {expandEarlyMorning ? (
+                  <>
+                    <span>收起凌晨</span>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  </>
+                ) : (
+                  <>
+                    <span>展开凌晨</span>
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
             </div>
             {/* Day切换按钮 - 手机端 */}
             {currentTripPlan && (
@@ -1184,34 +1206,38 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             )}
             
             {/* 计算全局 earliestHour，供时间轴和每日渲染使用 */}
-            {/* 默认从7点开始，折叠0-7点时间段 */}
             {(() => {
-              let globalEarliestHour = 7;
+              // 根据展开状态决定起始时间：折叠时从7点开始，展开时从0点开始
+              let globalEarliestHour = expandEarlyMorning ? 0 : 7;
               
-              // 只考虑当天活动的开始时间，不考虑跨天活动延续的00:00
+              // 根据活动开始时间动态计算最早时间
               currentTripPlan?.days.forEach(day => {
                 const sortedActivities = getSortedActivities(day.activities);
                 sortedActivities.forEach(activity => {
                   const hour = parseInt(activity.startTime.split(':')[0]);
-                  // 只考虑7点之后的活动，保持默认从7点开始
-                  if (hour >= 7 && hour < globalEarliestHour) globalEarliestHour = hour;
+                  // 折叠时只考虑7点之后的活动，展开时考虑所有活动
+                  if (hour < globalEarliestHour) {
+                    if (expandEarlyMorning || hour >= 7) {
+                      globalEarliestHour = hour;
+                    }
+                  }
                 });
                 if (day.dayNumber === 1) {
                   const arrival = getArrivalTransport(day);
                   if (arrival) {
                     const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
-                    if (depHour >= 7 && depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    if (depHour < globalEarliestHour && (expandEarlyMorning || depHour >= 7)) globalEarliestHour = depHour;
                     const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
-                    if (arrHour >= 7 && arrHour < globalEarliestHour) globalEarliestHour = arrHour;
+                    if (arrHour < globalEarliestHour && (expandEarlyMorning || arrHour >= 7)) globalEarliestHour = arrHour;
                   }
                 }
                 if (day.dayNumber === currentTripPlan?.travelDays) {
                   const departure = getDepartureTransport(day);
                   if (departure) {
                     const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
-                    if (depHour >= 7 && depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    if (depHour < globalEarliestHour && (expandEarlyMorning || depHour >= 7)) globalEarliestHour = depHour;
                     const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
-                    if (arrHour >= 7 && arrHour < globalEarliestHour) globalEarliestHour = arrHour;
+                    if (arrHour < globalEarliestHour && (expandEarlyMorning || arrHour >= 7)) globalEarliestHour = arrHour;
                   }
                 }
                 sortedActivities.forEach((activity, idx) => {
@@ -1220,10 +1246,24 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     const transport = getBetweenTransport(day, activity.id, nextActivity.id);
                     if (transport) {
                       const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
-                      if (depHour >= 7 && depHour < globalEarliestHour) globalEarliestHour = depHour;
+                      if (depHour < globalEarliestHour && (expandEarlyMorning || depHour >= 7)) globalEarliestHour = depHour;
                     }
                   }
                 });
+                
+                // 检查跨天活动延续：展开时需要考虑延续活动的结束时间
+                if (expandEarlyMorning && day.dayNumber > 1) {
+                  const prevDay = currentTripPlan?.days.find(d => d.dayNumber === day.dayNumber - 1);
+                  if (prevDay) {
+                    getSortedActivities(prevDay.activities).forEach(activity => {
+                      const offset = getActivityEndDayOffset(activity);
+                      if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
+                        // 延续活动从00:00开始
+                        if (0 < globalEarliestHour) globalEarliestHour = 0;
+                      }
+                    });
+                  }
+                }
               });
               
               const globalGetTimePosition = (time: string) => {
