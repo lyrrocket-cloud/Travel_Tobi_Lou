@@ -87,6 +87,49 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     location: '',
     notes: undefined,
   });
+
+  const handleActivityTypeChange = (type: string, currentData: Omit<ActivityItem, 'id'> | ActivityItem): Omit<ActivityItem, 'id'> | ActivityItem => {
+    if (type === 'accommodation') {
+      return {
+        ...currentData,
+        type,
+        startTime: '20:00',
+        endTime: '08:00',
+      };
+    } else {
+      return {
+        ...currentData,
+        type,
+        startTime: '09:00',
+        endTime: undefined,
+      };
+    }
+  };
+
+  const isOvernight = (startTime: string, endTime?: string): boolean => {
+    if (!endTime) return false;
+    return endTime.localeCompare(startTime) <= 0;
+  };
+
+  const calcDurationMinutes = (startTime: string, endTime?: string): number => {
+    if (!endTime) return 60;
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+    let durationMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+    if (durationMinutes <= 0) {
+      durationMinutes += 24 * 60;
+    }
+    return durationMinutes;
+  };
+
+  const formatTimeWithDayOffset = (time: string, startTime: string, endTime?: string): string => {
+    if (!endTime) return time;
+    const isNextDay = isOvernight(startTime, endTime);
+    if (isNextDay && time === endTime) {
+      return `次日 ${time}`;
+    }
+    return time;
+  };
   const [showSchedule, setShowSchedule] = useState(false);
   const [showTripEditor, setShowTripEditor] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -845,7 +888,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Label className="text-[#FFFFFF]/60 text-xs">活动类型</Label>
                 <select
                   value={editingData.type}
-                  onChange={(e) => setEditingActivityData({ ...editingData, type: e.target.value })}
+                  onChange={(e) => setEditingActivityData(handleActivityTypeChange(e.target.value, editingData) as ActivityItem)}
                   className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                 >
                   <option value="accommodation">住宿</option>
@@ -947,7 +990,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               <span className="text-[#CEA472] font-medium text-xs">{activityTypes[activity.type]}</span>
               <span className="text-[#FFFFFF]/60 text-xs">
                 {activity.startTime}
-                {activity.endTime && ` - ${activity.endTime}`}
+                {activity.endTime && ` - ${formatTimeWithDayOffset(activity.endTime, activity.startTime, activity.endTime)}`}
               </span>
             </div>
             {activity.content && (
@@ -1206,10 +1249,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       
                       const getDuration = (startTime: string, endTime?: string) => {
                         if (!endTime) return 60;
-                        const [startHours, startMinutes] = startTime.split(':').map(Number);
-                        const [endHours, endMinutes] = endTime.split(':').map(Number);
-                        const durationMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
-                        return Math.max(durationMinutes * (40 / 60), 60);
+                        return Math.max(calcDurationMinutes(startTime, endTime) * (40 / 60), 60);
                       };
                       
                       const mergedItems: Array<{
@@ -1785,7 +1825,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         <Label className="text-[#FFFFFF]/60 text-xs">活动类型</Label>
                         <select
                           value={newActivity.type}
-                          onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
+                          onChange={(e) => setNewActivity(handleActivityTypeChange(e.target.value, newActivity) as Omit<ActivityItem, 'id'>)}
                           className="w-full h-10 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3 text-xs"
                         >
                           <option value="accommodation">住宿</option>

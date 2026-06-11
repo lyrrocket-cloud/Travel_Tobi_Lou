@@ -68,6 +68,12 @@
             "startTime": "18:00",
             "location": "C",
             "id": "activity-1780642978344"
+          },
+          {
+            "type": "accommodation",
+            "startTime": "22:00",
+            "location": "K",
+            "id": "activity-1781149670377"
           }
         ]
       },
@@ -217,7 +223,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-05T07:11:18.509Z"
+    "updatedAt": "2026-06-11T03:47:50.501Z"
   },
   {
     "id": "trip-plan-1780193545980",
