@@ -53,18 +53,6 @@
             "position": "between",
             "beforeActivityId": "activity-1780639292649",
             "afterActivityId": "arrival"
-          },
-          {
-            "id": "transport-1781150083429",
-            "type": "taxi",
-            "from": "C",
-            "to": "K",
-            "departureTime": "18:01",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780642978344",
-            "afterActivityId": "activity-1781149670377"
           }
         ],
         "activities": [
@@ -83,9 +71,11 @@
           },
           {
             "type": "accommodation",
-            "startTime": "22:00",
-            "location": "K",
-            "id": "activity-1781149670377"
+            "startTime": "20:00",
+            "endTime": "08:00",
+            "endDayOffset": 1,
+            "location": "",
+            "id": "activity-1781157757523"
           }
         ]
       },
@@ -235,7 +225,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-11T03:54:45.053Z"
+    "updatedAt": "2026-06-11T06:02:37.641Z"
   },
   {
     "id": "trip-plan-1780193545980",

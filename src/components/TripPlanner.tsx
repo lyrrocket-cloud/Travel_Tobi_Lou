@@ -103,7 +103,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         ...currentData,
         type,
         startTime: '09:00',
-        endTime: undefined,
+        endTime: '12:00',
         endDayOffset: 0,
       };
     }
@@ -1494,7 +1494,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               <div key={hour} className="h-10 border-b border-[#CEA472]/10"></div>
                             ))}
                             {mergedItems.map(item => {
-                              const top = getTimePosition(item.startTime);
+                              const rawTop = getTimePosition(item.startTime);
+                              const top = Math.max(rawTop, 0);
                               const height = getDuration(item.startTime, item.endTime);
                               
                               let bgColor = '';
