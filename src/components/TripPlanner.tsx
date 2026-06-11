@@ -890,7 +890,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     );
   };
 
-  const renderActivityItem = (activity: ActivityItem, day: number) => {
+  const renderActivityItem = (activity: ActivityItem, day: number, isContinuation: boolean = false) => {
     const isEditing = editingActivity?.dayNumber === day && editingActivity?.activityId === activity.id;
     const editingData = isEditing && editingActivityData ? editingActivityData : activity;
 
@@ -1013,30 +1013,25 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       );
     }
 
-    const isActivityOvernight = getActivityEndDayOffset(activity) > 0 || activity.type === 'accommodation' || isOvernight(activity.startTime, activity.endTime);
-
     return (
       <div 
         key={activity.id}
-        className={`bg-black/40 border rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors ${isActivityOvernight ? 'border-2 border-[#FF9500]/60' : 'border border-[#CEA472]/20'}`}
+        className="bg-black/40 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors"
         onClick={() => {
           setEditingActivity({ dayNumber: day, activityId: activity.id });
           setEditingActivityData({ ...activity });
         }}
       >
         <div className="flex items-start gap-2.5 sm:gap-3">
-          <div className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${isActivityOvernight ? 'bg-[#FF9500]/20' : 'bg-[#CEA472]/20'}`}>
-            {isActivityOvernight ? <Moon className="w-4 h-4 text-[#FF9500]" /> : (activityTypeIcons[activity.type] || activityTypeIcons['other'])}
+          <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#CEA472]/20 flex items-center justify-center">
+            {activityTypeIcons[activity.type] || activityTypeIcons['other']}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <span className={`font-medium text-xs ${isActivityOvernight ? 'text-[#FF9500]' : 'text-[#CEA472]'}`}>{activityTypes[activity.type]}</span>
-              {isActivityOvernight && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 bg-[#FF9500]/20 text-[#FF9500] rounded">跨天</span>
-              )}
+              <span className="text-[#CEA472] font-medium text-xs">{activityTypes[activity.type]}{isContinuation ? ' (续)' : ''}</span>
               <span className="text-[#FFFFFF]/60 text-xs">
-                {activity.startTime}
-                {activity.endTime && ` - ${formatTimeWithDayOffset(activity.endTime, activity.startTime, activity.endTime, activity.endDayOffset)}`}
+                {isContinuation ? '00:00' : activity.startTime}
+                {activity.endTime && ` - ${isContinuation ? activity.endTime : formatTimeWithDayOffset(activity.endTime, activity.startTime, activity.endTime, activity.endDayOffset)}`}
               </span>
             </div>
             {activity.content && (
@@ -1529,14 +1524,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 subtitle = departure?.from || '出发地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
                               } else if (item.activity) {
-                                isOvernightActivity = !!item.isOvernightContinuation || item.activity.type === 'accommodation' || isOvernight(item.activity.startTime, item.activity.endTime);
-                                bgColor = isOvernightActivity ? 'bg-[#FF9500]/15' : 'bg-[#CEA472]/15';
-                                borderColor = isOvernightActivity ? 'border-[#FF9500]' : 'border-[#CEA472]';
-                                icon = isOvernightActivity ? <Moon className="w-3 h-3 text-[#FF9500]" /> : (activityTypeIcons[item.activity.type] || activityTypeIcons['other']);
+                                bgColor = 'bg-[#CEA472]/15';
+                                borderColor = 'border-[#CEA472]';
+                                icon = activityTypeIcons[item.activity.type] || activityTypeIcons['other'];
                                 if (item.isOvernightContinuation) {
-                                  title = `${activityTypes[item.activity.type] || '活动'} (续) 🌙`;
-                                } else if (isOvernightActivity) {
-                                  title = `${activityTypes[item.activity.type] || '活动'} 🌙`;
+                                  title = `${activityTypes[item.activity.type] || '活动'} (续)`;
                                 } else {
                                   title = activityTypes[item.activity.type] || '活动';
                                 }
@@ -1544,11 +1536,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 if (item.activity.content) contentParts.push(item.activity.content);
                                 if (item.activity.location) contentParts.push(item.activity.location);
                                 subtitle = contentParts.join(' · ');
-                                if (isOvernightActivity) {
-                                  const dayOffsetText = item.isOvernightContinuation
-                                    ? `${item.startTime}-${item.endTime}`
-                                    : `${item.startTime}-次日${item.activity.endTime || '08:00'}`;
-                                  subtitle = `跨天 ${dayOffsetText}${subtitle ? ' · ' + subtitle : ''}`;
+                                if (item.isOvernightContinuation) {
+                                  subtitle = `${item.startTime}-${item.endTime}${subtitle ? ' · ' + subtitle : ''}`;
+                                } else if (isOvernight(item.activity.startTime, item.activity.endTime) || getActivityEndDayOffset(item.activity) > 0) {
+                                  subtitle = `${item.startTime}-次日${item.activity.endTime || '08:00'}${subtitle ? ' · ' + subtitle : ''}`;
                                 }
                                 
                                 if (item.transportAfter) {
@@ -1568,7 +1559,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                   }}
                                 >
                                   <div className="flex items-start gap-1">
-                                    <div className={`flex-shrink-0 mt-0.5 ${isOvernightActivity ? 'text-[#FF9500]' : 'text-[#CEA472]'}`}>
+                                    <div className="text-[#CEA472] flex-shrink-0 mt-0.5">
                                       {icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -1672,10 +1663,35 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   transport?: TransportInfo;
                   beforeActivityId?: string;
                   afterActivityId?: string;
+                  isOvernightContinuation?: boolean;
+                  originalActivityDayNumber?: number;
                 };
                 
                 const items: SortableItem[] = [];
                 const dayPlan = currentTripPlan?.days.find(d => d.dayNumber === day);
+                
+                // 处理跨天活动的延续：检查前一天是否有跨天活动延续到今天
+                const prevDayPlan = currentTripPlan?.days.find(d => d.dayNumber === day - 1);
+                if (prevDayPlan) {
+                  const prevDayActivities = getSortedActivities(prevDayPlan.activities);
+                  prevDayActivities.forEach(activity => {
+                    const offset = getActivityEndDayOffset(activity);
+                    if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
+                      const actualOffset = offset > 0 ? offset : 1;
+                      const endDayNumber = prevDayPlan.dayNumber + actualOffset;
+                      if (day <= endDayNumber) {
+                        const isLastDay = day === endDayNumber;
+                        items.push({
+                          type: 'activity',
+                          sortTime: '00:00',
+                          activity: activity,
+                          isOvernightContinuation: true,
+                          originalActivityDayNumber: prevDayPlan.dayNumber,
+                        });
+                      }
+                    }
+                  });
+                }
                 
                 // 添加到达行程（第1天）
                 if (day === 1) {
@@ -1690,14 +1706,24 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   }
                 }
                 
-                // 添加活动
-                sortedActivities.forEach((activity, index) => {
+                // 添加当天活动
+                const dayActivities = dayPlan ? getSortedActivities(dayPlan.activities) : [];
+                dayActivities.forEach((activity, index) => {
+                  const offset = getActivityEndDayOffset(activity);
+                  const isOvernightActivity = offset > 0 || isOvernight(activity.startTime, activity.endTime);
+                  let endTimeForSort = activity.startTime;
+                  if (!isOvernightActivity) {
+                    endTimeForSort = activity.endTime || activity.startTime;
+                  }
+                  
                   items.push({
                     type: 'activity',
                     sortTime: activity.startTime,
                     activity: activity,
-                    beforeActivityId: index > 0 ? sortedActivities[index - 1].id : (day === 1 && dayPlan && getArrivalTransport(dayPlan) ? 'arrival' : undefined),
-                    afterActivityId: index < sortedActivities.length - 1 ? sortedActivities[index + 1].id : (day === currentTripPlan.travelDays && dayPlan && getDepartureTransport(dayPlan) ? 'departure' : undefined),
+                    beforeActivityId: index > 0 ? dayActivities[index - 1].id : (day === 1 && dayPlan && getArrivalTransport(dayPlan) ? 'arrival' : undefined),
+                    afterActivityId: index < dayActivities.length - 1 ? dayActivities[index + 1].id : (day === currentTripPlan.travelDays && dayPlan && getDepartureTransport(dayPlan) ? 'departure' : undefined),
+                    isOvernightContinuation: false,
+                    originalActivityDayNumber: day,
                   });
                 });
                 
@@ -1859,7 +1885,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             )}
                           </div>
                         )}
-                        {renderActivityItem(activity, day)}
+                        {renderActivityItem(activity, day, item.isOvernightContinuation || false)}
                         {/* 活动后的交通（当下一个是活动或离开时） */}
                         {nextItem && (nextItem.type === 'activity' || nextItem.type === 'departure') && dayPlan && (
                           <div className="pl-8 space-y-2">
