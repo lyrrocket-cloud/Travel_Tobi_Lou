@@ -637,33 +637,39 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 {selfDrivingRoutes.length > 0 && (
                   <div className="mb-3">
                     <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择自驾行程</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {selfDrivingRoutes.map(route => (
-                        <button
-                          key={route.id}
-                          onClick={() => {
-                            setSelectedRouteId(selectedRouteId === route.id ? null : route.id);
-                            if (selectedRouteId === route.id) {
-                              setNewDrivingRecord({ ...newDrivingRecord });
-                            } else {
-                              setNewDrivingRecord({
-                                ...newDrivingRecord,
-                                startLocation: route.from,
-                                endLocation: route.to,
-                              });
-                            }
-                          }}
-                          className={`flex flex-col items-start p-3 rounded-lg border transition-all text-xs ${
-                            selectedRouteId === route.id
-                              ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
-                              : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                          }`}
-                        >
-                          <span className="text-[#FFFFFF]/80">{route.day}</span>
-                          <span className="mt-0.5">{route.from} → {route.to}</span>
-                        </button>
-                      ))}
-                    </div>
+                    <Select
+                      value={selectedRouteId || ''}
+                      onValueChange={(value) => {
+                        setSelectedRouteId(value);
+                        if (value) {
+                          const route = selfDrivingRoutes.find(r => r.id === value);
+                          if (route) {
+                            setNewDrivingRecord({
+                              ...newDrivingRecord,
+                              startLocation: route.from,
+                              endLocation: route.to,
+                            });
+                          }
+                        } else {
+                          setNewDrivingRecord({
+                            ...newDrivingRecord,
+                            startLocation: '',
+                            endLocation: '',
+                          });
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                        <SelectValue placeholder="选择自驾行程" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                        {selfDrivingRoutes.map(route => (
+                          <SelectItem key={route.id} value={route.id}>
+                            {route.day} - {route.from} → {route.to}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
                 

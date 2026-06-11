@@ -980,36 +980,31 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 <div>
                   <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
-                  {filteredLocations.length > 0 && (
-                    <div className="mb-3">
-                      <div className="text-xs text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {filteredLocations.map((activity, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleActivitySelect(activity)}
-                            className={`flex flex-col items-start p-3 rounded-lg border transition-all text-xs ${
-                              selectedActivity?.activityId === activity.activityId
-                                ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
-                                : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                            }`}
-                          >
-                            <span className="text-[#FFFFFF]/80">Day{activity.dayNumber}</span>
-                            <span className="mt-0.5">{activity.location}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  <Input
-                    value={newExpense.location}
-                    onChange={(e) => {
-                      setNewExpense({ ...newExpense, location: e.target.value });
-                      setSelectedActivity(null);
+                  <Select
+                    value={selectedActivity?.activityId || ''}
+                    onValueChange={(value) => {
+                      if (value) {
+                        const activity = filteredLocations.find(l => l.activityId === value);
+                        if (activity) {
+                          handleActivitySelect(activity);
+                        }
+                      } else {
+                        setSelectedActivity(null);
+                        setNewExpense(prev => ({ ...prev, location: '' }));
+                      }
                     }}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
-                    placeholder="或直接输入地点"
-                  />
+                  >
+                    <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                      <SelectValue placeholder="选择活动地点" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                      {filteredLocations.map((activity, idx) => (
+                        <SelectItem key={idx} value={activity.activityId}>
+                          Day{activity.dayNumber} - {activity.location}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
