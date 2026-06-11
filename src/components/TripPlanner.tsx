@@ -585,6 +585,22 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             } else if (beforeActivity.startTime) {
               departureTime = addMinutesToTime(beforeActivity.startTime, 1);
             }
+          } else if (beforeActivityId) {
+            // 如果在当天找不到 beforeActivity，可能是前一天的跨天活动延续
+            const prevDayPlan = currentTripPlan.days.find(d => d.dayNumber === dayNumber - 1);
+            if (prevDayPlan) {
+              const prevDayActivity = prevDayPlan.activities.find(a => a.id === beforeActivityId);
+              if (prevDayActivity) {
+                // 使用跨天活动的地点
+                from = prevDayActivity.location || '';
+                // 计算跨天活动在当天的结束时间
+                const offset = getActivityEndDayOffset(prevDayActivity);
+                if (offset > 0 || isOvernight(prevDayActivity.startTime, prevDayActivity.endTime)) {
+                  // 跨天活动的结束时间是它在当天结束的时间
+                  departureTime = prevDayActivity.endTime || '';
+                }
+              }
+            }
           }
         }
       }
