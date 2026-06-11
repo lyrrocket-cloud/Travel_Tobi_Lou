@@ -71,6 +71,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   });
 
   const [analysisDriverFilter, setAnalysisDriverFilter] = useState<string | null>(null);
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
 
   const fetchDrivingRecords = async () => {
     setLoading(true);
@@ -103,6 +104,20 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
   const currentTripPlan = selectedWishId ?
     tripPlans.find(p => String(p.wishId) === String(selectedWishId)) : null;
+
+  // 从旅行规划中提取自驾交通路线
+  const selfDrivingRoutes = currentTripPlan?.days?.flatMap(day => {
+    return day.transport
+      ?.filter(t => t.type === 'car' || t.type === '自驾')
+      .map(t => ({
+        id: t.id,
+        day: `Day${day.dayNumber}`,
+        from: t.from,
+        to: t.to,
+        departureTime: t.departureTime,
+        arrivalTime: t.arrivalTime,
+      })) || [];
+  }) || [];
 
   useEffect(() => {
     // 读取保存的选中愿望ID（与 TripPlanner/TripAccounting 共享，保留上一次的行程）
@@ -617,6 +632,43 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">行程信息</Label>
+                
+                {/* 从旅行规划中选择自驾交通 */}
+                {selfDrivingRoutes.length > 0 && (
+                  <div className="mb-3">
+                    <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择自驾行程</Label>
+                    <select
+                      value={selectedRouteId || ''}
+                      onChange={(e) => {
+                        const routeId = e.target.value;
+                        setSelectedRouteId(routeId);
+                        if (routeId) {
+                          const route = selfDrivingRoutes.find(r => r.id === routeId);
+                          if (route) {
+                            setNewDrivingRecord({
+                              ...newDrivingRecord,
+                              startLocation: route.from,
+                              endLocation: route.to,
+                            });
+                          }
+                        } else {
+                          setNewDrivingRecord({
+                            ...newDrivingRecord,
+                          });
+                        }
+                      }}
+                      className="w-full bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 rounded px-3 appearance-none cursor-pointer"
+                    >
+                      <option value="">选择自驾行程...</option>
+                      {selfDrivingRoutes.map(route => (
+                        <option key={route.id} value={route.id}>
+                          {route.day} - {route.from} → {route.to}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                     <div>
