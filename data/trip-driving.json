@@ -1,0 +1,52 @@
+[
+  {
+    "id": "driving-1781169915739",
+    "wishId": "in-memory-1",
+    "destination": "济州岛",
+    "startDate": "2026-06-17",
+    "records": [
+      {
+        "id": "driving-1781169917170",
+        "wishId": "in-memory-1",
+        "date": "2026-06-11",
+        "time": "12:00",
+        "driver": "秦瑜贲",
+        "startLocation": "A",
+        "endLocation": "B",
+        "distance": 10,
+        "duration": 8,
+        "score": 0,
+        "behaviors": [
+          {
+            "type": "normal",
+            "timestamp": "2026-06-11 12:00"
+          }
+        ],
+        "createdAt": "2026-06-11T09:25:17.170Z",
+        "updatedAt": "2026-06-11T09:25:17.170Z"
+      },
+      {
+        "id": "driving-1781169933171",
+        "wishId": "in-memory-1",
+        "date": "2026-06-11",
+        "time": "12:00",
+        "driver": "秦瑜贲",
+        "startLocation": "A",
+        "endLocation": "b",
+        "distance": 10,
+        "duration": 8,
+        "score": 0,
+        "behaviors": [
+          {
+            "type": "normal",
+            "timestamp": "2026-06-11 12:00"
+          }
+        ],
+        "createdAt": "2026-06-11T09:25:33.171Z",
+        "updatedAt": "2026-06-11T09:25:33.171Z"
+      }
+    ],
+    "createdAt": "2026-06-11T09:25:15.739Z",
+    "updatedAt": "2026-06-11T09:25:33.256Z"
+  }
+]

@@ -22,7 +22,6 @@ const drivingBehaviors: Record<string, { icon: React.ReactNode; label: string; s
   phone_use: { icon: <Car className="w-4 h-4" />, label: '使用手机', score: -10, color: 'text-purple-500' },
   lane_violation: { icon: <Navigation className="w-4 h-4" />, label: '变道违规', score: -5, color: 'text-orange-400' },
   red_light: { icon: <Car className="w-4 h-4" />, label: '闯红灯', score: -20, color: 'text-red-700' },
-  safe_driving: { icon: <Award className="w-4 h-4" />, label: '安全驾驶', score: 10, color: 'text-green-500' },
 };
 
 interface TripDrivingProps {
@@ -196,10 +195,20 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  const calculateScore = (behaviors: DrivingBehavior[]): number => {
-    return behaviors.reduce((total, behavior) => {
+  const calculateScore = (behaviors: DrivingBehavior[], distance?: number, duration?: number): number => {
+    // 驾驶行为评分
+    const behaviorScore = behaviors.reduce((total, behavior) => {
       return total + (drivingBehaviors[behavior]?.score || 0);
     }, 0);
+    
+    // 距离积分：每公里1分
+    const distanceScore = distance ? Math.floor(distance) : 0;
+    
+    // 时长积分：每分钟1分
+    const durationScore = duration ? Math.floor(duration) : 0;
+    
+    // 总积分
+    return behaviorScore + distanceScore + durationScore;
   };
 
   const addDrivingRecord = async () => {
@@ -252,24 +261,27 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       return;
     }
 
-    const drivingRecordItem: DrivingRecordItem = {
-      id: `driving-${Date.now()}`,
-      wishId: targetRecord.wishId,
-      date: newDrivingRecord.date,
-      time: newDrivingRecord.time,
-      driver: newDrivingRecord.driver,
-      startLocation: newDrivingRecord.startLocation,
-      endLocation: newDrivingRecord.endLocation,
-      distance: newDrivingRecord.distance ? parseFloat(newDrivingRecord.distance) : undefined,
-      duration: newDrivingRecord.duration ? parseFloat(newDrivingRecord.duration) : undefined,
-      score: calculateScore(newDrivingRecord.behaviors),
-      behaviors: newDrivingRecord.behaviors.map(behavior => ({
-        type: behavior,
-        timestamp: `${newDrivingRecord.date} ${newDrivingRecord.time}`,
-      })),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    const distance = newDrivingRecord.distance ? parseFloat(newDrivingRecord.distance) : undefined;
+      const duration = newDrivingRecord.duration ? parseFloat(newDrivingRecord.duration) : undefined;
+      
+      const drivingRecordItem: DrivingRecordItem = {
+        id: `driving-${Date.now()}`,
+        wishId: targetRecord.wishId,
+        date: newDrivingRecord.date,
+        time: newDrivingRecord.time,
+        driver: newDrivingRecord.driver,
+        startLocation: newDrivingRecord.startLocation,
+        endLocation: newDrivingRecord.endLocation,
+        distance,
+        duration,
+        score: calculateScore(newDrivingRecord.behaviors, distance, duration),
+        behaviors: newDrivingRecord.behaviors.map(behavior => ({
+          type: behavior,
+          timestamp: `${newDrivingRecord.date} ${newDrivingRecord.time}`,
+        })),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
     try {
       const response = await fetch('/api/trip-driving', {
@@ -702,14 +714,21 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     </button>
                   ))}
                 </div>
-                {newDrivingRecord.behaviors.length > 0 && (
-                  <div className="mt-3 p-3 bg-black/40 rounded-lg border border-[#CEA472]/20">
-                    <div className="text-xs text-[#FFFFFF]/60 mb-2">本次积分：</div>
-                    <div className={`text-lg font-semibold ${calculateScore(newDrivingRecord.behaviors) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {calculateScore(newDrivingRecord.behaviors) >= 0 ? '+' : ''}{calculateScore(newDrivingRecord.behaviors)} 分
-                    </div>
-                  </div>
-                )}
+                {(() => {
+                    const score = calculateScore(
+                      newDrivingRecord.behaviors,
+                      newDrivingRecord.distance ? parseFloat(newDrivingRecord.distance) : undefined,
+                      newDrivingRecord.duration ? parseFloat(newDrivingRecord.duration) : undefined
+                    );
+                    return score !== 0 ? (
+                      <div className="mt-3 p-3 bg-black/40 rounded-lg border border-[#CEA472]/20">
+                        <div className="text-xs text-[#FFFFFF]/60 mb-2">本次积分：</div>
+                        <div className={`text-lg font-semibold ${score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {score >= 0 ? '+' : ''}{score} 分
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
               </div>
             </div>
           </div>
