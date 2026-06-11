@@ -1191,6 +1191,19 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     <div className="h-12 border-b border-[#CEA472]/20"></div>
                     {(() => {
                       let earliestHour = 7;
+                      
+                      // 先检查所有跨天活动，考虑延续部分的开始时间(00:00)
+                      currentTripPlan?.days.forEach(day => {
+                        const sortedActivities = getSortedActivities(day.activities);
+                        sortedActivities.forEach(activity => {
+                          const offset = getActivityEndDayOffset(activity);
+                          if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
+                            // 跨天活动会让第二天从00:00开始显示
+                            if (0 < earliestHour) earliestHour = 0;
+                          }
+                        });
+                      });
+                      
                       currentTripPlan?.days.forEach(day => {
                         const sortedActivities = getSortedActivities(day.activities);
                         sortedActivities.forEach(activity => {
@@ -1250,6 +1263,29 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       const date = getDateDisplay(day.dayNumber);
                       
                       let earliestHour = 7;
+                      
+                      // 先检查前一天是否有跨天活动延续到今天，考虑其结束时间
+                      const prevDayForEarliest = currentTripPlan?.days.find(d => d.dayNumber === day.dayNumber - 1);
+                      if (prevDayForEarliest) {
+                        const prevSortedActivities = getSortedActivities(prevDayForEarliest.activities);
+                        prevSortedActivities.forEach(activity => {
+                          const offset = getActivityEndDayOffset(activity);
+                          if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
+                            const actualOffset = offset > 0 ? offset : 1;
+                            const endDayNumber = prevDayForEarliest.dayNumber + actualOffset;
+                            if (day.dayNumber <= endDayNumber) {
+                              // 延续活动从00:00开始，需要让earliestHour至少为0以显示延续部分
+                              if (0 < earliestHour) earliestHour = 0;
+                              // 如果是最后一天，还需要考虑结束时间
+                              if (day.dayNumber === endDayNumber && activity.endTime) {
+                                const endHour = parseInt(activity.endTime.split(':')[0]);
+                                if (endHour > 0 && endHour < earliestHour) earliestHour = 0; // 确保能看到结束部分
+                              }
+                            }
+                          }
+                        });
+                      }
+                      
                       sortedActivities.forEach(activity => {
                         const hour = parseInt(activity.startTime.split(':')[0]);
                         if (hour < earliestHour) earliestHour = hour;
