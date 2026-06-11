@@ -952,25 +952,23 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
-                  {editingData.endTime && (
-                    <label className="flex items-center gap-1 text-[10px] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset)}
-                        onChange={(e) => {
-                          const newEndTime = editingData.endTime || '08:00';
-                          const newOffset = e.target.checked ? 1 : 0;
-                          setEditingActivityData({
-                            ...editingData,
-                            endTime: newEndTime,
-                            endDayOffset: newOffset,
-                          } as ActivityItem);
-                        }}
-                        className="w-3 h-3 accent-[#CEA472]"
-                      />
-                      <span className={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) ? 'text-[#FF9500]' : 'text-[#FFFFFF]/60'}>跨天</span>
-                    </label>
-                  )}
+                  <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset)}
+                      onChange={(e) => {
+                        const newEndTime = editingData.endTime || '08:00';
+                        const newOffset = e.target.checked ? 1 : 0;
+                        setEditingActivityData({
+                          ...editingData,
+                          endTime: newEndTime,
+                          endDayOffset: newOffset,
+                        } as ActivityItem);
+                      }}
+                      className="w-3 h-3 accent-[#CEA472]"
+                    />
+                    <span className={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) ? 'text-[#FF9500]' : 'text-[#FFFFFF]/60'}>跨天</span>
+                  </label>
                 </div>
                 <Input
                   type="time"
@@ -1577,6 +1575,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 const departure = getDepartureTransport(day);
                                 subtitle = departure?.from || '出发地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
+                                if (item.transportBefore) {
+                                  const t = item.transportBefore;
+                                  transportText = `${transportNames[t.type] || t.type || '交通'}至下一程`;
+                                }
                               } else if (item.activity) {
                                 bgColor = 'bg-[#CEA472]/15';
                                 borderColor = 'border-[#CEA472]';
