@@ -1477,7 +1477,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         if (departure) {
                           const lastActivity = sortedActivities[sortedActivities.length - 1];
                           const departureStartTime = departure.departureTime || lastActivity?.endTime || '23:00';
-                          const departureEndTime = departure.departureTime || '23:00';
+                          const departureEndTime = departure.arrivalTime || departureStartTime;
                           
                           allItems.push({
                             id: 'departure',
