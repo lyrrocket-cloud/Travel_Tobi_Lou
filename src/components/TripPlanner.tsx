@@ -1270,6 +1270,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       
                       // 使用全局的 globalGetTimePosition 计算位置
                       const getTimePosition = globalGetTimePosition;
+                      const earliestHour = globalEarliestHour;
 
                       const getActivityDurationForDay = (activity: ActivityItem, dayNumber: number, activityDayNumber: number): { startTime: string; endTime: string } | null => {
                         const offset = getActivityEndDayOffset(activity);
