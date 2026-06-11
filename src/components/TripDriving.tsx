@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Star, RefreshCw, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route } from 'lucide-react';
+import { Plus, Edit2, Trash2, RefreshCw, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -50,7 +50,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const [deletingRecordId, setDeletingRecordId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
-  const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
 
   const [newDrivingRecord, setNewDrivingRecord] = useState<{
     date: string;
@@ -149,19 +148,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   }, []);
 
   useEffect(() => {
-    const handleDefaultTripChanged = (e: any) => {
-      if (e.detail && e.detail.defaultTripId) {
-        setDefaultTripId(e.detail.defaultTripId);
-      }
-    };
-
-    window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
-    return () => {
-      window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!initializedFromStorage) return;
     if (loading) return;
     if (confirmedWishes.length === 0) return;
@@ -169,14 +155,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     if (selectedWishId) {
       const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
       if (wishExists) {
-        return;
-      }
-    }
-    
-    if (defaultTripId) {
-      const defaultWishExists = confirmedWishes.some(wish => String(wish.id) === defaultTripId);
-      if (defaultWishExists) {
-        setSelectedWishId(defaultTripId);
         return;
       }
     }
@@ -208,7 +186,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       }
       setSelectedWishId(String(firstWish.id));
     }
-  }, [confirmedWishes, tripDrivingRecords, selectedWishId, initializedFromStorage, loading, defaultTripId]);
+  }, [confirmedWishes, tripDrivingRecords, selectedWishId, initializedFromStorage, loading]);
 
   const createDrivingRecord = async (wish: Wish) => {
     try {
@@ -500,11 +478,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <div className="space-y-3 sm:space-y-4">
             {confirmedWishes.map(wish => {
               const hasRecord = tripDrivingRecords.some(record => record.wishId === String(wish.id));
-              const isDefault = defaultTripId === String(wish.id);
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/40 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  className="bg-black/40 border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors"
                   onClick={() => {
                     setSelectedWishId(String(wish.id));
                     setShowWishSelector(false);
@@ -512,10 +489,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 >
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
-                        {isDefault && <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
-                      </div>
+                      <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
                       <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
                       </p>
@@ -547,7 +521,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {currentWish?.destination} 旅行驾驶
           </h2>
-          {defaultTripId === selectedWishId && <Star className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#CEA472] fill-[#CEA472] flex-shrink-0" />}
         </div>
         <Button
           variant="ghost"
@@ -1143,7 +1116,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <div className="space-y-3 py-4 max-h-[50vh] overflow-y-auto flex-1">
             {confirmedWishes.map(wish => {
               const existingRecord = tripDrivingRecords.find(record => record.wishId === String(wish.id));
-              const isDefault = defaultTripId === String(wish.id);
               return (
                 <div key={wish.id}>
                   <button
