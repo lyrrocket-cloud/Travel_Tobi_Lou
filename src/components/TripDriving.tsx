@@ -576,21 +576,30 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶员</Label>
-                <div className="flex flex-wrap gap-2">
-                  {travelers.map((traveler, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setNewDrivingRecord({ ...newDrivingRecord, driver: traveler })}
-                      className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
-                        newDrivingRecord.driver === traveler
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                      }`}
-                    >
-                      {traveler}
-                    </button>
-                  ))}
-                </div>
+                {travelers.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {travelers.map((traveler, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setNewDrivingRecord({ ...newDrivingRecord, driver: traveler })}
+                        className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
+                          newDrivingRecord.driver === traveler
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {traveler}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <Input
+                    value={newDrivingRecord.driver}
+                    onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, driver: e.target.value })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                    placeholder="输入驾驶员姓名"
+                  />
+                )}
               </div>
 
               <div>
