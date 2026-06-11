@@ -469,6 +469,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   className="bg-black/40 border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors"
                   onClick={() => {
                     setSelectedWishId(String(wish.id));
+                    setActiveTab('entry');
                     setShowWishSelector(false);
                   }}
                 >
@@ -1106,6 +1107,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   <button
                     onClick={() => {
                       setSelectedWishId(String(wish.id));
+                      setActiveTab('entry');
                       setShowWishSelector(false);
                     }}
                     className={`w-full p-4 rounded-lg text-left transition-all ${
