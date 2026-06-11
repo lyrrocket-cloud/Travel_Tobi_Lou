@@ -7,6 +7,7 @@ interface ActivityItem {
   type: string;
   startTime: string;
   endTime?: string;
+  endDayOffset?: number;
   content?: string;
   location?: string;
   notes?: string;
