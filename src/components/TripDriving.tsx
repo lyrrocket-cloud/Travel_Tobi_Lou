@@ -637,35 +637,33 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 {selfDrivingRoutes.length > 0 && (
                   <div className="mb-3">
                     <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择自驾行程</Label>
-                    <select
-                      value={selectedRouteId || ''}
-                      onChange={(e) => {
-                        const routeId = e.target.value;
-                        setSelectedRouteId(routeId);
-                        if (routeId) {
-                          const route = selfDrivingRoutes.find(r => r.id === routeId);
-                          if (route) {
-                            setNewDrivingRecord({
-                              ...newDrivingRecord,
-                              startLocation: route.from,
-                              endLocation: route.to,
-                            });
-                          }
-                        } else {
-                          setNewDrivingRecord({
-                            ...newDrivingRecord,
-                          });
-                        }
-                      }}
-                      className="w-full bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 rounded px-3 appearance-none cursor-pointer"
-                    >
-                      <option value="">选择自驾行程...</option>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {selfDrivingRoutes.map(route => (
-                        <option key={route.id} value={route.id}>
-                          {route.day} - {route.from} → {route.to}
-                        </option>
+                        <button
+                          key={route.id}
+                          onClick={() => {
+                            setSelectedRouteId(selectedRouteId === route.id ? null : route.id);
+                            if (selectedRouteId === route.id) {
+                              setNewDrivingRecord({ ...newDrivingRecord });
+                            } else {
+                              setNewDrivingRecord({
+                                ...newDrivingRecord,
+                                startLocation: route.from,
+                                endLocation: route.to,
+                              });
+                            }
+                          }}
+                          className={`flex flex-col items-start p-3 rounded-lg border transition-all text-xs ${
+                            selectedRouteId === route.id
+                              ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
+                              : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          }`}
+                        >
+                          <span className="text-[#FFFFFF]/80">{route.day}</span>
+                          <span className="mt-0.5">{route.from} → {route.to}</span>
+                        </button>
                       ))}
-                    </select>
+                    </div>
                   </div>
                 )}
                 
