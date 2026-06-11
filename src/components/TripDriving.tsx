@@ -236,7 +236,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             await fetchDrivingRecords();
             targetRecord = tripDrivingRecords.find(r => String(r.wishId) === String(selectedWishId));
           } else {
-            console.error('[Trip Driving] Failed to create driving record');
+            const errorText = await createResponse.text();
+            console.error('[Trip Driving] Failed to create driving record:', createResponse.status, errorText);
             return;
           }
         } catch (error) {
