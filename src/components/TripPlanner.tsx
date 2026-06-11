@@ -83,6 +83,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     type: 'other',
     startTime: '09:00',
     endTime: undefined,
+    endDayOffset: 0,
     content: undefined,
     location: '',
     notes: undefined,
@@ -95,6 +96,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         type,
         startTime: '20:00',
         endTime: '08:00',
+        endDayOffset: 1,
       };
     } else {
       return {
@@ -102,33 +104,45 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         type,
         startTime: '09:00',
         endTime: undefined,
+        endDayOffset: 0,
       };
     }
   };
 
-  const isOvernight = (startTime: string, endTime?: string): boolean => {
+  const isOvernight = (startTime: string, endTime?: string, dayOffset?: number): boolean => {
     if (!endTime) return false;
+    if (dayOffset && dayOffset > 0) return true;
     return endTime.localeCompare(startTime) <= 0;
   };
 
-  const calcDurationMinutes = (startTime: string, endTime?: string): number => {
+  const calcDurationMinutes = (startTime: string, endTime?: string, dayOffset?: number): number => {
     if (!endTime) return 60;
     const [startHours, startMinutes] = startTime.split(':').map(Number);
     const [endHours, endMinutes] = endTime.split(':').map(Number);
     let durationMinutes = (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
-    if (durationMinutes <= 0) {
-      durationMinutes += 24 * 60;
-    }
+    const extraDays = dayOffset || (durationMinutes <= 0 ? 1 : 0);
+    durationMinutes += extraDays * 24 * 60;
     return durationMinutes;
   };
 
-  const formatTimeWithDayOffset = (time: string, startTime: string, endTime?: string): string => {
+  const formatTimeWithDayOffset = (time: string, startTime: string, endTime?: string, dayOffset?: number): string => {
     if (!endTime) return time;
-    const isNextDay = isOvernight(startTime, endTime);
+    const isNextDay = isOvernight(startTime, endTime, dayOffset);
     if (isNextDay && time === endTime) {
-      return `次日 ${time}`;
+      const offsetText = dayOffset && dayOffset > 1 ? `第${dayOffset}天` : '次日';
+      return `${offsetText} ${time}`;
     }
     return time;
+  };
+
+  const getActivityEndDayOffset = (activity: ActivityItem): number => {
+    if (activity.endDayOffset && activity.endDayOffset > 0) {
+      return activity.endDayOffset;
+    }
+    if (activity.endTime && isOvernight(activity.startTime, activity.endTime)) {
+      return 1;
+    }
+    return 0;
   };
   const [showSchedule, setShowSchedule] = useState(false);
   const [showTripEditor, setShowTripEditor] = useState(true);
@@ -376,6 +390,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
           type: 'other',
           startTime: '09:00',
           endTime: undefined,
+          endDayOffset: 0,
           content: undefined,
           location: '',
           notes: undefined,
@@ -918,13 +933,39 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                <div className="flex items-center gap-2 mb-1">
+                  <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                  {editingData.endTime && (
+                    <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset)}
+                        onChange={(e) => {
+                          const newEndTime = editingData.endTime || '08:00';
+                          const newOffset = e.target.checked ? 1 : 0;
+                          setEditingActivityData({
+                            ...editingData,
+                            endTime: newEndTime,
+                            endDayOffset: newOffset,
+                          } as ActivityItem);
+                        }}
+                        className="w-3 h-3 accent-[#CEA472]"
+                      />
+                      <span className={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) ? 'text-[#FF9500]' : 'text-[#FFFFFF]/60'}>跨天</span>
+                    </label>
+                  )}
+                </div>
                 <Input
                   type="time"
                   value={editingData.endTime || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  className={`bg-black/40 border text-[#FFFFFF] text-xs h-10 w-full ${isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) ? 'border-[#FF9500]/60' : 'border-[#CEA472]/30'}`}
                 />
+                {isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) && editingData.endTime && (
+                  <div className="text-[10px] text-[#FF9500] mt-1">
+                    次日 {editingData.endTime} 结束
+                  </div>
+                )}
               </div>
               <div className="md:col-span-2">
                 <Label className="text-[#FFFFFF]/60 text-xs">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
@@ -972,7 +1013,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       );
     }
 
-    const isActivityOvernight = activity.type === 'accommodation' || isOvernight(activity.startTime, activity.endTime);
+    const isActivityOvernight = getActivityEndDayOffset(activity) > 0 || activity.type === 'accommodation' || isOvernight(activity.startTime, activity.endTime);
 
     return (
       <div 
@@ -995,7 +1036,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               )}
               <span className="text-[#FFFFFF]/60 text-xs">
                 {activity.startTime}
-                {activity.endTime && ` - ${formatTimeWithDayOffset(activity.endTime, activity.startTime, activity.endTime)}`}
+                {activity.endTime && ` - ${formatTimeWithDayOffset(activity.endTime, activity.startTime, activity.endTime, activity.endDayOffset)}`}
               </span>
             </div>
             {activity.content && (
@@ -1251,13 +1292,37 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         const [hours, minutes] = time.split(':').map(Number);
                         return ((hours - earliestHour) * 60 + minutes) * (40 / 60);
                       };
-                      
-                      const getDuration = (startTime: string, endTime?: string) => {
+
+                      const getActivityDurationForDay = (activity: ActivityItem, dayNumber: number, activityDayNumber: number): { startTime: string; endTime: string } | null => {
+                        const offset = getActivityEndDayOffset(activity);
+                        const activityStartDay = activityDayNumber;
+                        const activityEndDay = activityDayNumber + offset;
+
+                        if (dayNumber < activityStartDay || dayNumber > activityEndDay) {
+                          return null;
+                        }
+
+                        if (dayNumber === activityStartDay && dayNumber === activityEndDay) {
+                          return { startTime: activity.startTime, endTime: activity.endTime || activity.startTime };
+                        }
+
+                        if (dayNumber === activityStartDay) {
+                          return { startTime: activity.startTime, endTime: '23:59' };
+                        }
+
+                        if (dayNumber === activityEndDay) {
+                          return { startTime: '00:00', endTime: activity.endTime || '00:00' };
+                        }
+
+                        return { startTime: '00:00', endTime: '23:59' };
+                      };
+
+                      const getDuration = (startTime: string, endTime?: string, dayOffset?: number) => {
                         if (!endTime) return 60;
-                        return Math.max(calcDurationMinutes(startTime, endTime) * (40 / 60), 60);
+                        return Math.max(calcDurationMinutes(startTime, endTime, dayOffset) * (40 / 60), 60);
                       };
                       
-                      const mergedItems: Array<{
+                      interface MergedItem {
                         id: string;
                         type: 'arrival' | 'departure' | 'activity';
                         startTime: string;
@@ -1265,18 +1330,41 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         activity: ActivityItem | null;
                         transportBefore: TransportInfo | null;
                         transportAfter: TransportInfo | null;
-                      }> = [];
-                      
-                      const allItems: Array<{
-                        id: string;
-                        type: 'arrival' | 'departure' | 'activity';
-                        startTime: string;
-                        endTime?: string;
-                        activity: ActivityItem | null;
-                        transportBefore: TransportInfo | null;
-                        transportAfter: TransportInfo | null;
-                      }> = [];
-                      
+                        isOvernightContinuation?: boolean;
+                        originalActivityDayNumber?: number;
+                      }
+
+                      const mergedItems: MergedItem[] = [];
+
+                      const allItems: MergedItem[] = [];
+
+                      // 处理跨天活动的延续：先检查前一天是否有跨天活动延续到今天
+                      const prevDayForContinue = currentTripPlan?.days.find(d => d.dayNumber === day.dayNumber - 1);
+                      if (prevDayForContinue) {
+                        const prevSortedActivities = getSortedActivities(prevDayForContinue.activities);
+                        prevSortedActivities.forEach(activity => {
+                          const offset = getActivityEndDayOffset(activity);
+                          if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
+                            const actualOffset = offset > 0 ? offset : 1;
+                            const endDayNumber = prevDayForContinue.dayNumber + actualOffset;
+                            if (day.dayNumber <= endDayNumber) {
+                              const isLastDay = day.dayNumber === endDayNumber;
+                              allItems.push({
+                                id: `${activity.id}-continue-${day.dayNumber}`,
+                                type: 'activity',
+                                startTime: '00:00',
+                                endTime: isLastDay ? (activity.endTime || '00:00') : '23:59',
+                                activity: activity,
+                                transportBefore: null,
+                                transportAfter: null,
+                                isOvernightContinuation: true,
+                                originalActivityDayNumber: prevDayForContinue.dayNumber,
+                              });
+                            }
+                          }
+                        });
+                      }
+
                       if (day.dayNumber === 1) {
                         const arrival = getArrivalTransport(day);
                         if (arrival) {
@@ -1315,14 +1403,23 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           transportAfter = getBetweenTransport(day, activity.id, 'departure') || null;
                         }
                         
+                        const offset = getActivityEndDayOffset(activity);
+                        let endTimeForDay = activity.endTime;
+                        const isActivityOvernight = offset > 0 || isOvernight(activity.startTime, activity.endTime);
+                        if (isActivityOvernight) {
+                          endTimeForDay = '23:59';
+                        }
+
                         allItems.push({
                           id: activity.id,
                           type: 'activity',
                           startTime: activity.startTime,
-                          endTime: activity.endTime,
+                          endTime: endTimeForDay,
                           activity: activity,
                           transportBefore: transportBefore,
                           transportAfter: transportAfter,
+                          isOvernightContinuation: false,
+                          originalActivityDayNumber: day.dayNumber,
                         });
                       });
                       
@@ -1432,19 +1529,26 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 subtitle = departure?.from || '出发地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
                               } else if (item.activity) {
-                                isOvernightActivity = item.activity.type === 'accommodation' || isOvernight(item.activity.startTime, item.activity.endTime);
+                                isOvernightActivity = !!item.isOvernightContinuation || item.activity.type === 'accommodation' || isOvernight(item.activity.startTime, item.activity.endTime);
                                 bgColor = isOvernightActivity ? 'bg-[#FF9500]/15' : 'bg-[#CEA472]/15';
                                 borderColor = isOvernightActivity ? 'border-[#FF9500]' : 'border-[#CEA472]';
                                 icon = isOvernightActivity ? <Moon className="w-3 h-3 text-[#FF9500]" /> : (activityTypeIcons[item.activity.type] || activityTypeIcons['other']);
-                                title = isOvernightActivity 
-                                  ? `${activityTypes[item.activity.type] || '活动'} 🌙` 
-                                  : (activityTypes[item.activity.type] || '活动');
+                                if (item.isOvernightContinuation) {
+                                  title = `${activityTypes[item.activity.type] || '活动'} (续) 🌙`;
+                                } else if (isOvernightActivity) {
+                                  title = `${activityTypes[item.activity.type] || '活动'} 🌙`;
+                                } else {
+                                  title = activityTypes[item.activity.type] || '活动';
+                                }
                                 const contentParts = [];
                                 if (item.activity.content) contentParts.push(item.activity.content);
                                 if (item.activity.location) contentParts.push(item.activity.location);
                                 subtitle = contentParts.join(' · ');
                                 if (isOvernightActivity) {
-                                  subtitle = `跨天 · ${subtitle}`;
+                                  const dayOffsetText = item.isOvernightContinuation
+                                    ? `${item.startTime}-${item.endTime}`
+                                    : `${item.startTime}-次日${item.activity.endTime || '08:00'}`;
+                                  subtitle = `跨天 ${dayOffsetText}${subtitle ? ' · ' + subtitle : ''}`;
                                 }
                                 
                                 if (item.transportAfter) {
@@ -1867,13 +1971,39 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                          <div className="flex items-center gap-2 mb-1">
+                            <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
+                            {newActivity.endTime && (
+                              <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset)}
+                                  onChange={(e) => {
+                                    const newEndTime = newActivity.endTime || '08:00';
+                                    const newOffset = e.target.checked ? 1 : 0;
+                                    setNewActivity({
+                                      ...newActivity,
+                                      endTime: newEndTime,
+                                      endDayOffset: newOffset,
+                                    });
+                                  }}
+                                  className="w-3 h-3 accent-[#CEA472]"
+                                />
+                                <span className={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) ? 'text-[#FF9500]' : 'text-[#FFFFFF]/60'}>跨天</span>
+                              </label>
+                            )}
+                          </div>
                           <Input
                             type="time"
                             value={newActivity.endTime || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value || undefined })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                            className={`bg-black/40 border text-[#FFFFFF] text-xs h-10 w-full ${isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) ? 'border-[#FF9500]/60' : 'border-[#CEA472]/30'}`}
                           />
+                          {isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) && newActivity.endTime && (
+                            <div className="text-[10px] text-[#FF9500] mt-1">
+                              次日 {newActivity.endTime} 结束
+                            </div>
+                          )}
                         </div>
                         <div className="md:col-span-2">
                           <Label className="text-[#FFFFFF]/60 text-xs">活动内容 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
