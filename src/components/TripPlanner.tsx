@@ -2057,25 +2057,23 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
-                            {newActivity.endTime && (
-                              <label className="flex items-center gap-1 text-[10px] cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset)}
-                                  onChange={(e) => {
-                                    const newEndTime = newActivity.endTime || '08:00';
-                                    const newOffset = e.target.checked ? 1 : 0;
-                                    setNewActivity({
-                                      ...newActivity,
-                                      endTime: newEndTime,
-                                      endDayOffset: newOffset,
-                                    });
-                                  }}
-                                  className="w-3 h-3 accent-[#CEA472]"
-                                />
-                                <span className={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) ? 'text-[#FF9500]' : 'text-[#FFFFFF]/60'}>跨天</span>
-                              </label>
-                            )}
+                            <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset)}
+                                onChange={(e) => {
+                                  const newEndTime = newActivity.endTime || '08:00';
+                                  const newOffset = e.target.checked ? 1 : 0;
+                                  setNewActivity({
+                                    ...newActivity,
+                                    endTime: newEndTime,
+                                    endDayOffset: newOffset,
+                                  });
+                                }}
+                                className="w-3 h-3 accent-[#CEA472]"
+                              />
+                              <span className={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) ? 'text-[#FF9500]' : 'text-[#FFFFFF]/60'}>跨天</span>
+                            </label>
                           </div>
                           <Input
                             type="time"
