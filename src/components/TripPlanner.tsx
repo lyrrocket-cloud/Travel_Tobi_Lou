@@ -1184,43 +1184,34 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             )}
             
             {/* 计算全局 earliestHour，供时间轴和每日渲染使用 */}
+            {/* 默认从7点开始，折叠0-7点时间段 */}
             {(() => {
               let globalEarliestHour = 7;
               
-              // 先检查所有跨天活动，考虑延续部分的开始时间(00:00)
-              currentTripPlan?.days.forEach(day => {
-                const sortedActivities = getSortedActivities(day.activities);
-                sortedActivities.forEach(activity => {
-                  const offset = getActivityEndDayOffset(activity);
-                  if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
-                    // 跨天活动会让第二天从00:00开始显示
-                    if (0 < globalEarliestHour) globalEarliestHour = 0;
-                  }
-                });
-              });
-              
+              // 只考虑当天活动的开始时间，不考虑跨天活动延续的00:00
               currentTripPlan?.days.forEach(day => {
                 const sortedActivities = getSortedActivities(day.activities);
                 sortedActivities.forEach(activity => {
                   const hour = parseInt(activity.startTime.split(':')[0]);
-                  if (hour < globalEarliestHour) globalEarliestHour = hour;
+                  // 只考虑7点之后的活动，保持默认从7点开始
+                  if (hour >= 7 && hour < globalEarliestHour) globalEarliestHour = hour;
                 });
                 if (day.dayNumber === 1) {
                   const arrival = getArrivalTransport(day);
                   if (arrival) {
                     const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
-                    if (depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    if (depHour >= 7 && depHour < globalEarliestHour) globalEarliestHour = depHour;
                     const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
-                    if (arrHour < globalEarliestHour) globalEarliestHour = arrHour;
+                    if (arrHour >= 7 && arrHour < globalEarliestHour) globalEarliestHour = arrHour;
                   }
                 }
                 if (day.dayNumber === currentTripPlan?.travelDays) {
                   const departure = getDepartureTransport(day);
                   if (departure) {
                     const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
-                    if (depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    if (depHour >= 7 && depHour < globalEarliestHour) globalEarliestHour = depHour;
                     const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
-                    if (arrHour < globalEarliestHour) globalEarliestHour = arrHour;
+                    if (arrHour >= 7 && arrHour < globalEarliestHour) globalEarliestHour = arrHour;
                   }
                 }
                 sortedActivities.forEach((activity, idx) => {
@@ -1229,7 +1220,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     const transport = getBetweenTransport(day, activity.id, nextActivity.id);
                     if (transport) {
                       const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
-                      if (depHour < globalEarliestHour) globalEarliestHour = depHour;
+                      if (depHour >= 7 && depHour < globalEarliestHour) globalEarliestHour = depHour;
                     }
                   }
                 });
