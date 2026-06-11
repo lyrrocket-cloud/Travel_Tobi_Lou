@@ -1044,6 +1044,43 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   />
                 </div>
               </div>
+              {selfDrivingRoutes.length > 0 && (
+                <div>
+                  <Label className="text-[#FFFFFF]/40 mb-2 block text-xs">从旅行规划选择自驾行程</Label>
+                  <Select
+                    value={selfDrivingRoutes.find(r => r.from === editingRecord.startLocation && r.to === editingRecord.endLocation)?.id || ''}
+                    onValueChange={(value) => {
+                      if (value) {
+                        const route = selfDrivingRoutes.find(r => r.id === value);
+                        if (route) {
+                          setEditingRecord({
+                            ...editingRecord,
+                            startLocation: route.from,
+                            endLocation: route.to,
+                          });
+                        }
+                      } else {
+                        setEditingRecord({
+                          ...editingRecord,
+                          startLocation: '',
+                          endLocation: '',
+                        });
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                      <SelectValue placeholder="选择自驾行程" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                      {selfDrivingRoutes.map(route => (
+                        <SelectItem key={route.id} value={route.id}>
+                          {route.day} - {route.from} → {route.to}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">出发地点</Label>
                 <Input

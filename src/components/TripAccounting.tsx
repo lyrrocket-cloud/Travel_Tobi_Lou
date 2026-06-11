@@ -1398,37 +1398,31 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     : [];
                   
                   return (
-                    <>
-                      {editFilteredLocations.length > 0 && (
-                        <div className="mb-3">
-                          <div className="text-xs text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
-                          <div className="flex flex-wrap gap-2">
-                            {editFilteredLocations.map((activity, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => handleEditActivitySelect(activity)}
-                                className={`px-3 py-1.5 rounded-full text-xs transition-all ${
-                                  editingSelectedActivity?.activityId === activity.activityId
-                                    ? 'bg-[#CEA472] text-[#0a0a0f]'
-                                    : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                                }`}
-                              >
-                                {activity.location}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      <Input
-                        value={editingExpense.location || ''}
-                        onChange={(e) => {
-                          setEditingExpense({ ...editingExpense, location: e.target.value });
+                    <Select
+                      value={editingSelectedActivity?.activityId || ''}
+                      onValueChange={(value) => {
+                        if (value) {
+                          const activity = editFilteredLocations.find(l => l.activityId === value);
+                          if (activity) {
+                            handleEditActivitySelect(activity);
+                          }
+                        } else {
                           setEditingSelectedActivity(null);
-                        }}
-                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
-                        placeholder="或直接输入地点"
-                      />
-                    </>
+                          setEditingExpense({ ...editingExpense, location: '' });
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                        <SelectValue placeholder="选择活动地点" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                        {editFilteredLocations.map((activity, idx) => (
+                          <SelectItem key={idx} value={activity.activityId}>
+                            Day{activity.dayNumber} - {activity.location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   );
                 })()}
               </div>
