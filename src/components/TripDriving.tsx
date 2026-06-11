@@ -209,7 +209,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     }
   }, [confirmedWishes, tripDrivingRecords, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
-  const createDrivingRecord = async (wish: Wish) => {
+  const createDrivingRecord = async (wish: Wish): Promise<boolean> => {
     try {
       const response = await fetch('/api/trip-driving', {
         method: 'POST',
@@ -222,12 +222,24 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       });
 
       if (response.ok) {
+        // 等待数据加载完成后再切换视图
         await fetchDrivingRecords();
+        // 确保状态更新完成后再切换
         setSelectedWishId(String(wish.id));
-        setShowWishSelector(false);
+        setActiveTab('entry');
+        // 延迟关闭选择器，确保 UI 更新
+        setTimeout(() => {
+          setShowWishSelector(false);
+        }, 100);
+        return true;
+      } else {
+        const errorData = await response.json();
+        console.error('[Trip Driving] Failed to create driving record:', errorData.error);
+        return false;
       }
     } catch (error) {
       console.error('[Trip Driving] Error creating driving record:', error);
+      return false;
     }
   };
 
@@ -238,14 +250,15 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   };
 
   const addDrivingRecord = async () => {
-    let availableRecords = tripDrivingRecords;
     let targetRecord = currentDrivingRecord;
     
+    // 如果没有当前记录，尝试创建
     if (!targetRecord && selectedWishId) {
       const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
       if (wish) {
         try {
-          const response = await fetch('/api/trip-driving', {
+          // 先创建驾驶记录
+          const createResponse = await fetch('/api/trip-driving', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -255,26 +268,20 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             }),
           });
 
-          if (response.ok) {
-            availableRecords = await fetchDrivingRecords();
-            targetRecord = availableRecords.find(r => String(r.wishId) === String(selectedWishId));
-            if (!targetRecord) {
-              console.error('[Trip Driving] Record still not found after creation');
-              return;
-            }
-          } else {
-            console.error('[Trip Driving] Failed to create driving record');
-            return;
+          if (createResponse.ok) {
+            // 重新获取所有记录
+            const records = await fetchDrivingRecords();
+            targetRecord = records.find(r => String(r.wishId) === String(selectedWishId));
           }
         } catch (error) {
           console.error('[Trip Driving] Error creating driving record:', error);
-          return;
         }
       }
     }
     
+    // 再次检查记录是否存在
     if (!targetRecord) {
-      targetRecord = availableRecords.find(r => String(r.wishId) === String(selectedWishId));
+      targetRecord = tripDrivingRecords.find(r => String(r.wishId) === String(selectedWishId));
     }
     
     if (!targetRecord) {
@@ -512,6 +519,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   onClick={() => {
                     if (hasRecord) {
                       setSelectedWishId(String(wish.id));
+                      setActiveTab('entry');
                       setShowWishSelector(false);
                     } else {
                       createDrivingRecord(wish);
@@ -1158,6 +1166,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     onClick={() => {
                       if (existingRecord) {
                         setSelectedWishId(String(wish.id));
+                        setActiveTab('entry');
                         setShowWishSelector(false);
                       } else {
                         createDrivingRecord(wish);
