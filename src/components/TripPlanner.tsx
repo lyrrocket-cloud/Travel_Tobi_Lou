@@ -1182,75 +1182,81 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 ))}
               </div>
             )}
+            
+            {/* 计算全局 earliestHour，供时间轴和每日渲染使用 */}
+            {(() => {
+              let globalEarliestHour = 7;
               
-              <div>
-              <div className="overflow-y-auto max-h-[600px] sm:max-h-[900px] schedule-scroll">
-                <div className="flex min-w-max">
-                  {/* 时间轴 - 仅桌面端显示 */}
-                  <div className="w-12 sm:w-16 flex-shrink-0 flex flex-col">
-                    <div className="h-12 border-b border-[#CEA472]/20"></div>
-                    {(() => {
-                      let earliestHour = 7;
-                      
-                      // 先检查所有跨天活动，考虑延续部分的开始时间(00:00)
-                      currentTripPlan?.days.forEach(day => {
-                        const sortedActivities = getSortedActivities(day.activities);
-                        sortedActivities.forEach(activity => {
-                          const offset = getActivityEndDayOffset(activity);
-                          if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
-                            // 跨天活动会让第二天从00:00开始显示
-                            if (0 < earliestHour) earliestHour = 0;
-                          }
-                        });
-                      });
-                      
-                      currentTripPlan?.days.forEach(day => {
-                        const sortedActivities = getSortedActivities(day.activities);
-                        sortedActivities.forEach(activity => {
-                          const hour = parseInt(activity.startTime.split(':')[0]);
-                          if (hour < earliestHour) earliestHour = hour;
-                        });
-                        if (day.dayNumber === 1) {
-                          const arrival = getArrivalTransport(day);
-                          if (arrival) {
-                            const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
-                            if (depHour < earliestHour) earliestHour = depHour;
-                            const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
-                            if (arrHour < earliestHour) earliestHour = arrHour;
-                          }
-                        }
-                        if (day.dayNumber === currentTripPlan.travelDays) {
-                          const departure = getDepartureTransport(day);
-                          if (departure) {
-                            const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
-                            if (depHour < earliestHour) earliestHour = depHour;
-                            const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
-                            if (arrHour < earliestHour) earliestHour = arrHour;
-                          }
-                        }
-                        sortedActivities.forEach((activity, idx) => {
-                          const nextActivity = sortedActivities[idx + 1];
-                          if (nextActivity) {
-                            const transport = getBetweenTransport(day, activity.id, nextActivity.id);
-                            if (transport) {
-                              const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
-                              if (depHour < earliestHour) earliestHour = depHour;
-                            }
-                          }
-                        });
-                      });
-                      
-                      const hoursToShow = Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour);
-                      
-                      return hoursToShow.map(hour => (
-                        <div key={hour} className="h-10 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
-                          {String(hour).padStart(2, '0')}:00
-                        </div>
-                      ));
-                    })()}
-                  </div>
-                  <div className="flex-1 flex">
-                    {currentTripPlan?.days
+              // 先检查所有跨天活动，考虑延续部分的开始时间(00:00)
+              currentTripPlan?.days.forEach(day => {
+                const sortedActivities = getSortedActivities(day.activities);
+                sortedActivities.forEach(activity => {
+                  const offset = getActivityEndDayOffset(activity);
+                  if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
+                    // 跨天活动会让第二天从00:00开始显示
+                    if (0 < globalEarliestHour) globalEarliestHour = 0;
+                  }
+                });
+              });
+              
+              currentTripPlan?.days.forEach(day => {
+                const sortedActivities = getSortedActivities(day.activities);
+                sortedActivities.forEach(activity => {
+                  const hour = parseInt(activity.startTime.split(':')[0]);
+                  if (hour < globalEarliestHour) globalEarliestHour = hour;
+                });
+                if (day.dayNumber === 1) {
+                  const arrival = getArrivalTransport(day);
+                  if (arrival) {
+                    const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
+                    if (depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
+                    if (arrHour < globalEarliestHour) globalEarliestHour = arrHour;
+                  }
+                }
+                if (day.dayNumber === currentTripPlan?.travelDays) {
+                  const departure = getDepartureTransport(day);
+                  if (departure) {
+                    const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
+                    if (depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
+                    if (arrHour < globalEarliestHour) globalEarliestHour = arrHour;
+                  }
+                }
+                sortedActivities.forEach((activity, idx) => {
+                  const nextActivity = sortedActivities[idx + 1];
+                  if (nextActivity) {
+                    const transport = getBetweenTransport(day, activity.id, nextActivity.id);
+                    if (transport) {
+                      const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
+                      if (depHour < globalEarliestHour) globalEarliestHour = depHour;
+                    }
+                  }
+                });
+              });
+              
+              const globalGetTimePosition = (time: string) => {
+                const [hours, minutes] = time.split(':').map(Number);
+                return ((hours - globalEarliestHour) * 60 + minutes) * (40 / 60);
+              };
+              
+              const globalHoursToShow = Array.from({ length: 24 - globalEarliestHour }, (_, i) => i + globalEarliestHour);
+              
+              return (
+                <div>
+                  <div className="overflow-y-auto max-h-[600px] sm:max-h-[900px] schedule-scroll">
+                    <div className="flex min-w-max">
+                      {/* 时间轴 - 仅桌面端显示 */}
+                      <div className="w-12 sm:w-16 flex-shrink-0 flex flex-col">
+                        <div className="h-12 border-b border-[#CEA472]/20"></div>
+                        {globalHoursToShow.map(hour => (
+                          <div key={hour} className="h-10 border-b border-[#CEA472]/10 text-xs text-[#FFFFFF]/40 px-2 py-1">
+                            {String(hour).padStart(2, '0')}:00
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex-1 flex">
+                        {currentTripPlan?.days
                       .filter(day => {
                         // 手机端只显示选中的Day，桌面端显示所有
                         if (typeof window !== 'undefined' && window.innerWidth < 640) {
@@ -1262,67 +1268,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                       const sortedActivities = getSortedActivities(day.activities);
                       const date = getDateDisplay(day.dayNumber);
                       
-                      let earliestHour = 7;
-                      
-                      // 先检查前一天是否有跨天活动延续到今天，考虑其结束时间
-                      const prevDayForEarliest = currentTripPlan?.days.find(d => d.dayNumber === day.dayNumber - 1);
-                      if (prevDayForEarliest) {
-                        const prevSortedActivities = getSortedActivities(prevDayForEarliest.activities);
-                        prevSortedActivities.forEach(activity => {
-                          const offset = getActivityEndDayOffset(activity);
-                          if (offset > 0 || isOvernight(activity.startTime, activity.endTime)) {
-                            const actualOffset = offset > 0 ? offset : 1;
-                            const endDayNumber = prevDayForEarliest.dayNumber + actualOffset;
-                            if (day.dayNumber <= endDayNumber) {
-                              // 延续活动从00:00开始，需要让earliestHour至少为0以显示延续部分
-                              if (0 < earliestHour) earliestHour = 0;
-                              // 如果是最后一天，还需要考虑结束时间
-                              if (day.dayNumber === endDayNumber && activity.endTime) {
-                                const endHour = parseInt(activity.endTime.split(':')[0]);
-                                if (endHour > 0 && endHour < earliestHour) earliestHour = 0; // 确保能看到结束部分
-                              }
-                            }
-                          }
-                        });
-                      }
-                      
-                      sortedActivities.forEach(activity => {
-                        const hour = parseInt(activity.startTime.split(':')[0]);
-                        if (hour < earliestHour) earliestHour = hour;
-                      });
-                      if (day.dayNumber === 1) {
-                        const arrival = getArrivalTransport(day);
-                        if (arrival) {
-                          const depHour = parseInt((arrival.departureTime || arrival.arrivalTime || '07:00').split(':')[0]);
-                          if (depHour < earliestHour) earliestHour = depHour;
-                          const arrHour = parseInt((arrival.arrivalTime || '07:00').split(':')[0]);
-                          if (arrHour < earliestHour) earliestHour = arrHour;
-                        }
-                      }
-                      if (day.dayNumber === currentTripPlan.travelDays) {
-                        const departure = getDepartureTransport(day);
-                        if (departure) {
-                          const depHour = parseInt((departure.departureTime || '07:00').split(':')[0]);
-                          if (depHour < earliestHour) earliestHour = depHour;
-                          const arrHour = parseInt((departure.arrivalTime || departure.departureTime || '07:00').split(':')[0]);
-                          if (arrHour < earliestHour) earliestHour = arrHour;
-                        }
-                      }
-                      sortedActivities.forEach((activity, idx) => {
-                        const nextActivity = sortedActivities[idx + 1];
-                        if (nextActivity) {
-                          const transport = getBetweenTransport(day, activity.id, nextActivity.id);
-                          if (transport) {
-                            const depHour = parseInt((transport.departureTime || '07:00').split(':')[0]);
-                            if (depHour < earliestHour) earliestHour = depHour;
-                          }
-                        }
-                      });
-                      
-                      const getTimePosition = (time: string) => {
-                        const [hours, minutes] = time.split(':').map(Number);
-                        return ((hours - earliestHour) * 60 + minutes) * (40 / 60);
-                      };
+                      // 使用全局的 globalGetTimePosition 计算位置
+                      const getTimePosition = globalGetTimePosition;
 
                       const getActivityDurationForDay = (activity: ActivityItem, dayNumber: number, activityDayNumber: number): { startTime: string; endTime: string } | null => {
                         const offset = getActivityEndDayOffset(activity);
@@ -1620,6 +1567,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 </div>
               </div>
             </div>
+          );
+        })()}
           </CardContent>
         </Card>
       )}
