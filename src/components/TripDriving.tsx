@@ -109,25 +109,11 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     // 读取保存的选中愿望ID（与 TripPlanner/TripAccounting 共享，保留上一次的行程）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
     
-    const fetchDefaultTrip = async () => {
-      try {
-        const response = await fetch('/api/default-trip');
-        const data = await response.json();
-        if (data.wishId) {
-          setDefaultTripId(data.wishId);
-        }
-      } catch (error) {
-        console.error('[Trip Driving] Failed to fetch default trip:', error);
-      } finally {
-        // 如果有保存的愿望ID，使用它（包括刷新页面）
-        if (savedWishId) {
-          setSelectedWishId(savedWishId);
-        }
-        setInitializedFromStorage(true);
-      }
-    };
-    
-    fetchDefaultTrip();
+    // 如果有保存的愿望ID，使用它（包括刷新页面）
+    if (savedWishId) {
+      setSelectedWishId(savedWishId);
+    }
+    setInitializedFromStorage(true);
   }, []);
 
   // 保存选中的旅行到 localStorage（与 TripPlanner/TripAccounting 共享）
@@ -217,14 +203,24 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   };
 
   const addDrivingRecord = async () => {
-    let targetRecord = currentDrivingRecord;
+    // 验证必填字段
+    if (!newDrivingRecord.driver) {
+      console.error('[Trip Driving] Driver is required');
+      return;
+    }
+    if (!newDrivingRecord.startLocation || !newDrivingRecord.endLocation) {
+      console.error('[Trip Driving] Start and end locations are required');
+      return;
+    }
     
-    // 如果没有当前记录，尝试创建
+    // 获取目标记录
+    let targetRecord = tripDrivingRecords.find(r => String(r.wishId) === String(selectedWishId));
+    
+    // 如果没有记录，先创建
     if (!targetRecord && selectedWishId) {
       const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
       if (wish) {
         try {
-          // 先创建驾驶记录
           const createResponse = await fetch('/api/trip-driving', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -236,32 +232,22 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           });
 
           if (createResponse.ok) {
-            // 重新获取所有记录
-            const records = await fetchDrivingRecords();
-            targetRecord = records.find(r => String(r.wishId) === String(selectedWishId));
+            // 等待数据更新
+            await fetchDrivingRecords();
+            targetRecord = tripDrivingRecords.find(r => String(r.wishId) === String(selectedWishId));
+          } else {
+            console.error('[Trip Driving] Failed to create driving record');
+            return;
           }
         } catch (error) {
           console.error('[Trip Driving] Error creating driving record:', error);
+          return;
         }
       }
     }
     
-    // 再次检查记录是否存在
-    if (!targetRecord) {
-      targetRecord = tripDrivingRecords.find(r => String(r.wishId) === String(selectedWishId));
-    }
-    
     if (!targetRecord) {
       console.error('[Trip Driving] No driving record available');
-      return;
-    }
-    
-    if (!newDrivingRecord.driver) {
-      console.error('[Trip Driving] Driver is required');
-      return;
-    }
-    if (!newDrivingRecord.startLocation || !newDrivingRecord.endLocation) {
-      console.error('[Trip Driving] Start and end locations are required');
       return;
     }
 
@@ -296,7 +282,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
       if (response.ok) {
         await fetchDrivingRecords();
-        setShowAddDriving(false);
         setNewDrivingRecord({
           date: new Date().toISOString().split('T')[0],
           time: '12:00',
