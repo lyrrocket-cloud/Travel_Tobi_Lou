@@ -210,7 +210,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     }
   }, [confirmedWishes, tripDrivingRecords, selectedWishId, initializedFromStorage, loading, defaultTripId]);
 
-  const createDrivingRecord = async (wish: Wish): Promise<boolean> => {
+  const createDrivingRecord = async (wish: Wish) => {
     try {
       const response = await fetch('/api/trip-driving', {
         method: 'POST',
@@ -223,21 +223,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       });
 
       if (response.ok) {
-        // 先切换视图，确保 UI 立即响应
+        await fetchDrivingRecords();
         setSelectedWishId(String(wish.id));
-        setActiveTab('entry');
         setShowWishSelector(false);
-        // 后台重新获取数据
-        fetchDrivingRecords();
-        return true;
-      } else {
-        const errorData = await response.json();
-        console.error('[Trip Driving] Failed to create driving record:', errorData.error);
-        return false;
       }
     } catch (error) {
       console.error('[Trip Driving] Error creating driving record:', error);
-      return false;
     }
   };
 
@@ -515,13 +506,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   key={wish.id}
                   className={`bg-black/40 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
                   onClick={() => {
-                    if (hasRecord) {
-                      setSelectedWishId(String(wish.id));
-                      setActiveTab('entry');
-                      setShowWishSelector(false);
-                    } else {
-                      createDrivingRecord(wish);
-                    }
+                    setSelectedWishId(String(wish.id));
+                    setShowWishSelector(false);
                   }}
                 >
                   <div className="flex items-start justify-between gap-2.5">
@@ -1162,13 +1148,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 <div key={wish.id}>
                   <button
                     onClick={() => {
-                      if (existingRecord) {
-                        setSelectedWishId(String(wish.id));
-                        setActiveTab('entry');
-                        setShowWishSelector(false);
-                      } else {
-                        createDrivingRecord(wish);
-                      }
+                      setSelectedWishId(String(wish.id));
+                      setShowWishSelector(false);
                     }}
                     className={`w-full p-4 rounded-lg text-left transition-all ${
                       String(wish.id) === selectedWishId
