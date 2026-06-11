@@ -983,18 +983,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   {filteredLocations.length > 0 && (
                     <div className="mb-3">
                       <div className="text-xs text-[#FFFFFF]/40 mb-2">从行程中选择（已按类型筛选）：</div>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {filteredLocations.map((activity, idx) => (
                           <button
                             key={idx}
                             onClick={() => handleActivitySelect(activity)}
-                            className={`px-3 py-1.5 rounded-full text-xs transition-all ${
+                            className={`flex flex-col items-start p-3 rounded-lg border transition-all text-xs ${
                               selectedActivity?.activityId === activity.activityId
-                                ? 'bg-[#CEA472] text-[#0a0a0f]'
-                                : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                                ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
+                                : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                             }`}
                           >
-                            {activity.location}
+                            <span className="text-[#FFFFFF]/80">Day{activity.dayNumber}</span>
+                            <span className="mt-0.5">{activity.location}</span>
                           </button>
                         ))}
                       </div>
