@@ -972,22 +972,27 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       );
     }
 
+    const isActivityOvernight = activity.type === 'accommodation' || isOvernight(activity.startTime, activity.endTime);
+
     return (
       <div 
         key={activity.id}
-        className="bg-black/40 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors"
+        className={`bg-black/40 border rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors ${isActivityOvernight ? 'border-2 border-[#FF9500]/60' : 'border border-[#CEA472]/20'}`}
         onClick={() => {
           setEditingActivity({ dayNumber: day, activityId: activity.id });
           setEditingActivityData({ ...activity });
         }}
       >
         <div className="flex items-start gap-2.5 sm:gap-3">
-          <div className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#CEA472]/20 flex items-center justify-center">
-            {activityTypeIcons[activity.type] || activityTypeIcons['other']}
+          <div className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${isActivityOvernight ? 'bg-[#FF9500]/20' : 'bg-[#CEA472]/20'}`}>
+            {isActivityOvernight ? <Moon className="w-4 h-4 text-[#FF9500]" /> : (activityTypeIcons[activity.type] || activityTypeIcons['other'])}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <span className="text-[#CEA472] font-medium text-xs">{activityTypes[activity.type]}</span>
+              <span className={`font-medium text-xs ${isActivityOvernight ? 'text-[#FF9500]' : 'text-[#CEA472]'}`}>{activityTypes[activity.type]}</span>
+              {isActivityOvernight && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 bg-[#FF9500]/20 text-[#FF9500] rounded">跨天</span>
+              )}
               <span className="text-[#FFFFFF]/60 text-xs">
                 {activity.startTime}
                 {activity.endTime && ` - ${formatTimeWithDayOffset(activity.endTime, activity.startTime, activity.endTime)}`}
@@ -1406,6 +1411,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               let subtitle = '';
                               let transportText = '';
                               let icon = null;
+                              let isOvernightActivity = false;
                               
                               if (item.type === 'arrival') {
                                 bgColor = 'bg-[#CEA472]/10';
@@ -1426,14 +1432,20 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 subtitle = departure?.from || '出发地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
                               } else if (item.activity) {
-                                bgColor = 'bg-[#CEA472]/15';
-                                borderColor = 'border-[#CEA472]';
-                                icon = activityTypeIcons[item.activity.type] || activityTypeIcons['other'];
-                                title = activityTypes[item.activity.type] || '活动';
+                                isOvernightActivity = item.activity.type === 'accommodation' || isOvernight(item.activity.startTime, item.activity.endTime);
+                                bgColor = isOvernightActivity ? 'bg-[#FF9500]/15' : 'bg-[#CEA472]/15';
+                                borderColor = isOvernightActivity ? 'border-[#FF9500]' : 'border-[#CEA472]';
+                                icon = isOvernightActivity ? <Moon className="w-3 h-3 text-[#FF9500]" /> : (activityTypeIcons[item.activity.type] || activityTypeIcons['other']);
+                                title = isOvernightActivity 
+                                  ? `${activityTypes[item.activity.type] || '活动'} 🌙` 
+                                  : (activityTypes[item.activity.type] || '活动');
                                 const contentParts = [];
                                 if (item.activity.content) contentParts.push(item.activity.content);
                                 if (item.activity.location) contentParts.push(item.activity.location);
                                 subtitle = contentParts.join(' · ');
+                                if (isOvernightActivity) {
+                                  subtitle = `跨天 · ${subtitle}`;
+                                }
                                 
                                 if (item.transportAfter) {
                                   const t = item.transportAfter;
@@ -1452,7 +1464,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                   }}
                                 >
                                   <div className="flex items-start gap-1">
-                                    <div className="text-[#CEA472] flex-shrink-0 mt-0.5">
+                                    <div className={`flex-shrink-0 mt-0.5 ${isOvernightActivity ? 'text-[#FF9500]' : 'text-[#CEA472]'}`}>
                                       {icon}
                                     </div>
                                     <div className="flex-1 min-w-0">

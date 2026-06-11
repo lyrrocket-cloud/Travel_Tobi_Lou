@@ -31,18 +31,6 @@
             "position": "arrival"
           },
           {
-            "id": "transport-1780642966871",
-            "type": "bus",
-            "from": "A",
-            "to": "B",
-            "departureTime": "19:00",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780639292649",
-            "afterActivityId": "arrival"
-          },
-          {
             "id": "transport-1780642980144",
             "type": "walk",
             "from": "济州岛",
@@ -53,13 +41,37 @@
             "position": "between",
             "beforeActivityId": "arrival",
             "afterActivityId": "activity-1780642978344"
+          },
+          {
+            "id": "transport-1781150070687",
+            "type": "taxi",
+            "from": "A",
+            "to": "B",
+            "departureTime": "10:00",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780639292649",
+            "afterActivityId": "arrival"
+          },
+          {
+            "id": "transport-1781150083429",
+            "type": "taxi",
+            "from": "C",
+            "to": "K",
+            "departureTime": "18:01",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780642978344",
+            "afterActivityId": "activity-1781149670377"
           }
         ],
         "activities": [
           {
             "type": "other",
             "startTime": "09:00",
-            "endTime": "19:00",
+            "endTime": "10:00",
             "location": "A",
             "id": "activity-1780639292649"
           },
@@ -223,7 +235,7 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-11T03:47:50.501Z"
+    "updatedAt": "2026-06-11T03:54:45.053Z"
   },
   {
     "id": "trip-plan-1780193545980",
