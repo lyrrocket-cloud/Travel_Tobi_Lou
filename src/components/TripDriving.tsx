@@ -75,6 +75,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const [analysisDriverFilter, setAnalysisDriverFilter] = useState<string | null>(null);
 
   const fetchDrivingRecords = async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/trip-driving');
       const data = await response.json();
@@ -222,15 +223,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       });
 
       if (response.ok) {
-        // 等待数据加载完成后再切换视图
-        await fetchDrivingRecords();
-        // 确保状态更新完成后再切换
+        // 先切换视图，确保 UI 立即响应
         setSelectedWishId(String(wish.id));
         setActiveTab('entry');
-        // 延迟关闭选择器，确保 UI 更新
-        setTimeout(() => {
-          setShowWishSelector(false);
-        }, 100);
+        setShowWishSelector(false);
+        // 后台重新获取数据
+        fetchDrivingRecords();
         return true;
       } else {
         const errorData = await response.json();
