@@ -1359,17 +1359,40 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             const endDayNumber = prevDayForContinue.dayNumber + actualOffset;
                             if (day.dayNumber <= endDayNumber) {
                               const isLastDay = day.dayNumber === endDayNumber;
-                              allItems.push({
-                                id: `${activity.id}-continue-${day.dayNumber}`,
-                                type: 'activity',
-                                startTime: '00:00',
-                                endTime: isLastDay ? (activity.endTime || '00:00') : '23:59',
-                                activity: activity,
-                                transportBefore: null,
-                                transportAfter: null,
-                                isOvernightContinuation: true,
-                                originalActivityDayNumber: prevDayForContinue.dayNumber,
-                              });
+                              const continuationEndTime = isLastDay ? (activity.endTime || '00:00') : '23:59';
+                              
+                              // 折叠状态下，只显示结束时间在7点之后的延续活动
+                              if (!expandEarlyMorning) {
+                                const endHour = parseInt(continuationEndTime.split(':')[0]);
+                                // 如果结束时间在7点之前，跳过（折叠）
+                                if (endHour < 7) return;
+                                
+                                // 如果结束时间在7点之后，调整开始时间为7点
+                                allItems.push({
+                                  id: `${activity.id}-continue-${day.dayNumber}`,
+                                  type: 'activity',
+                                  startTime: '07:00', // 折叠时从7点开始显示
+                                  endTime: continuationEndTime,
+                                  activity: activity,
+                                  transportBefore: null,
+                                  transportAfter: null,
+                                  isOvernightContinuation: true,
+                                  originalActivityDayNumber: prevDayForContinue.dayNumber,
+                                });
+                              } else {
+                                // 展开状态下，正常显示从00:00开始
+                                allItems.push({
+                                  id: `${activity.id}-continue-${day.dayNumber}`,
+                                  type: 'activity',
+                                  startTime: '00:00',
+                                  endTime: continuationEndTime,
+                                  activity: activity,
+                                  transportBefore: null,
+                                  transportAfter: null,
+                                  isOvernightContinuation: true,
+                                  originalActivityDayNumber: prevDayForContinue.dayNumber,
+                                });
+                              }
                             }
                           }
                         });
