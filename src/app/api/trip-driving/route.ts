@@ -25,19 +25,31 @@ function saveDrivingRecords() {
 }
 
 // 检查数据库是否可用
-async function isDatabaseAvailable(): Promise<boolean> {
+async function isDatabaseAvailable(): Promise<{ available: boolean; error?: string; hint?: string }> {
   try {
     const client = getSupabaseClient();
     if (!client) {
-      console.error('[Trip Driving API] Supabase client is null');
-      return false;
+      return { 
+        available: false, 
+        error: 'Supabase client is null. Check COZE_SUPABASE_URL and COZE_SUPABASE_ANON_KEY environment variables.' 
+      };
     }
     await client.from('trip_driving_records').select('id').limit(1);
     console.log('[Trip Driving API] Database connection verified');
-    return true;
-  } catch (error) {
+    return { available: true };
+  } catch (error: any) {
     console.error('[Trip Driving API] Database connection failed:', error);
-    return false;
+    
+    // 检查是否是表不存在的错误
+    if (error?.message?.includes('Could not find the table') || error?.code === 'PGRST205') {
+      return { 
+        available: false, 
+        error: 'Table trip_driving_records does not exist in Supabase database.',
+        hint: 'Please execute the migration SQL in Supabase SQL Editor to create the table. Check supabase/migrations/create_trip_tables.sql for the SQL script.'
+      };
+    }
+    
+    return { available: false, error: error?.message || 'Unknown error' };
   }
 }
 
@@ -46,9 +58,9 @@ export async function GET() {
   initializeData();
   
   try {
-    const dbAvailable = await isDatabaseAvailable();
+    const dbResult = await isDatabaseAvailable();
     
-    if (dbAvailable) {
+    if (dbResult.available) {
       try {
         const client = getSupabaseClient();
         const { data, error } = await client
@@ -76,9 +88,13 @@ export async function GET() {
       }
     }
     
-    // 数据库不可用时返回错误，不再 fallback 到文件存储
-    console.error('[Trip Driving API] Database not available, cannot fetch records');
-    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    // 数据库不可用时返回详细错误信息
+    console.error('[Trip Driving API] Database not available:', dbResult.error);
+    return NextResponse.json({ 
+      error: 'Database not available', 
+      details: dbResult.error,
+      hint: dbResult.hint 
+    }, { status: 503 });
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -97,9 +113,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Wish ID is required' }, { status: 400 });
     }
 
-    const dbAvailable = await isDatabaseAvailable();
+    const dbResult = await isDatabaseAvailable();
     
-    if (dbAvailable) {
+    if (dbResult.available) {
       try {
         // 检查是否已存在记录
         const client = getSupabaseClient();
@@ -142,9 +158,13 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // 数据库不可用时返回错误，不再 fallback 到文件存储
-    console.error('[Trip Driving API] Database not available, cannot create record');
-    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    // 数据库不可用时返回详细错误信息
+    console.error('[Trip Driving API] Database not available:', dbResult.error);
+    return NextResponse.json({ 
+      error: 'Database not available', 
+      details: dbResult.error,
+      hint: dbResult.hint 
+    }, { status: 503 });
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -163,9 +183,9 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const dbAvailable = await isDatabaseAvailable();
+    const dbResult = await isDatabaseAvailable();
     
-    if (dbAvailable) {
+    if (dbResult.available) {
       try {
         const client = getSupabaseClient();
         const { data, error } = await client
@@ -196,9 +216,13 @@ export async function PUT(request: NextRequest) {
       }
     }
     
-    // 数据库不可用时返回错误，不再 fallback 到文件存储
-    console.error('[Trip Driving API] Database not available, cannot update record');
-    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    // 数据库不可用时返回详细错误信息
+    console.error('[Trip Driving API] Database not available:', dbResult.error);
+    return NextResponse.json({ 
+      error: 'Database not available', 
+      details: dbResult.error,
+      hint: dbResult.hint 
+    }, { status: 503 });
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
