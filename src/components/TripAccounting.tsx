@@ -980,36 +980,37 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 <div>
                   <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">行程信息</Label>
-                  {filteredLocations.length > 0 && (
-                    <div className="mb-3">
-                      <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择活动行程</Label>
-                      <Select
-                        value={selectedActivity?.activityId || ''}
-                        onValueChange={(value) => {
-                          if (value) {
-                            const activity = filteredLocations.find(l => l.activityId === value);
-                            if (activity) {
-                              handleActivitySelect(activity);
-                            }
-                          } else {
-                            setSelectedActivity(null);
-                            setNewExpense(prev => ({ ...prev, location: '', category: 'other', date: new Date().toISOString().split('T')[0], time: '12:00', description: '' }));
+                  
+                  {/* 从旅行规划中选择活动 */}
+                  <div className="mb-3">
+                    <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择活动行程</Label>
+                    <Select
+                      value={selectedActivity?.activityId || ''}
+                      onValueChange={(value) => {
+                        if (value) {
+                          const activity = filteredLocations.find(l => l.activityId === value);
+                          if (activity) {
+                            handleActivitySelect(activity);
                           }
-                        }}
-                      >
-                        <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
-                          <SelectValue placeholder="选择活动行程" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                          {filteredLocations.map((activity, idx) => (
-                            <SelectItem key={idx} value={activity.activityId}>
-                              Day{activity.dayNumber} - {activity.location}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
+                        } else {
+                          setSelectedActivity(null);
+                          setNewExpense(prev => ({ ...prev, location: '', category: 'other', date: new Date().toISOString().split('T')[0], time: '12:00', description: '' }));
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                        <SelectValue placeholder="选择活动行程" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                        {filteredLocations.map((activity, idx) => (
+                          <SelectItem key={idx} value={activity.activityId}>
+                            Day{activity.dayNumber} - {activity.location}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
                   <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
                   <Input
                     value={newExpense.location}
