@@ -489,6 +489,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     }));
   };
 
+  const OVERVIEW_WISH_ID = '__overview__';
+
   if (!selectedWishId || showWishSelector) {
     return (
       <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
@@ -502,6 +504,30 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-4">
+            {/* 总览选项 */}
+            <div
+              className="bg-[#CEA472]/10 border border-[#CEA472]/30 rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-[#CEA472]/20 transition-colors"
+              onClick={() => {
+                setSelectedWishId(OVERVIEW_WISH_ID);
+                setActiveTab('query');
+                setShowWishSelector(false);
+              }}
+            >
+              <div className="flex items-start justify-between gap-2.5">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[#CEA472] font-medium text-xs">总览</h4>
+                  <p className="text-[#FFFFFF]/60 text-xs mt-1">
+                    查看所有旅行的驾驶记录和统计分析
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <span className="text-[#CEA472] text-xs">
+                    {tripDrivingRecords.reduce((sum, r) => sum + (r.records?.length || 0), 0)} 条记录
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {confirmedWishes.map(wish => {
               const hasRecord = tripDrivingRecords.some(record => record.wishId === String(wish.id));
               return (
@@ -538,15 +564,55 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     );
   }
 
+  const isOverviewMode = selectedWishId === OVERVIEW_WISH_ID;
+
   const currentWish = confirmedWishes.find(wish => String(wish.id) === selectedWishId);
   const travelers = getTravelers();
+
+  // 总览模式下获取所有旅行的驾驶员
+  const getAllDrivers = (): string[] => {
+    const driverSet = new Set<string>();
+    tripDrivingRecords.forEach(tripRecord => {
+      tripRecord.records?.forEach(record => {
+        if (record.driver) driverSet.add(record.driver);
+      });
+    });
+    // 同时也从愿望列表中获取所有 travelers
+    confirmedWishes.forEach(wish => {
+      wish.travelers?.split(',').map(t => t.trim()).filter(t => t).forEach(t => driverSet.add(t));
+    });
+    return Array.from(driverSet);
+  };
+
+  // 总览模式下按目的地查找
+  const getDestinationByWishId = (wishId: string): string => {
+    const wish = confirmedWishes.find(w => String(w.id) === String(wishId));
+    return wish?.destination || '未知';
+  };
+
+  // 总览模式下的所有记录
+  const allDrivingRecords = isOverviewMode
+    ? tripDrivingRecords.flatMap(tripRecord => 
+        (tripRecord.records || []).map(record => ({
+          ...record,
+          destination: getDestinationByWishId(tripRecord.wishId),
+        }))
+      ).sort((a, b) => {
+        const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
+        if (dateCompare !== 0) return dateCompare;
+        if (a.time && b.time) return a.time.localeCompare(b.time);
+        if (a.time) return 1;
+        if (b.time) return -1;
+        return 0;
+      })
+    : [];
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-            {currentWish?.destination} 旅行驾驶
+            {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
           </h2>
         </div>
         <Button
@@ -560,39 +626,70 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         </Button>
       </div>
 
-      <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
-        onClick={() => {
-          if (isAdminMode && onEditTripInfo && currentWish) {
-            onEditTripInfo({
-              id: String(selectedWishId),
-              confirmed_date: currentWish.confirmed_date,
-              travelDays: getTravelDays(),
-              travelers: currentWish.travelers,
-              destination: currentWish.destination,
-            });
-          }
-        }}
-      >
-        <div className="px-1">
-          <div className="flex justify-between items-start gap-2">
-            <div className="min-w-0 flex-1">
-              <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
-              <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{getTravelDays()}天 · {currentWish?.travelers}</p>
+      {!isOverviewMode && (
+        <div 
+          className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
+          onClick={() => {
+            if (isAdminMode && onEditTripInfo && currentWish) {
+              onEditTripInfo({
+                id: String(selectedWishId),
+                confirmed_date: currentWish.confirmed_date,
+                travelDays: getTravelDays(),
+                travelers: currentWish.travelers,
+                destination: currentWish.destination,
+              });
+            }
+          }}
+        >
+          <div className="px-1">
+            <div className="flex justify-between items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
+                <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{getTravelDays()}天 · {currentWish?.travelers}</p>
+              </div>
+              {isAdminMode && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
             </div>
-            {isAdminMode && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
           </div>
         </div>
-      </div>
+      )}
+
+      {isOverviewMode && (
+        <div className="mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+          <div className="px-1">
+            <div className="grid grid-cols-3 gap-2">
+              <div className="text-center">
+                <div className="text-[#CEA472] font-medium text-lg">
+                  {tripDrivingRecords.length}
+                </div>
+                <div className="text-[#FFFFFF]/60 text-xs mt-0.5">旅行数</div>
+              </div>
+              <div className="text-center">
+                <div className="text-[#CEA472] font-medium text-lg">
+                  {tripDrivingRecords.reduce((sum, r) => sum + (r.records?.length || 0), 0)}
+                </div>
+                <div className="text-[#FFFFFF]/60 text-xs mt-0.5">驾驶记录</div>
+              </div>
+              <div className="text-center">
+                <div className="text-[#CEA472] font-medium text-lg">
+                  {tripDrivingRecords.reduce((sum, r) => (r.records || []).reduce((s, rec) => s + (rec.score || 0), 0), 0)}
+                </div>
+                <div className="text-[#FFFFFF]/60 text-xs mt-0.5">总积分</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]">
-          <TabsTrigger 
-            value="entry"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
-          >
-            驾驶录入
-          </TabsTrigger>
+        <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]`}>
+          {!isOverviewMode && (
+            <TabsTrigger 
+              value="entry"
+              className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
+            >
+              驾驶录入
+            </TabsTrigger>
+          )}
           <TabsTrigger 
             value="query"
             className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
@@ -607,8 +704,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="entry" className="mt-4">
-          <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+        {!isOverviewMode && (
+          <TabsContent value="entry" className="mt-4">
+            <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-center gap-3 mb-4">
                 <Car className="w-5 h-5 text-[#CEA472]" />
@@ -801,23 +899,25 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               </div>
             </div>
           </div>
-          <div className="mt-4 px-2.5 sm:px-0">
-            <Button
-              onClick={addDrivingRecord}
-              disabled={!newDrivingRecord.driver || !newDrivingRecord.startLocation || !newDrivingRecord.endLocation}
-              className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              保存驾驶记录
-            </Button>
-          </div>
-        </TabsContent>
+            <div className="mt-4 px-2.5 sm:px-0">
+              <Button
+                onClick={addDrivingRecord}
+                disabled={!newDrivingRecord.driver || !newDrivingRecord.startLocation || !newDrivingRecord.endLocation}
+                className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                保存驾驶记录
+              </Button>
+            </div>
+          </TabsContent>
+        )}
 
         <TabsContent value="query" className="mt-4">
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
-            {currentDrivingRecord && sortedDrivingRecords.length > 0 ? (
+            {(!isOverviewMode && currentDrivingRecord && sortedDrivingRecords.length > 0) ||
+             (isOverviewMode && allDrivingRecords.length > 0) ? (
               <div className="space-y-3 sm:space-y-3">
-                {sortedDrivingRecords.map(record => (
+                {(isOverviewMode ? allDrivingRecords : sortedDrivingRecords).map(record => (
                   <div
                     key={record.id}
                     className="p-3.5 sm:p-4 rounded-lg bg-black/40 border border-[#CEA472]/20 hover:bg-black/70 transition-colors"
@@ -832,6 +932,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                             <div className="flex flex-wrap items-center gap-2">
                               <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{record.driver}</span>
                               <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{record.date} {record.time || ''}</span>
+                              {isOverviewMode && (record as any).destination && (
+                                <span className="text-[#CEA472]/70 text-xs whitespace-nowrap">· {(record as any).destination}</span>
+                              )}
                             </div>
                             <div className="mt-1.5 flex items-center gap-1">
                               <MapPin className="w-3 h-3 text-[#FFFFFF]/40" />
@@ -875,7 +978,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         </div>
                       </div>
                     </div>
-                    {isAdminMode && (
+                    {isAdminMode && !isOverviewMode && (
                       <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#CEA472]/20">
                         <Button
                           size="icon"
@@ -929,7 +1032,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   >
                     全部
                   </button>
-                  {travelers.map((traveler) => (
+                  {(isOverviewMode ? getAllDrivers() : travelers).map((traveler) => (
                     <button
                       key={traveler}
                       onClick={() => setAnalysisDriverFilter(traveler)}
