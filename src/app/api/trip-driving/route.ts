@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readJsonFile, writeJsonFile, DATA_FILES, getDataDir } from '@/lib/storage';
 import { getSupabaseClient } from '@/storage/database/supabase-client';
+import { Pool } from 'pg';
 
 // 内存中存储
 let inMemoryDrivingRecords: any[] = [];
 let isInitialized = false;
+let tableCreated = false; // 标记表是否已创建
 
 // 初始化数据
 function initializeData() {
@@ -24,7 +26,100 @@ function saveDrivingRecords() {
   return success;
 }
 
-// 检查数据库是否可用
+// 创建 trip_driving_records 表的 SQL
+const CREATE_TABLE_SQL = `
+CREATE TABLE IF NOT EXISTS trip_driving_records (
+  id VARCHAR(100) PRIMARY KEY NOT NULL,
+  wish_id VARCHAR(100) NOT NULL,
+  destination VARCHAR(255) NOT NULL,
+  start_date VARCHAR(20),
+  records JSONB NOT NULL DEFAULT '[]',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS trip_driving_records_wish_id_idx ON trip_driving_records(wish_id);
+`;
+
+// 使用 PostgreSQL 直接连接创建表
+async function createTableIfNotExists(): Promise<{ success: boolean; error?: string }> {
+  if (tableCreated) {
+    return { success: true };
+  }
+  
+  const dbUrl = process.env.PGDATABASE_URL;
+  if (!dbUrl) {
+    console.error('[Trip Driving API] PGDATABASE_URL not set');
+    return { success: false, error: 'PGDATABASE_URL not set' };
+  }
+  
+  const pool = new Pool({ connectionString: dbUrl });
+  
+  try {
+    console.log('[Trip Driving API] Creating trip_driving_records table if not exists...');
+    await pool.query(CREATE_TABLE_SQL);
+    console.log('[Trip Driving API] Table trip_driving_records created/verified successfully');
+    tableCreated = true;
+    return { success: true };
+  } catch (error: any) {
+    console.error('[Trip Driving API] Error creating table:', error);
+    return { success: false, error: error?.message || 'Unknown error' };
+  } finally {
+    await pool.end();
+  }
+}
+
+// 检查数据库是否可用，如果表不存在则尝试创建
+async function ensureDatabaseReady(): Promise<{ available: boolean; error?: string; hint?: string }> {
+  try {
+    const client = getSupabaseClient();
+    if (!client) {
+      return { 
+        available: false, 
+        error: 'Supabase client is null. Check COZE_SUPABASE_URL and COZE_SUPABASE_ANON_KEY environment variables.' 
+      };
+    }
+    
+    // 尝试查询表，检查是否存在
+    const { error } = await client.from('trip_driving_records').select('id').limit(1);
+    
+    if (error) {
+      // 表不存在的错误
+      if (error.message?.includes('Could not find the table') || error.code === 'PGRST205') {
+        console.log('[Trip Driving API] Table trip_driving_records does not exist, attempting to create via PostgreSQL...');
+        
+        // 使用 PostgreSQL 直接连接创建表
+        const result = await createTableIfNotExists();
+        
+        if (result.success) {
+          console.log('[Trip Driving API] Table created successfully, verifying...');
+          // 再次验证
+          const { error: verifyError } = await client.from('trip_driving_records').select('id').limit(1);
+          if (!verifyError) {
+            return { available: true };
+          }
+        }
+        
+        return { 
+          available: false, 
+          error: 'Failed to create table: ' + (result.error || 'Unknown error'),
+          hint: 'Please check the database connection and permissions.'
+        };
+      }
+      
+      console.error('[Trip Driving API] Database error:', error);
+      return { available: false, error: error.message, hint: error.hint };
+    }
+    
+    console.log('[Trip Driving API] Database connection verified');
+    return { available: true };
+  } catch (error: any) {
+    console.error('[Trip Driving API] Database connection failed:', error);
+    return { available: false, error: error?.message || 'Unknown error' };
+  }
+}
+
+// 简化的数据库可用性检查（用于只读操作）
 async function isDatabaseAvailable(): Promise<{ available: boolean; error?: string; hint?: string }> {
   try {
     const client = getSupabaseClient();
@@ -58,7 +153,8 @@ export async function GET() {
   initializeData();
   
   try {
-    const dbResult = await isDatabaseAvailable();
+    // 使用 ensureDatabaseReady 来自动创建表（如果不存在）
+    const dbResult = await ensureDatabaseReady();
     
     if (dbResult.available) {
       try {
@@ -113,7 +209,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Wish ID is required' }, { status: 400 });
     }
 
-    const dbResult = await isDatabaseAvailable();
+    // 使用 ensureDatabaseReady 来自动创建表（如果不存在）
+    const dbResult = await ensureDatabaseReady();
     
     if (dbResult.available) {
       try {
@@ -183,7 +280,8 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const dbResult = await isDatabaseAvailable();
+    // 使用 ensureDatabaseReady 来自动创建表（如果不存在）
+    const dbResult = await ensureDatabaseReady();
     
     if (dbResult.available) {
       try {
