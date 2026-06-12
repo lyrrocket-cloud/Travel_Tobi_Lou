@@ -1049,8 +1049,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         </div>
                         <div className="text-center p-2 bg-black/40 rounded">
                           <div className="text-[#FFFFFF]/60">总积分</div>
-                          <div className={`font-medium mt-1 ${stat.totalScore >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {stat.totalScore >= 0 ? '+' : ''}{stat.totalScore}
+                          <div className="font-medium mt-1 text-[#FFFFFF]">
+                            {stat.totalScore}
                           </div>
                         </div>
                       </div>
