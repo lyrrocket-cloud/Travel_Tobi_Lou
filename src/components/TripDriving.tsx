@@ -174,6 +174,11 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     if (loading) return;
     if (confirmedWishes.length === 0) return;
     
+    // 如果是总览模式，不执行自动选择逻辑
+    if (selectedWishId === OVERVIEW_WISH_ID) {
+      return;
+    }
+    
     if (selectedWishId) {
       const wishExists = confirmedWishes.some(wish => String(wish.id) === selectedWishId);
       if (wishExists) {
