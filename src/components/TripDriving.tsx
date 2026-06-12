@@ -45,6 +45,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const [deletingRecordId, setDeletingRecordId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
+  const [previousWishIdBeforeOverview, setPreviousWishIdBeforeOverview] = useState<string | null>(null);
 
   // 总览模式 ID
   const OVERVIEW_WISH_ID = '__overview__';
@@ -610,18 +611,25 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             size="icon"
             onClick={() => {
               if (isOverviewMode) {
-                // 退出总览，切换到第一个有记录的旅行
-                const firstWishWithRecord = confirmedWishes.find(wish => 
-                  tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-                );
-                if (firstWishWithRecord) {
-                  setSelectedWishId(String(firstWishWithRecord.id));
-                  setActiveTab('entry');
-                } else if (confirmedWishes.length > 0) {
-                  setSelectedWishId(String(confirmedWishes[0].id));
-                  setActiveTab('entry');
+                // 退出总览，恢复之前选择的旅行
+                if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
+                  setSelectedWishId(String(previousWishIdBeforeOverview));
+                } else {
+                  // 如果之前的旅行不存在，尝试选择第一个有记录的旅行
+                  const firstWishWithRecord = confirmedWishes.find(wish =>
+                    tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+                  );
+                  if (firstWishWithRecord) {
+                    setSelectedWishId(String(firstWishWithRecord.id));
+                  } else if (confirmedWishes.length > 0) {
+                    setSelectedWishId(String(confirmedWishes[0].id));
+                  }
                 }
+                setActiveTab('entry');
+                setPreviousWishIdBeforeOverview(null);
               } else {
+                // 保存当前选择的旅行ID，退出总览时恢复
+                setPreviousWishIdBeforeOverview(selectedWishId);
                 setSelectedWishId(OVERVIEW_WISH_ID);
                 setActiveTab('analysis');
               }
