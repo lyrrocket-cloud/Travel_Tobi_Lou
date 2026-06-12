@@ -1598,11 +1598,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 if (item.activity.content) contentParts.push(item.activity.content);
                                 if (item.activity.location) contentParts.push(item.activity.location);
                                 subtitle = contentParts.join(' · ');
-                                if (item.isOvernightContinuation) {
-                                  subtitle = `${item.startTime}-${item.endTime}${subtitle ? ' · ' + subtitle : ''}`;
-                                } else if (isOvernight(item.activity.startTime, item.activity.endTime) || getActivityEndDayOffset(item.activity) > 0) {
-                                  subtitle = `${item.startTime}-次日${item.activity.endTime || '08:00'}${subtitle ? ' · ' + subtitle : ''}`;
-                                }
                                 
                                 if (item.transportAfter) {
                                   const t = item.transportAfter;
@@ -1625,20 +1620,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                       {icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="flex items-center justify-between gap-1">
-                                        <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (item.type === 'activity' && item.activity) {
-                                              deleteActivity(item.originalActivityDayNumber || day.dayNumber, item.activity.id);
-                                            }
-                                          }}
-                                          className="text-red-500/60 hover:text-red-500 flex-shrink-0"
-                                        >
-                                          <Trash2 className="w-3 h-3" />
-                                        </button>
-                                      </div>
+                                      <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
                                       {subtitle && (
                                         <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
                                       )}
