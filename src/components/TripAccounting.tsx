@@ -1010,6 +1010,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       </Select>
                     </div>
                   )}
+                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
                   <Input
                     value={newExpense.location}
                     onChange={(e) => {
