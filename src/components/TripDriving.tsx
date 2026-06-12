@@ -623,7 +623,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 }
               } else {
                 setSelectedWishId(OVERVIEW_WISH_ID);
-                setActiveTab('query');
+                setActiveTab('analysis');
               }
             }}
             className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}`}
