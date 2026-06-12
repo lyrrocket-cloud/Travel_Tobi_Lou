@@ -623,7 +623,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 setActiveTab('query');
               }
             }}
-            className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent border border-[#CEA472]/30'}`}
+            className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}`}
             title={isOverviewMode ? '退出总览' : '总览'}
           >
             <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
