@@ -105,18 +105,31 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const currentTripPlan = selectedWishId ?
     tripPlans.find(p => String(p.wishId) === String(selectedWishId)) : null;
 
-  // 从旅行规划中提取自驾交通路线
+  // 从旅行规划中提取所有自驾交通路线（包括到达、离开、活动间交通）
   const selfDrivingRoutes = currentTripPlan?.days?.flatMap(day => {
     return day.transport
       ?.filter(t => t.type === 'car' || t.type === '自驾')
-      .map(t => ({
-        id: t.id,
-        day: `Day${day.dayNumber}`,
-        from: t.from,
-        to: t.to,
-        departureTime: t.departureTime,
-        arrivalTime: t.arrivalTime,
-      })) || [];
+      .map(t => {
+        // 根据 position 类型生成不同的描述
+        let description = '';
+        if (t.position === 'arrival') {
+          description = '到达交通';
+        } else if (t.position === 'departure') {
+          description = '离开交通';
+        } else if (t.position === 'between') {
+          description = '活动间交通';
+        }
+        
+        return {
+          id: t.id,
+          day: `Day${day.dayNumber}`,
+          from: t.from,
+          to: t.to,
+          description: description,
+          departureTime: t.departureTime,
+          arrivalTime: t.arrivalTime,
+        };
+      }) || [];
   }) || [];
 
   useEffect(() => {
@@ -665,7 +678,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
                         {selfDrivingRoutes.map(route => (
                           <SelectItem key={route.id} value={route.id}>
-                            {route.day} - {route.from} → {route.to}
+                            {route.day} {route.description} - {route.from} → {route.to}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -1074,7 +1087,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
                       {selfDrivingRoutes.map(route => (
                         <SelectItem key={route.id} value={route.id}>
-                          {route.day} - {route.from} → {route.to}
+                          {route.day} {route.description} - {route.from} → {route.to}
                         </SelectItem>
                       ))}
                     </SelectContent>
