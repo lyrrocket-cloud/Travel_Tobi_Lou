@@ -28,5 +28,35 @@
     ],
     "createdAt": "2026-06-11T09:25:15.739Z",
     "updatedAt": "2026-06-11T09:30:40.883Z"
+  },
+  {
+    "id": "driving-1781251100299",
+    "wishId": "in-memory-2",
+    "destination": "坦桑尼亚",
+    "startDate": "2026-10-01",
+    "records": [
+      {
+        "id": "driving-1781251101795",
+        "wishId": "in-memory-2",
+        "date": "2026-06-12",
+        "time": "12:00",
+        "driver": "秦瑜贲",
+        "startLocation": "AA",
+        "endLocation": "CC",
+        "distance": 10,
+        "duration": 10,
+        "score": 20,
+        "behaviors": [
+          {
+            "type": "normal",
+            "timestamp": "2026-06-12 12:00"
+          }
+        ],
+        "createdAt": "2026-06-12T07:58:21.795Z",
+        "updatedAt": "2026-06-12T07:58:21.795Z"
+      }
+    ],
+    "createdAt": "2026-06-12T07:58:20.299Z",
+    "updatedAt": "2026-06-12T07:58:21.983Z"
   }
 ]

@@ -431,7 +431,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
     const statsMap = new Map<string, DriverStatistics>();
 
-    const recordsToProcess = isOverviewMode
+    const isOverview = selectedWishId === OVERVIEW_WISH_ID;
+    const recordsToProcess = isOverview
       ? tripDrivingRecords
       : tripDrivingRecords.filter(r => String(r.wishId) === String(selectedWishId));
 
