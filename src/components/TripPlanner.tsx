@@ -1575,8 +1575,8 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 const departure = getDepartureTransport(day);
                                 subtitle = departure?.from || '出发地';
                                 icon = departure ? transportIcons[departure.type] || transportIcons['other'] : transportIcons['other'];
-                                if (item.transportBefore) {
-                                  const t = item.transportBefore;
+                                if (item.transportAfter) {
+                                  const t = item.transportAfter;
                                   transportText = `${transportNames[t.type] || t.type || '交通'}至下一程`;
                                 }
                               } else if (item.activity) {
