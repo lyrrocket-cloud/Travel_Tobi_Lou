@@ -694,7 +694,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               </div>
               <div className="text-center">
                 <div className="text-[#CEA472] font-medium text-lg">
-                  {tripDrivingRecords.reduce((sum, r) => (r.records || []).reduce((s, rec) => s + (rec.score || 0), 0), 0)}
+                  {tripDrivingRecords.reduce((sum, r) => sum + (r.records || []).reduce((s, rec) => s + (rec.score || 0), 0), 0)}
                 </div>
                 <div className="text-[#FFFFFF]/60 text-xs mt-0.5">总积分</div>
               </div>
