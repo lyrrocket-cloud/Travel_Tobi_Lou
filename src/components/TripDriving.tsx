@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, RefreshCw, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route } from 'lucide-react';
+import { Plus, Edit2, Trash2, RefreshCw, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -601,31 +601,43 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
           {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
         </h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            if (isOverviewMode) {
-              // 退出总览，切换到第一个有记录的旅行
-              const firstWishWithRecord = confirmedWishes.find(wish => 
-                tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-              );
-              if (firstWishWithRecord) {
-                setSelectedWishId(String(firstWishWithRecord.id));
-                setActiveTab('entry');
-              } else if (confirmedWishes.length > 0) {
-                setSelectedWishId(String(confirmedWishes[0].id));
-                setActiveTab('entry');
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (isOverviewMode) {
+                // 退出总览，切换到第一个有记录的旅行
+                const firstWishWithRecord = confirmedWishes.find(wish => 
+                  tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+                );
+                if (firstWishWithRecord) {
+                  setSelectedWishId(String(firstWishWithRecord.id));
+                  setActiveTab('entry');
+                } else if (confirmedWishes.length > 0) {
+                  setSelectedWishId(String(confirmedWishes[0].id));
+                  setActiveTab('entry');
+                }
+              } else {
+                setSelectedWishId(OVERVIEW_WISH_ID);
+                setActiveTab('query');
               }
-            } else {
-              setSelectedWishId(OVERVIEW_WISH_ID);
-              setActiveTab('query');
-            }
-          }}
-          className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent border border-[#CEA472]/30'} text-xs px-3 py-1.5 h-8`}
-        >
-          {isOverviewMode ? '退出总览' : '总览'}
-        </Button>
+            }}
+            className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent border border-[#CEA472]/30'}`}
+            title={isOverviewMode ? '退出总览' : '总览'}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowWishSelector(true)}
+            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+            title="切换旅行"
+          >
+            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </Button>
+        </div>
       </div>
 
       {!isOverviewMode && (
