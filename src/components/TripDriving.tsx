@@ -598,30 +598,33 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setSelectedWishId(OVERVIEW_WISH_ID);
-              setActiveTab('query');
-            }}
-            className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent border border-[#CEA472]/30'} text-xs px-3 py-1.5 h-8`}
-          >
-            总览
-          </Button>
-          <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-            {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
-          </h2>
-        </div>
+        <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
+          {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
+        </h2>
         <Button
           variant="ghost"
-          size="icon"
-          onClick={() => setShowWishSelector(true)}
-          className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-          title="切换旅行"
+          size="sm"
+          onClick={() => {
+            if (isOverviewMode) {
+              // 退出总览，切换到第一个有记录的旅行
+              const firstWishWithRecord = confirmedWishes.find(wish => 
+                tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+              );
+              if (firstWishWithRecord) {
+                setSelectedWishId(String(firstWishWithRecord.id));
+                setActiveTab('entry');
+              } else if (confirmedWishes.length > 0) {
+                setSelectedWishId(String(confirmedWishes[0].id));
+                setActiveTab('entry');
+              }
+            } else {
+              setSelectedWishId(OVERVIEW_WISH_ID);
+              setActiveTab('query');
+            }
+          }}
+          className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent border border-[#CEA472]/30'} text-xs px-3 py-1.5 h-8`}
         >
-          <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          {isOverviewMode ? '退出总览' : '总览'}
         </Button>
       </div>
 
