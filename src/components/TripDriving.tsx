@@ -656,6 +656,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       {isOverviewMode && (
         <div className="mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
           <div className="px-1">
+            <div className="flex justify-between items-start gap-2 mb-3">
+              <div className="min-w-0 flex-1">
+                <h4 className="text-[#CEA472] font-medium text-xs">总览</h4>
+                <p className="text-[#FFFFFF]/60 text-xs mt-0.5">所有旅行驾驶记录</p>
+              </div>
+            </div>
             <div className="grid grid-cols-3 gap-2">
               <div className="text-center">
                 <div className="text-[#CEA472] font-medium text-lg">
