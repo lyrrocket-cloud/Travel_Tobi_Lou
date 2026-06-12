@@ -19,6 +19,7 @@ async function checkDatabaseAvailability(): Promise<boolean> {
   lastDbCheck = now;
   
   try {
+    console.log('[Database] Checking database availability...');
     const client = getSupabaseClient();
     // 尝试查询一个简单的表来验证连接
     await client.from('trip_plans').select('id').limit(1);
@@ -27,8 +28,10 @@ async function checkDatabaseAvailability(): Promise<boolean> {
     return true;
   } catch (error) {
     isDatabaseAvailable = false;
-    console.warn('[Database] Supabase not available - using file storage fallback');
-    console.warn('[Database] Storage path:', getDataDir());
+    console.error('[Database] Supabase not available - error:', error);
+    console.error('[Database] Storage path:', getDataDir());
+    console.error('[Database] COZE_SUPABASE_URL set:', !!process.env.COZE_SUPABASE_URL);
+    console.error('[Database] COZE_SUPABASE_ANON_KEY set:', !!process.env.COZE_SUPABASE_ANON_KEY);
     return false;
   }
 }

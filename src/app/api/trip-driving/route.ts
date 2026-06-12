@@ -28,10 +28,15 @@ function saveDrivingRecords() {
 async function isDatabaseAvailable(): Promise<boolean> {
   try {
     const client = getSupabaseClient();
-    if (!client) return false;
+    if (!client) {
+      console.error('[Trip Driving API] Supabase client is null');
+      return false;
+    }
     await client.from('trip_driving_records').select('id').limit(1);
+    console.log('[Trip Driving API] Database connection verified');
     return true;
   } catch (error) {
+    console.error('[Trip Driving API] Database connection failed:', error);
     return false;
   }
 }
@@ -63,18 +68,20 @@ export async function GET() {
           updatedAt: record.updated_at,
         }));
 
+        console.log('[Trip Driving API] Fetched', tripDrivingRecords.length, 'records from database');
         return NextResponse.json({ tripDrivingRecords });
       } catch (error) {
         console.error('[API] Error fetching from database:', error);
+        return NextResponse.json({ error: 'Failed to fetch from database', details: String(error) }, { status: 500 });
       }
     }
     
-    // Fallback to file storage
-    console.log('[Trip Driving API] Using file storage');
-    return NextResponse.json({ tripDrivingRecords: inMemoryDrivingRecords });
+    // 数据库不可用时返回错误，不再 fallback 到文件存储
+    console.error('[Trip Driving API] Database not available, cannot fetch records');
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
   } catch (error) {
     console.error('[API] Error:', error);
-    return NextResponse.json({ tripDrivingRecords: inMemoryDrivingRecords });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -119,6 +126,7 @@ export async function POST(request: NextRequest) {
 
         if (error) throw error;
 
+        console.log('[Trip Driving API] Created record in database:', data.id);
         return NextResponse.json({
           id: data.id,
           wishId: data.wish_id,
@@ -130,32 +138,13 @@ export async function POST(request: NextRequest) {
         });
       } catch (error) {
         console.error('[API] Error saving to database:', error);
+        return NextResponse.json({ error: 'Failed to save to database', details: String(error) }, { status: 500 });
       }
     }
     
-    // Fallback to file storage
-    console.log('[Trip Driving API] Using file storage for creation');
-    
-    // 检查是否已存在
-    const existing = inMemoryDrivingRecords.find(r => String(r.wishId) === String(wishId));
-    if (existing) {
-      return NextResponse.json({ error: 'Driving record already exists for this wish' }, { status: 400 });
-    }
-
-    const newRecord = {
-      id: `driving-${Date.now()}`,
-      wishId: String(wishId),
-      destination: destination || '',
-      startDate: startDate || null,
-      records: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    inMemoryDrivingRecords.push(newRecord);
-    saveDrivingRecords();
-
-    return NextResponse.json(newRecord);
+    // 数据库不可用时返回错误，不再 fallback 到文件存储
+    console.error('[Trip Driving API] Database not available, cannot create record');
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -191,6 +180,7 @@ export async function PUT(request: NextRequest) {
 
         if (error) throw error;
 
+        console.log('[Trip Driving API] Updated record in database:', data.id);
         return NextResponse.json({
           id: data.id,
           wishId: data.wish_id,
@@ -202,25 +192,13 @@ export async function PUT(request: NextRequest) {
         });
       } catch (error) {
         console.error('[API] Error updating in database:', error);
+        return NextResponse.json({ error: 'Failed to update in database', details: String(error) }, { status: 500 });
       }
     }
     
-    // Fallback to file storage
-    console.log('[Trip Driving API] Using file storage for update');
-    
-    const index = inMemoryDrivingRecords.findIndex(r => r.id === id);
-    if (index === -1) {
-      return NextResponse.json({ error: 'Record not found' }, { status: 404 });
-    }
-
-    inMemoryDrivingRecords[index] = {
-      ...inMemoryDrivingRecords[index],
-      records: records || [],
-      updatedAt: new Date().toISOString(),
-    };
-    saveDrivingRecords();
-
-    return NextResponse.json(inMemoryDrivingRecords[index]);
+    // 数据库不可用时返回错误，不再 fallback 到文件存储
+    console.error('[Trip Driving API] Database not available, cannot update record');
+    return NextResponse.json({ error: 'Database not available' }, { status: 503 });
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
