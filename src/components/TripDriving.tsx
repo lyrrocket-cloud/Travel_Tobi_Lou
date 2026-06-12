@@ -431,8 +431,11 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
     const statsMap = new Map<string, DriverStatistics>();
 
-    // 聚合所有旅行的驾驶记录
-    tripDrivingRecords.forEach(tripRecord => {
+    const recordsToProcess = isOverviewMode
+      ? tripDrivingRecords
+      : tripDrivingRecords.filter(r => String(r.wishId) === String(selectedWishId));
+
+    recordsToProcess.forEach(tripRecord => {
       tripRecord.records.forEach(record => {
         if (!statsMap.has(record.driver)) {
           statsMap.set(record.driver, {
