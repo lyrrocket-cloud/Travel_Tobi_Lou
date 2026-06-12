@@ -444,8 +444,13 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             behaviorCounts: {
               normal: 0,
               speeding: 0,
+              harsh_brake: 0,
+              rapid_accelerate: 0,
+              fatigue: 0,
+              phone_use: 0,
               lane_violation: 0,
               red_light: 0,
+              safe_driving: 0,
             },
           });
         }
