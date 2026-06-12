@@ -50,6 +50,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
 
+  // 总览模式 ID
+  const OVERVIEW_WISH_ID = '__overview__';
+
   const [newDrivingRecord, setNewDrivingRecord] = useState<{
     date: string;
     time: string;
@@ -137,7 +140,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
     
     // 如果有保存的愿望ID，使用它（包括刷新页面）
-    if (savedWishId) {
+    // 但是如果是总览模式ID，则不恢复
+    if (savedWishId && savedWishId !== OVERVIEW_WISH_ID) {
       setSelectedWishId(savedWishId);
     }
     setInitializedFromStorage(true);
@@ -146,7 +150,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   // 保存选中的旅行到 localStorage（与 TripPlanner/TripAccounting 共享）
   useEffect(() => {
     if (typeof window !== 'undefined' && selectedWishId && initializedFromStorage) {
-      localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+      // 不保存总览模式到 localStorage
+      if (selectedWishId !== OVERVIEW_WISH_ID) {
+        localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+      } else {
+        localStorage.removeItem('travel-toolbox-selected-wish-id');
+      }
     }
   }, [selectedWishId, initializedFromStorage]);
 
@@ -488,8 +497,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         : [...prev.behaviors, behavior]
     }));
   };
-
-  const OVERVIEW_WISH_ID = '__overview__';
 
   if (!selectedWishId || showWishSelector) {
     return (
