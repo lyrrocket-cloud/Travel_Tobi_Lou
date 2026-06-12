@@ -73,7 +73,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     behaviors: [],
   });
 
-  const [analysisDriverFilter, setAnalysisDriverFilter] = useState<string | null>(null);
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
 
   const fetchDrivingRecords = async () => {
@@ -456,20 +455,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       });
     });
 
-    return Array.from(statsMap.values());
+    return Array.from(statsMap.values()).sort((a, b) => b.totalScore - a.totalScore);
   };
 
   const driverStats = calculateDriverStatistics();
-
-  const calculateFilteredDriverStatistics = (): DriverStatistics[] => {
-    if (!analysisDriverFilter) {
-      return driverStats;
-    }
-
-    return driverStats.filter(stat => stat.driver === analysisDriverFilter);
-  };
-
-  const filteredStats = calculateFilteredDriverStatistics();
 
   const sortedDrivingRecords = currentDrivingRecord ? 
     [...currentDrivingRecord.records].sort((a, b) => {
@@ -1040,38 +1029,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <div className="text-xs text-[#FFFFFF]/40 mb-2">筛选驾驶员：</div>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setAnalysisDriverFilter(null)}
-                    className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
-                      analysisDriverFilter === null
-                        ? 'bg-[#CEA472] text-[#0a0a0f]'
-                        : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                    }`}
-                  >
-                    全部
-                  </button>
-                  {(isOverviewMode ? getAllDrivers() : travelers).map((traveler) => (
-                    <button
-                      key={traveler}
-                      onClick={() => setAnalysisDriverFilter(traveler)}
-                      className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
-                        analysisDriverFilter === traveler
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                      }`}
-                    >
-                      {traveler}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
                 <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h4>
                 <div className="space-y-3">
-                  {filteredStats.map(stat => (
+                  {driverStats.map(stat => (
                     <div key={stat.driver} className="p-4 bg-black/40 rounded-lg border border-[#CEA472]/20">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-[#CEA472] font-medium text-sm">{stat.driver}</span>
@@ -1121,7 +1081,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 </div>
               </div>
 
-              {filteredStats.length === 0 && (
+              {driverStats.length === 0 && (
                 <div className="text-center py-8">
                   <Award className="w-12 h-12 text-[#CEA472]/40 mx-auto mb-4" />
                   <p className="text-[#FFFFFF]/60 text-xs">暂无统计数据</p>
