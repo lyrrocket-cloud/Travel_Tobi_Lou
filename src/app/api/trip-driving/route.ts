@@ -226,9 +226,11 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'Driving record already exists for this wish' }, { status: 400 });
         }
 
+        const id = `driving_${wishId}_${Date.now()}`;
         const { data, error } = await client
           .from('trip_driving_records')
           .insert({
+            id: id,
             wish_id: wishId,
             destination: destination || '',
             start_date: startDate || null,
