@@ -1199,7 +1199,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     min="0"
                     step="0.1"
                     value={editingRecord.distance || ''}
-                    onChange={(e) => setEditingRecord({ ...editingRecord, distance: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => {
+                      const newDistance = parseFloat(e.target.value) || 0;
+                      setEditingRecord({ 
+                        ...editingRecord, 
+                        distance: newDistance,
+                        score: calculateScore(editingRecord.behaviors.map(b => b.type), newDistance, editingRecord.duration)
+                      });
+                    }}
                     className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                     placeholder="0.0"
                   />
@@ -1211,7 +1218,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     min="0"
                     step="1"
                     value={editingRecord.duration || ''}
-                    onChange={(e) => setEditingRecord({ ...editingRecord, duration: parseInt(e.target.value) || 0 })}
+                    onChange={(e) => {
+                      const newDuration = parseInt(e.target.value) || 0;
+                      setEditingRecord({ 
+                        ...editingRecord, 
+                        duration: newDuration,
+                        score: calculateScore(editingRecord.behaviors.map(b => b.type), editingRecord.distance, newDuration)
+                      });
+                    }}
                     className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
                     placeholder="0"
                   />
@@ -1228,10 +1242,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                           ? editingRecord.behaviors.filter(b => b.type !== key)
                           : [...editingRecord.behaviors, { type: key as DrivingBehavior }];
                         setEditingRecord({ 
-                          ...editingRecord, 
-                          behaviors: newBehaviors,
-                          score: calculateScore(newBehaviors.map(b => b.type))
-                        });
+                        ...editingRecord, 
+                        behaviors: newBehaviors,
+                        score: calculateScore(newBehaviors.map(b => b.type), editingRecord.distance, editingRecord.duration)
+                      });
                       }}
                       className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-xs ${
                         editingRecord.behaviors.some(b => b.type === key)
