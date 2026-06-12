@@ -196,6 +196,13 @@
             "startTime": "13:00",
             "location": "E",
             "id": "activity-1780642634797"
+          },
+          {
+            "type": "other",
+            "startTime": "20:00",
+            "endDayOffset": 0,
+            "location": "",
+            "id": "activity-1781229727121"
           }
         ],
         "transport": [
@@ -232,12 +239,24 @@
             "position": "between",
             "beforeActivityId": "departure",
             "afterActivityId": "activity-1780642626306"
+          },
+          {
+            "id": "transport-1781229728486",
+            "type": "taxi",
+            "from": "G",
+            "to": "",
+            "departureTime": "17:01",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780642626306",
+            "afterActivityId": "activity-1781229727121"
           }
         ]
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-12T01:59:14.536Z"
+    "updatedAt": "2026-06-12T02:02:10.248Z"
   },
   {
     "id": "trip-plan-1780193545980",
