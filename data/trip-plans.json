@@ -450,18 +450,6 @@
             "afterActivityId": "activity-1780200583047"
           },
           {
-            "id": "transport-1780201412633",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780201410818",
-            "afterActivityId": "activity-1780200657098"
-          },
-          {
             "id": "transport-1780201522877",
             "type": "walk",
             "from": "",
@@ -498,18 +486,6 @@
             "afterActivityId": "activity-1780201410818"
           },
           {
-            "id": "transport-1780222919093",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780200657098",
-            "afterActivityId": "activity-1780222915267"
-          },
-          {
             "id": "transport-1780222921881",
             "type": "walk",
             "from": "",
@@ -520,6 +496,30 @@
             "position": "between",
             "beforeActivityId": "activity-1780222915267",
             "afterActivityId": "activity-1780201520683"
+          },
+          {
+            "id": "transport-1781235210008",
+            "type": "taxi",
+            "from": "我家姐点心",
+            "to": "牧心谷",
+            "departureTime": "11:31",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780201410818",
+            "afterActivityId": "activity-1780200657098"
+          },
+          {
+            "id": "transport-1781235215070",
+            "type": "taxi",
+            "from": "牧心谷",
+            "to": "千岛湖VOCO酒店",
+            "departureTime": "13:01",
+            "arrivalTime": "",
+            "details": "",
+            "position": "between",
+            "beforeActivityId": "activity-1780200657098",
+            "afterActivityId": "activity-1780222915267"
           }
         ]
       },
@@ -641,7 +641,7 @@
       }
     ],
     "createdAt": "2026-05-31T04:07:40.413Z",
-    "updatedAt": "2026-06-01T01:56:59.819Z"
+    "updatedAt": "2026-06-12T03:33:36.446Z"
   },
   {
     "id": "trip-plan-1780229164499",
