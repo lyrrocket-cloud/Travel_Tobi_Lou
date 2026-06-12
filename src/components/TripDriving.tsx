@@ -1033,15 +1033,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 <div className="space-y-3">
                   {driverStats.map(stat => (
                     <div key={stat.driver} className="p-4 bg-black/40 rounded-lg border border-[#CEA472]/20">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[#CEA472] font-medium text-sm">{stat.driver}</span>
-                        <div className={`text-lg font-bold ${stat.totalScore >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {stat.totalScore >= 0 ? '+' : ''}{stat.totalScore} 分
-                        </div>
-                      </div>
+                      <div className="text-[#CEA472] font-medium text-sm mb-3">{stat.driver}</div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                         <div className="text-center p-2 bg-black/40 rounded">
-                          <div className="text-[#FFFFFF]/60">行驶次数</div>
+                          <div className="text-[#FFFFFF]/60">总次数</div>
                           <div className="text-[#FFFFFF] font-medium mt-1">{stat.totalTrips}</div>
                         </div>
                         <div className="text-center p-2 bg-black/40 rounded">
@@ -1053,29 +1048,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                           <div className="text-[#FFFFFF] font-medium mt-1">{stat.totalDuration} min</div>
                         </div>
                         <div className="text-center p-2 bg-black/40 rounded">
-                          <div className="text-[#FFFFFF]/60">平均积分</div>
-                          <div className={`font-medium mt-1 ${stat.totalTrips > 0 ? (stat.totalScore / stat.totalTrips >= 0 ? 'text-green-400' : 'text-red-400') : 'text-[#FFFFFF]'}`}>
-                            {stat.totalTrips > 0 ? (stat.totalScore / stat.totalTrips >= 0 ? '+' : '') + (stat.totalScore / stat.totalTrips).toFixed(1) : '0'}
+                          <div className="text-[#FFFFFF]/60">总积分</div>
+                          <div className={`font-medium mt-1 ${stat.totalScore >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            {stat.totalScore >= 0 ? '+' : ''}{stat.totalScore}
                           </div>
                         </div>
                       </div>
-                      {Object.entries(stat.behaviorCounts).filter(([_, count]) => count > 0).length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-[#CEA472]/20">
-                          <div className="text-xs text-[#FFFFFF]/60 mb-2">驾驶行为统计</div>
-                          <div className="flex flex-wrap gap-1">
-                            {Object.entries(stat.behaviorCounts)
-                              .filter(([_, count]) => count > 0)
-                              .map(([behavior, count]) => (
-                                <span
-                                  key={behavior}
-                                  className={`px-2 py-1 rounded text-xs ${drivingBehaviors[behavior]?.color || 'text-gray-400'} bg-black/40`}
-                                >
-                                  {drivingBehaviors[behavior]?.label || behavior} × {count}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
