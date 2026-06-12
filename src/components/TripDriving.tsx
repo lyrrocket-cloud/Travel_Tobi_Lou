@@ -14,12 +14,8 @@ import { TripPlan } from '@/types';
 
 // 驾驶行为配置
 const drivingBehaviors: Record<string, { icon: React.ReactNode; label: string; score: number; color: string }> = {
-  normal: { icon: <Car className="w-4 h-4" />, label: '正常驾驶', score: 0, color: 'text-blue-400' },
+  normal: { icon: <Car className="w-4 h-4" />, label: '正常驾驶', score: 0, color: 'text-green-400' },
   speeding: { icon: <TrendingUp className="w-4 h-4" />, label: '超速', score: -10, color: 'text-red-500' },
-  harsh_brake: { icon: <Car className="w-4 h-4" />, label: '急刹车', score: -5, color: 'text-orange-500' },
-  rapid_accelerate: { icon: <TrendingUp className="w-4 h-4" />, label: '急加速', score: -3, color: 'text-yellow-500' },
-  fatigue: { icon: <Clock className="w-4 h-4" />, label: '疲劳驾驶', score: -15, color: 'text-red-600' },
-  phone_use: { icon: <Car className="w-4 h-4" />, label: '使用手机', score: -10, color: 'text-purple-500' },
   lane_violation: { icon: <Navigation className="w-4 h-4" />, label: '变道违规', score: -5, color: 'text-orange-400' },
   red_light: { icon: <Car className="w-4 h-4" />, label: '闯红灯', score: -20, color: 'text-red-700' },
 };
@@ -448,13 +444,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             behaviorCounts: {
               normal: 0,
               speeding: 0,
-              harsh_brake: 0,
-              rapid_accelerate: 0,
-              fatigue: 0,
-              phone_use: 0,
               lane_violation: 0,
               red_light: 0,
-              safe_driving: 0,
             },
           });
         }
