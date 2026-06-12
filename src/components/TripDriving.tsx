@@ -353,9 +353,15 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   };
 
   const saveEditedDriving = async () => {
-    if (!currentDrivingRecord || !editingRecord) return;
+    if (!editingRecord) return;
 
-    const updatedRecords = currentDrivingRecord.records.map(record => {
+    const targetRecord = isOverviewMode 
+      ? tripDrivingRecords.find(r => String(r.wishId) === String(editingRecord.wishId))
+      : currentDrivingRecord;
+
+    if (!targetRecord) return;
+
+    const updatedRecords = targetRecord.records.map(record => {
       if (record.id === editingRecord.id) {
         return {
           ...editingRecord,
@@ -370,7 +376,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: currentDrivingRecord.id,
+          id: targetRecord.id,
           records: updatedRecords,
         }),
       });
@@ -386,9 +392,17 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   };
 
   const deleteDrivingRecord = async () => {
-    if (!currentDrivingRecord || !deletingRecordId) return;
+    if (!deletingRecordId) return;
 
-    const updatedRecords = currentDrivingRecord.records.filter(
+    const targetRecord = isOverviewMode
+      ? tripDrivingRecords.find(r => 
+          r.records.some(record => record.id === deletingRecordId)
+        )
+      : currentDrivingRecord;
+
+    if (!targetRecord) return;
+
+    const updatedRecords = targetRecord.records.filter(
       record => record.id !== deletingRecordId
     );
 
@@ -397,7 +411,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: currentDrivingRecord.id,
+          id: targetRecord.id,
           records: updatedRecords,
         }),
       });
@@ -987,7 +1001,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         </div>
                       </div>
                     </div>
-                    {isAdminMode && !isOverviewMode && (
+                    {isAdminMode && (
                       <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#CEA472]/20">
                         <Button
                           size="icon"
