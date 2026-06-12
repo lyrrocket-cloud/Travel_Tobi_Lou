@@ -516,30 +516,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-4">
-            {/* 总览选项 */}
-            <div
-              className="bg-[#CEA472]/10 border border-[#CEA472]/30 rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-[#CEA472]/20 transition-colors"
-              onClick={() => {
-                setSelectedWishId(OVERVIEW_WISH_ID);
-                setActiveTab('query');
-                setShowWishSelector(false);
-              }}
-            >
-              <div className="flex items-start justify-between gap-2.5">
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-[#CEA472] font-medium text-xs">总览</h4>
-                  <p className="text-[#FFFFFF]/60 text-xs mt-1">
-                    查看所有旅行的驾驶记录和统计分析
-                  </p>
-                </div>
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <span className="text-[#CEA472] text-xs">
-                    {tripDrivingRecords.reduce((sum, r) => sum + (r.records?.length || 0), 0)} 条记录
-                  </span>
-                </div>
-              </div>
-            </div>
-
             {confirmedWishes.map(wish => {
               const hasRecord = tripDrivingRecords.some(record => record.wishId === String(wish.id));
               return (
@@ -623,6 +599,17 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSelectedWishId(OVERVIEW_WISH_ID);
+              setActiveTab('query');
+            }}
+            className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent border border-[#CEA472]/30'} text-xs px-3 py-1.5 h-8`}
+          >
+            总览
+          </Button>
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
             {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
           </h2>
