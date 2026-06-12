@@ -1506,6 +1506,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           if (prevItem && prevItem.type === 'activity') {
                             transportBefore = getBetweenTransport(day, prevItem.activity!.id, 'departure') || null;
                           }
+                          const nextItem = allItems[index + 1];
+                          if (nextItem && nextItem.type === 'activity') {
+                            transportAfter = getBetweenTransport(day, 'departure', nextItem.activity!.id) || null;
+                          }
                         } else if (item.type === 'activity') {
                           const prevItem = allItems[index - 1];
                           const nextItem = allItems[index + 1];
