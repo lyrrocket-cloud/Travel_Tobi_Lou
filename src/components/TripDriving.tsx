@@ -781,8 +781,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               </button>
             </div>
 
-            {!lotteryResult ? (
-              <Button
+            <Button
                 onClick={() => {
                   const travelersStr = currentWish?.travelers || '';
                   const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
@@ -822,27 +821,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               >
                 {isLotteryRunning ? '抽签中...' : '开始抽签'}
               </Button>
-            ) : (
-              <div className="text-center py-6">
-                <div className="text-[#FFFFFF]/60 text-sm mb-2">本轮驾驶</div>
-                <div className="text-3xl font-bold text-[#CEA472]">{lotteryResult}</div>
-                <div className="text-[#FFFFFF]/60 text-sm mt-2">
-                  {lotteryMode === 'fair' ? '公平模式' : '随机模式'}
-                </div>
-                <Button
-                  onClick={() => {
-                    setLotteryResult(null);
-                  }}
-                  className="mt-4 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-                >
-                  再抽一次
-                </Button>
-              </div>
-            )}
-
-            {!currentWish?.travelers && (
-              <p className="text-center text-[#FFFFFF]/60 text-sm mt-4">请先设置同行人信息</p>
-            )}
           </div>
         </div>
       )}
