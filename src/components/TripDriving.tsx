@@ -515,7 +515,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     }));
   };
 
-  if (!selectedWishId || showWishSelector) {
+  if (!selectedWishId) {
     return (
       <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
         <div className="flex items-center mb-6">
@@ -611,7 +611,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-          {isOverviewMode ? '驾驶记录总览' : isLotteryMode ? '驾驶抽签' : `${currentWish?.destination} 旅行驾驶`}
+          {isOverviewMode ? '驾驶记录总览' : isLotteryMode ? '驾驶抽签' : showWishSelector ? '选择旅行' : `${currentWish?.destination} 旅行驾驶`}
         </h2>
         <div className="flex items-center gap-2">
           {/* 抽签按钮 - 始终显示 */}
@@ -670,8 +670,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setShowWishSelector(true)}
-            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+            onClick={() => {
+              setShowWishSelector(!showWishSelector);
+            }}
+            className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
             title="切换旅行"
           >
             <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -814,7 +816,41 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${isLotteryMode ? 'hidden' : ''}`}>
+      {showWishSelector && (
+        <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+          <div className="space-y-3">
+            {confirmedWishes.map(wish => {
+              const existingRecord = tripDrivingRecords.find(record => record.wishId === String(wish.id));
+              const isSelected = String(wish.id) === String(selectedWishId);
+              return (
+                <button
+                  key={wish.id}
+                  onClick={() => {
+                    setSelectedWishId(String(wish.id));
+                    setActiveTab('entry');
+                    setShowWishSelector(false);
+                  }}
+                  className={`w-full p-4 rounded-lg text-left transition-all ${
+                    isSelected
+                      ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
+                      : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/70'
+                  }`}
+                >
+                  <div className="font-medium text-sm">{wish.destination}</div>
+                  <div className="text-xs text-[#FFFFFF]/60 mt-1">
+                    {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
+                  </div>
+                  {!existingRecord && (
+                    <div className="text-xs text-[#CEA472]/80 mt-1">点击创建驾驶记录</div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${isLotteryMode || showWishSelector ? 'hidden' : ''}`}>
         <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]`}>
           {!isOverviewMode && (
             <TabsTrigger 
@@ -1423,58 +1459,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               className="bg-red-500 text-white hover:bg-red-500/80"
             >
               删除
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showWishSelector} onOpenChange={setShowWishSelector}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">选择旅行</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 py-4 max-h-[50vh] overflow-y-auto flex-1">
-            {confirmedWishes.map(wish => {
-              const existingRecord = tripDrivingRecords.find(record => record.wishId === String(wish.id));
-              return (
-                <div key={wish.id}>
-                  <button
-                    onClick={() => {
-                      setSelectedWishId(String(wish.id));
-                      setActiveTab('entry');
-                      setShowWishSelector(false);
-                    }}
-                    className={`w-full p-4 rounded-lg text-left transition-all ${
-                      String(wish.id) === selectedWishId
-                        ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                        : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/70'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium flex items-center gap-2">
-                          {wish.destination}
-                        </div>
-                        <div className="text-xs text-[#FFFFFF]/60 mt-1">
-                          {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
-                        </div>
-                        {!existingRecord && (
-                          <div className="text-xs text-[#CEA472]/80 mt-1">点击创建驾驶记录</div>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
-            <Button
-              variant="outline"
-              onClick={() => setShowWishSelector(false)}
-              className="w-full bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-            >
-              取消
             </Button>
           </DialogFooter>
         </DialogContent>
