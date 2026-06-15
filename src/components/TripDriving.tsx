@@ -47,6 +47,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const [lotteryMode, setLotteryMode] = useState<'fair' | 'random'>('fair');
   const [lotteryResult, setLotteryResult] = useState<string | null>(null);
   const [isLotteryRunning, setIsLotteryRunning] = useState(false);
+
+  // 抽签模式
+  const isLotteryMode = showLottery;
+
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
   const [previousWishIdBeforeOverview, setPreviousWishIdBeforeOverview] = useState<string | null>(null);
@@ -607,10 +611,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-          {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
+          {isOverviewMode ? '驾驶记录总览' : isLotteryMode ? '驾驶抽签' : `${currentWish?.destination} 旅行驾驶`}
         </h2>
         <div className="flex items-center gap-2">
-          {!isOverviewMode && (
+          {!isOverviewMode && !isLotteryMode && (
             <Button
               variant="ghost"
               size="icon"
@@ -625,11 +629,28 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Button>
           )}
+          {isLotteryMode && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setShowLottery(false);
+                setLotteryResult(null);
+              }}
+              className="bg-[#CEA472] text-[#0a0a0f]"
+              title="退出抽签"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => {
-              if (isOverviewMode) {
+              if (isLotteryMode) {
+                setShowLottery(false);
+                setLotteryResult(null);
+              } else if (isOverviewMode) {
                 // 退出总览，恢复之前选择的旅行
                 if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
                   setSelectedWishId(String(previousWishIdBeforeOverview));
@@ -653,20 +674,22 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 setActiveTab('analysis');
               }
             }}
-            className={`${isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}`}
-            title={isOverviewMode ? '退出总览' : '总览'}
+            className={`${isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}`}
+            title={isLotteryMode ? '退出抽签' : isOverviewMode ? '退出总览' : '总览'}
           >
-            <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            {isLotteryMode ? <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowWishSelector(true)}
-            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-            title="切换旅行"
-          >
-            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </Button>
+          {!isOverviewMode && !isLotteryMode && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowWishSelector(true)}
+              className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+              title="切换旅行"
+            >
+              <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -730,7 +753,115 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      {/* 抽签模式内容 */}
+      {isLotteryMode && (
+        <div className="space-y-4">
+          {/* 同行人信息 */}
+          <div className="mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+            <div className="px-1 mb-3">
+              <div className="flex justify-between items-start gap-2 mb-3">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-[#CEA472] font-medium text-xs">同行人</h4>
+                  <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{currentWish?.travelers || '暂无同行人'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 抽签卡片 */}
+          <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setLotteryMode('fair')}
+                className={`flex-1 p-3 rounded-lg text-center transition-all ${
+                  lotteryMode === 'fair'
+                    ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
+                    : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
+                }`}
+              >
+                <div className="font-medium text-sm">公平模式</div>
+                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
+              </button>
+              <button
+                onClick={() => setLotteryMode('random')}
+                className={`flex-1 p-3 rounded-lg text-center transition-all ${
+                  lotteryMode === 'random'
+                    ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
+                    : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
+                }`}
+              >
+                <div className="font-medium text-sm">随机模式</div>
+                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
+              </button>
+            </div>
+
+            {!lotteryResult ? (
+              <Button
+                onClick={() => {
+                  const travelersStr = currentWish?.travelers || '';
+                  const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
+                  if (travelersList.length === 0) {
+                    return;
+                  }
+                  setIsLotteryRunning(true);
+                  setLotteryResult(null);
+                  let count = 0;
+                  const maxCount = 20;
+                  const interval = setInterval(() => {
+                    count++;
+                    if (count >= maxCount) {
+                      clearInterval(interval);
+                      if (lotteryMode === 'fair') {
+                        const driverScores: { name: string; score: number }[] = travelersList.map(name => {
+                          const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
+                          const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
+                          return { name, score: totalScore };
+                        });
+                        const lowest = driverScores.reduce((min, curr) => 
+                          curr.score < min.score ? curr : min, driverScores[0]);
+                        setLotteryResult(lowest.name);
+                      } else {
+                        const randomIndex = Math.floor(Math.random() * travelersList.length);
+                        setLotteryResult(travelersList[randomIndex]);
+                      }
+                      setIsLotteryRunning(false);
+                    } else {
+                      const randomIndex = Math.floor(Math.random() * travelersList.length);
+                      setLotteryResult(travelersList[randomIndex]);
+                    }
+                  }, 100);
+                }}
+                disabled={isLotteryRunning || !currentWish?.travelers}
+                className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
+              >
+                {isLotteryRunning ? '抽签中...' : '开始抽签'}
+              </Button>
+            ) : (
+              <div className="text-center py-6">
+                <div className="text-[#FFFFFF]/60 text-sm mb-2">本轮驾驶</div>
+                <div className="text-3xl font-bold text-[#CEA472]">{lotteryResult}</div>
+                <div className="text-[#FFFFFF]/60 text-sm mt-2">
+                  {lotteryMode === 'fair' ? '公平模式' : '随机模式'}
+                </div>
+                <Button
+                  onClick={() => {
+                    setLotteryResult(null);
+                  }}
+                  className="mt-4 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                >
+                  再抽一次
+                </Button>
+              </div>
+            )}
+
+            {!currentWish?.travelers && (
+              <p className="text-center text-[#FFFFFF]/60 text-sm mt-4">请先设置同行人信息</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${isLotteryMode ? 'hidden' : ''}`}>
         <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]`}>
           {!isOverviewMode && (
             <TabsTrigger 
@@ -1396,118 +1527,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showLottery} onOpenChange={setShowLottery}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">驾驶抽签</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            {!lotteryResult ? (
-              <>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setLotteryMode('fair')}
-                    className={`flex-1 p-4 rounded-lg text-center transition-all ${
-                      lotteryMode === 'fair'
-                        ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                        : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
-                    }`}
-                  >
-                    <div className="font-medium">公平模式</div>
-                    <div className="text-xs text-[#FFFFFF]/60 mt-1">选择积分最低的人驾驶</div>
-                  </button>
-                  <button
-                    onClick={() => setLotteryMode('random')}
-                    className={`flex-1 p-4 rounded-lg text-center transition-all ${
-                      lotteryMode === 'random'
-                        ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                        : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
-                    }`}
-                  >
-                    <div className="font-medium">随机模式</div>
-                    <div className="text-xs text-[#FFFFFF]/60 mt-1">随机选择一个同行人</div>
-                  </button>
-                </div>
-                <Button
-                  onClick={() => {
-                    // 支持多种分隔符：顿号、逗号、分号
-                    const travelersStr = currentWish?.travelers || '';
-                    const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
-                    if (travelersList.length === 0) {
-                      return;
-                    }
-                    setIsLotteryRunning(true);
-                    setLotteryResult(null);
-                    let count = 0;
-                    const maxCount = 20;
-                    const interval = setInterval(() => {
-                      count++;
-                      if (count >= maxCount) {
-                        clearInterval(interval);
-                        if (lotteryMode === 'fair') {
-                          // 公平模式：选择积分最低的人
-                          const driverScores: { name: string; score: number }[] = travelersList.map(name => {
-                            const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
-                            const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
-                            return { name, score: totalScore };
-                          });
-                          const lowest = driverScores.reduce((min, curr) => 
-                            curr.score < min.score ? curr : min, driverScores[0]);
-                          setLotteryResult(lowest.name);
-                        } else {
-                          // 随机模式
-                          const randomIndex = Math.floor(Math.random() * travelersList.length);
-                          setLotteryResult(travelersList[randomIndex]);
-                        }
-                        setIsLotteryRunning(false);
-                      } else {
-                        // 滚动效果
-                        const randomIndex = Math.floor(Math.random() * travelersList.length);
-                        setLotteryResult(travelersList[randomIndex]);
-                      }
-                    }, 100);
-                  }}
-                  disabled={isLotteryRunning || !currentWish?.travelers}
-                  className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
-                >
-                  {isLotteryRunning ? '抽签中...' : '开始抽签'}
-                </Button>
-                {!currentWish?.travelers && (
-                  <p className="text-center text-[#FFFFFF]/60 text-sm">请先设置同行人信息</p>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-[#FFFFFF]/60 text-sm mb-2">本轮驾驶</div>
-                <div className="text-3xl font-bold text-[#CEA472]">{lotteryResult}</div>
-                <div className="text-[#FFFFFF]/60 text-sm mt-4">
-                  {lotteryMode === 'fair' ? '公平模式' : '随机模式'}
-                </div>
-                <Button
-                  onClick={() => {
-                    setLotteryResult(null);
-                  }}
-                  className="mt-6 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-                >
-                  再抽一次
-                </Button>
-              </div>
-            )}
-          </div>
-          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowLottery(false);
-                setLotteryResult(null);
-              }}
-              className="w-full bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-            >
-              关闭
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
