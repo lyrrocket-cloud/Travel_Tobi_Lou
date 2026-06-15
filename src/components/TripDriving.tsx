@@ -767,6 +767,13 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               </button>
             </div>
 
+            {lotteryResult && !isLotteryRunning && (
+              <div className="text-center py-4">
+                <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
+                <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
+              </div>
+            )}
+
             <Button
               onClick={() => {
                 const travelersStr = currentWish?.travelers || '';
