@@ -1127,14 +1127,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       <div className="flex justify-between items-center mb-5">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-            {currentTripPlan.destination} 旅行规划
+            {showWishSelector ? '选择旅行' : `${currentTripPlan.destination} 旅行规划`}
           </h3>
         </div>
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setShowWishSelector(true)}
-          className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+          onClick={() => setShowWishSelector(!showWishSelector)}
+          className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
           title="切换行程"
         >
           <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
