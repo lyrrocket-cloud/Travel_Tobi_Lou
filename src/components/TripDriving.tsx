@@ -1430,11 +1430,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 </div>
                 <Button
                   onClick={() => {
-                    const travelersList = currentWish?.travelers?.split('、').filter(t => t.trim()) || [];
+                    // 支持多种分隔符：顿号、逗号、分号
+                    const travelersStr = currentWish?.travelers || '';
+                    const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
                     if (travelersList.length === 0) {
                       return;
                     }
                     setIsLotteryRunning(true);
+                    setLotteryResult(null);
                     let count = 0;
                     const maxCount = 20;
                     const interval = setInterval(() => {
