@@ -768,46 +768,42 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             </div>
 
             <Button
-                onClick={() => {
-                  const travelersStr = currentWish?.travelers || '';
-                  const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
-                  if (travelersList.length === 0) {
-                    return;
-                  }
-                  setIsLotteryRunning(true);
-                  setLotteryResult(null);
-                  let count = 0;
-                  const maxCount = 20;
-                  const interval = setInterval(() => {
-                    count++;
-                    if (count >= maxCount) {
-                      clearInterval(interval);
-                      if (lotteryMode === 'fair') {
-                        const driverScores: { name: string; score: number }[] = travelersList.map(name => {
-                          const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
-                          const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
-                          return { name, score: totalScore };
-                        });
-                        const lowest = driverScores.reduce((min, curr) => 
-                          curr.score < min.score ? curr : min, driverScores[0]);
-                        setLotteryResult(lowest.name);
-                      } else {
-                        const randomIndex = Math.floor(Math.random() * travelersList.length);
-                        setLotteryResult(travelersList[randomIndex]);
-                      }
-                      setIsLotteryRunning(false);
+              onClick={() => {
+                const travelersStr = currentWish?.travelers || '';
+                const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
+                if (travelersList.length === 0) return;
+                setIsLotteryRunning(true);
+                setLotteryResult(null);
+                let count = 0;
+                const maxCount = 20;
+                const interval = setInterval(() => {
+                  count++;
+                  if (count >= maxCount) {
+                    clearInterval(interval);
+                    if (lotteryMode === 'fair') {
+                      const driverScores = travelersList.map(name => {
+                        const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
+                        const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
+                        return { name, score: totalScore };
+                      });
+                      const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
+                      setLotteryResult(lowest.name);
                     } else {
                       const randomIndex = Math.floor(Math.random() * travelersList.length);
                       setLotteryResult(travelersList[randomIndex]);
                     }
-                  }, 100);
-                }}
-                disabled={isLotteryRunning || !currentWish?.travelers}
-                className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
-              >
-                {isLotteryRunning ? '抽签中...' : '开始抽签'}
-              </Button>
-          </div>
+                    setIsLotteryRunning(false);
+                  } else {
+                    const randomIndex = Math.floor(Math.random() * travelersList.length);
+                    setLotteryResult(travelersList[randomIndex]);
+                  }
+                }, 100);
+              }}
+              disabled={isLotteryRunning || !currentWish?.travelers}
+              className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
+            >
+              {isLotteryRunning ? '抽签中...' : '开始抽签'}
+            </Button>
         </div>
       )}
 
