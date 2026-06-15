@@ -936,7 +936,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 disabled={!newDrivingRecord.driver || !newDrivingRecord.startLocation || !newDrivingRecord.endLocation}
                 className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
               >
-                <Plus className="w-4 h-4 mr-2" />
                 保存驾驶记录
               </Button>
             </div>
