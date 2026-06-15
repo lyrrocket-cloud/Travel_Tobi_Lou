@@ -788,7 +788,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       {/* 抽签模式内容 */}
       {isLotteryMode && (
         <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-2">
             <button
               onClick={() => setLotteryMode('fair')}
               className={`flex-1 p-3 rounded-lg text-center transition-all ${
@@ -801,63 +801,65 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
             </button>
             <button
-                onClick={() => setLotteryMode('random')}
-                className={`flex-1 p-3 rounded-lg text-center transition-all ${
-                  lotteryMode === 'random'
-                    ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                    : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
-                }`}
-              >
-                <div className="font-medium text-sm">随机模式</div>
-                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
-              </button>
-            </div>
-
-            {lotteryResult && !isLotteryRunning && (
-              <div className="text-center py-4">
-                <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
-                <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
-              </div>
-            )}
-
-            <Button
-              onClick={() => {
-                const travelersStr = currentWish?.travelers || '';
-                const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
-                if (travelersList.length === 0) return;
-                setIsLotteryRunning(true);
-                setLotteryResult(null);
-                let count = 0;
-                const maxCount = 20;
-                const interval = setInterval(() => {
-                  count++;
-                  if (count >= maxCount) {
-                    clearInterval(interval);
-                    if (lotteryMode === 'fair') {
-                      const driverScores = travelersList.map(name => {
-                        const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
-                        const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
-                        return { name, score: totalScore };
-                      });
-                      const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
-                      setLotteryResult(lowest.name);
-                    } else {
-                      const randomIndex = Math.floor(Math.random() * travelersList.length);
-                      setLotteryResult(travelersList[randomIndex]);
-                    }
-                    setIsLotteryRunning(false);
-                  } else {
-                    const randomIndex = Math.floor(Math.random() * travelersList.length);
-                    setLotteryResult(travelersList[randomIndex]);
-                  }
-                }, 100);
-              }}
-              disabled={isLotteryRunning || !currentWish?.travelers}
-              className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
+              onClick={() => setLotteryMode('random')}
+              className={`flex-1 p-3 rounded-lg text-center transition-all ${
+                lotteryMode === 'random'
+                  ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
+                  : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
+              }`}
             >
-              {isLotteryRunning ? '抽签中...' : '开始抽签'}
-            </Button>
+              <div className="font-medium text-sm">随机模式</div>
+              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
+            </button>
+          </div>
         </div>
+      )}
+
+      {isLotteryMode && lotteryResult && !isLotteryRunning && (
+        <div className="text-center py-3">
+          <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
+          <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
+        </div>
+      )}
+
+      {isLotteryMode && (
+        <Button
+          onClick={() => {
+            const travelersStr = currentWish?.travelers || '';
+            const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
+            if (travelersList.length === 0) return;
+            setIsLotteryRunning(true);
+            setLotteryResult(null);
+            let count = 0;
+            const maxCount = 20;
+            const interval = setInterval(() => {
+              count++;
+              if (count >= maxCount) {
+                clearInterval(interval);
+                if (lotteryMode === 'fair') {
+                  const driverScores = travelersList.map(name => {
+                    const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
+                    const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
+                    return { name, score: totalScore };
+                  });
+                  const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
+                  setLotteryResult(lowest.name);
+                } else {
+                  const randomIndex = Math.floor(Math.random() * travelersList.length);
+                  setLotteryResult(travelersList[randomIndex]);
+                }
+                setIsLotteryRunning(false);
+              } else {
+                const randomIndex = Math.floor(Math.random() * travelersList.length);
+                setLotteryResult(travelersList[randomIndex]);
+              }
+            }, 100);
+          }}
+          disabled={isLotteryRunning || !currentWish?.travelers}
+          className="w-full -mt-2.5 sm:-mt-4 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs sm:text-xs"
+        >
+          {isLotteryRunning ? '抽签中...' : '开始抽签'}
+        </Button>
       )}
 
       {showWishSelector && (
