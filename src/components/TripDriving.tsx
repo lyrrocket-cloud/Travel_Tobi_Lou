@@ -620,12 +620,31 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             size="icon"
             onClick={() => {
               if (isLotteryMode) {
+                // 退出抽签模式
                 setShowLottery(false);
                 setLotteryResult(null);
               } else {
+                // 进入抽签模式，先退出其他模式
+                setShowLottery(true);
+                setShowWishSelector(false);
+                if (isOverviewMode) {
+                  // 从总览进入，恢复之前的选择
+                  if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
+                    setSelectedWishId(String(previousWishIdBeforeOverview));
+                  } else {
+                    const firstWishWithRecord = confirmedWishes.find(wish =>
+                      tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+                    );
+                    if (firstWishWithRecord) {
+                      setSelectedWishId(String(firstWishWithRecord.id));
+                    } else if (confirmedWishes.length > 0) {
+                      setSelectedWishId(String(confirmedWishes[0].id));
+                    }
+                  }
+                  setPreviousWishIdBeforeOverview(null);
+                }
                 setLotteryMode('fair');
                 setLotteryResult(null);
-                setShowLottery(true);
               }
             }}
             className={isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
@@ -655,10 +674,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 setActiveTab('entry');
                 setPreviousWishIdBeforeOverview(null);
               } else {
-                // 进入总览
+                // 进入总览，先退出其他模式
                 setPreviousWishIdBeforeOverview(selectedWishId);
                 setSelectedWishId(OVERVIEW_WISH_ID);
                 setActiveTab('analysis');
+                setShowLottery(false);
+                setShowWishSelector(false);
               }
             }}
             className={isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
@@ -671,7 +692,30 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             variant="ghost"
             size="icon"
             onClick={() => {
-              setShowWishSelector(!showWishSelector);
+              if (showWishSelector) {
+                // 退出切换旅行模式
+                setShowWishSelector(false);
+              } else {
+                // 进入切换旅行模式，先退出其他模式
+                setShowWishSelector(true);
+                setShowLottery(false);
+                if (isOverviewMode) {
+                  // 从总览进入，恢复之前的选择
+                  if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
+                    setSelectedWishId(String(previousWishIdBeforeOverview));
+                  } else {
+                    const firstWishWithRecord = confirmedWishes.find(wish =>
+                      tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+                    );
+                    if (firstWishWithRecord) {
+                      setSelectedWishId(String(firstWishWithRecord.id));
+                    } else if (confirmedWishes.length > 0) {
+                      setSelectedWishId(String(confirmedWishes[0].id));
+                    }
+                  }
+                  setPreviousWishIdBeforeOverview(null);
+                }
+              }
             }}
             className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
             title="切换旅行"
