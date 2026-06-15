@@ -1072,7 +1072,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     );
   }
 
-  if (!currentTripPlan || showWishSelector) {
+  if (!currentTripPlan) {
     return (
       <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
         <div className="flex items-center mb-5">
@@ -1647,52 +1647,35 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       )}
 
       {showWishSelector && (
-        <Card className="mb-6 border border-[#CEA472]/20 bg-black/40">
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-[#CEA472] font-medium">选择愿望</h4>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setShowWishSelector(false)}
-                  className="text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 hover:bg-transparent"
+        <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+          <div className="space-y-3">
+            {confirmedWishes.map(wish => {
+              const isDefault = defaultTripId === String(wish.id);
+              return (
+                <button
+                  key={wish.id}
+                  onClick={() => {
+                    setSelectedWishId(wish.id);
+                    setShowWishSelector(false);
+                  }}
+                  className={`w-full text-left p-4 rounded-lg transition-all ${
+                    selectedWishId === wish.id 
+                      ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]' 
+                      : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/70'
+                  }`}
                 >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-2">
-              {confirmedWishes.map(wish => {
-                const isDefault = defaultTripId === String(wish.id);
-                return (
-                  <button
-                    key={wish.id}
-                    onClick={() => {
-                      setSelectedWishId(wish.id);
-                      setShowWishSelector(false);
-                    }}
-                    className={`w-full text-left p-3 rounded-md border transition-colors ${selectedWishId === wish.id ? 'bg-[#CEA472]/20 border-[#CEA472] text-[#CEA472]' : 'bg-black/40 border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/50'}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium flex items-center gap-2">
-                          {wish.destination}
-                        </div>
-                        <div className="text-xs text-[#FFFFFF]/50">
-                          {wish.confirmed_date} · {wish.travelers}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                  <div className="font-medium text-sm">{wish.destination}</div>
+                  <div className="text-xs text-[#FFFFFF]/60 mt-1">
+                    {wish.confirmed_date} · {wish.travelers}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
 
-      {showTripEditor && (
+      {showTripEditor && !showWishSelector && (
         <Tabs value={String(selectedDay)} onValueChange={(v) => setSelectedDay(Number(v))} className="w-full">
         <TabsList className="inline-flex h-[48px] sm:h-[56px] bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 w-full justify-start overflow-x-auto">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
