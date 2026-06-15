@@ -614,35 +614,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           {isOverviewMode ? '驾驶记录总览' : isLotteryMode ? '驾驶抽签' : `${currentWish?.destination} 旅行驾驶`}
         </h2>
         <div className="flex items-center gap-2">
-          {!isOverviewMode && !isLotteryMode && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setLotteryMode('fair');
-                setLotteryResult(null);
-                setShowLottery(true);
-              }}
-              className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-              title="抽签"
-            >
-              <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-          )}
-          {isLotteryMode && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setShowLottery(false);
-                setLotteryResult(null);
-              }}
-              className="bg-[#CEA472] text-[#0a0a0f]"
-              title="退出抽签"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-          )}
+          {/* 抽签按钮 - 始终显示 */}
           <Button
             variant="ghost"
             size="icon"
@@ -650,12 +622,27 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               if (isLotteryMode) {
                 setShowLottery(false);
                 setLotteryResult(null);
-              } else if (isOverviewMode) {
+              } else {
+                setLotteryMode('fair');
+                setLotteryResult(null);
+                setShowLottery(true);
+              }
+            }}
+            className={isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+            title="抽签"
+          >
+            <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </Button>
+          {/* 总览按钮 - 始终显示 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (isOverviewMode) {
                 // 退出总览，恢复之前选择的旅行
                 if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
                   setSelectedWishId(String(previousWishIdBeforeOverview));
                 } else {
-                  // 如果之前的旅行不存在，尝试选择第一个有记录的旅行
                   const firstWishWithRecord = confirmedWishes.find(wish =>
                     tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
                   );
@@ -668,28 +655,27 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 setActiveTab('entry');
                 setPreviousWishIdBeforeOverview(null);
               } else {
-                // 保存当前选择的旅行ID，退出总览时恢复
+                // 进入总览
                 setPreviousWishIdBeforeOverview(selectedWishId);
                 setSelectedWishId(OVERVIEW_WISH_ID);
                 setActiveTab('analysis');
               }
             }}
-            className={`${isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}`}
-            title={isLotteryMode ? '退出抽签' : isOverviewMode ? '退出总览' : '总览'}
+            className={isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+            title={isOverviewMode ? '退出总览' : '总览'}
           >
-            {isLotteryMode ? <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+            <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Button>
-          {!isOverviewMode && !isLotteryMode && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowWishSelector(true)}
-              className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-              title="切换旅行"
-            >
-              <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-          )}
+          {/* 切换旅行按钮 - 始终显示 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowWishSelector(true)}
+            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+            title="切换旅行"
+          >
+            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </Button>
         </div>
       </div>
 
