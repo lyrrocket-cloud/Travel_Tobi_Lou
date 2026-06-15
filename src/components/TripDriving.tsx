@@ -610,6 +610,21 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           {isOverviewMode ? '驾驶记录总览' : `${currentWish?.destination} 旅行驾驶`}
         </h2>
         <div className="flex items-center gap-2">
+          {!isOverviewMode && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setLotteryMode('fair');
+                setLotteryResult(null);
+                setShowLottery(true);
+              }}
+              className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+              title="抽签"
+            >
+              <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -652,21 +667,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           >
             <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Button>
-          {!isOverviewMode && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setLotteryMode('fair');
-                setLotteryResult(null);
-                setShowLottery(true);
-              }}
-              className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-              title="抽签"
-            >
-              <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-          )}
         </div>
       </div>
 
