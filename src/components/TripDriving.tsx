@@ -755,34 +755,20 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
       {/* 抽签模式内容 */}
       {isLotteryMode && (
-        <div className="space-y-4">
-          {/* 同行人信息 */}
-          <div className="mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
-            <div className="px-1 mb-3">
-              <div className="flex justify-between items-start gap-2 mb-3">
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-[#CEA472] font-medium text-xs">同行人</h4>
-                  <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{currentWish?.travelers || '暂无同行人'}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 抽签卡片 */}
-          <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => setLotteryMode('fair')}
-                className={`flex-1 p-3 rounded-lg text-center transition-all ${
-                  lotteryMode === 'fair'
-                    ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                    : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
-                }`}
-              >
-                <div className="font-medium text-sm">公平模式</div>
-                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
-              </button>
-              <button
+        <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => setLotteryMode('fair')}
+              className={`flex-1 p-3 rounded-lg text-center transition-all ${
+                lotteryMode === 'fair'
+                  ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
+                  : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/80 hover:bg-black/70'
+              }`}
+            >
+              <div className="font-medium text-sm">公平模式</div>
+              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
+            </button>
+            <button
                 onClick={() => setLotteryMode('random')}
                 className={`flex-1 p-3 rounded-lg text-center transition-all ${
                   lotteryMode === 'random'
