@@ -1242,7 +1242,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               size="icon"
                               variant="ghost"
                               onClick={() => {
-                                setEditingExpense(expense);
+                                setEditingExpense({
+                                  ...expense,
+                                  currency: expense.currency || 'CNY',
+                                  description: expense.description || '',
+                                  location: expense.location || '',
+                                  payers: expense.payers || [],
+                                  payer: expense.payer || undefined,
+                                });
                                 setShowEditExpense(true);
                               }}
                               className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent"
@@ -1424,14 +1431,31 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">金额</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={String(editingExpense.amount)}
-                  onChange={(e) => setEditingExpense({ ...editingExpense, amount: parseFloat(e.target.value) || 0 })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={String(editingExpense.amount)}
+                    onChange={(e) => setEditingExpense({ ...editingExpense, amount: parseFloat(e.target.value) || 0 })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 flex-1"
+                  />
+                  <Select
+                    value={editingExpense.currency || 'CNY'}
+                    onValueChange={(value) => setEditingExpense({ ...editingExpense, currency: value as CurrencyCode })}
+                  >
+                    <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-[120px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                      {activeCurrencies.map((code) => (
+                        <SelectItem key={code} value={code}>
+                          {currencySymbols[code]} {code}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">描述</Label>
