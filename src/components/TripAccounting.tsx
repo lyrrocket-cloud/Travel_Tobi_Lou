@@ -1242,14 +1242,28 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               size="icon"
                               variant="ghost"
                               onClick={() => {
-                                setEditingExpense({
+                                // 初始化 editingExpense，保留所有原始数据
+                                const initializedExpense = {
                                   ...expense,
                                   currency: expense.currency ?? 'CNY',
                                   description: expense.description ?? '',
                                   location: expense.location ?? '',
                                   payers: expense.payers ?? [],
                                   payer: expense.payer ?? undefined,
-                                });
+                                };
+                                setEditingExpense(initializedExpense);
+                                
+                                // 尝试根据已有的 location 找到对应的活动
+                                if (initializedExpense.location && currentTripPlan) {
+                                  const allLocations = [...getActivityLocations(), ...getTransportLocations()];
+                                  const matchedActivity = allLocations.find(
+                                    loc => loc.location === initializedExpense.location
+                                  );
+                                  setEditingSelectedActivity(matchedActivity ?? null);
+                                } else {
+                                  setEditingSelectedActivity(null);
+                                }
+                                
                                 setShowEditExpense(true);
                               }}
                               className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent"
@@ -1384,40 +1398,45 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </Tabs>
 
       <Dialog open={showEditExpense} onOpenChange={setShowEditExpense}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-hidden flex flex-col sm:max-w-lg">
+          <DialogHeader className="flex-shrink-0 pb-2">
             <DialogTitle className="text-[#FFFFFF]">编辑支出</DialogTitle>
           </DialogHeader>
           {editingExpense && (
-            <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
-              <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="\d{4}-\d{2}-\d{2}"
-                  placeholder="YYYY-MM-DD"
-                  value={editingExpense.date}
-                  onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
-                />
+            <div className="space-y-4 py-2 px-1 overflow-y-auto flex-1 min-h-0">
+              {/* 日期和时间 - 同一行 */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">日期</Label>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="\d{4}-\d{2}-\d{2}"
+                    placeholder="YYYY-MM-DD"
+                    value={editingExpense.date}
+                    onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  />
+                </div>
+                <div>
+                  <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">时间</Label>
+                  <Input
+                    type="time"
+                    value={editingExpense.time || ''}
+                    onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  />
+                </div>
               </div>
+              
+              {/* 类别 */}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
-                <Input
-                  type="time"
-                  value={editingExpense.time || ''}
-                  onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
-                />
-              </div>
-              <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">类别</Label>
+                <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">类别</Label>
                 <Select
                   value={editingExpense.category}
                   onValueChange={(value) => setEditingExpense({ ...editingExpense, category: value as ExpenseCategory })}
                 >
-                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1">
+                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
@@ -1429,8 +1448,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </SelectContent>
                 </Select>
               </div>
+              
+              {/* 金额和货币 - 同一行 */}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">金额</Label>
+                <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">金额</Label>
                 <div className="flex gap-2">
                   <Input
                     type="number"
@@ -1438,13 +1459,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     step="0.01"
                     value={String(editingExpense.amount)}
                     onChange={(e) => setEditingExpense({ ...editingExpense, amount: parseFloat(e.target.value) || 0 })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 flex-1"
+                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 flex-1 min-w-0"
                   />
                   <Select
                     value={editingExpense.currency || 'CNY'}
                     onValueChange={(value) => setEditingExpense({ ...editingExpense, currency: value as CurrencyCode })}
                   >
-                    <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-[120px]">
+                    <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-20 sm:w-24">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
@@ -1457,16 +1478,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </Select>
                 </div>
               </div>
+              
+              {/* 描述 */}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">描述</Label>
+                <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">描述/备注</Label>
                 <Input
-                  value={editingExpense.description}
+                  value={editingExpense.description || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, description: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  placeholder="输入描述或备注"
                 />
               </div>
+              
+              {/* 活动地点 */}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
+                <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">活动地点</Label>
                 {(() => {
                   const editFilteredLocations = currentTripPlan
                     ? [...getActivityLocations(), ...getTransportLocations()].filter(loc => 
@@ -1476,7 +1502,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   
                   return (
                     <Select
-                      value={editingSelectedActivity?.activityId || ''}
+                      value={editingSelectedActivity?.activityId || editingExpense.location || ''}
                       onValueChange={(value) => {
                         if (value) {
                           const activity = editFilteredLocations.find(l => l.activityId === value);
@@ -1493,22 +1519,29 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         <SelectValue placeholder="选择活动地点" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                        {editFilteredLocations.map((activity, idx) => (
-                          <SelectItem key={idx} value={activity.activityId}>
-                            Day{activity.dayNumber} - {activity.location}
-                          </SelectItem>
-                        ))}
+                        {editFilteredLocations.length > 0 ? (
+                          editFilteredLocations.map((activity, idx) => (
+                            <SelectItem key={idx} value={activity.activityId}>
+                              Day{activity.dayNumber} - {activity.location}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="none" disabled>暂无可选活动</SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   );
                 })()}
               </div>
+              
+              {/* 消费人 */}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费人</Label>
-                <div className="flex flex-wrap gap-2 mt-1">
+                <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">消费人</Label>
+                <div className="flex flex-wrap gap-1.5">
                   {travelers.map((traveler, idx) => (
                     <button
                       key={idx}
+                      type="button"
                       onClick={() => {
                         const currentPayers = editingExpense.payers || [];
                         const newPayers = currentPayers.includes(traveler)
@@ -1516,7 +1549,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           : [...currentPayers, traveler];
                         setEditingExpense({ ...editingExpense, payers: newPayers });
                       }}
-                      className={`px-4 py-2 rounded-full text-xs transition-all ${
+                      className={`px-3 py-1.5 rounded-full text-xs transition-all ${
                         (editingExpense.payers || []).includes(traveler)
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1527,14 +1560,17 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   ))}
                 </div>
               </div>
+              
+              {/* 支付人 */}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">支付人</Label>
-                <div className="flex flex-wrap gap-2 mt-1">
+                <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">支付人</Label>
+                <div className="flex flex-wrap gap-1.5">
                   {travelers.map((traveler, idx) => (
                     <button
                       key={idx}
+                      type="button"
                       onClick={() => setEditingExpense({ ...editingExpense, payer: traveler })}
-                      className={`px-4 py-2 rounded-full text-xs transition-all ${
+                      className={`px-3 py-1.5 rounded-full text-xs transition-all ${
                         editingExpense.payer === traveler
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
@@ -1547,24 +1583,26 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
             </div>
           )}
-          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowEditExpense(false);
-                setEditingExpense(null);
-                setEditingSelectedActivity(null);
-              }}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-            >
-              取消
-            </Button>
-            <Button
-              onClick={saveEditedExpense}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-            >
-              保存
-            </Button>
+          <DialogFooter className="flex-shrink-0 pt-3 pb-2 border-t border-[#CEA472]/20">
+            <div className="flex gap-2 w-full justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowEditExpense(false);
+                  setEditingExpense(null);
+                  setEditingSelectedActivity(null);
+                }}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10 h-10 px-4"
+              >
+                取消
+              </Button>
+              <Button
+                onClick={saveEditedExpense}
+                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 h-10 px-4"
+              >
+                保存
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
