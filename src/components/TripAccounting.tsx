@@ -1244,11 +1244,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               onClick={() => {
                                 setEditingExpense({
                                   ...expense,
-                                  currency: expense.currency || 'CNY',
-                                  description: expense.description || '',
-                                  location: expense.location || '',
-                                  payers: expense.payers || [],
-                                  payer: expense.payer || undefined,
+                                  currency: expense.currency ?? 'CNY',
+                                  description: expense.description ?? '',
+                                  location: expense.location ?? '',
+                                  payers: expense.payers ?? [],
+                                  payer: expense.payer ?? undefined,
                                 });
                                 setShowEditExpense(true);
                               }}
