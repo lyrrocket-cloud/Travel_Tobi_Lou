@@ -1403,7 +1403,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             <DialogTitle className="text-[#FFFFFF]">编辑支出</DialogTitle>
           </DialogHeader>
           {editingExpense && (
-            <div className="space-y-4 py-2 px-1 overflow-y-auto flex-1 min-h-0">
+            <div className="space-y-4 py-2 pr-1 overflow-y-auto flex-1 min-h-0 edit-expense-scroll">
               {/* 日期和时间 - 同一行 */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -1490,9 +1490,20 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 />
               </div>
               
-              {/* 活动地点 */}
+              {/* 活动地点 - 可输入也可选择 */}
               <div>
                 <Label className="text-[#FFFFFF]/60 mb-1.5 block text-xs">活动地点</Label>
+                {/* 手工输入框 */}
+                <Input
+                  value={editingExpense.location || ''}
+                  onChange={(e) => {
+                    setEditingExpense({ ...editingExpense, location: e.target.value });
+                    setEditingSelectedActivity(null);
+                  }}
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  placeholder="手工输入或从下方选择"
+                />
+                {/* 可选活动列表 */}
                 {(() => {
                   const editFilteredLocations = currentTripPlan
                     ? [...getActivityLocations(), ...getTransportLocations()].filter(loc => 
@@ -1500,36 +1511,33 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       )
                     : [];
                   
+                  if (editFilteredLocations.length === 0) return null;
+                  
                   return (
-                    <Select
-                      value={editingSelectedActivity?.activityId || editingExpense.location || ''}
-                      onValueChange={(value) => {
-                        if (value) {
-                          const activity = editFilteredLocations.find(l => l.activityId === value);
-                          if (activity) {
-                            handleEditActivitySelect(activity);
-                          }
-                        } else {
-                          setEditingSelectedActivity(null);
-                          setEditingExpense({ ...editingExpense, location: '' });
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
-                        <SelectValue placeholder="选择活动地点" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                        {editFilteredLocations.length > 0 ? (
-                          editFilteredLocations.map((activity, idx) => (
-                            <SelectItem key={idx} value={activity.activityId}>
-                              Day{activity.dayNumber} - {activity.location}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem value="none" disabled>暂无可选活动</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <div className="mt-2">
+                      <div className="text-[10px] text-[#FFFFFF]/40 mb-1.5">从行程中选择：</div>
+                      <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto edit-expense-scroll">
+                        {editFilteredLocations.map((activity, idx) => {
+                          const isSelected = editingSelectedActivity?.activityId === activity.activityId;
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                handleEditActivitySelect(activity);
+                              }}
+                              className={`px-2.5 py-1 rounded-full text-[10px] transition-all whitespace-nowrap ${
+                                isSelected
+                                  ? 'bg-[#CEA472] text-[#0a0a0f]'
+                                  : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40 hover:text-[#FFFFFF]/80'
+                              }`}
+                            >
+                              Day{activity.dayNumber} · {activity.location}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   );
                 })()}
               </div>

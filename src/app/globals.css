@@ -282,3 +282,34 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(206, 164, 114, 0.5) rgba(0, 0, 0, 0.2);
 }
+
+/* 编辑对话框滚动条样式 - 与UI保持一致 */
+.edit-expense-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.edit-expense-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.edit-expense-scroll::-webkit-scrollbar-thumb {
+  background: rgba(206, 164, 114, 0.4);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.edit-expense-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(206, 164, 114, 0.7);
+}
+
+.edit-expense-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox滚动条支持 */
+.edit-expense-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(206, 164, 114, 0.5) rgba(0, 0, 0, 0.1);
+}
