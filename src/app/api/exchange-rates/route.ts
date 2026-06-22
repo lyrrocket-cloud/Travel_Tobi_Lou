@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CurrencyCode, ExchangeRateRecord } from '@/types';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // 默认汇率数据（基于人民币）
 const defaultExchangeRates: Record<CurrencyCode, number> = {
@@ -20,25 +22,74 @@ const defaultExchangeRates: Record<CurrencyCode, number> = {
 // 默认活跃货币列表
 const defaultActiveCurrencies: CurrencyCode[] = ['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'KRW'];
 
-// 存储用户自定义汇率
-let customExchangeRates: Record<CurrencyCode, number> | null = null;
-// 存储活跃货币列表
-let activeCurrencies: CurrencyCode[] = [...defaultActiveCurrencies];
-let lastUpdated: string = new Date().toISOString();
+// 存储文件路径
+const DATA_FILE_PATH = path.join(process.cwd(), '.data', 'exchange-rates.json');
+
+// 确保数据目录存在
+async function ensureDataDir() {
+  const dataDir = path.dirname(DATA_FILE_PATH);
+  try {
+    await fs.access(dataDir);
+  } catch {
+    await fs.mkdir(dataDir, { recursive: true });
+  }
+}
+
+// 从文件加载数据
+async function loadData(): Promise<{
+  customExchangeRates: Record<CurrencyCode, number> | null;
+  activeCurrencies: CurrencyCode[];
+  lastUpdated: string;
+}> {
+  try {
+    await ensureDataDir();
+    const content = await fs.readFile(DATA_FILE_PATH, 'utf-8');
+    const data = JSON.parse(content);
+    return {
+      customExchangeRates: data.customExchangeRates || null,
+      activeCurrencies: data.activeCurrencies || defaultActiveCurrencies,
+      lastUpdated: data.lastUpdated || new Date().toISOString(),
+    };
+  } catch {
+    // 文件不存在或读取失败，返回默认值
+    return {
+      customExchangeRates: null,
+      activeCurrencies: defaultActiveCurrencies,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+}
+
+// 保存数据到文件
+async function saveData(data: {
+  customExchangeRates: Record<CurrencyCode, number> | null;
+  activeCurrencies: CurrencyCode[];
+  lastUpdated: string;
+}) {
+  try {
+    await ensureDataDir();
+    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (error) {
+    console.error('Error saving exchange rates:', error);
+    throw error;
+  }
+}
 
 export async function GET() {
   try {
+    const data = await loadData();
+    
     // 返回所有汇率和活跃货币列表
     const rates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
       code,
-      rate: customExchangeRates?.[code] || defaultExchangeRates[code],
-      updatedAt: lastUpdated,
+      rate: data.customExchangeRates?.[code] || defaultExchangeRates[code],
+      updatedAt: data.lastUpdated,
     }));
 
     return NextResponse.json({
       rates,
-      activeCurrencies,
-      updatedAt: lastUpdated,
+      activeCurrencies: data.activeCurrencies,
+      updatedAt: data.lastUpdated,
     });
   } catch (error) {
     console.error('Error fetching exchange rates:', error);
@@ -54,12 +105,15 @@ export async function PUT(request: NextRequest) {
       activeCurrencies?: CurrencyCode[];
     };
 
+    // 加载当前数据
+    const currentData = await loadData();
+    
     // 更新汇率
     if (rates && typeof rates === 'object') {
-      customExchangeRates = { ...defaultExchangeRates };
+      currentData.customExchangeRates = { ...defaultExchangeRates };
       for (const [code, rate] of Object.entries(rates)) {
         if (typeof rate === 'number' && rate > 0) {
-          customExchangeRates[code as CurrencyCode] = rate;
+          currentData.customExchangeRates[code as CurrencyCode] = rate;
         }
       }
     }
@@ -70,22 +124,25 @@ export async function PUT(request: NextRequest) {
       if (!newActiveCurrencies.includes('CNY')) {
         newActiveCurrencies.unshift('CNY');
       }
-      activeCurrencies = newActiveCurrencies;
+      currentData.activeCurrencies = newActiveCurrencies;
     }
 
-    lastUpdated = new Date().toISOString();
+    currentData.lastUpdated = new Date().toISOString();
+
+    // 保存到文件
+    await saveData(currentData);
 
     // 返回更新后的数据
     const updatedRates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
       code,
-      rate: customExchangeRates?.[code] || defaultExchangeRates[code],
-      updatedAt: lastUpdated,
+      rate: currentData.customExchangeRates?.[code] || defaultExchangeRates[code],
+      updatedAt: currentData.lastUpdated,
     }));
 
     return NextResponse.json({
       rates: updatedRates,
-      activeCurrencies,
-      updatedAt: lastUpdated,
+      activeCurrencies: currentData.activeCurrencies,
+      updatedAt: currentData.lastUpdated,
     });
   } catch (error) {
     console.error('Error updating exchange rates:', error);
@@ -94,13 +151,15 @@ export async function PUT(request: NextRequest) {
 }
 
 // 辅助函数：将金额转换为人民币
-export function convertToCNY(amount: number, currency: CurrencyCode): number {
-  const rate = customExchangeRates?.[currency] || defaultExchangeRates[currency];
+export async function convertToCNY(amount: number, currency: CurrencyCode): Promise<number> {
+  const data = await loadData();
+  const rate = data.customExchangeRates?.[currency] || defaultExchangeRates[currency];
   return amount * rate;
 }
 
 // 辅助函数：从人民币转换
-export function convertFromCNY(amount: number, currency: CurrencyCode): number {
-  const rate = customExchangeRates?.[currency] || defaultExchangeRates[currency];
+export async function convertFromCNY(amount: number, currency: CurrencyCode): Promise<number> {
+  const data = await loadData();
+  const rate = data.customExchangeRates?.[currency] || defaultExchangeRates[currency];
   return amount / rate;
 }
