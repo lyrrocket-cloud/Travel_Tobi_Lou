@@ -149,17 +149,3 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to update exchange rates' }, { status: 500 });
   }
 }
-
-// 辅助函数：将金额转换为人民币
-export async function convertToCNY(amount: number, currency: CurrencyCode): Promise<number> {
-  const data = await loadData();
-  const rate = data.customExchangeRates?.[currency] || defaultExchangeRates[currency];
-  return amount * rate;
-}
-
-// 辅助函数：从人民币转换
-export async function convertFromCNY(amount: number, currency: CurrencyCode): Promise<number> {
-  const data = await loadData();
-  const rate = data.customExchangeRates?.[currency] || defaultExchangeRates[currency];
-  return amount / rate;
-}

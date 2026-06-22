@@ -151,6 +151,24 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   } | null>(null);
 
   const [analysisConsumerFilter, setAnalysisConsumerFilter] = useState<string | null>(null);
+  
+  // 消费查询筛选状态
+  const [queryFilters, setQueryFilters] = useState<{
+    category: string | null;
+    consumer: string | null;  // 消费人
+    payer: string | null;     // 支付人
+    currency: CurrencyCode | null;
+    dateFrom: string;
+    dateTo: string;
+  }>({
+    category: null,
+    consumer: null,
+    payer: null,
+    currency: null,
+    dateFrom: '',
+    dateTo: '',
+  });
+  
   const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
   const [editingExchangeRates, setEditingExchangeRates] = useState<Record<CurrencyCode, number>>(exchangeRates);
 
@@ -646,19 +664,48 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   const filteredStats = calculateFilteredStats();
 
-  const sortedExpenses = currentExpenseRecord ? 
-    [...currentExpenseRecord.expenses].sort((a, b) => {
-      // 先比较日期
-      const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
-      if (dateCompare !== 0) return dateCompare;
-      // 日期相同则比较时间
-      if (a.time && b.time) {
-        return a.time.localeCompare(b.time);
-      }
-      if (a.time) return 1; // 有时间的排后面
-      if (b.time) return -1;
-      return 0;
-    }) : [];
+  // 消费查询筛选后的消费记录
+  const filteredQueryExpenses = currentExpenseRecord
+    ? currentExpenseRecord.expenses.filter(expense => {
+        // 类别筛选
+        if (queryFilters.category && expense.category !== queryFilters.category) {
+          return false;
+        }
+        // 消费人筛选（检查消费人列表中是否包含该消费人）
+        if (queryFilters.consumer && (!expense.payers || !expense.payers.includes(queryFilters.consumer))) {
+          return false;
+        }
+        // 支付人筛选
+        if (queryFilters.payer && expense.payer !== queryFilters.payer) {
+          return false;
+        }
+        // 货币筛选
+        if (queryFilters.currency && expense.currency !== queryFilters.currency) {
+          return false;
+        }
+        // 日期范围筛选
+        if (queryFilters.dateFrom && expense.date < queryFilters.dateFrom) {
+          return false;
+        }
+        if (queryFilters.dateTo && expense.date > queryFilters.dateTo) {
+          return false;
+        }
+        return true;
+      })
+    : [];
+
+  const sortedExpenses = filteredQueryExpenses.sort((a, b) => {
+    // 先比较日期
+    const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
+    if (dateCompare !== 0) return dateCompare;
+    // 日期相同则比较时间
+    if (a.time && b.time) {
+      return a.time.localeCompare(b.time);
+    }
+    if (a.time) return 1; // 有时间的排后面
+    if (b.time) return -1;
+    return 0;
+  });
 
   const getTravelDays = () => {
     const plan = tripPlans?.find(p => String(p.wishId) === String(selectedWishId));
@@ -1176,6 +1223,171 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
         <TabsContent value="query" className="mt-4">
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+              {/* 筛选区域 */}
+              <div className="mb-4 pb-4 border-b border-[#CEA472]/20">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[#FFFFFF]/60 text-xs">筛选条件</span>
+                  <button
+                    onClick={() => setQueryFilters({
+                      category: null,
+                      consumer: null,
+                      payer: null,
+                      currency: null,
+                      dateFrom: '',
+                      dateTo: '',
+                    })}
+                    className="text-[#CEA472] text-xs hover:underline"
+                  >
+                    清除筛选
+                  </button>
+                </div>
+                
+                {/* 类别筛选 */}
+                <div className="mb-3">
+                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">活动类型</Label>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setQueryFilters({ ...queryFilters, category: null })}
+                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        queryFilters.category === null
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    {Object.entries(expenseCategories).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setQueryFilters({ ...queryFilters, category: key })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.category === key
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {expenseCategoryIcons[key]} {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* 消费人筛选 */}
+                <div className="mb-3">
+                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">消费人</Label>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setQueryFilters({ ...queryFilters, consumer: null })}
+                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        queryFilters.consumer === null
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    {travelers.map((traveler) => (
+                      <button
+                        key={traveler}
+                        onClick={() => setQueryFilters({ ...queryFilters, consumer: traveler })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.consumer === traveler
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {traveler}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* 支付人筛选 */}
+                <div className="mb-3">
+                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">支付人</Label>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setQueryFilters({ ...queryFilters, payer: null })}
+                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        queryFilters.payer === null
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    {travelers.map((traveler) => (
+                      <button
+                        key={traveler}
+                        onClick={() => setQueryFilters({ ...queryFilters, payer: traveler })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.payer === traveler
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {traveler}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* 货币筛选 */}
+                <div className="mb-3">
+                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">货币种类</Label>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      onClick={() => setQueryFilters({ ...queryFilters, currency: null })}
+                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        queryFilters.currency === null
+                          ? 'bg-[#CEA472] text-[#0a0a0f]'
+                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                      }`}
+                    >
+                      全部
+                    </button>
+                    {activeCurrencies.map((code) => (
+                      <button
+                        key={code}
+                        onClick={() => setQueryFilters({ ...queryFilters, currency: code })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.currency === code
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        {currencySymbols[code]} {code}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* 日期范围筛选 */}
+                <div className="mb-2">
+                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">日期范围</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="date"
+                      value={queryFilters.dateFrom}
+                      onChange={(e) => setQueryFilters({ ...queryFilters, dateFrom: e.target.value })}
+                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
+                    />
+                    <span className="text-[#FFFFFF]/40 text-xs">至</span>
+                    <Input
+                      type="date"
+                      value={queryFilters.dateTo}
+                      onChange={(e) => setQueryFilters({ ...queryFilters, dateTo: e.target.value })}
+                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* 筛选结果统计 */}
+              <div className="mb-3 text-xs text-[#FFFFFF]/60">
+                共 {sortedExpenses.length} 条记录
+              </div>
+              
               {currentExpenseRecord && sortedExpenses.length > 0 ? (
                 <div className="space-y-3 sm:space-y-3">
                   {sortedExpenses.map(expense => {
