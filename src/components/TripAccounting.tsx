@@ -167,6 +167,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     dateTo: '',
   });
   
+  // 消费查询筛选区域折叠状态
+  const [queryFiltersCollapsed, setQueryFiltersCollapsed] = useState(true);
+  
   const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
   const [editingExchangeRates, setEditingExchangeRates] = useState<Record<CurrencyCode, number>>(exchangeRates);
 
@@ -1217,139 +1220,154 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
         <TabsContent value="query" className="mt-4">
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
-              {/* 筛选区域 */}
-              <div className="mb-4 pb-4 border-b border-[#CEA472]/20">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[#FFFFFF]/60 text-xs">筛选条件</span>
+              {/* 筛选结果统计 - 始终显示 */}
+              <div className="mb-3 flex items-center justify-between">
+                <div className="text-xs text-[#FFFFFF]/60">
+                  共 <span className="text-[#CEA472]">{sortedExpenses.length}</span> 条记录
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#FFFFFF]/60">
+                    合计：<span className="text-[#CEA472] font-medium">¥{sortedExpenses.reduce((sum, e) => sum + convertToCNY(e.amount, e.currency), 0).toFixed(2)}</span>
+                  </span>
                   <button
-                    onClick={() => setQueryFilters({
-                      category: null,
-                      payer: null,
-                      currency: null,
-                      dateFrom: '',
-                      dateTo: '',
-                    })}
+                    onClick={() => setQueryFiltersCollapsed(!queryFiltersCollapsed)}
                     className="text-[#CEA472] text-xs hover:underline"
                   >
-                    清除筛选
+                    {queryFiltersCollapsed ? '展开筛选' : '收起筛选'}
                   </button>
-                </div>
-                
-                {/* 类别筛选 */}
-                <div className="mb-3">
-                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">活动类型</Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      onClick={() => setQueryFilters({ ...queryFilters, category: null })}
-                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                        queryFilters.category === null
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                      }`}
-                    >
-                      全部
-                    </button>
-                    {Object.entries(expenseCategories).map(([key, label]) => (
-                      <button
-                        key={key}
-                        onClick={() => setQueryFilters({ ...queryFilters, category: key })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                          queryFilters.category === key
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* 支付人筛选 */}
-                <div className="mb-3">
-                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">支付人</Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      onClick={() => setQueryFilters({ ...queryFilters, payer: null })}
-                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                        queryFilters.payer === null
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                      }`}
-                    >
-                      全部
-                    </button>
-                    {travelers.map((traveler) => (
-                      <button
-                        key={traveler}
-                        onClick={() => setQueryFilters({ ...queryFilters, payer: traveler })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                          queryFilters.payer === traveler
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                        }`}
-                      >
-                        {traveler}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* 货币筛选 */}
-                <div className="mb-3">
-                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">货币种类</Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      onClick={() => setQueryFilters({ ...queryFilters, currency: null })}
-                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                        queryFilters.currency === null
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                      }`}
-                    >
-                      全部
-                    </button>
-                    {activeCurrencies.map((code) => (
-                      <button
-                        key={code}
-                        onClick={() => setQueryFilters({ ...queryFilters, currency: code })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                          queryFilters.currency === code
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                        }`}
-                      >
-                        {currencySymbols[code]} {code}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* 日期范围筛选 */}
-                <div className="mb-2">
-                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">日期范围</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="date"
-                      value={queryFilters.dateFrom}
-                      onChange={(e) => setQueryFilters({ ...queryFilters, dateFrom: e.target.value })}
-                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
-                    />
-                    <span className="text-[#FFFFFF]/40 text-xs">至</span>
-                    <Input
-                      type="date"
-                      value={queryFilters.dateTo}
-                      onChange={(e) => setQueryFilters({ ...queryFilters, dateTo: e.target.value })}
-                      className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
-                    />
-                  </div>
                 </div>
               </div>
               
-              {/* 筛选结果统计 */}
-              <div className="mb-3 text-xs text-[#FFFFFF]/60">
-                共 {sortedExpenses.length} 条记录
-              </div>
+              {/* 筛选区域 - 可折叠 */}
+              {!queryFiltersCollapsed && (
+                <div className="mb-4 pb-4 border-b border-[#CEA472]/20">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[#FFFFFF]/60 text-xs">筛选条件</span>
+                    <button
+                      onClick={() => setQueryFilters({
+                        category: null,
+                        payer: null,
+                        currency: null,
+                        dateFrom: '',
+                        dateTo: '',
+                      })}
+                      className="text-[#CEA472] text-xs hover:underline"
+                    >
+                      清除筛选
+                    </button>
+                  </div>
+                  
+                  {/* 类别筛选 */}
+                  <div className="mb-3">
+                    <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">活动类型</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        onClick={() => setQueryFilters({ ...queryFilters, category: null })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.category === null
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        全部
+                      </button>
+                      {Object.entries(expenseCategories).map(([key, label]) => (
+                        <button
+                          key={key}
+                          onClick={() => setQueryFilters({ ...queryFilters, category: key })}
+                          className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                            queryFilters.category === key
+                              ? 'bg-[#CEA472] text-[#0a0a0f]'
+                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* 支付人筛选 */}
+                  <div className="mb-3">
+                    <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">支付人</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        onClick={() => setQueryFilters({ ...queryFilters, payer: null })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.payer === null
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        全部
+                      </button>
+                      {travelers.map((traveler) => (
+                        <button
+                          key={traveler}
+                          onClick={() => setQueryFilters({ ...queryFilters, payer: traveler })}
+                          className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                            queryFilters.payer === traveler
+                              ? 'bg-[#CEA472] text-[#0a0a0f]'
+                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          }`}
+                        >
+                          {traveler}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* 货币筛选 */}
+                  <div className="mb-3">
+                    <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">货币种类</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        onClick={() => setQueryFilters({ ...queryFilters, currency: null })}
+                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          queryFilters.currency === null
+                            ? 'bg-[#CEA472] text-[#0a0a0f]'
+                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                        }`}
+                      >
+                        全部
+                      </button>
+                      {activeCurrencies.map((code) => (
+                        <button
+                          key={code}
+                          onClick={() => setQueryFilters({ ...queryFilters, currency: code })}
+                          className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                            queryFilters.currency === code
+                              ? 'bg-[#CEA472] text-[#0a0a0f]'
+                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          }`}
+                        >
+                          {currencySymbols[code]} {code}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* 日期范围筛选 */}
+                  <div className="mb-2">
+                    <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">日期范围</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="date"
+                        value={queryFilters.dateFrom}
+                        onChange={(e) => setQueryFilters({ ...queryFilters, dateFrom: e.target.value })}
+                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
+                      />
+                      <span className="text-[#FFFFFF]/40 text-xs">至</span>
+                      <Input
+                        type="date"
+                        value={queryFilters.dateTo}
+                        onChange={(e) => setQueryFilters({ ...queryFilters, dateTo: e.target.value })}
+                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {currentExpenseRecord && sortedExpenses.length > 0 ? (
                 <div className="space-y-3 sm:space-y-3">
