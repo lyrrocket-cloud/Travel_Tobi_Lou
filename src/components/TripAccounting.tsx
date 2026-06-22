@@ -917,15 +917,34 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             {showWishSelector ? '选择旅行' : `${currentWish?.destination} 旅行记账`}
           </h2>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowWishSelector(!showWishSelector)}
-          className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-          title="切换旅行"
-        >
-          <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* 汇率管理按钮 - 始终显示 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setEditingExchangeRates(exchangeRates);
+              setEditingActiveCurrencies(activeCurrencies);
+              setNewCurrencyCode('');
+              setNewCurrencyRate('');
+              setShowExchangeRateEditor(true);
+            }}
+            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
+            title="汇率管理"
+          >
+            <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </Button>
+          {/* 切换旅行按钮 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowWishSelector(!showWishSelector)}
+            className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+            title="切换旅行"
+          >
+            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </Button>
+        </div>
       </div>
 
       <div 
@@ -1013,25 +1032,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsList>
 
         <TabsContent value="entry" className="mt-4">
-          {isAdminMode && (
-            <div className="mb-4 flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setEditingExchangeRates(exchangeRates);
-                  setEditingActiveCurrencies(activeCurrencies);
-                  setNewCurrencyCode('');
-                  setNewCurrencyRate('');
-                  setShowExchangeRateEditor(true);
-                }}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#CEA472] hover:bg-[#CEA472]/10 text-xs"
-              >
-                <Coins className="w-3.5 h-3.5 mr-1.5" />
-                汇率管理
-              </Button>
-            </div>
-          )}
           <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
@@ -1839,7 +1839,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showExchangeRateEditor && isAdminMode} onOpenChange={(open) => {
+      <Dialog open={showExchangeRateEditor} onOpenChange={(open) => {
         if (!open) {
           setShowExchangeRateEditor(false);
         }
