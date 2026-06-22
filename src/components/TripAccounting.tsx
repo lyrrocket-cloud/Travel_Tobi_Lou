@@ -155,14 +155,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   // 消费查询筛选状态
   const [queryFilters, setQueryFilters] = useState<{
     category: string | null;
-    consumer: string | null;  // 消费人
     payer: string | null;     // 支付人
     currency: CurrencyCode | null;
     dateFrom: string;
     dateTo: string;
   }>({
     category: null,
-    consumer: null,
     payer: null,
     currency: null,
     dateFrom: '',
@@ -669,10 +667,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     ? currentExpenseRecord.expenses.filter(expense => {
         // 类别筛选
         if (queryFilters.category && expense.category !== queryFilters.category) {
-          return false;
-        }
-        // 消费人筛选（检查消费人列表中是否包含该消费人）
-        if (queryFilters.consumer && (!expense.payers || !expense.payers.includes(queryFilters.consumer))) {
           return false;
         }
         // 支付人筛选
@@ -1230,7 +1224,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <button
                     onClick={() => setQueryFilters({
                       category: null,
-                      consumer: null,
                       payer: null,
                       currency: null,
                       dateFrom: '',
@@ -1266,37 +1259,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                         }`}
                       >
-                        {expenseCategoryIcons[key]} {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* 消费人筛选 */}
-                <div className="mb-3">
-                  <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">消费人</Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      onClick={() => setQueryFilters({ ...queryFilters, consumer: null })}
-                      className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                        queryFilters.consumer === null
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                      }`}
-                    >
-                      全部
-                    </button>
-                    {travelers.map((traveler) => (
-                      <button
-                        key={traveler}
-                        onClick={() => setQueryFilters({ ...queryFilters, consumer: traveler })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                          queryFilters.consumer === traveler
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
-                        }`}
-                      >
-                        {traveler}
+                        {label}
                       </button>
                     ))}
                   </div>
