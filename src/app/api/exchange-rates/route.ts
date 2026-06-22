@@ -19,8 +19,8 @@ const defaultExchangeRates: Record<CurrencyCode, number> = {
   VND: 0.00029, // 越南盾
 };
 
-// 默认活跃货币列表
-const defaultActiveCurrencies: CurrencyCode[] = ['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'KRW'];
+// 默认活跃货币列表（不含人民币）
+const defaultActiveCurrencies: CurrencyCode[] = ['USD', 'EUR', 'GBP', 'JPY', 'KRW'];
 
 // 存储文件路径
 const DATA_FILE_PATH = path.join(process.cwd(), '.data', 'exchange-rates.json');
@@ -120,10 +120,6 @@ export async function PUT(request: NextRequest) {
 
     // 更新活跃货币列表
     if (newActiveCurrencies && Array.isArray(newActiveCurrencies)) {
-      // 确保 CNY 始终在列表中
-      if (!newActiveCurrencies.includes('CNY')) {
-        newActiveCurrencies.unshift('CNY');
-      }
       currentData.activeCurrencies = newActiveCurrencies;
     }
 

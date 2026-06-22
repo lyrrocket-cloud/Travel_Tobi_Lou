@@ -5,7 +5,7 @@
     "EUR": 7.8,
     "GBP": 9,
     "JPY": 0.048,
-    "KRW": 0.0052,
+    "KRW": 0.0045,
     "HKD": 0.92,
     "TWD": 0.22,
     "THB": 0.2,
@@ -15,7 +15,8 @@
   },
   "activeCurrencies": [
     "CNY",
-    "USD"
+    "USD",
+    "KRW"
   ],
-  "lastUpdated": "2026-06-22T10:00:03.331Z"
+  "lastUpdated": "2026-06-22T10:05:53.550Z"
 }

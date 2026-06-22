@@ -113,7 +113,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     MYR: 1.55,
     VND: 0.00029,
   });
-  const [activeCurrencies, setActiveCurrencies] = useState<CurrencyCode[]>(['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'KRW']);
+  const [activeCurrencies, setActiveCurrencies] = useState<CurrencyCode[]>(['USD', 'EUR', 'GBP', 'JPY', 'KRW']);
   const [editingActiveCurrencies, setEditingActiveCurrencies] = useState<CurrencyCode[]>([]);
   const [newCurrencyCode, setNewCurrencyCode] = useState<CurrencyCode | ''>('');
   const [newCurrencyRate, setNewCurrencyRate] = useState<string>('');
@@ -1876,16 +1876,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
                       />
                       <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
-                      {code !== 'CNY' && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => setEditingActiveCurrencies(prev => prev.filter(c => c !== code))}
-                          className="text-red-500 hover:text-red-500 hover:bg-transparent h-8 w-8"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setEditingActiveCurrencies(prev => prev.filter(c => c !== code))}
+                        className="text-red-500 hover:text-red-500 hover:bg-transparent h-8 w-8"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
