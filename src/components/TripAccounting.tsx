@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -1231,9 +1231,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </span>
                   <button
                     onClick={() => setQueryFiltersCollapsed(!queryFiltersCollapsed)}
-                    className="text-[#CEA472] text-xs hover:underline"
+                    className="p-1.5 rounded-md bg-black/40 border border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
+                    title={queryFiltersCollapsed ? '展开筛选' : '收起筛选'}
                   >
-                    {queryFiltersCollapsed ? '展开筛选' : '收起筛选'}
+                    {queryFiltersCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
@@ -1251,9 +1252,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         dateFrom: '',
                         dateTo: '',
                       })}
-                      className="text-[#CEA472] text-xs hover:underline"
+                      className="p-1.5 rounded-md bg-black/40 border border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
+                      title="清除筛选"
                     >
-                      清除筛选
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                   
