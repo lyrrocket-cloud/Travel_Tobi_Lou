@@ -80,6 +80,11 @@ async function ensureDatabaseReady(): Promise<{ available: boolean; error?: stri
       };
     }
     
+    // 如果表已经确认可用，直接返回
+    if (tableCreated) {
+      return { available: true };
+    }
+    
     // 尝试查询表，检查是否存在
     const { error } = await client.from('trip_driving_records').select('id').limit(1);
     

@@ -1,5 +1,87 @@
 import { getSupabaseClient } from '@/storage/database/supabase-client';
 import { readJsonFile, writeJsonFile, DATA_FILES, getDataDir } from '@/lib/storage';
+import { Pool } from 'pg';
+
+// 自动创建表的 SQL 定义
+const TABLE_DEFINITIONS: Record<string, string> = {
+  exchange_rates: `
+    CREATE TABLE IF NOT EXISTS exchange_rates (
+      id VARCHAR(100) PRIMARY KEY NOT NULL,
+      custom_exchange_rates JSONB,
+      active_currencies JSONB,
+      currency_meta JSONB,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    );
+  `,
+  trip_driving_records: `
+    CREATE TABLE IF NOT EXISTS trip_driving_records (
+      id VARCHAR(100) PRIMARY KEY NOT NULL,
+      wish_id VARCHAR(100) NOT NULL,
+      destination VARCHAR(255) NOT NULL,
+      start_date VARCHAR(20),
+      records JSONB NOT NULL DEFAULT '[]',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS trip_driving_records_wish_id_idx ON trip_driving_records(wish_id);
+  `,
+  default_trip: `
+    CREATE TABLE IF NOT EXISTS default_trip (
+      id VARCHAR(100) PRIMARY KEY NOT NULL,
+      data JSONB NOT NULL,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    );
+  `,
+};
+
+// 已确认存在的表（避免重复检查）
+const confirmedTables = new Set<string>();
+
+// 使用 PostgreSQL 直接连接创建表
+async function ensureTableExists(tableName: string): Promise<boolean> {
+  if (confirmedTables.has(tableName)) return true;
+
+  try {
+    const client = getSupabaseClient();
+    const { error } = await client.from(tableName).select('id').limit(1);
+    if (!error) {
+      confirmedTables.add(tableName);
+      return true;
+    }
+    if (error.code !== 'PGRST205') {
+      // 非表不存在的错误
+      console.error(`[Database] Error checking table ${tableName}:`, error.message);
+      return false;
+    }
+
+    // 表不存在，尝试创建
+    console.log(`[Database] Table ${tableName} does not exist, creating via PostgreSQL...`);
+    const tableSQL = TABLE_DEFINITIONS[tableName];
+    if (!tableSQL) {
+      console.error(`[Database] No table definition for ${tableName}`);
+      return false;
+    }
+
+    const dbUrl = process.env.PGDATABASE_URL;
+    if (!dbUrl) {
+      console.error(`[Database] PGDATABASE_URL not set, cannot create table ${tableName}`);
+      return false;
+    }
+
+    const pool = new Pool({ connectionString: dbUrl });
+    try {
+      await pool.query(tableSQL);
+      console.log(`[Database] Table ${tableName} created successfully`);
+      confirmedTables.add(tableName);
+      return true;
+    } finally {
+      await pool.end();
+    }
+  } catch (err) {
+    console.error(`[Database] Failed to ensure table ${tableName}:`, err);
+    return false;
+  }
+}
 
 let inMemoryTripPlans: any[] = readJsonFile(DATA_FILES.TRIP_PLANS, []);
 let inMemoryTripExpenses: any[] = readJsonFile(DATA_FILES.TRIP_EXPENSES, []);
@@ -488,9 +570,9 @@ export const TripExpenseDB = {
 
 export const DefaultTripDB = {
   async get(): Promise<string | null> {
-    const dbAvailable = await checkDatabaseAvailability();
+    const tableReady = await ensureTableExists('default_trip');
     
-    if (dbAvailable) {
+    if (tableReady) {
       try {
         const client = getSupabaseClient();
         const { data, error } = await client
@@ -514,9 +596,9 @@ export const DefaultTripDB = {
   },
 
   async set(wishId: string): Promise<void> {
-    const dbAvailable = await checkDatabaseAvailability();
+    const tableReady = await ensureTableExists('default_trip');
     
-    if (dbAvailable) {
+    if (tableReady) {
       try {
         const client = getSupabaseClient();
         
@@ -537,7 +619,7 @@ export const DefaultTripDB = {
         } else {
           await client
             .from('default_trip')
-            .insert({ wish_id: wishId });
+            .insert({ id: 'default', wish_id: wishId });
         }
         
         console.log('[Database] Saved default trip to database');
@@ -555,9 +637,9 @@ export const DefaultTripDB = {
   },
 
   async clear(): Promise<void> {
-    const dbAvailable = await checkDatabaseAvailability();
+    const tableReady = await ensureTableExists('default_trip');
     
-    if (dbAvailable) {
+    if (tableReady) {
       try {
         const client = getSupabaseClient();
         await client.from('default_trip').delete();
@@ -578,9 +660,9 @@ export const DefaultTripDB = {
 
 export const ExchangeRateDB = {
   async get(): Promise<{ customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; currencyMeta: Record<string, any> | null; lastUpdated: string } | null> {
-    const dbAvailable = await checkDatabaseAvailability();
+    const tableReady = await ensureTableExists('exchange_rates');
     
-    if (dbAvailable) {
+    if (tableReady) {
       try {
         const client = getSupabaseClient();
         const { data, error } = await client
@@ -615,9 +697,9 @@ export const ExchangeRateDB = {
   },
 
   async set(data: { customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; currencyMeta: Record<string, any> | null; lastUpdated: string }): Promise<void> {
-    const dbAvailable = await checkDatabaseAvailability();
+    const tableReady = await ensureTableExists('exchange_rates');
     
-    if (dbAvailable) {
+    if (tableReady) {
       try {
         const client = getSupabaseClient();
         
