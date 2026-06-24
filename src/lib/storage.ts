@@ -77,4 +77,5 @@ export const DATA_FILES = {
   TRIP_EXPENSES: 'trip-expenses.json',
   TRIP_DRIVING: 'trip-driving.json',
   DEFAULT_TRIP: 'default-trip.json',
+  EXCHANGE_RATES: 'exchange-rates.json',
 } as const;
