@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CurrencyCode, ExchangeRateRecord } from '@/types';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { ExchangeRateDB } from '@/lib/database';
 
 // 默认汇率数据（基于人民币）
 const defaultExchangeRates: Record<CurrencyCode, number> = {
@@ -20,76 +19,55 @@ const defaultExchangeRates: Record<CurrencyCode, number> = {
 };
 
 // 默认活跃货币列表（不含人民币）
-const defaultActiveCurrencies: CurrencyCode[] = ['USD', 'EUR', 'GBP', 'JPY', 'KRW'];
+const defaultActiveCurrencies: string[] = ['USD', 'EUR', 'GBP', 'JPY', 'KRW'];
 
-// 存储文件路径
-const DATA_FILE_PATH = path.join(process.cwd(), '.data', 'exchange-rates.json');
-
-// 确保数据目录存在
-async function ensureDataDir() {
-  const dataDir = path.dirname(DATA_FILE_PATH);
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
-}
-
-// 从文件加载数据
-async function loadData(): Promise<{
-  customExchangeRates: Record<CurrencyCode, number> | null;
-  activeCurrencies: CurrencyCode[];
-  lastUpdated: string;
-}> {
-  try {
-    await ensureDataDir();
-    const content = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-    const data = JSON.parse(content);
-    return {
-      customExchangeRates: data.customExchangeRates || null,
-      activeCurrencies: data.activeCurrencies || defaultActiveCurrencies,
-      lastUpdated: data.lastUpdated || new Date().toISOString(),
-    };
-  } catch {
-    // 文件不存在或读取失败，返回默认值
-    return {
-      customExchangeRates: null,
-      activeCurrencies: defaultActiveCurrencies,
-      lastUpdated: new Date().toISOString(),
-    };
-  }
-}
-
-// 保存数据到文件
-async function saveData(data: {
-  customExchangeRates: Record<CurrencyCode, number> | null;
-  activeCurrencies: CurrencyCode[];
-  lastUpdated: string;
-}) {
-  try {
-    await ensureDataDir();
-    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error saving exchange rates:', error);
-    throw error;
-  }
-}
+// 默认货币元数据（空，因为默认货币都是基础货币）
+const defaultCurrencyMeta: Record<string, { baseCode: CurrencyCode; note?: string }> = {};
 
 export async function GET() {
   try {
-    const data = await loadData();
+    const storedData = await ExchangeRateDB.get();
     
-    // 返回所有汇率和活跃货币列表
-    const rates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
-      code,
-      rate: data.customExchangeRates?.[code] || defaultExchangeRates[code],
-      updatedAt: data.lastUpdated,
-    }));
+    const customRates = storedData?.customExchangeRates || null;
+    const activeCurrencies = storedData?.activeCurrencies?.length
+      ? storedData.activeCurrencies
+      : defaultActiveCurrencies;
+    const currencyMeta = storedData?.currencyMeta || defaultCurrencyMeta;
+    const lastUpdated = storedData?.lastUpdated || new Date().toISOString();
+    
+    // 构建所有汇率记录（包括基础货币和自定义货币）
+    const ratesMap: Record<string, number> = {};
+    
+    // 先加入默认基础货币
+    for (const [code, rate] of Object.entries(defaultExchangeRates)) {
+      ratesMap[code] = customRates?.[code] || rate;
+    }
+    
+    // 加入自定义货币（带备注的）
+    if (customRates) {
+      for (const [id, rate] of Object.entries(customRates)) {
+        if (!(id in defaultExchangeRates)) {
+          ratesMap[id] = rate;
+        }
+      }
+    }
+
+    const rates: ExchangeRateRecord[] = Object.entries(ratesMap).map(([code, rate]) => {
+      const meta = currencyMeta[code];
+      return {
+        code,
+        baseCode: meta?.baseCode || (code in defaultExchangeRates ? code as CurrencyCode : 'CNY'),
+        note: meta?.note,
+        rate,
+        updatedAt: lastUpdated,
+      };
+    });
 
     return NextResponse.json({
       rates,
-      activeCurrencies: data.activeCurrencies,
-      updatedAt: data.lastUpdated,
+      activeCurrencies,
+      currencyMeta,
+      updatedAt: lastUpdated,
     });
   } catch (error) {
     console.error('Error fetching exchange rates:', error);
@@ -100,45 +78,74 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rates, activeCurrencies: newActiveCurrencies } = body as {
-      rates?: Partial<Record<CurrencyCode, number>>;
-      activeCurrencies?: CurrencyCode[];
+    const { rates, activeCurrencies: newActiveCurrencies, currencyMeta: newCurrencyMeta } = body as {
+      rates?: Record<string, number>;
+      activeCurrencies?: string[];
+      currencyMeta?: Record<string, { baseCode: CurrencyCode; note?: string }>;
     };
 
-    // 加载当前数据
-    const currentData = await loadData();
+    const storedData = await ExchangeRateDB.get();
     
-    // 更新汇率
+    let customRates = storedData?.customExchangeRates
+      ? { ...storedData.customExchangeRates }
+      : null;
+    let activeCurrencies = storedData?.activeCurrencies?.length
+      ? [...storedData.activeCurrencies]
+      : [...defaultActiveCurrencies];
+    let currencyMeta = storedData?.currencyMeta
+      ? { ...storedData.currencyMeta }
+      : { ...defaultCurrencyMeta };
+
     if (rates && typeof rates === 'object') {
-      currentData.customExchangeRates = { ...defaultExchangeRates };
-      for (const [code, rate] of Object.entries(rates)) {
-        if (typeof rate === 'number' && rate > 0) {
-          currentData.customExchangeRates[code as CurrencyCode] = rate;
+      customRates = { ...rates };
+    }
+
+    if (newActiveCurrencies && Array.isArray(newActiveCurrencies)) {
+      activeCurrencies = newActiveCurrencies;
+    }
+
+    if (newCurrencyMeta && typeof newCurrencyMeta === 'object') {
+      currencyMeta = { ...newCurrencyMeta };
+    }
+
+    const lastUpdated = new Date().toISOString();
+
+    await ExchangeRateDB.set({
+      customExchangeRates: customRates,
+      activeCurrencies,
+      currencyMeta,
+      lastUpdated,
+    });
+
+    // 构建返回的汇率记录
+    const ratesMap: Record<string, number> = {};
+    for (const [code, rate] of Object.entries(defaultExchangeRates)) {
+      ratesMap[code] = customRates?.[code] || rate;
+    }
+    if (customRates) {
+      for (const [id, rate] of Object.entries(customRates)) {
+        if (!(id in defaultExchangeRates)) {
+          ratesMap[id] = rate;
         }
       }
     }
 
-    // 更新活跃货币列表
-    if (newActiveCurrencies && Array.isArray(newActiveCurrencies)) {
-      currentData.activeCurrencies = newActiveCurrencies;
-    }
-
-    currentData.lastUpdated = new Date().toISOString();
-
-    // 保存到文件
-    await saveData(currentData);
-
-    // 返回更新后的数据
-    const updatedRates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
-      code,
-      rate: currentData.customExchangeRates?.[code] || defaultExchangeRates[code],
-      updatedAt: currentData.lastUpdated,
-    }));
+    const updatedRates: ExchangeRateRecord[] = Object.entries(ratesMap).map(([code, rate]) => {
+      const meta = currencyMeta[code];
+      return {
+        code,
+        baseCode: meta?.baseCode || (code in defaultExchangeRates ? code as CurrencyCode : 'CNY'),
+        note: meta?.note,
+        rate,
+        updatedAt: lastUpdated,
+      };
+    });
 
     return NextResponse.json({
       rates: updatedRates,
-      activeCurrencies: currentData.activeCurrencies,
-      updatedAt: currentData.lastUpdated,
+      activeCurrencies,
+      currencyMeta,
+      updatedAt: lastUpdated,
     });
   } catch (error) {
     console.error('Error updating exchange rates:', error);

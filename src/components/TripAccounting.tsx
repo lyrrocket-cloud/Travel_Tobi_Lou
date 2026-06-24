@@ -99,7 +99,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
-  const [exchangeRates, setExchangeRates] = useState<Record<CurrencyCode, number>>({
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
     CNY: 1,
     USD: 7.2,
     EUR: 7.8,
@@ -113,9 +113,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     MYR: 1.55,
     VND: 0.00029,
   });
-  const [activeCurrencies, setActiveCurrencies] = useState<CurrencyCode[]>(['USD', 'EUR', 'GBP', 'JPY', 'KRW']);
-  const [editingActiveCurrencies, setEditingActiveCurrencies] = useState<CurrencyCode[]>([]);
-  const [newCurrencyCode, setNewCurrencyCode] = useState<CurrencyCode | ''>('');
+  const [activeCurrencies, setActiveCurrencies] = useState<string[]>(['USD', 'EUR', 'GBP', 'JPY', 'KRW']);
+  const [currencyMeta, setCurrencyMeta] = useState<Record<string, { baseCode: CurrencyCode; note?: string }>>({});
+  const [editingActiveCurrencies, setEditingActiveCurrencies] = useState<string[]>([]);
+  const [editingCurrencyMeta, setEditingCurrencyMeta] = useState<Record<string, { baseCode: CurrencyCode; note?: string }>>({});
+  const [newCurrencyBaseCode, setNewCurrencyBaseCode] = useState<CurrencyCode | ''>('');
+  const [newCurrencyNote, setNewCurrencyNote] = useState('');
   const [newCurrencyRate, setNewCurrencyRate] = useState<string>('');
   
   const [newExpense, setNewExpense] = useState<{
@@ -123,7 +126,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     time: string;
     category: string;
     amount: string;
-    currency: CurrencyCode;
+    currency: string;
     description: string;
     location: string;
     payers: string[];
@@ -156,7 +159,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [queryFilters, setQueryFilters] = useState<{
     category: string | null;
     payer: string | null;     // 支付人
-    currency: CurrencyCode | null;
+    currency: string | null;
     dateFrom: string;
     dateTo: string;
   }>({
@@ -171,7 +174,44 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [queryFiltersCollapsed, setQueryFiltersCollapsed] = useState(true);
   
   const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
-  const [editingExchangeRates, setEditingExchangeRates] = useState<Record<CurrencyCode, number>>(exchangeRates);
+  const [editingExchangeRates, setEditingExchangeRates] = useState<Record<string, number>>(exchangeRates);
+
+  const getCurrencyBaseCode = (currencyId: string): CurrencyCode => {
+    const meta = currencyMeta[currencyId];
+    if (meta) return meta.baseCode;
+    if (currencyId in currencyNames) return currencyId as CurrencyCode;
+    return 'CNY';
+  };
+
+  const getCurrencyNote = (currencyId: string): string | undefined => {
+    return currencyMeta[currencyId]?.note;
+  };
+
+  const getCurrencySymbol = (currencyId: string): string => {
+    const baseCode = getCurrencyBaseCode(currencyId);
+    return currencySymbols[baseCode] || currencyId;
+  };
+
+  const getCurrencyName = (currencyId: string): string => {
+    const baseCode = getCurrencyBaseCode(currencyId);
+    const note = getCurrencyNote(currencyId);
+    const baseName = currencyNames[baseCode] || baseCode;
+    return note ? `${baseName}（${note}）` : baseName;
+  };
+
+  const getEditingCurrencySymbol = (currencyId: string): string => {
+    const meta = editingCurrencyMeta[currencyId];
+    const baseCode = meta ? meta.baseCode : (currencyId in currencyNames ? currencyId as CurrencyCode : 'CNY');
+    return currencySymbols[baseCode] || currencyId;
+  };
+
+  const getEditingCurrencyName = (currencyId: string): string => {
+    const meta = editingCurrencyMeta[currencyId];
+    const baseCode = meta ? meta.baseCode : (currencyId in currencyNames ? currencyId as CurrencyCode : 'CNY');
+    const note = meta?.note;
+    const baseName = currencyNames[baseCode] || baseCode;
+    return note ? `${baseName}（${note}）` : baseName;
+  };
 
   const saveExchangeRates = async () => {
     try {
@@ -181,19 +221,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         body: JSON.stringify({
           rates: editingExchangeRates,
           activeCurrencies: editingActiveCurrencies,
+          currencyMeta: editingCurrencyMeta,
         }),
       });
       if (response.ok) {
         const data = await response.json();
         if (data.rates) {
-          const ratesMap: Record<CurrencyCode, number> = {} as Record<CurrencyCode, number>;
-          data.rates.forEach((record: ExchangeRateRecord) => {
+          const ratesMap: Record<string, number> = {};
+          data.rates.forEach((record: any) => {
             ratesMap[record.code] = record.rate;
           });
           setExchangeRates(ratesMap);
         }
         if (data.activeCurrencies) {
           setActiveCurrencies(data.activeCurrencies);
+        }
+        if (data.currencyMeta) {
+          setCurrencyMeta(data.currencyMeta);
         }
         setShowExchangeRateEditor(false);
       }
@@ -238,8 +282,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       const response = await fetch('/api/exchange-rates');
       const data = await response.json();
       if (data.rates) {
-        const ratesMap: Record<CurrencyCode, number> = {} as Record<CurrencyCode, number>;
-        data.rates.forEach((record: ExchangeRateRecord) => {
+        const ratesMap: Record<string, number> = {};
+        data.rates.forEach((record: any) => {
           ratesMap[record.code] = record.rate;
         });
         setExchangeRates(ratesMap);
@@ -247,12 +291,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       if (data.activeCurrencies) {
         setActiveCurrencies(data.activeCurrencies);
       }
+      if (data.currencyMeta) {
+        setCurrencyMeta(data.currencyMeta);
+      }
     } catch (error) {
       console.error('[Trip Accounting] Error fetching exchange rates:', error);
     }
   };
 
-  const convertToCNY = (amount: number, currency?: CurrencyCode): number => {
+  const convertToCNY = (amount: number, currency?: string): number => {
     return amount * (exchangeRates[currency || 'CNY'] || 1);
   };
 
@@ -914,7 +961,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-            {showWishSelector ? '选择旅行' : `${currentWish?.destination} 旅行记账`}
+            {showWishSelector ? '选择旅行' : showExchangeRateEditor ? '汇率管理' : `${currentWish?.destination} 旅行记账`}
           </h2>
         </div>
         <div className="flex items-center gap-2">
@@ -923,14 +970,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             variant="ghost"
             size="icon"
             onClick={() => {
-              setEditingExchangeRates(exchangeRates);
-              setEditingActiveCurrencies(activeCurrencies);
-              setNewCurrencyCode('');
-              setNewCurrencyRate('');
-              setShowExchangeRateEditor(true);
+              if (showExchangeRateEditor) {
+                setShowExchangeRateEditor(false);
+              } else {
+                setEditingExchangeRates(exchangeRates);
+                setEditingActiveCurrencies(activeCurrencies);
+                setEditingCurrencyMeta(currencyMeta);
+                setNewCurrencyBaseCode('');
+                setNewCurrencyNote('');
+                setNewCurrencyRate('');
+                setShowExchangeRateEditor(true);
+                setShowWishSelector(false);
+              }
             }}
-            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-            title="汇率管理"
+            className={showExchangeRateEditor ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+            title={showExchangeRateEditor ? '退出汇率管理' : '汇率管理'}
           >
             <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Button>
@@ -1009,7 +1063,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${showWishSelector ? 'hidden' : ''}`}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
         <TabsList className="grid w-full grid-cols-3 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
@@ -1140,15 +1194,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             />
                             <Select
                               value={newExpense.currency}
-                              onValueChange={(value) => setNewExpense({ ...newExpense, currency: value as CurrencyCode })}
+                              onValueChange={(value) => setNewExpense({ ...newExpense, currency: value })}
                             >
                               <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-[120px]">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                                {activeCurrencies.map((code) => (
-                                  <SelectItem key={code} value={code}>
-                                    {currencySymbols[code]} {code}
+                                <SelectItem key="CNY" value="CNY">
+                                  {getCurrencySymbol('CNY')} CNY
+                                </SelectItem>
+                                {activeCurrencies.map((currencyId) => (
+                                  <SelectItem key={currencyId} value={currencyId}>
+                                    {getCurrencySymbol(currencyId)} {getCurrencyName(currencyId)}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -1333,17 +1390,17 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       >
                         全部
                       </button>
-                      {activeCurrencies.map((code) => (
+                      {activeCurrencies.map((currencyId) => (
                         <button
-                          key={code}
-                          onClick={() => setQueryFilters({ ...queryFilters, currency: code })}
+                          key={currencyId}
+                          onClick={() => setQueryFilters({ ...queryFilters, currency: currencyId })}
                           className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
-                            queryFilters.currency === code
+                            queryFilters.currency === currencyId
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
                               : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
                           }`}
                         >
-                          {currencySymbols[code]} {code}
+                          {getCurrencySymbol(currencyId)} {getCurrencyName(currencyId)}
                         </button>
                       ))}
                     </div>
@@ -1417,14 +1474,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                                 <div className="flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">总金额：</span>
                                   <span className="text-[#CEA472] font-semibold text-xs">
-                                    {currencySymbols[expense.currency || 'CNY']}{expense.amount.toFixed(2)}{expense.currency && expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount, expense.currency).toFixed(2)})` : ''}
+                                    {getCurrencySymbol(expense.currency || 'CNY')}{expense.amount.toFixed(2)}{expense.currency && expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount, expense.currency).toFixed(2)})` : ''}
                                   </span>
                                 </div>
                                 {/* 人均金额 */}
                                 <div className="mt-1 flex items-center justify-start sm:justify-end gap-1">
                                   <span className="text-[#FFFFFF]/60 text-xs">人均金额：</span>
                                   <span className="text-[#CEA472] font-semibold text-xs">
-                                    {currencySymbols[expense.currency || 'CNY']}{(expense.amount / (expense.payers?.length || 1)).toFixed(2)}{expense.currency && expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount / (expense.payers?.length || 1), expense.currency).toFixed(2)})` : ''}
+                                    {getCurrencySymbol(expense.currency || 'CNY')}{(expense.amount / (expense.payers?.length || 1)).toFixed(2)}{expense.currency && expense.currency !== 'CNY' ? ` (¥${convertToCNY(expense.amount / (expense.payers?.length || 1), expense.currency).toFixed(2)})` : ''}
                                   </span>
                                 </div>
                               </div>
@@ -1658,15 +1715,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   />
                   <Select
                     value={editingExpense.currency || 'CNY'}
-                    onValueChange={(value) => setEditingExpense({ ...editingExpense, currency: value as CurrencyCode })}
+                    onValueChange={(value) => setEditingExpense({ ...editingExpense, currency: value })}
                   >
                     <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-20 sm:w-24">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
-                      {activeCurrencies.map((code) => (
-                        <SelectItem key={code} value={code}>
-                          {currencySymbols[code]} {code}
+                      <SelectItem key="CNY" value="CNY">
+                        {getCurrencySymbol('CNY')} CNY
+                      </SelectItem>
+                      {activeCurrencies.map((currencyId) => (
+                        <SelectItem key={currencyId} value={currencyId}>
+                          {getCurrencySymbol(currencyId)} {getCurrencyName(currencyId)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -1839,39 +1899,37 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showExchangeRateEditor} onOpenChange={(open) => {
-        if (!open) {
-          setShowExchangeRateEditor(false);
-        }
-      }}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">汇率管理</DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              管理活跃货币和汇率设置
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto flex-1">
+      {/* 汇率管理模式内容 */}
+      {showExchangeRateEditor && (
+        <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Coins className="w-5 h-5 text-[#CEA472]" />
+              <span className="text-[#CEA472] font-medium text-xs">管理活跃货币和汇率设置</span>
+            </div>
+
             {/* 活跃货币列表 */}
             <div>
               <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
               <div className="space-y-2">
-                {editingActiveCurrencies.map((code) => (
-                  <div key={code} className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-lg">
+                {editingActiveCurrencies.map((currencyId) => (
+                  <div key={currencyId} className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#CEA472] font-medium text-xs w-20">{currencySymbols[code]}</span>
-                      <span className="text-[#FFFFFF] text-xs">{currencyNames[code]}</span>
-                      <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
+                      <span className="text-[#CEA472] font-medium text-xs w-20">{getEditingCurrencySymbol(currencyId)}</span>
+                      <span className="text-[#FFFFFF] text-xs">{getEditingCurrencyName(currencyId)}</span>
+                      {editingCurrencyMeta[currencyId]?.note && (
+                        <span className="text-[#CEA472]/60 text-xs">（{editingCurrencyMeta[currencyId].note}）</span>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Input
                         type="number"
                         min="0"
                         step="0.0001"
-                        value={editingExchangeRates[code]}
+                        value={editingExchangeRates[currencyId] || 0}
                         onChange={(e) => setEditingExchangeRates({
                           ...editingExchangeRates,
-                          [code]: parseFloat(e.target.value) || 0
+                          [currencyId]: parseFloat(e.target.value) || 0
                         })}
                         className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
                       />
@@ -1879,7 +1937,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <Button
                         size="icon"
                         variant="ghost"
-                        onClick={() => setEditingActiveCurrencies(prev => prev.filter(c => c !== code))}
+                        onClick={() => setEditingActiveCurrencies(prev => prev.filter(c => c !== currencyId))}
                         className="text-red-500 hover:text-red-500 hover:bg-transparent h-8 w-8"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1893,12 +1951,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             {/* 添加新货币 */}
             <div className="border-t border-[#CEA472]/20 pt-4">
               <div className="text-xs text-[#CEA472] mb-2 font-medium">添加货币</div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Select
-                  value={newCurrencyCode}
+                  value={newCurrencyBaseCode}
                   onValueChange={(value) => {
                     const code = value as CurrencyCode;
-                    setNewCurrencyCode(code);
+                    setNewCurrencyBaseCode(code);
                     if (exchangeRates[code] !== undefined) {
                       setNewCurrencyRate(String(exchangeRates[code]));
                     }
@@ -1909,7 +1967,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </SelectTrigger>
                   <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
                     {(Object.keys(currencyNames) as CurrencyCode[])
-                      .filter(code => !editingActiveCurrencies.includes(code))
                       .map((code) => (
                         <SelectItem key={code} value={code}>
                           {currencySymbols[code]} {code}
@@ -1918,32 +1975,53 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   </SelectContent>
                 </Select>
                 <Input
+                  value={newCurrencyNote}
+                  onChange={(e) => setNewCurrencyNote(e.target.value)}
+                  placeholder="备注（现金/信用卡等）"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-32"
+                />
+                <Input
                   type="number"
                   min="0"
                   step="0.0001"
                   value={newCurrencyRate}
                   onChange={(e) => setNewCurrencyRate(e.target.value)}
                   placeholder="汇率"
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-28"
+                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-24"
                 />
                 <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
                 <Button
                   size="sm"
                   onClick={() => {
-                    if (newCurrencyCode && newCurrencyRate) {
+                    if (newCurrencyBaseCode && newCurrencyRate) {
                       const rate = parseFloat(newCurrencyRate);
                       if (rate > 0) {
-                        setEditingExchangeRates({
-                          ...editingExchangeRates,
-                          [newCurrencyCode]: rate,
-                        });
-                        setEditingActiveCurrencies(prev => [...prev, newCurrencyCode as CurrencyCode]);
-                        setNewCurrencyCode('');
+                        const currencyId = newCurrencyNote
+                          ? `${newCurrencyBaseCode}_${newCurrencyNote}`
+                          : newCurrencyBaseCode;
+                        if (!editingActiveCurrencies.includes(currencyId)) {
+                          setEditingExchangeRates({
+                            ...editingExchangeRates,
+                            [currencyId]: rate,
+                          });
+                          setEditingActiveCurrencies(prev => [...prev, currencyId]);
+                          if (newCurrencyNote) {
+                            setEditingCurrencyMeta({
+                              ...editingCurrencyMeta,
+                              [currencyId]: {
+                                baseCode: newCurrencyBaseCode,
+                                note: newCurrencyNote,
+                              },
+                            });
+                          }
+                        }
+                        setNewCurrencyBaseCode('');
+                        setNewCurrencyNote('');
                         setNewCurrencyRate('');
                       }
                     }
                   }}
-                  disabled={!newCurrencyCode || !newCurrencyRate}
+                  disabled={!newCurrencyBaseCode || !newCurrencyRate}
                   className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 h-8"
                 >
                   <Plus className="w-4 h-4" />
@@ -1951,55 +2029,25 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
             </div>
 
-            {/* 非活跃货币汇率编辑 */}
-            <div className="border-t border-[#CEA472]/20 pt-4">
-              <div className="text-xs text-[#FFFFFF]/40 mb-2">其他货币汇率（仅供参考）</div>
-              <div className="space-y-2">
-                {(Object.keys(currencyNames) as CurrencyCode[])
-                  .filter(code => !editingActiveCurrencies.includes(code))
-                  .map((code) => (
-                    <div key={code} className="flex items-center justify-between gap-4 p-2 bg-black/20 rounded-lg opacity-60">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#FFFFFF]/60 font-medium text-xs w-20">{currencySymbols[code]}</span>
-                        <span className="text-[#FFFFFF]/60 text-xs">{currencyNames[code]}</span>
-                        <span className="text-[#FFFFFF]/40 text-xs">({code})</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="number"
-                          min="0"
-                          step="0.0001"
-                          value={editingExchangeRates[code]}
-                          onChange={(e) => setEditingExchangeRates({
-                            ...editingExchangeRates,
-                            [code]: parseFloat(e.target.value) || 0
-                          })}
-                          className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
-                        />
-                        <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+            {/* 操作按钮 */}
+            <div className="flex justify-end gap-2 pt-4 border-t border-[#CEA472]/20">
+              <Button
+                variant="outline"
+                onClick={() => setShowExchangeRateEditor(false)}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              >
+                取消
+              </Button>
+              <Button
+                onClick={saveExchangeRates}
+                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+              >
+                保存
+              </Button>
             </div>
           </div>
-          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
-            <Button
-              variant="outline"
-              onClick={() => setShowExchangeRateEditor(false)}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-            >
-              取消
-            </Button>
-            <Button
-              onClick={saveExchangeRates}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-            >
-              保存
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   );
 }

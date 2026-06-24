@@ -4,6 +4,7 @@ import { readJsonFile, writeJsonFile, DATA_FILES, getDataDir } from '@/lib/stora
 let inMemoryTripPlans: any[] = readJsonFile(DATA_FILES.TRIP_PLANS, []);
 let inMemoryTripExpenses: any[] = readJsonFile(DATA_FILES.TRIP_EXPENSES, []);
 let inMemoryDefaultTrip: string | null = readJsonFile(DATA_FILES.DEFAULT_TRIP, null);
+let inMemoryExchangeRates: any = readJsonFile(DATA_FILES.EXCHANGE_RATES, null);
 
 // 标记数据库是否可用
 let isDatabaseAvailable = true;
@@ -56,6 +57,14 @@ function saveDefaultTrip() {
   const success = writeJsonFile(DATA_FILES.DEFAULT_TRIP, inMemoryDefaultTrip);
   if (success) {
     console.log('[Database] Saved default trip to file:', getDataDir());
+  }
+  return success;
+}
+
+function saveExchangeRates() {
+  const success = writeJsonFile(DATA_FILES.EXCHANGE_RATES, inMemoryExchangeRates);
+  if (success) {
+    console.log('[Database] Saved exchange rates to file:', getDataDir());
   }
   return success;
 }
@@ -565,4 +574,95 @@ export const DefaultTripDB = {
     inMemoryDefaultTrip = null;
     saveDefaultTrip();
   }
+};
+
+export const ExchangeRateDB = {
+  async get(): Promise<{ customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; currencyMeta: Record<string, any> | null; lastUpdated: string } | null> {
+    const dbAvailable = await checkDatabaseAvailability();
+    
+    if (dbAvailable) {
+      try {
+        const client = getSupabaseClient();
+        const { data, error } = await client
+          .from('exchange_rates')
+          .select('*')
+          .single();
+        
+        if (error) {
+          if (error.code === 'PGRST116') return null;
+          throw error;
+        }
+        
+        return {
+          customExchangeRates: typeof data.custom_exchange_rates === 'string'
+            ? JSON.parse(data.custom_exchange_rates)
+            : data.custom_exchange_rates,
+          activeCurrencies: Array.isArray(data.active_currencies)
+            ? data.active_currencies
+            : (typeof data.active_currencies === 'string' ? JSON.parse(data.active_currencies) : []),
+          currencyMeta: typeof data.currency_meta === 'string'
+            ? JSON.parse(data.currency_meta)
+            : data.currency_meta,
+          lastUpdated: data.updated_at || data.last_updated || new Date().toISOString(),
+        };
+      } catch (error) {
+        console.error('[Database] Error fetching exchange rates from DB:', error);
+      }
+    }
+    
+    console.log('[Database] Using file storage for exchange rates');
+    return inMemoryExchangeRates;
+  },
+
+  async set(data: { customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; currencyMeta: Record<string, any> | null; lastUpdated: string }): Promise<void> {
+    const dbAvailable = await checkDatabaseAvailability();
+    
+    if (dbAvailable) {
+      try {
+        const client = getSupabaseClient();
+        
+        const { data: existing, error: checkError } = await client
+          .from('exchange_rates')
+          .select('id')
+          .limit(1)
+          .maybeSingle();
+        
+        if (checkError && checkError.code !== 'PGRST116') {
+          throw checkError;
+        }
+        
+        if (existing) {
+          await client
+            .from('exchange_rates')
+            .update({
+              custom_exchange_rates: data.customExchangeRates,
+              active_currencies: data.activeCurrencies,
+              currency_meta: data.currencyMeta,
+              updated_at: data.lastUpdated,
+            })
+            .eq('id', existing.id);
+        } else {
+          await client
+            .from('exchange_rates')
+            .insert({
+              id: 'default',
+              custom_exchange_rates: data.customExchangeRates,
+              active_currencies: data.activeCurrencies,
+              currency_meta: data.currencyMeta,
+              updated_at: data.lastUpdated,
+            });
+        }
+        
+        console.log('[Database] Saved exchange rates to database');
+        return;
+      } catch (error) {
+        console.error('[Database] Error saving exchange rates to DB:', error);
+      }
+    }
+    
+    console.warn('[Database] Falling back to file storage for exchange rates');
+    
+    inMemoryExchangeRates = data;
+    saveExchangeRates();
+  },
 };
