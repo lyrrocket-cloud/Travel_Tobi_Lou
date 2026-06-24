@@ -914,7 +914,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-            {showWishSelector ? '选择旅行' : `${currentWish?.destination} 旅行记账`}
+            {showWishSelector ? '选择旅行' : showExchangeRateEditor ? '汇率管理' : `${currentWish?.destination} 旅行记账`}
           </h2>
         </div>
         <div className="flex items-center gap-2">
@@ -923,14 +923,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
             variant="ghost"
             size="icon"
             onClick={() => {
-              setEditingExchangeRates(exchangeRates);
-              setEditingActiveCurrencies(activeCurrencies);
-              setNewCurrencyCode('');
-              setNewCurrencyRate('');
-              setShowExchangeRateEditor(true);
+              if (showExchangeRateEditor) {
+                setShowExchangeRateEditor(false);
+              } else {
+                setEditingExchangeRates(exchangeRates);
+                setEditingActiveCurrencies(activeCurrencies);
+                setNewCurrencyCode('');
+                setNewCurrencyRate('');
+                setShowExchangeRateEditor(true);
+                setShowWishSelector(false);
+              }
             }}
-            className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent"
-            title="汇率管理"
+            className={showExchangeRateEditor ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+            title={showExchangeRateEditor ? '退出汇率管理' : '汇率管理'}
           >
             <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Button>
@@ -1009,7 +1014,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${showWishSelector ? 'hidden' : ''}`}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
         <TabsList className="grid w-full grid-cols-3 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]">
           <TabsTrigger 
             value="entry"
@@ -1839,19 +1844,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showExchangeRateEditor} onOpenChange={(open) => {
-        if (!open) {
-          setShowExchangeRateEditor(false);
-        }
-      }}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-[#FFFFFF]">汇率管理</DialogTitle>
-            <DialogDescription className="text-[#FFFFFF]/60">
-              管理活跃货币和汇率设置
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto flex-1">
+      {/* 汇率管理模式内容 */}
+      {showExchangeRateEditor && (
+        <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Coins className="w-5 h-5 text-[#CEA472]" />
+              <span className="text-[#CEA472] font-medium text-xs">管理活跃货币和汇率设置</span>
+            </div>
+
             {/* 活跃货币列表 */}
             <div>
               <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
@@ -1982,24 +1983,26 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   ))}
               </div>
             </div>
+
+            {/* 操作按钮 */}
+            <div className="flex justify-end gap-2 pt-4 border-t border-[#CEA472]/20">
+              <Button
+                variant="outline"
+                onClick={() => setShowExchangeRateEditor(false)}
+                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              >
+                取消
+              </Button>
+              <Button
+                onClick={saveExchangeRates}
+                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+              >
+                保存
+              </Button>
+            </div>
           </div>
-          <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
-            <Button
-              variant="outline"
-              onClick={() => setShowExchangeRateEditor(false)}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
-            >
-              取消
-            </Button>
-            <Button
-              onClick={saveExchangeRates}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
-            >
-              保存
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   );
 }
