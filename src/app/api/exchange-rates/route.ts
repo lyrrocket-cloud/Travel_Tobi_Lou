@@ -19,7 +19,10 @@ const defaultExchangeRates: Record<CurrencyCode, number> = {
 };
 
 // 默认活跃货币列表（不含人民币）
-const defaultActiveCurrencies: CurrencyCode[] = ['USD', 'EUR', 'GBP', 'JPY', 'KRW'];
+const defaultActiveCurrencies: string[] = ['USD', 'EUR', 'GBP', 'JPY', 'KRW'];
+
+// 默认货币元数据（空，因为默认货币都是基础货币）
+const defaultCurrencyMeta: Record<string, { baseCode: CurrencyCode; note?: string }> = {};
 
 export async function GET() {
   try {
@@ -27,19 +30,43 @@ export async function GET() {
     
     const customRates = storedData?.customExchangeRates || null;
     const activeCurrencies = storedData?.activeCurrencies?.length
-      ? storedData.activeCurrencies as CurrencyCode[]
+      ? storedData.activeCurrencies
       : defaultActiveCurrencies;
+    const currencyMeta = storedData?.currencyMeta || defaultCurrencyMeta;
     const lastUpdated = storedData?.lastUpdated || new Date().toISOString();
     
-    const rates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
-      code,
-      rate: customRates?.[code] || defaultExchangeRates[code],
-      updatedAt: lastUpdated,
-    }));
+    // 构建所有汇率记录（包括基础货币和自定义货币）
+    const ratesMap: Record<string, number> = {};
+    
+    // 先加入默认基础货币
+    for (const [code, rate] of Object.entries(defaultExchangeRates)) {
+      ratesMap[code] = customRates?.[code] || rate;
+    }
+    
+    // 加入自定义货币（带备注的）
+    if (customRates) {
+      for (const [id, rate] of Object.entries(customRates)) {
+        if (!(id in defaultExchangeRates)) {
+          ratesMap[id] = rate;
+        }
+      }
+    }
+
+    const rates: ExchangeRateRecord[] = Object.entries(ratesMap).map(([code, rate]) => {
+      const meta = currencyMeta[code];
+      return {
+        code,
+        baseCode: meta?.baseCode || (code in defaultExchangeRates ? code as CurrencyCode : 'CNY'),
+        note: meta?.note,
+        rate,
+        updatedAt: lastUpdated,
+      };
+    });
 
     return NextResponse.json({
       rates,
       activeCurrencies,
+      currencyMeta,
       updatedAt: lastUpdated,
     });
   } catch (error) {
@@ -51,9 +78,10 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rates, activeCurrencies: newActiveCurrencies } = body as {
-      rates?: Partial<Record<CurrencyCode, number>>;
-      activeCurrencies?: CurrencyCode[];
+    const { rates, activeCurrencies: newActiveCurrencies, currencyMeta: newCurrencyMeta } = body as {
+      rates?: Record<string, number>;
+      activeCurrencies?: string[];
+      currencyMeta?: Record<string, { baseCode: CurrencyCode; note?: string }>;
     };
 
     const storedData = await ExchangeRateDB.get();
@@ -62,20 +90,22 @@ export async function PUT(request: NextRequest) {
       ? { ...storedData.customExchangeRates }
       : null;
     let activeCurrencies = storedData?.activeCurrencies?.length
-      ? [...storedData.activeCurrencies] as CurrencyCode[]
+      ? [...storedData.activeCurrencies]
       : [...defaultActiveCurrencies];
+    let currencyMeta = storedData?.currencyMeta
+      ? { ...storedData.currencyMeta }
+      : { ...defaultCurrencyMeta };
 
     if (rates && typeof rates === 'object') {
-      customRates = { ...defaultExchangeRates };
-      for (const [code, rate] of Object.entries(rates)) {
-        if (typeof rate === 'number' && rate > 0) {
-          customRates[code as CurrencyCode] = rate;
-        }
-      }
+      customRates = { ...rates };
     }
 
     if (newActiveCurrencies && Array.isArray(newActiveCurrencies)) {
       activeCurrencies = newActiveCurrencies;
+    }
+
+    if (newCurrencyMeta && typeof newCurrencyMeta === 'object') {
+      currencyMeta = { ...newCurrencyMeta };
     }
 
     const lastUpdated = new Date().toISOString();
@@ -83,18 +113,38 @@ export async function PUT(request: NextRequest) {
     await ExchangeRateDB.set({
       customExchangeRates: customRates,
       activeCurrencies,
+      currencyMeta,
       lastUpdated,
     });
 
-    const updatedRates: ExchangeRateRecord[] = (Object.keys(defaultExchangeRates) as CurrencyCode[]).map(code => ({
-      code,
-      rate: customRates?.[code] || defaultExchangeRates[code],
-      updatedAt: lastUpdated,
-    }));
+    // 构建返回的汇率记录
+    const ratesMap: Record<string, number> = {};
+    for (const [code, rate] of Object.entries(defaultExchangeRates)) {
+      ratesMap[code] = customRates?.[code] || rate;
+    }
+    if (customRates) {
+      for (const [id, rate] of Object.entries(customRates)) {
+        if (!(id in defaultExchangeRates)) {
+          ratesMap[id] = rate;
+        }
+      }
+    }
+
+    const updatedRates: ExchangeRateRecord[] = Object.entries(ratesMap).map(([code, rate]) => {
+      const meta = currencyMeta[code];
+      return {
+        code,
+        baseCode: meta?.baseCode || (code in defaultExchangeRates ? code as CurrencyCode : 'CNY'),
+        note: meta?.note,
+        rate,
+        updatedAt: lastUpdated,
+      };
+    });
 
     return NextResponse.json({
       rates: updatedRates,
       activeCurrencies,
+      currencyMeta,
       updatedAt: lastUpdated,
     });
   } catch (error) {

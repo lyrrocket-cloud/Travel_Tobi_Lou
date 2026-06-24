@@ -577,7 +577,7 @@ export const DefaultTripDB = {
 };
 
 export const ExchangeRateDB = {
-  async get(): Promise<{ customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; lastUpdated: string } | null> {
+  async get(): Promise<{ customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; currencyMeta: Record<string, any> | null; lastUpdated: string } | null> {
     const dbAvailable = await checkDatabaseAvailability();
     
     if (dbAvailable) {
@@ -600,6 +600,9 @@ export const ExchangeRateDB = {
           activeCurrencies: Array.isArray(data.active_currencies)
             ? data.active_currencies
             : (typeof data.active_currencies === 'string' ? JSON.parse(data.active_currencies) : []),
+          currencyMeta: typeof data.currency_meta === 'string'
+            ? JSON.parse(data.currency_meta)
+            : data.currency_meta,
           lastUpdated: data.updated_at || data.last_updated || new Date().toISOString(),
         };
       } catch (error) {
@@ -611,7 +614,7 @@ export const ExchangeRateDB = {
     return inMemoryExchangeRates;
   },
 
-  async set(data: { customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; lastUpdated: string }): Promise<void> {
+  async set(data: { customExchangeRates: Record<string, number> | null; activeCurrencies: string[]; currencyMeta: Record<string, any> | null; lastUpdated: string }): Promise<void> {
     const dbAvailable = await checkDatabaseAvailability();
     
     if (dbAvailable) {
@@ -634,6 +637,7 @@ export const ExchangeRateDB = {
             .update({
               custom_exchange_rates: data.customExchangeRates,
               active_currencies: data.activeCurrencies,
+              currency_meta: data.currencyMeta,
               updated_at: data.lastUpdated,
             })
             .eq('id', existing.id);
@@ -644,6 +648,7 @@ export const ExchangeRateDB = {
               id: 'default',
               custom_exchange_rates: data.customExchangeRates,
               active_currencies: data.activeCurrencies,
+              currency_meta: data.currencyMeta,
               updated_at: data.lastUpdated,
             });
         }

@@ -15,6 +15,14 @@ export interface Wish {
 // 货币类型
 export type CurrencyCode = 'CNY' | 'USD' | 'EUR' | 'GBP' | 'JPY' | 'KRW' | 'HKD' | 'TWD' | 'THB' | 'SGD' | 'MYR' | 'VND';
 
+// 自定义货币（支持备注，如现金、信用卡等）
+export interface CustomCurrency {
+  id: string;           // 唯一标识，格式：基础代码_备注（无备注时就是基础代码）
+  baseCode: CurrencyCode; // 基础货币代码
+  note?: string;        // 备注（现金、信用卡等）
+  rate: number;         // 相对于人民币的汇率
+}
+
 // 货币信息接口
 export interface Currency {
   code: CurrencyCode;
@@ -26,7 +34,9 @@ export interface Currency {
 
 // 汇率记录接口
 export interface ExchangeRateRecord {
-  code: CurrencyCode;
+  code: string;         // 货币ID（可能是带备注的自定义货币）
+  baseCode: CurrencyCode;
+  note?: string;
   rate: number; // 1 外币 = ? 人民币
   updatedAt: string;
 }
@@ -49,7 +59,7 @@ export interface ExpenseItem {
   time: string;
   category: ExpenseCategory;
   amount: number;
-  currency: CurrencyCode; // 货币类型
+  currency: string;     // 货币ID（可能是带备注的自定义货币）
   description: string;
   location?: string;
   payer?: string;

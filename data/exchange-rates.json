@@ -1,22 +1,6 @@
 {
-  "customExchangeRates": {
-    "CNY": 1,
-    "USD": 7.8,
-    "EUR": 7.8,
-    "GBP": 9,
-    "JPY": 0.048,
-    "KRW": 0.0052,
-    "HKD": 0.92,
-    "TWD": 0.22,
-    "THB": 0.2,
-    "SGD": 5.3,
-    "MYR": 1.55,
-    "VND": 0.00029
-  },
-  "activeCurrencies": [
-    "USD",
-    "EUR",
-    "THB"
-  ],
-  "lastUpdated": "2026-06-24T03:53:59.869Z"
+  "customExchangeRates": {},
+  "activeCurrencies": [],
+  "currencyMeta": {},
+  "lastUpdated": "2026-06-24T05:32:40.114Z"
 }
