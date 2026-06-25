@@ -313,3 +313,38 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(206, 164, 114, 0.5) rgba(0, 0, 0, 0.1);
 }
+
+/* ========================================
+   通用自定义滚动条样式 - 所有div统一UI标准
+   ======================================== */
+
+/* 所有带滚动的div元素统一滚动条样式 */
+div::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+div::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+div::-webkit-scrollbar-thumb {
+  background: rgba(206, 164, 114, 0.4);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+  background: rgba(206, 164, 114, 0.7);
+}
+
+div::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox通用滚动条支持 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(206, 164, 114, 0.5) rgba(0, 0, 0, 0.1);
+}
