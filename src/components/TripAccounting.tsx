@@ -962,17 +962,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
-            {showWishSelector ? '选择旅行' : showExchangeRateEditor ? '汇率管理' : `${currentWish?.destination} 旅行记账`}
-          </h2>
-          {currentTripPlan?.frozen && !showWishSelector && !showExchangeRateEditor && (
-            <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-500/20 border border-blue-500/40 rounded text-[10px] text-blue-400 flex-shrink-0">
-              <Snowflake className="w-3 h-3" />
-              已冻结
-            </span>
-          )}
-        </div>
+        <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
+          {showWishSelector ? '选择旅行' : showExchangeRateEditor ? '汇率管理' : `${currentWish?.destination} 旅行记账`}
+        </h2>
         <div className="flex items-center gap-2">
           {/* 汇率管理按钮 - 始终显示 */}
           <Button
