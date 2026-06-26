@@ -347,6 +347,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
   };
 
   const currentTripPlan = selectedWishId ? tripPlans.find(plan => plan.wishId === selectedWishId) : null;
+  const isCurrentTripFrozen = !!currentTripPlan?.frozen;
   const currentDayPlan = currentTripPlan?.days.find(d => d.dayNumber === selectedDay);
 
   const getSortedActivities = (activities: ActivityItem[]) => {
@@ -872,10 +873,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={transport.id}
-        className="bg-black/40 border border-[#CEA472]/20 rounded-md p-3 cursor-pointer hover:bg-black/50 transition-colors"
+        className={`bg-black/40 border border-[#CEA472]/20 rounded-md p-3 transition-colors ${
+          isCurrentTripFrozen ? '' : 'cursor-pointer hover:bg-black/50'
+        }`}
         onClick={() => {
-          setEditingTransport({ dayNumber: day, transportId: transport.id });
-          setEditingTransportData({ ...transport });
+          if (!isCurrentTripFrozen) {
+            setEditingTransport({ dayNumber: day, transportId: transport.id });
+            setEditingTransportData({ ...transport });
+          }
         }}
       >
         <div className="flex items-center gap-2 text-[#CEA472]">
@@ -1031,10 +1036,14 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={activity.id}
-        className="bg-black/40 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors"
+        className={`bg-black/40 border border-[#CEA472]/20 rounded-md p-3.5 sm:p-4 transition-colors ${
+          isCurrentTripFrozen ? '' : 'cursor-pointer hover:bg-black/50'
+        }`}
         onClick={() => {
-          setEditingActivity({ dayNumber: day, activityId: activity.id });
-          setEditingActivityData({ ...activity });
+          if (!isCurrentTripFrozen) {
+            setEditingActivity({ dayNumber: day, activityId: activity.id });
+            setEditingActivityData({ ...activity });
+          }
         }}
       >
         <div className="flex items-start gap-2.5 sm:gap-3">
@@ -1950,19 +1959,21 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                 day
                               )
                             ) : (
-                              <Button
-                                onClick={() => addTransport(
-                                  day, 
-                                  'between', 
-                                  activity.id, 
-                                  nextItem.type === 'activity' ? nextItem.activity!.id : 'departure'
-                                )}
-                                variant="outline"
-                                className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
-                              >
-                                <Plus className="w-4 h-4 mr-2" />
-                                添加交通
-                              </Button>
+                              !isCurrentTripFrozen && (
+                                <Button
+                                  onClick={() => addTransport(
+                                    day, 
+                                    'between', 
+                                    activity.id, 
+                                    nextItem.type === 'activity' ? nextItem.activity!.id : 'departure'
+                                  )}
+                                  variant="outline"
+                                  className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                                >
+                                  <Plus className="w-4 h-4 mr-2" />
+                                  添加交通
+                                </Button>
+                              )
                             )}
                           </div>
                         )}
@@ -1974,7 +1985,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               })()}
               
               {/* 添加到达按钮（第1天，如果没有到达） */}
-              {day === 1 && (!currentDayPlan || !getArrivalTransport(currentDayPlan)) && (
+              {!isCurrentTripFrozen && day === 1 && (!currentDayPlan || !getArrivalTransport(currentDayPlan)) && (
                 <Button
                   onClick={() => addTransport(day, 'arrival')}
                   variant="outline"
@@ -1986,7 +1997,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               )}
               
               {/* 添加离开按钮（最后一天，如果没有离开） */}
-              {day === currentTripPlan.travelDays && (!currentDayPlan || !getDepartureTransport(currentDayPlan)) && (
+              {!isCurrentTripFrozen && day === currentTripPlan.travelDays && (!currentDayPlan || !getDepartureTransport(currentDayPlan)) && (
                 <Button
                   onClick={() => addTransport(day, 'departure')}
                   variant="outline"
@@ -1998,7 +2009,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               )}
               
               {/* 添加活动按钮 */}
-              {showAddActivity ? (
+              {!isCurrentTripFrozen && showAddActivity ? (
                 <div className="mt-4">
                   <div className="border border-[#CEA472]/20 bg-black/40 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
@@ -2111,14 +2122,16 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     </div>
                   </div>
                 ) : (
-                  <Button
-                    onClick={() => setShowAddActivity(true)}
-                    variant="outline"
-                    className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    添加活动
-                  </Button>
+                  !isCurrentTripFrozen && (
+                    <Button
+                      onClick={() => setShowAddActivity(true)}
+                      variant="outline"
+                      className="w-full justify-start bg-black/40 border border-[#CEA472]/20 hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      添加活动
+                    </Button>
+                  )
                 )}
             </div>
           </TabsContent>

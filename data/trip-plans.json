@@ -192,6 +192,20 @@
             "endDayOffset": 0,
             "location": "",
             "id": "activity-1781232425336"
+          },
+          {
+            "type": "other",
+            "startTime": "09:00",
+            "endDayOffset": 0,
+            "location": "",
+            "id": "activity-1782466212208"
+          },
+          {
+            "type": "other",
+            "startTime": "09:00",
+            "endDayOffset": 0,
+            "location": "",
+            "id": "activity-1782466215388"
           }
         ]
       },
@@ -276,8 +290,8 @@
       }
     ],
     "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-26T09:22:58.167Z",
-    "frozen": false
+    "updatedAt": "2026-06-26T09:30:15.438Z",
+    "frozen": true
   },
   {
     "id": "trip-plan-1780193545980",
