@@ -1256,7 +1256,7 @@ export default function Home() {
                                           variant="ghost"
                                           size="icon"
                                           title={tripFrozenStatus[String(wish.id)] ? '解冻行程' : '冻结行程'}
-                                          className="text-[#CEA472]/60 hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
+                                          className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
                                         >
                                           <Snowflake className="w-3 h-3 sm:w-4 sm:h-4" />
                                         </Button>
