@@ -346,40 +346,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   };
 
-  // 冻结/解冻行程
-  const toggleFreezeTrip = async (tripPlan: TripPlan) => {
-    if (!isAdminMode || !tripPlan) return;
-    
-    try {
-      const updatedPlan = {
-        ...tripPlan,
-        frozen: !tripPlan.frozen
-      };
-      
-      const response = await fetch('/api/trip-plans', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedPlan),
-      });
-
-      if (response.ok) {
-        // 更新本地状态
-        setTripPlans(prev => prev.map(plan => 
-          plan.id === tripPlan.id ? { ...plan, frozen: !plan.frozen } : plan
-        ));
-        // 触发事件通知其他组件
-        window.dispatchEvent(new CustomEvent('tripPlansUpdated'));
-      } else {
-        alert(`${tripPlan.frozen ? '解冻' : '冻结'}行程失败`);
-      }
-    } catch (error) {
-      console.error('[Trip Planner] Failed to toggle freeze:', error);
-      alert(`${tripPlan.frozen ? '解冻' : '冻结'}行程失败`);
-    }
-  };
-
   const currentTripPlan = selectedWishId ? tripPlans.find(plan => plan.wishId === selectedWishId) : null;
   const currentDayPlan = currentTripPlan?.days.find(d => d.dayNumber === selectedDay);
 
@@ -1207,22 +1173,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             </p>
           </div>
           {isAdminMode && !currentTripPlan.frozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
-          {isAdminMode && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFreezeTrip(currentTripPlan);
-              }}
-              className={`p-1.5 rounded-lg transition-colors ${
-                currentTripPlan.frozen 
-                  ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30' 
-                  : 'bg-[#CEA472]/10 text-[#CEA472]/60 hover:bg-[#CEA472]/20 hover:text-[#CEA472]'
-              }`}
-              title={currentTripPlan.frozen ? '解冻行程' : '冻结行程'}
-            >
-              <Snowflake className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
-          )}
         </div>
       </div>
 

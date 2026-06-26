@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car, XCircle } from 'lucide-react';
+import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car, XCircle, Snowflake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -83,6 +83,7 @@ export default function Home() {
   const [deletingFollowerWishId, setDeletingFollowerWishId] = useState<string>('');
   const [deleteFollowerName, setDeleteFollowerName] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [tripFrozenStatus, setTripFrozenStatus] = useState<Record<string, boolean>>({});
 
   const [mainTab, setMainTab] = useState('wish');
 
@@ -177,7 +178,27 @@ export default function Home() {
       const response = await fetch('/api/wishes');
       const data = await response.json();
       console.log('[Page] Fetch wishes response:', data);
-      setWishes(data.wishes || []);
+      const wishesData = data.wishes || [];
+      setWishes(wishesData);
+      
+      // 加载所有已确认行程的冻结状态
+      const confirmedWishes = wishesData.filter((w: Wish) => w.is_confirmed === 1);
+      if (confirmedWishes.length > 0) {
+        const frozenStatus: Record<string, boolean> = {};
+        for (const wish of confirmedWishes) {
+          try {
+            const planRes = await fetch(`/api/trip-plans?wishId=${wish.id}`);
+            const planData = await planRes.json();
+            if (planData.tripPlans && planData.tripPlans.length > 0) {
+              frozenStatus[String(wish.id)] = !!planData.tripPlans[0].frozen;
+            }
+          } catch (e) {
+            // 忽略单个行程的加载错误
+          }
+        }
+        setTripFrozenStatus(frozenStatus);
+      }
+      
       if (data.usingInMemory) {
         console.log('[Page] Using in-memory storage');
       }
@@ -698,6 +719,51 @@ export default function Home() {
     }
   };
 
+  // 冻结/解冻行程
+  const toggleFreezeTrip = async (wishId: string) => {
+    if (!isAdminMode) return;
+    
+    try {
+      // 获取对应的旅行规划
+      const res = await fetch(`/api/trip-plans?wishId=${wishId}`);
+      const data = await res.json();
+      
+      if (!data.tripPlans || data.tripPlans.length === 0) {
+        alert('未找到对应的旅行规划');
+        return;
+      }
+      
+      const tripPlan = data.tripPlans[0];
+      const newFrozenState = !tripPlan.frozen;
+      
+      const response = await fetch('/api/trip-plans', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: tripPlan.id,
+          frozen: newFrozenState,
+        }),
+      });
+
+      if (response.ok) {
+        // 更新本地状态
+        setTripFrozenStatus(prev => ({
+          ...prev,
+          [wishId]: newFrozenState
+        }));
+        // 触发事件通知其他组件
+        window.dispatchEvent(new CustomEvent('tripPlansUpdated'));
+      } else {
+        alert(`${newFrozenState ? '冻结' : '解冻'}行程失败`);
+      }
+    } catch (error) {
+      console.error('[Page] Failed to toggle freeze:', error);
+      alert('操作失败，请稍后重试');
+    }
+  };
+
   // 渲染主内容区域
   const renderMainContent = () => {
     if (mainTab === 'wish') {
@@ -1180,6 +1246,25 @@ export default function Home() {
                                       >
                                         <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                       </Button>
+                                      {/* 已过期行程显示冻结/解冻按钮 */}
+                                      {wish.is_expired === 1 && (
+                                        <Button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleFreezeTrip(String(wish.id));
+                                          }}
+                                          variant="ghost"
+                                          size="icon"
+                                          title={tripFrozenStatus[String(wish.id)] ? '解冻行程' : '冻结行程'}
+                                          className={`min-h-[36px] ${
+                                            tripFrozenStatus[String(wish.id)]
+                                              ? 'text-blue-400 hover:text-blue-400 hover:bg-blue-500/10'
+                                              : 'text-[#CEA472]/60 hover:text-[#CEA472] hover:bg-[#CEA472]/10'
+                                          }`}
+                                        >
+                                          <Snowflake className="w-3 h-3 sm:w-4 sm:h-4" />
+                                        </Button>
+                                      )}
                                       <Button
                                         onClick={(e) => {
                                           e.stopPropagation();
