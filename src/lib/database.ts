@@ -73,6 +73,10 @@ async function ensureTableExists(tableName: string): Promise<boolean> {
       await pool.query(tableSQL);
       console.log(`[Database] Table ${tableName} created successfully`);
       confirmedTables.add(tableName);
+      
+      // 创建表后，检查并添加缺失的列
+      await ensureTableColumns(tableName, pool);
+      
       return true;
     } finally {
       await pool.end();
@@ -80,6 +84,57 @@ async function ensureTableExists(tableName: string): Promise<boolean> {
   } catch (err) {
     console.error(`[Database] Failed to ensure table ${tableName}:`, err);
     return false;
+  }
+}
+
+// 表需要的列定义（用于自动添加缺失的列）
+const TABLE_COLUMNS: Record<string, Record<string, string>> = {
+  trip_plans: {
+    frozen: 'BOOLEAN DEFAULT FALSE',
+  },
+};
+
+// 检查并添加缺失的列
+async function ensureTableColumns(tableName: string, pool: Pool): Promise<void> {
+  const requiredColumns = TABLE_COLUMNS[tableName];
+  if (!requiredColumns) return;
+
+  for (const [columnName, columnType] of Object.entries(requiredColumns)) {
+    try {
+      // 检查列是否存在
+      const checkResult = await pool.query(
+        `SELECT column_name FROM information_schema.columns WHERE table_name = $1 AND column_name = $2`,
+        [tableName, columnName]
+      );
+      
+      if (checkResult.rows.length === 0) {
+        // 列不存在，添加它
+        await pool.query(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}`);
+        console.log(`[Database] Added missing column ${columnName} to table ${tableName}`);
+      }
+    } catch (err) {
+      console.error(`[Database] Failed to ensure column ${columnName} in ${tableName}:`, err);
+    }
+  }
+}
+
+// 确保表存在并检查缺失的列（用于已存在的表）
+async function ensureTableColumnsExist(tableName: string): Promise<boolean> {
+  const requiredColumns = TABLE_COLUMNS[tableName];
+  if (!requiredColumns) return true;
+
+  const dbUrl = process.env.PGDATABASE_URL;
+  if (!dbUrl) return false;
+
+  const pool = new Pool({ connectionString: dbUrl });
+  try {
+    await ensureTableColumns(tableName, pool);
+    return true;
+  } catch (err) {
+    console.error(`[Database] Failed to ensure columns for ${tableName}:`, err);
+    return false;
+  } finally {
+    await pool.end();
   }
 }
 
@@ -281,6 +336,9 @@ export const TripPlanDB = {
     
     if (dbAvailable) {
       try {
+        // 确保缺失的列已添加（如 frozen）
+        await ensureTableColumnsExist('trip_plans');
+        
         const client = getSupabaseClient();
         const processedData: any = { ...updateData };
         
