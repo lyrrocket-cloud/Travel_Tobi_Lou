@@ -1150,10 +1150,17 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         </Button>
       </div>
 
+      {isCurrentTripFrozen && (
+        <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+          <Snowflake className="w-4 h-4 text-blue-400" />
+          <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改行程规划</span>
+        </div>
+      )}
+
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
-          if (isAdminMode && !currentTripPlan.frozen && onEditTripInfo) {
+          if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo) {
             onEditTripInfo({
               id: String(selectedWishId),
               confirmed_date: currentTripPlan.startDate,
@@ -1181,7 +1188,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
-          {isAdminMode && !currentTripPlan.frozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
+          {isAdminMode && !isCurrentTripFrozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
         </div>
       </div>
 
