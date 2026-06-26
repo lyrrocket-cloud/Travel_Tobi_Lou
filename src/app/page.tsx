@@ -721,7 +721,10 @@ export default function Home() {
 
   // 冻结/解冻行程
   const toggleFreezeTrip = async (wishId: string) => {
-    if (!isAdminMode) return;
+    if (!isAdminMode) {
+      alert('请先开启管理员模式');
+      return;
+    }
     
     try {
       // 获取对应的旅行规划
