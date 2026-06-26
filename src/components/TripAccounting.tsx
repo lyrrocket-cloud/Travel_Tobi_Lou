@@ -1295,10 +1295,33 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 <div className="text-xs text-[#FFFFFF]/60">
                   共 <span className="text-[#CEA472]">{sortedExpenses.length}</span> 条记录
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#FFFFFF]/60">
-                    合计：<span className="text-[#CEA472] font-medium">¥{sortedExpenses.reduce((sum, e) => sum + convertToCNY(e.amount, e.currency), 0).toFixed(2)}</span>
-                  </span>
+                <div className="flex items-center gap-2 flex-wrap justify-end">
+                  {(() => {
+                    // 计算各种货币的总额
+                    const currencyTotals: Record<string, number> = {};
+                    sortedExpenses.forEach(e => {
+                      const currency = e.currency || 'CNY';
+                      currencyTotals[currency] = (currencyTotals[currency] || 0) + e.amount;
+                    });
+                    
+                    return (
+                      <>
+                        {/* 人民币合计 */}
+                        <span className="text-xs text-[#FFFFFF]/60">
+                          合计：<span className="text-[#CEA472] font-medium">¥{sortedExpenses.reduce((sum, e) => sum + convertToCNY(e.amount, e.currency), 0).toFixed(2)}</span>
+                        </span>
+                        {/* 其他货币合计 */}
+                        {Object.entries(currencyTotals)
+                          .filter(([currency]) => currency !== 'CNY')
+                          .map(([currency, total]) => (
+                            <span key={currency} className="text-xs text-[#FFFFFF]/60">
+                              <span className="text-[#CEA472] font-medium">{getCurrencySymbol(currency)}{total.toFixed(2)}</span>
+                            </span>
+                          ))
+                        }
+                      </>
+                    );
+                  })()}
                   <button
                     onClick={() => setQueryFiltersCollapsed(!queryFiltersCollapsed)}
                     className="p-1.5 rounded-md bg-black/40 border border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
