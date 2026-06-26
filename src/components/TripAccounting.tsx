@@ -252,6 +252,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const currentTripPlan = selectedWishId ?
     tripPlans.find(p => String(p.wishId) === String(selectedWishId)) : null;
 
+  // 判断当前行程是否冻结（普通模式下冻结的行程不可修改）
+  const isCurrentTripFrozen = !isAdminMode && currentTripPlan?.frozen;
+
   const fetchExpenses = async () => {
     try {
       const response = await fetch('/api/trip-expenses');
@@ -1086,7 +1089,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsList>
 
         <TabsContent value="entry" className="mt-4">
-          <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+          {isCurrentTripFrozen && (
+            <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+              <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改消费记录</span>
+            </div>
+          )}
+          <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
                   {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
@@ -1276,7 +1284,12 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
 
         <TabsContent value="query" className="mt-4">
-          <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+          {isCurrentTripFrozen && (
+            <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+              <span className="text-blue-400 text-xs">此行程已冻结，无法修改消费记录</span>
+            </div>
+          )}
+          <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
               {/* 筛选结果统计 - 始终显示 */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-xs text-[#FFFFFF]/60">

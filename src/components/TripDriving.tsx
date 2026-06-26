@@ -112,6 +112,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   const currentTripPlan = selectedWishId ?
     tripPlans.find(p => String(p.wishId) === String(selectedWishId)) : null;
 
+  // 判断当前行程是否冻结（普通模式下冻结的行程不可修改）
+  const isCurrentTripFrozen = !isAdminMode && currentTripPlan?.frozen;
+
   // 从旅行规划中提取所有自驾交通路线（包括到达、离开、活动间交通）
   const selfDrivingRoutes = currentTripPlan?.days?.flatMap(day => {
     return day.transport
@@ -922,7 +925,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
         {!isOverviewMode && (
           <TabsContent value="entry" className="mt-4">
-            <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+            {isCurrentTripFrozen && (
+              <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+                <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改驾驶记录</span>
+              </div>
+            )}
+            <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-center gap-3 mb-4">
                 <Car className="w-5 h-5 text-[#CEA472]" />
@@ -1128,7 +1136,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         )}
 
         <TabsContent value="query" className="mt-4">
-          <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+          {isCurrentTripFrozen && (
+            <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+              <span className="text-blue-400 text-xs">此行程已冻结，无法修改驾驶记录</span>
+            </div>
+          )}
+          <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
             {(!isOverviewMode && currentDrivingRecord && sortedDrivingRecords.length > 0) ||
              (isOverviewMode && allDrivingRecords.length > 0) ? (
               <div className="space-y-3 sm:space-y-3">

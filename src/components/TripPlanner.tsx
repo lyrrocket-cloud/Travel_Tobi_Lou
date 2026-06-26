@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown, Snowflake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -343,6 +343,40 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       setShowWishSelector(false);
     } else {
       await createTripPlan(wish);
+    }
+  };
+
+  // 冻结/解冻行程
+  const toggleFreezeTrip = async (tripPlan: TripPlan) => {
+    if (!isAdminMode || !tripPlan) return;
+    
+    try {
+      const updatedPlan = {
+        ...tripPlan,
+        frozen: !tripPlan.frozen
+      };
+      
+      const response = await fetch('/api/trip-plans', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedPlan),
+      });
+
+      if (response.ok) {
+        // 更新本地状态
+        setTripPlans(prev => prev.map(plan => 
+          plan.id === tripPlan.id ? { ...plan, frozen: !plan.frozen } : plan
+        ));
+        // 触发事件通知其他组件
+        window.dispatchEvent(new CustomEvent('tripPlansUpdated'));
+      } else {
+        alert(`${tripPlan.frozen ? '解冻' : '冻结'}行程失败`);
+      }
+    } catch (error) {
+      console.error('[Trip Planner] Failed to toggle freeze:', error);
+      alert(`${tripPlan.frozen ? '解冻' : '冻结'}行程失败`);
     }
   };
 
@@ -1144,7 +1178,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       <div 
         className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
-          if (isAdminMode && onEditTripInfo) {
+          if (isAdminMode && !currentTripPlan.frozen && onEditTripInfo) {
             onEditTripInfo({
               id: String(selectedWishId),
               confirmed_date: currentTripPlan.startDate,
@@ -1157,14 +1191,38 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       >
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
-            <h4 className="text-[#FFFFFF] font-medium text-xs truncate">
-              {currentTripPlan.destination}
-            </h4>
+            <div className="flex items-center gap-1.5">
+              <h4 className="text-[#FFFFFF] font-medium text-xs truncate">
+                {currentTripPlan.destination}
+              </h4>
+              {currentTripPlan.frozen && (
+                <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20 border border-blue-500/40 rounded text-[10px] text-blue-400">
+                  <Snowflake className="w-2.5 h-2.5" />
+                  已冻结
+                </span>
+              )}
+            </div>
             <p className="text-[#FFFFFF]/60 text-xs mt-0.5">
               {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
             </p>
           </div>
-          {isAdminMode && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
+          {isAdminMode && !currentTripPlan.frozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
+          {isAdminMode && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFreezeTrip(currentTripPlan);
+              }}
+              className={`p-1.5 rounded-lg transition-colors ${
+                currentTripPlan.frozen 
+                  ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30' 
+                  : 'bg-[#CEA472]/10 text-[#CEA472]/60 hover:bg-[#CEA472]/20 hover:text-[#CEA472]'
+              }`}
+              title={currentTripPlan.frozen ? '解冻行程' : '冻结行程'}
+            >
+              <Snowflake className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </button>
+          )}
         </div>
       </div>
 

@@ -126,6 +126,7 @@ export interface TripPlan {
   travelDays: number;
   travelers: string;
   days: DayPlan[];
+  frozen?: boolean;  // 是否冻结，冻结后普通模式不可修改
   createdAt: string;
   updatedAt: string;
 }
