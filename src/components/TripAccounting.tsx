@@ -1930,9 +1930,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <div className="flex items-center gap-2">
                       <span className="text-[#CEA472] font-medium text-xs w-20">{getEditingCurrencySymbol(currencyId)}</span>
                       <span className="text-[#FFFFFF] text-xs">{getEditingCurrencyName(currencyId)}</span>
-                      {editingCurrencyMeta[currencyId]?.note && (
-                        <span className="text-[#CEA472]/60 text-xs">（{editingCurrencyMeta[currencyId].note}）</span>
-                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Input
