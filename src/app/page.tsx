@@ -721,6 +721,8 @@ export default function Home() {
 
   // 冻结/解冻行程
   const toggleFreezeTrip = async (wishId: string) => {
+    console.log('[Page] toggleFreezeTrip called, wishId:', wishId, 'isAdminMode:', isAdminMode);
+    
     if (!isAdminMode) {
       alert('请先开启管理员模式');
       return;
@@ -728,8 +730,10 @@ export default function Home() {
     
     try {
       // 获取对应的旅行规划
+      console.log('[Page] Fetching trip plan for wishId:', wishId);
       const res = await fetch(`/api/trip-plans?wishId=${wishId}`);
       const data = await res.json();
+      console.log('[Page] Trip plan response:', data);
       
       if (!data.tripPlans || data.tripPlans.length === 0) {
         alert('未找到对应的旅行规划');
@@ -738,6 +742,7 @@ export default function Home() {
       
       const tripPlan = data.tripPlans[0];
       const newFrozenState = !tripPlan.frozen;
+      console.log('[Page] Current frozen state:', tripPlan.frozen, 'New frozen state:', newFrozenState);
       
       const response = await fetch('/api/trip-plans', {
         method: 'PUT',
@@ -750,6 +755,8 @@ export default function Home() {
         }),
       });
 
+      console.log('[Page] PUT response status:', response.status);
+      
       if (response.ok) {
         // 更新本地状态
         setTripFrozenStatus(prev => ({
@@ -758,8 +765,12 @@ export default function Home() {
         }));
         // 触发事件通知其他组件
         window.dispatchEvent(new CustomEvent('tripPlansUpdated'));
+        // 明确提示操作成功
+        alert(`${newFrozenState ? '冻结' : '解冻'}行程成功`);
       } else {
-        alert(`${newFrozenState ? '冻结' : '解冻'}行程失败`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[Page] Failed to toggle freeze:', errorData);
+        alert(`${newFrozenState ? '冻结' : '解冻'}行程失败：${errorData.error || '未知错误'}`);
       }
     } catch (error) {
       console.error('[Page] Failed to toggle freeze:', error);
@@ -1259,7 +1270,11 @@ export default function Home() {
                                           variant="ghost"
                                           size="icon"
                                           title={tripFrozenStatus[String(wish.id)] ? '解冻行程' : '冻结行程'}
-                                          className="text-[#CEA472] hover:text-[#CEA472] hover:bg-transparent min-h-[36px]"
+                                          className={`hover:bg-transparent min-h-[36px] ${
+                                            tripFrozenStatus[String(wish.id)] 
+                                              ? 'text-blue-400 hover:text-blue-400' 
+                                              : 'text-[#CEA472] hover:text-[#CEA472]'
+                                          }`}
                                         >
                                           <Snowflake className="w-3 h-3 sm:w-4 sm:h-4" />
                                         </Button>
