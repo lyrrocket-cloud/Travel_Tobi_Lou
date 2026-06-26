@@ -1150,13 +1150,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         </Button>
       </div>
 
-      {isCurrentTripFrozen && (
-        <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
-          <Snowflake className="w-4 h-4 text-blue-400" />
-          <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改行程规划</span>
-        </div>
-      )}
-
       <div 
         className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
@@ -1718,7 +1711,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">
-            <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+            {isCurrentTripFrozen && (
+              <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+                <Snowflake className="w-4 h-4 text-blue-400" />
+                <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改行程规划</span>
+              </div>
+            )}
+            <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
               {/* 构建按时间排序的统一列表 */}
               {(() => {
                 type ItemType = 'arrival' | 'departure' | 'activity';
