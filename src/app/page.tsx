@@ -82,21 +82,9 @@ export default function Home() {
   const [deleteFollowerModalOpen, setDeleteFollowerModalOpen] = useState(false);
   const [deletingFollowerWishId, setDeletingFollowerWishId] = useState<string>('');
   const [deleteFollowerName, setDeleteFollowerName] = useState('');
-  const [selectedYear, setSelectedYear] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('travel-toolbox-selected-year');
-      return saved ? parseInt(saved, 10) : new Date().getFullYear();
-    }
-    return new Date().getFullYear();
-  });
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const [mainTab, setMainTab] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('travel-toolbox-main-tab');
-      return saved || 'wish';
-    }
-    return 'wish';
-  });
+  const [mainTab, setMainTab] = useState('wish');
 
   // 跳转到旅行规划页面并选中对应的愿望
   const navigateToPlan = (wishId: string | number) => {
@@ -110,13 +98,21 @@ export default function Home() {
     window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: String(wishId) } }));
   };
 
-  const [activeTab, setActiveTab] = useState(() => {
+  const [activeTab, setActiveTab] = useState('make-wish');
+
+  // 从 localStorage 加载初始值
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('travel-toolbox-active-tab');
-      return saved || 'make-wish';
+      const savedYear = localStorage.getItem('travel-toolbox-selected-year');
+      if (savedYear) setSelectedYear(parseInt(savedYear, 10));
+      
+      const savedMainTab = localStorage.getItem('travel-toolbox-main-tab');
+      if (savedMainTab) setMainTab(savedMainTab);
+      
+      const savedActiveTab = localStorage.getItem('travel-toolbox-active-tab');
+      if (savedActiveTab) setActiveTab(savedActiveTab);
     }
-    return 'make-wish';
-  });
+  }, []);
 
   // 保存 activeTab 到 localStorage
   useEffect(() => {
