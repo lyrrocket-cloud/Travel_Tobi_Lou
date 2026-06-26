@@ -724,7 +724,7 @@ export default function Home() {
     console.log('[Page] toggleFreezeTrip called, wishId:', wishId, 'isAdminMode:', isAdminMode);
     
     if (!isAdminMode) {
-      alert('请先开启管理员模式');
+      console.warn('[Page] 请先开启管理员模式');
       return;
     }
     
@@ -736,7 +736,7 @@ export default function Home() {
       console.log('[Page] Trip plan response:', data);
       
       if (!data.tripPlans || data.tripPlans.length === 0) {
-        alert('未找到对应的旅行规划');
+        console.warn('[Page] 未找到对应的旅行规划');
         return;
       }
       
@@ -765,16 +765,13 @@ export default function Home() {
         }));
         // 触发事件通知其他组件
         window.dispatchEvent(new CustomEvent('tripPlansUpdated'));
-        // 明确提示操作成功
-        alert(`${newFrozenState ? '冻结' : '解冻'}行程成功`);
+        console.log('[Page] 操作成功:', newFrozenState ? '冻结' : '解冻');
       } else {
         const errorData = await response.json().catch(() => ({}));
         console.error('[Page] Failed to toggle freeze:', errorData);
-        alert(`${newFrozenState ? '冻结' : '解冻'}行程失败：${errorData.error || '未知错误'}`);
       }
     } catch (error) {
       console.error('[Page] Failed to toggle freeze:', error);
-      alert('操作失败，请稍后重试');
     }
   };
 
