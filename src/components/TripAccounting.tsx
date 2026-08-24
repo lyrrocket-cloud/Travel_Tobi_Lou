@@ -993,7 +993,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setShowWishSelector(!showWishSelector)}
+            onClick={() => {
+              // 打开切换行程时，自动退出汇率管理（要求是切换而不是叠加）
+              if (!showWishSelector) {
+                setShowExchangeRateEditor(false);
+              }
+              setShowWishSelector(!showWishSelector);
+            }}
             className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
             title="切换旅行"
           >

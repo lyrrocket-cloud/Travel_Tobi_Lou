@@ -392,6 +392,11 @@ export default function Home() {
       alert('请填写完整的行程信息');
       return;
     }
+    // 仅允许 YYYY-MM-DD 日期格式
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(confirmDate)) {
+      alert('出发日期格式不正确，请使用 YYYY-MM-DD 格式');
+      return;
+    }
 
     try {
       // 首先确认愿望成行
@@ -777,6 +782,12 @@ export default function Home() {
 
   // 渲染主内容区域
   const renderMainContent = () => {
+    // 所有切换行程界面按出发日期倒序排列（新的在前）
+    const sortedConfirmedWishes = [...wishes.filter(w => w.is_confirmed === 1)].sort((a, b) => {
+      const dateA = a.confirmed_date || '';
+      const dateB = b.confirmed_date || '';
+      return dateB.localeCompare(dateA);
+    });
     if (mainTab === 'wish') {
       return (
         <div className="space-y-5">
@@ -1346,21 +1357,21 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <TripPlanner confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
+        <TripPlanner confirmedWishes={sortedConfirmedWishes} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
       );
     } else if (mainTab === 'account') {
       return (
-        <TripAccounting 
-          confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
-          isAdminMode={isAdminMode} 
+        <TripAccounting
+          confirmedWishes={sortedConfirmedWishes}
+          isAdminMode={isAdminMode}
           onEditTripInfo={handleOpenTripInfoEdit}
         />
       );
     } else if (mainTab === 'drive') {
       return (
-        <TripDriving 
-          confirmedWishes={wishes.filter(w => w.is_confirmed === 1)} 
-          isAdminMode={isAdminMode} 
+        <TripDriving
+          confirmedWishes={sortedConfirmedWishes}
+          isAdminMode={isAdminMode}
           onEditTripInfo={handleOpenTripInfoEdit}
         />
       );
@@ -1575,7 +1586,7 @@ export default function Home() {
               type="text"
               placeholder="YYYY-MM-DD"
               value={confirmDate}
-              onChange={(e) => setConfirmDate(e.target.value)}
+              onChange={(e) => setConfirmDate(e.target.value.replace(/\//g, '-'))}
               className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
             />
             <div className="grid grid-cols-2 gap-4">
