@@ -1672,11 +1672,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <button
                   key={wish.id}
                   onClick={() => {
-                    setSelectedWishId(wish.id);
+                    setSelectedWishId(String(wish.id));
                     setShowWishSelector(false);
                   }}
                   className={`w-full text-left p-4 rounded-lg transition-all ${
-                    selectedWishId === wish.id 
+                    selectedWishId === String(wish.id) 
                       ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]' 
                       : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/70'
                   }`}
