@@ -1475,13 +1475,13 @@ export default function Home() {
             >
               {shareSuccess ? (
                 <>
-                  <CheckCircle className="w-4 h-4" />
                   <span className="hidden sm:inline">已复制</span>
+                  <CheckCircle className="w-4 h-4" />
                 </>
               ) : (
                 <>
-                  <Share2 className="w-4 h-4" />
                   <span className="hidden sm:inline">分享</span>
+                  <Share2 className="w-4 h-4" />
                 </>
               )}
             </button>
