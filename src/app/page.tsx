@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car, XCircle, Snowflake } from 'lucide-react';
+import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car, XCircle, Snowflake, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -135,6 +135,63 @@ export default function Home() {
       localStorage.setItem('travel-toolbox-selected-year', String(selectedYear));
     }
   }, [selectedYear]);
+
+  // 分享按钮：生成当前页面状态的链接并复制到剪贴板
+  const [shareSuccess, setShareSuccess] = useState(false);
+  const handleShare = async () => {
+    const params = new URLSearchParams();
+    params.set('tab', mainTab);
+    if (mainTab === 'wish') {
+      params.set('sub', activeTab);
+    }
+    // 读取当前选中的行程 ID
+    const selectedWishId = typeof window !== 'undefined' ? localStorage.getItem('travel-toolbox-selected-wish-id') : null;
+    if ((mainTab === 'plan' || mainTab === 'account' || mainTab === 'drive') && selectedWishId) {
+      params.set('wish', selectedWishId);
+    }
+    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareSuccess(true);
+      setTimeout(() => setShareSuccess(false), 2000);
+    } catch {
+      // 剪贴板不可用时降级：手动复制
+      const textarea = document.createElement('textarea');
+      textarea.value = shareUrl;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setShareSuccess(true);
+      setTimeout(() => setShareSuccess(false), 2000);
+    }
+  };
+
+  // 从 URL 参数恢复页面状态（优先级高于 localStorage）
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlTab = urlParams.get('tab');
+    const urlSub = urlParams.get('sub');
+    const urlWish = urlParams.get('wish');
+    if (urlTab) {
+      setMainTab(urlTab);
+      localStorage.setItem('travel-toolbox-main-tab', urlTab);
+    }
+    if (urlSub) {
+      setActiveTab(urlSub);
+      localStorage.setItem('travel-toolbox-active-tab', urlSub);
+    }
+    if (urlWish) {
+      localStorage.setItem('travel-toolbox-selected-wish-id', urlWish);
+      // 通知 TripPlanner 切换到对应行程
+      window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: urlWish } }));
+    }
+    // 清除 URL 参数，避免刷新后残留
+    if (urlTab || urlSub || urlWish) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   // 恢复滚动位置
   useEffect(() => {
@@ -1411,6 +1468,23 @@ export default function Home() {
             </h1>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              onClick={handleShare}
+              title="分享当前页面"
+              className="flex items-center gap-1 px-2 py-1.5 rounded-md border border-[#CEA472]/30 bg-black/40 hover:bg-black/60 text-[#CEA472] text-xs sm:text-sm transition-colors"
+            >
+              {shareSuccess ? (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="hidden sm:inline">已复制</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">分享</span>
+                </>
+              )}
+            </button>
             <span className={`text-xs sm:text-sm ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40'}`}>管理</span>
             <Switch
               checked={isAdminMode}
