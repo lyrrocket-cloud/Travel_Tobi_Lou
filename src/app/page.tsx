@@ -149,6 +149,13 @@ export default function Home() {
     if ((mainTab === 'plan' || mainTab === 'account' || mainTab === 'drive') && selectedWishId) {
       params.set('wish', selectedWishId);
     }
+    // 读取记账子标签页
+    if (mainTab === 'account') {
+      const accountTab = typeof window !== 'undefined' ? localStorage.getItem('travel-toolbox-account-tab') : null;
+      if (accountTab) {
+        params.set('subTab', accountTab);
+      }
+    }
     const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -174,6 +181,7 @@ export default function Home() {
     const urlTab = urlParams.get('tab');
     const urlSub = urlParams.get('sub');
     const urlWish = urlParams.get('wish');
+    const urlSubTab = urlParams.get('subTab');
     if (urlTab) {
       setMainTab(urlTab);
       localStorage.setItem('travel-toolbox-main-tab', urlTab);
@@ -182,13 +190,18 @@ export default function Home() {
       setActiveTab(urlSub);
       localStorage.setItem('travel-toolbox-active-tab', urlSub);
     }
+    if (urlSubTab) {
+      localStorage.setItem('travel-toolbox-account-tab', urlSubTab);
+      // 通知 TripAccounting 切换到对应子标签页
+      window.dispatchEvent(new CustomEvent('account-tab-changed', { detail: { tab: urlSubTab } }));
+    }
     if (urlWish) {
       localStorage.setItem('travel-toolbox-selected-wish-id', urlWish);
       // 通知 TripPlanner 切换到对应行程
       window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: urlWish } }));
     }
     // 清除 URL 参数，避免刷新后残留
-    if (urlTab || urlSub || urlWish) {
+    if (urlTab || urlSub || urlWish || urlSubTab) {
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);

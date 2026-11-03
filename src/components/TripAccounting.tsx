@@ -98,6 +98,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
+  const [initializedTabFromStorage, setInitializedTabFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
     CNY: 1,
@@ -309,7 +310,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   useEffect(() => {
     // 读取保存的选中愿望ID（与 TripPlanner 共享，保留上一次的行程）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-    
+    // 读取保存的记账子标签页
+    const savedAccountTab = localStorage.getItem('travel-toolbox-account-tab');
+    if (savedAccountTab && ['entry', 'query', 'analysis'].includes(savedAccountTab)) {
+      setActiveTab(savedAccountTab);
+    }
+    setInitializedTabFromStorage(true);
+
     // 从数据库获取默认旅行
     const fetchDefaultTrip = async () => {
       try {
@@ -328,7 +335,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         setInitializedFromStorage(true);
       }
     };
-    
+
     fetchDefaultTrip();
   }, []);
 
@@ -338,6 +345,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
     }
   }, [selectedWishId, initializedFromStorage]);
+
+  // 保存记账子标签页到 localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && initializedTabFromStorage) {
+      localStorage.setItem('travel-toolbox-account-tab', activeTab);
+    }
+  }, [activeTab, initializedTabFromStorage]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && initializedFromStorage && defaultTripId) {
@@ -367,6 +381,20 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
     return () => {
       window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
+    };
+  }, []);
+
+  // 监听外部触发的记账子标签页切换（分享链接恢复）
+  useEffect(() => {
+    const handleAccountTabChanged = (e: any) => {
+      if (e.detail && e.detail.tab && ['entry', 'query', 'analysis'].includes(e.detail.tab)) {
+        setActiveTab(e.detail.tab);
+      }
+    };
+
+    window.addEventListener('account-tab-changed', handleAccountTabChanged as EventListener);
+    return () => {
+      window.removeEventListener('account-tab-changed', handleAccountTabChanged as EventListener);
     };
   }, []);
 
