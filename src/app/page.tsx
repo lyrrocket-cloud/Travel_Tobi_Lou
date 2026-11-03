@@ -1471,7 +1471,7 @@ export default function Home() {
             <button
               onClick={handleShare}
               title="分享当前页面"
-              className="flex items-center gap-1 px-2 py-1.5 rounded-md border border-[#CEA472]/30 bg-black/40 hover:bg-black/60 text-[#CEA472] text-xs sm:text-sm transition-colors"
+              className="flex items-center gap-1 text-xs sm:text-sm text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors"
             >
               {shareSuccess ? (
                 <>
