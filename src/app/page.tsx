@@ -1463,6 +1463,8 @@ export default function Home() {
       />
       {/* 深色叠加层，确保文字可读 */}
       <div className="fixed inset-0 bg-black/60 -z-10" />
+      {/* 背景流光（缓慢呼吸的金色/蓝紫色氛围光） */}
+      <div className="ambient-bg" aria-hidden="true" />
 
       {/* 内容区域 */}
       <div className="relative z-10 py-6 px-3 sm:px-6 lg:px-8">
@@ -1470,13 +1472,13 @@ export default function Home() {
         <div className="flex items-center justify-between mb-5 max-w-4xl mx-auto">
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* 图标容器 - 金色衬底 + 黑色线框 */}
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl" style={{
+            <div className="glow-icon w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl" style={{
               backgroundColor: '#CEA472',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
             }}>
               <Plane className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" style={{ color: '#0a0a0f' }} />
             </div>
-            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-[#FFFFFF] tracking-wide">
+            <h1 className="gold-title text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide">
               旅行工具箱
             </h1>
           </div>
