@@ -24,6 +24,10 @@ coverage/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.nas
+
+# 部署密钥（含 frp token）
+frpc.toml
 
 # Logs
 logs/

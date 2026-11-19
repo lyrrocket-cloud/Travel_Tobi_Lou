@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  travel-tobi:
+    build: .
+    container_name: travel-tobi-lou
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - COZE_PROJECT_ENV=PROD
+      - DATA_STORAGE_PATH=/app/data
+    # 敏感配置从 .env.nas 读取（不入库），参考 .env.nas.example
+    env_file:
+      - .env.nas
+    volumes:
+      - travel_tobi_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frpc:
+    image: frpc:local
+    container_name: travel-tobi-frpc
+    restart: unless-stopped
+    command: ["-c", "/frpc.toml"]
+    volumes:
+      - ./frpc.toml:/frpc.toml:ro
+    depends_on:
+      - travel-tobi
+
+volumes:
+  travel_tobi_data:
