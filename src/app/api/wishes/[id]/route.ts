@@ -27,7 +27,7 @@ export async function PUT(
         travel_month: travelMonth,
         wisher_name: wisherName,
       })
-      .eq('id', parseInt(id))
+      .eq('id', id)
       .select()
       .single();
 
@@ -54,7 +54,7 @@ export async function DELETE(
     const { error: followError } = await client
       .from('wish_followers')
       .delete()
-      .eq('wish_id', parseInt(id));
+      .eq('wish_id', id);
 
     if (followError) {
       console.error('Error deleting wish followers:', followError);
@@ -64,7 +64,7 @@ export async function DELETE(
     const { error: wishError } = await client
       .from('wishes')
       .delete()
-      .eq('id', parseInt(id));
+      .eq('id', id);
 
     if (wishError) {
       return NextResponse.json({ error: wishError.message }, { status: 500 });

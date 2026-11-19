@@ -4,6 +4,63 @@ import { Pool } from 'pg';
 
 // 自动创建表的 SQL 定义
 const TABLE_DEFINITIONS: Record<string, string> = {
+  wishes: `
+    CREATE TABLE IF NOT EXISTS wishes (
+      id VARCHAR(100) PRIMARY KEY NOT NULL DEFAULT gen_random_uuid()::text,
+      destination VARCHAR(255) NOT NULL,
+      travel_month VARCHAR(20),
+      travel_year INTEGER,
+      wisher_name VARCHAR(100),
+      is_confirmed INTEGER DEFAULT 0,
+      confirmed_date VARCHAR(20),
+      travelers TEXT,
+      followers_count INTEGER DEFAULT 0,
+      followers JSONB DEFAULT '[]'::jsonb,
+      is_expired INTEGER DEFAULT 0,
+      is_pinned INTEGER DEFAULT 0,
+      confirmed_at TIMESTAMP WITH TIME ZONE,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  `,
+  wish_followers: `
+    CREATE TABLE IF NOT EXISTS wish_followers (
+      id SERIAL PRIMARY KEY,
+      wish_id VARCHAR(100) NOT NULL,
+      follower_name VARCHAR(100) NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS wish_followers_wish_id_idx ON wish_followers(wish_id);
+  `,
+  trip_plans: `
+    CREATE TABLE IF NOT EXISTS trip_plans (
+      id VARCHAR(100) PRIMARY KEY NOT NULL DEFAULT gen_random_uuid()::text,
+      wish_id VARCHAR(100) NOT NULL,
+      destination VARCHAR(255),
+      start_date VARCHAR(20),
+      end_date VARCHAR(20),
+      travel_days INTEGER DEFAULT 1,
+      travelers TEXT,
+      days JSONB DEFAULT '[]'::jsonb,
+      frozen BOOLEAN DEFAULT false,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS trip_plans_wish_id_idx ON trip_plans(wish_id);
+  `,
+  trip_expenses: `
+    CREATE TABLE IF NOT EXISTS trip_expenses (
+      id VARCHAR(100) PRIMARY KEY NOT NULL DEFAULT gen_random_uuid()::text,
+      wish_id VARCHAR(100) NOT NULL,
+      destination VARCHAR(255),
+      start_date VARCHAR(20),
+      end_date VARCHAR(20),
+      expenses JSONB DEFAULT '[]'::jsonb,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS trip_expenses_wish_id_idx ON trip_expenses(wish_id);
+  `,
   exchange_rates: `
     CREATE TABLE IF NOT EXISTS exchange_rates (
       id VARCHAR(100) PRIMARY KEY NOT NULL,
@@ -28,7 +85,8 @@ const TABLE_DEFINITIONS: Record<string, string> = {
   default_trip: `
     CREATE TABLE IF NOT EXISTS default_trip (
       id VARCHAR(100) PRIMARY KEY NOT NULL,
-      data JSONB NOT NULL,
+      wish_id VARCHAR(100),
+      data JSONB,
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
     );
   `,
@@ -700,7 +758,7 @@ export const DefaultTripDB = {
     if (tableReady) {
       try {
         const client = getSupabaseClient();
-        await client.from('default_trip').delete();
+        await client.from('default_trip').delete().neq('id', '');
         console.log('[Database] Cleared default trip from database');
         return;
       } catch (error) {

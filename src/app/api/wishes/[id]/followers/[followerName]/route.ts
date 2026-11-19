@@ -13,7 +13,7 @@ export async function DELETE(
     const { error: deleteError } = await client
       .from('wish_followers')
       .delete()
-      .eq('wish_id', parseInt(id))
+      .eq('wish_id', id)
       .eq('follower_name', decodeURIComponent(followerName));
 
     if (deleteError) {
@@ -25,7 +25,7 @@ export async function DELETE(
     const { data: wish, error: wishError } = await client
       .from('wishes')
       .select('followers_count')
-      .eq('id', parseInt(id));
+      .eq('id', id);
 
     if (wishError || !wish || wish.length === 0) {
       return NextResponse.json({ error: 'Wish not found' }, { status: 404 });
@@ -38,7 +38,7 @@ export async function DELETE(
       .update({
         followers_count: Math.max(0, currentCount - 1),
       })
-      .eq('id', parseInt(id));
+      .eq('id', id);
 
     if (updateError) {
       console.error('Error updating followers count:', updateError);

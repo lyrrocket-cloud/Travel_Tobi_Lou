@@ -25,10 +25,9 @@ export async function POST(
         is_confirmed: 1,
         confirmed_date: confirmedDate,
         travelers: travelers,
-        is_pinned: 1,
         confirmed_at: new Date().toISOString(),
       })
-      .eq('id', parseInt(id))
+      .eq('id', id)
       .select()
       .single();
 
@@ -68,7 +67,7 @@ export async function PUT(
         confirmed_date: confirmedDate,
         travelers: travelers,
       })
-      .eq('id', parseInt(id))
+      .eq('id', id)
       .select()
       .single();
 
