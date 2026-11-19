@@ -348,3 +348,265 @@ div::-webkit-scrollbar-corner {
   scrollbar-width: thin;
   scrollbar-color: rgba(206, 164, 114, 0.5) rgba(0, 0, 0, 0.1);
 }
+
+/* ========================================
+   高级动效层 (Premium Motion Layer)
+   ======================================== */
+
+::selection {
+  background: rgba(206, 164, 114, 0.35);
+  color: #fff;
+}
+
+/* ---------- 背景流光 ---------- */
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(5%, 6%, 0) scale(1.15);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(-3%, 8%, 0) scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-bg::before,
+.ambient-bg::after {
+  content: '';
+  position: absolute;
+  width: 65vw;
+  height: 65vw;
+  min-width: 420px;
+  min-height: 420px;
+  border-radius: 9999px;
+  will-change: transform, opacity;
+}
+
+.ambient-bg::before {
+  top: -18%;
+  left: -14%;
+  background: radial-gradient(
+    circle,
+    rgba(206, 164, 114, 0.28) 0%,
+    rgba(206, 164, 114, 0.1) 40%,
+    transparent 70%
+  );
+  filter: blur(90px);
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+}
+
+.ambient-bg::after {
+  bottom: -26%;
+  right: -18%;
+  background: radial-gradient(
+    circle,
+    rgba(94, 129, 194, 0.22) 0%,
+    rgba(120, 96, 180, 0.1) 45%,
+    transparent 72%
+  );
+  filter: blur(110px);
+  animation: aurora-drift 34s ease-in-out infinite alternate-reverse;
+}
+
+/* ---------- 卡片入场 ---------- */
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.985);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+[data-slot='card'] {
+  position: relative;
+  isolation: isolate;
+  animation: card-rise 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.45s ease,
+    box-shadow 0.45s ease,
+    background-color 0.45s ease;
+}
+
+/* 卡片悬浮高光扫过 */
+[data-slot='card']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(206, 164, 114, 0.1) 45%,
+    rgba(255, 255, 255, 0.07) 50%,
+    rgba(206, 164, 114, 0.1) 55%,
+    transparent 68%
+  );
+  background-size: 260% 100%;
+  background-position: 120% 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+[data-slot='card']:hover {
+  transform: translateY(-3px);
+  border-color: rgba(206, 164, 114, 0.5);
+  box-shadow:
+    0 22px 46px -22px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(206, 164, 114, 0.16),
+    0 0 40px -14px rgba(206, 164, 114, 0.42);
+}
+
+[data-slot='card']:hover::after {
+  opacity: 1;
+  animation: card-sheen 1.15s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes card-sheen {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+/* ---------- 标签页内容切换 ---------- */
+
+@keyframes tab-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+[data-slot='tabs-content'][data-state='active'] {
+  animation: tab-fade-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ---------- 主按钮流光 ---------- */
+[data-slot='button'][data-variant='default'] {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-slot='button'][data-variant='default']::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: skewX(-18deg);
+  opacity: 0;
+  transition: none;
+}
+
+[data-slot='button'][data-variant='default']:hover::before {
+  animation: btn-shine 0.85s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+@keyframes btn-shine {
+  0% {
+    left: -60%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    left: 120%;
+    opacity: 0;
+  }
+}
+
+/* ---------- 标题金色流光 ---------- */
+@keyframes gold-shimmer {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.gold-title {
+  background: linear-gradient(
+    100deg,
+    #cea472 0%,
+    #f6e2bd 22%,
+    #cea472 45%,
+    #fff4dd 62%,
+    #cea472 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: gold-shimmer 7s linear infinite;
+}
+
+/* ---------- 图标呼吸光 ---------- */
+@keyframes soft-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      0 0 0 0 rgba(206, 164, 114, 0);
+  }
+  50% {
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.35),
+      0 0 26px -4px rgba(206, 164, 114, 0.55);
+  }
+}
+
+.glow-icon {
+  animation: soft-glow 4.5s ease-in-out infinite;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.glow-icon:hover {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+/* ---------- 尊重系统「减少动态效果」设置 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
