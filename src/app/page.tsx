@@ -13,6 +13,8 @@ import TripPlanner from '@/components/TripPlanner';
 import TripAccounting from '@/components/TripAccounting';
 import TripDriving from '@/components/TripDriving';
 import { Wish } from '@/types';
+import { SplitTextTitle } from '@/components/motion/SplitTextTitle';
+import { useTabTransition, TabSwitchSkeleton } from '@/components/motion/TabTransition';
 
 const months = [
   '一月', '二月', '三月', '四月', '五月', '六月',
@@ -100,6 +102,8 @@ export default function Home() {
   };
 
   const [activeTab, setActiveTab] = useState('make-wish');
+  const wishTabTransition = useTabTransition();
+  const mainTabTransition = useTabTransition();
 
   // 从 localStorage 加载初始值
   useEffect(() => {
@@ -863,7 +867,7 @@ export default function Home() {
         <div className="space-y-5">
           {/* 年度时间轴 */}
           {wishes.length > 0 && (
-            <Card className="w-full max-w-4xl mx-auto border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm mb-5">
+            <Card className="w-full max-w-7xl mx-auto bg-black/40 mb-5">
               <CardContent className="pt-3.5 sm:pt-6 px-2.5 sm:px-6">
                 {/* 年度切换 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 mb-3.5 sm:mb-6">
@@ -873,7 +877,7 @@ export default function Home() {
                         setSelectedYear(selectedYear - 1);
                       }
                     }}
-                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                     disabled={selectedYear <= 2025}
                   >
                     <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -890,7 +894,7 @@ export default function Home() {
                         setSelectedYear(selectedYear + 1);
                       }
                     }}
-                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                     disabled={selectedYear >= 2030}
                   >
                     <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -969,7 +973,7 @@ export default function Home() {
                                   <div
                                     key={trip.id}
                                     onClick={() => navigateToPlan(trip.id)}
-                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 ${
+                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-all duration-200 hover:scale-105 ${
                                       isExpired
                                         ? 'text-[#FFFFFF]/60 bg-gray-500/20 hover:bg-gray-500/30'
                                         : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
@@ -989,7 +993,7 @@ export default function Home() {
                                   <div
                                     key={wish.id}
                                     onClick={() => handleUnconfirmedWishClick(wish.id)}
-                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/5 border-2 border-dashed border-gray-500/50 hover:bg-gray-500/10"
+                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/5    hover:bg-gray-500/10"
                                   >
                                     <div className="font-semibold truncate text-[10px] sm:text-xs text-gray-400">{wish.destination}</div>
                                     <div className="text-gray-500 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
@@ -1017,7 +1021,7 @@ export default function Home() {
                           <div
                             key={trip.id}
                             onClick={() => navigateToPlan(trip.id)}
-                            className={`flex items-center justify-between text-sm px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 ${
+                            className={`flex items-center justify-between text-sm px-3 py-2.5 rounded-none cursor-pointer transition-all duration-200 ${
                               isExpired
                                 ? 'text-[#FFFFFF]/60 bg-gray-500/20 hover:bg-gray-500/30'
                                 : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
@@ -1045,7 +1049,7 @@ export default function Home() {
                           <div
                             key={wish.id}
                             onClick={() => handleUnconfirmedWishClick(wish.id)}
-                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-200 bg-gray-500/5 border-2 border-dashed border-gray-500/50 hover:bg-gray-500/10"
+                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-none cursor-pointer transition-all duration-200 bg-gray-500/5    hover:bg-gray-500/10"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span className="font-semibold truncate text-gray-400">{wish.destination}</span>
@@ -1061,25 +1065,27 @@ export default function Home() {
           )}
 
           {/* 子标签页 */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 gap-0.5 h-[48px] sm:h-[44px]">
+          <Tabs value={activeTab} onValueChange={(v) => wishTabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] bg-transparent rounded-none p-0">
               <TabsTrigger
                 value="make-wish"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs h-full flex items-center justify-center"
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
               >
                 抛硬币
               </TabsTrigger>
               <TabsTrigger
                 value="wish-pool"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs h-full flex items-center justify-center"
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
               >
                 许愿池
               </TabsTrigger>
             </TabsList>
 
+            <div className="relative">
+              <div className="transition-opacity duration-200" style={{ opacity: wishTabTransition.contentOpacity }}>
             {/* Make Wish Tab */}
             <TabsContent value="make-wish" className="space-y-4.5 sm:space-y-6 min-h-[400px]">
-              <Card className="border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
+              <Card className="  bg-black/40 backdrop-blur-sm">
                 <CardContent className="space-y-4.5 pt-3.5 sm:pt-6 px-3.5 sm:px-6">
                   <div className="space-y-1.5 sm:space-y-2">
                     <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
@@ -1091,7 +1097,7 @@ export default function Home() {
                       placeholder="例如：巴黎、东京、马尔代夫..."
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-xs sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
@@ -1106,7 +1112,7 @@ export default function Home() {
                       placeholder="YYYY-MM（如：2026-03）"
                       value={travelYearMonth}
                       onChange={(e) => setTravelYearMonth(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-xs sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
@@ -1121,7 +1127,7 @@ export default function Home() {
                       placeholder="请输入您的姓名"
                       value={wisherName}
                       onChange={(e) => setWisherName(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50 text-xs sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs sm:text-xs"
                       disabled={isAnimating}
                     />
                   </div>
@@ -1185,7 +1191,7 @@ export default function Home() {
 
             {/* Wish Pool Tab */}
             <TabsContent value="wish-pool" className="space-y-5 min-h-[400px]">
-              <Card className="border border-[#CEA472]/20 bg-black/40 backdrop-blur-sm">
+              <Card className="  bg-black/40 backdrop-blur-sm">
                 <CardContent className="pt-5 sm:pt-6 px-2.5 sm:px-6">
                   {loading ? (
                     <div className="text-center py-12">
@@ -1204,12 +1210,12 @@ export default function Home() {
                         <div
                           key={wish.id}
                           onClick={() => wish.is_confirmed === 1 && !wish.is_expired && navigateToPlan(wish.id)}
-                          className={`group overflow-hidden p-3.5 sm:p-6 rounded-lg border backdrop-blur-sm transition-all duration-500 ${
+                          className={`group overflow-hidden p-3.5 sm:p-6 rounded-none  backdrop-blur-sm transition-all duration-500 ${
                             wish.is_expired === 1
-                              ? 'border-gray-500/30 bg-gray-500/5'
+                              ? ' bg-gray-500/5'
                               : wish.is_confirmed === 1
-                                ? 'border-[#CEA472] bg-[#CEA472]/10 cursor-pointer hover:scale-[1.01] hover:bg-[#CEA472]/15' 
-                                : 'border-[#CEA472]/10 bg-black/40 hover:border-[#CEA472]/50 hover:bg-black/60'
+                                ? ' bg-[#CEA472]/10 cursor-pointer hover:scale-[1.01] hover:bg-[#CEA472]/15' 
+                                : ' bg-black/40  hover:bg-black/60'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2.5">
@@ -1220,11 +1226,11 @@ export default function Home() {
                                   {wish.destination}
                                 </h3>
                                 {wish.is_expired === 1 ? (
-                                  <span className="px-1.5 py-0.5 text-[9px] sm:text-xs bg-gray-500/50 text-gray-300 rounded-full font-semibold flex-shrink-0">
+                                  <span className="px-1.5 py-0.5 text-[9px] sm:text-xs bg-gray-500/50 text-gray-300 rounded-none font-semibold flex-shrink-0">
                                     已过期
                                   </span>
                                 ) : wish.is_confirmed === 1 && (
-                                  <span className="px-1.5 py-0.5 text-[9px] sm:text-xs bg-[#CEA472] text-[#0a0a0f] rounded-full font-semibold flex-shrink-0">
+                                  <span className="px-1.5 py-0.5 text-[9px] sm:text-xs bg-[#CEA472] text-[#0a0a0f] rounded-none font-semibold flex-shrink-0">
                                     已成行
                                   </span>
                                 )}
@@ -1267,12 +1273,12 @@ export default function Home() {
                                     </div>
                                     <div className="flex flex-wrap gap-1 overflow-hidden">
                                       {wish.followers.map((name, idx) => (
-                                        <div key={idx} className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded ${wish.is_expired === 1 ? 'bg-gray-500/20 border-gray-500/20' : 'bg-black/40 border border-[#CEA472]/20'}`}>
+                                        <div key={idx} className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-none ${wish.is_expired === 1 ? 'bg-gray-500/20 ' : 'bg-black/40  '}`}>
                                           <span className={`text-[9px] sm:text-xs truncate max-w-[60px] sm:max-w-none ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
                                           {isAdminMode && (
                                             <button
                                               onClick={() => handleOpenDeleteFollowerDialog(wish.id, name)}
-                                              className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded flex-shrink-0"
+                                              className="text-red-500 hover:text-red-500 hover:bg-red-500/10 transition-colors p-0.5 rounded-none flex-shrink-0"
                                               title="删除跟随者"
                                             >
                                               <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
@@ -1422,6 +1428,9 @@ export default function Home() {
                 </CardContent>
               </Card>
             </TabsContent>
+              </div>
+              {wishTabTransition.isLoading && <TabSwitchSkeleton />}
+            </div>
           </Tabs>
         </div>
       );
@@ -1463,26 +1472,32 @@ export default function Home() {
       />
       {/* 深色叠加层，确保文字可读 */}
       <div className="fixed inset-0 bg-black/60 -z-10" />
-      {/* 背景流光（缓慢呼吸的金色/蓝紫色氛围光） */}
-      <div className="ambient-bg" aria-hidden="true" />
+      {/* 背景光斑（golden-dark-ui 标准氛围层，叠加在雪山背景之上） */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="bg-blob-a" />
+        <div className="bg-blob-b" />
+        <div className="bg-blob-c" />
+      </div>
 
       {/* 内容区域 */}
       <div className="relative z-10 py-6 px-3 sm:px-6 lg:px-8">
         {/* 标题和管理按钮 */}
-        <div className="flex items-center justify-between mb-5 max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-5 max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* 图标容器 - 金色衬底 + 黑色线框 */}
-            <div className="glow-icon w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl" style={{
+            <div className="glow-icon animate-hero-avatar w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-none sm:rounded-none md:rounded-none" style={{
               backgroundColor: '#CEA472',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
             }}>
               <Plane className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" style={{ color: '#0a0a0f' }} />
             </div>
-            <h1 className="gold-title text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide">
-              旅行工具箱
-            </h1>
+            <SplitTextTitle
+              as="h1"
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide"
+              lines={[{ text: '旅行工具箱', className: 'text-[#CEA472]' }]}
+            />
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="animate-hero-sub flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={handleShare}
               title="分享当前页面"
@@ -1515,33 +1530,37 @@ export default function Home() {
         </div>
 
         {/* 主标签页 */}
-        <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
-          <Tabs value={mainTab} onValueChange={setMainTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px]">
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <Tabs value={mainTab} onValueChange={(v) => mainTabTransition.switchTo(v, () => setMainTab(v))} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px] bg-transparent rounded-none p-0">
               <TabsTrigger
                 value="wish"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                style={{ animationDelay: '0ms' }}
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Plane className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行许愿</span>
               </TabsTrigger>
               <TabsTrigger
                 value="plan"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                style={{ animationDelay: '60ms' }}
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Map className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行规划</span>
               </TabsTrigger>
               <TabsTrigger
                 value="account"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                style={{ animationDelay: '120ms' }}
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Receipt className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行记账</span>
               </TabsTrigger>
               <TabsTrigger
                 value="drive"
-                className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                style={{ animationDelay: '180ms' }}
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Car className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行驾驶</span>
@@ -1550,13 +1569,18 @@ export default function Home() {
           </Tabs>
 
           {/* 主标签页内容 */}
-          {renderMainContent()}
+          <div className="relative">
+            <div className="transition-opacity duration-200" style={{ opacity: mainTabTransition.contentOpacity }}>
+              {renderMainContent()}
+            </div>
+            {mainTabTransition.isLoading && <TabSwitchSkeleton />}
+          </div>
         </div>
       </div>
 
       {/* 密码对话框 */}
       <Dialog open={passwordModalOpen} onOpenChange={setPasswordModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">进入管理模式</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">请输入管理员密码以进入管理模式</DialogDescription>
@@ -1568,7 +1592,7 @@ export default function Home() {
               type="password"
               value={adminPassword}
               onChange={(e) => setAdminPassword(e.target.value)}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="bg-black/40  text-[#FFFFFF]"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleAdminLogin();
@@ -1580,7 +1604,7 @@ export default function Home() {
             <Button
               variant="outline"
               onClick={() => setPasswordModalOpen(false)}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1596,7 +1620,7 @@ export default function Home() {
 
       {/* 编辑对话框 */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">编辑愿望</DialogTitle>
           </DialogHeader>
@@ -1606,7 +1630,7 @@ export default function Home() {
               id="edit-destination"
               value={editingWish?.destination || ''}
               onChange={(e) => editingWish && setEditingWish({ ...editingWish, destination: e.target.value })}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="bg-black/40  text-[#FFFFFF]"
             />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -1616,7 +1640,7 @@ export default function Home() {
                   type="number"
                   value={editingWish?.travel_year || ''}
                   onChange={(e) => editingWish && setEditingWish({ ...editingWish, travel_year: parseInt(e.target.value) })}
-                  className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40  text-[#FFFFFF]"
                 />
               </div>
               <div className="space-y-2">
@@ -1625,7 +1649,7 @@ export default function Home() {
                   id="edit-month"
                   value={editingWish?.travel_month || ''}
                   onChange={(e) => editingWish && setEditingWish({ ...editingWish, travel_month: e.target.value })}
-                  className="w-full h-11 rounded-md bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] px-3"
+                  className="w-full h-11 rounded-none bg-black/40   text-[#FFFFFF] px-3"
                 >
                   {months.map((month) => (
                     <option key={month} value={month}>{month}</option>
@@ -1638,7 +1662,7 @@ export default function Home() {
               id="edit-wisher"
               value={editingWish?.wisher_name || ''}
               onChange={(e) => editingWish && setEditingWish({ ...editingWish, wisher_name: e.target.value })}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="bg-black/40  text-[#FFFFFF]"
             />
           </div>
           <DialogFooter>
@@ -1648,7 +1672,7 @@ export default function Home() {
                 setEditModalOpen(false);
                 setEditingWish(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1664,7 +1688,7 @@ export default function Home() {
 
       {/* 确认成行对话框 */}
       <Dialog open={confirmModalOpen} onOpenChange={setConfirmModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">确认成行</DialogTitle>
           </DialogHeader>
@@ -1676,7 +1700,7 @@ export default function Home() {
               placeholder="YYYY-MM-DD"
               value={confirmDate}
               onChange={(e) => setConfirmDate(e.target.value.replace(/\//g, '-'))}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+              className="bg-black/40  text-[#FFFFFF]"
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -1688,7 +1712,7 @@ export default function Home() {
                   max="30"
                   value={confirmTravelDays}
                   onChange={(e) => setConfirmTravelDays(e.target.value)}
-                  className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40  text-[#FFFFFF]"
                 />
               </div>
               <div>
@@ -1697,7 +1721,7 @@ export default function Home() {
                   id="confirm-travelers"
                   value={confirmTravelers}
                   onChange={(e) => setConfirmTravelers(e.target.value)}
-                  className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF]"
+                  className="bg-black/40  text-[#FFFFFF]"
                   placeholder="例如：张三、李四、王五"
                 />
               </div>
@@ -1713,7 +1737,7 @@ export default function Home() {
                 setConfirmTravelers('');
                 setConfirmTravelDays('3');
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1729,7 +1753,7 @@ export default function Home() {
 
       {/* 取消成行确认对话框 */}
       <Dialog open={cancelConfirmModalOpen} onOpenChange={setCancelConfirmModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">取消成行</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">确定要取消这个行程的成行状态吗？此操作会将行程退回为愿望状态。</DialogDescription>
@@ -1741,7 +1765,7 @@ export default function Home() {
                 setCancelConfirmModalOpen(false);
                 setCancelingWishId('');
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1757,7 +1781,7 @@ export default function Home() {
 
       {/* 删除对话框 */}
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">删除愿望</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">确定要删除这个愿望吗？此操作不可撤销。</DialogDescription>
@@ -1769,7 +1793,7 @@ export default function Home() {
                 setDeleteModalOpen(false);
                 setDeletingWishId('');
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1785,7 +1809,7 @@ export default function Home() {
 
       {/* 统一的旅行信息编辑对话框 */}
       <Dialog open={tripInfoEditModalOpen} onOpenChange={setTripInfoEditModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF] text-base">编辑旅行信息</DialogTitle>
             {editingTripInfo?.destination && (
@@ -1803,7 +1827,7 @@ export default function Home() {
                 placeholder="YYYY-MM-DD"
                 value={editingTripInfo?.confirmed_date || ''}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, confirmed_date: e.target.value } : null)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs"
+                className="bg-black/40   text-[#FFFFFF] mt-1 text-xs"
               />
             </div>
             <div>
@@ -1815,7 +1839,7 @@ export default function Home() {
                 max="30"
                 value={editingTripInfo?.travelDays || 3}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelDays: parseInt(e.target.value) || 1 } : null)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs"
+                className="bg-black/40   text-[#FFFFFF] mt-1 text-xs"
               />
             </div>
             <div>
@@ -1824,7 +1848,7 @@ export default function Home() {
                 id="trip-info-travelers"
                 value={editingTripInfo?.travelers || ''}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelers: e.target.value } : null)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] mt-1 text-xs"
+                className="bg-black/40   text-[#FFFFFF] mt-1 text-xs"
                 placeholder="例如：张三、李四、王五"
               />
             </div>
@@ -1836,7 +1860,7 @@ export default function Home() {
                 setTripInfoEditModalOpen(false);
                 setEditingTripInfo(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
             >
               取消
             </Button>
@@ -1852,7 +1876,7 @@ export default function Home() {
 
       {/* 编辑行程对话框 */}
       <Dialog open={editTripModalOpen} onOpenChange={setEditTripModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF] text-base">编辑行程</DialogTitle>
           </DialogHeader>
@@ -1864,14 +1888,14 @@ export default function Home() {
               placeholder="YYYY-MM-DD"
               value={editingTrip?.confirmed_date || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, confirmed_date: e.target.value })}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+              className="bg-black/40  text-[#FFFFFF] text-xs"
             />
             <Label htmlFor="edit-trip-travelers" className="text-[#FFFFFF] text-xs">同行人员</Label>
             <Input
               id="edit-trip-travelers"
               value={editingTrip?.travelers || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, travelers: e.target.value })}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+              className="bg-black/40  text-[#FFFFFF] text-xs"
               placeholder="例如：张三、李四、王五"
             />
           </div>
@@ -1882,7 +1906,7 @@ export default function Home() {
                 setEditTripModalOpen(false);
                 setEditingTrip(null);
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
             >
               取消
             </Button>
@@ -1898,7 +1922,7 @@ export default function Home() {
 
       {/* 跟随对话框 */}
       <Dialog open={followModalOpen} onOpenChange={setFollowModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">跟随愿望</DialogTitle>
           </DialogHeader>
@@ -1909,7 +1933,7 @@ export default function Home() {
               placeholder="请输入您的姓名"
               value={followerName}
               onChange={(e) => setFollowerName(e.target.value)}
-              className="h-11 bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 focus:border-[#CEA472]/50"
+              className="h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 "
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleFollow();
@@ -1925,7 +1949,7 @@ export default function Home() {
                 setFollowingWishId('');
                 setFollowerName('');
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1941,7 +1965,7 @@ export default function Home() {
 
       {/* 删除跟随者对话框 */}
       <Dialog open={deleteFollowerModalOpen} onOpenChange={setDeleteFollowerModalOpen}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">删除跟随者</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">确定要删除跟随者"{deleteFollowerName}"吗？</DialogDescription>
@@ -1954,7 +1978,7 @@ export default function Home() {
                 setDeletingFollowerWishId('');
                 setDeleteFollowerName('');
               }}
-              className="bg-black/40 border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useTabTransition, TabSwitchSkeleton } from '@/components/motion/TabTransition';
 import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory, CurrencyCode, ExchangeRateRecord } from '@/types';
 import { TripPlan } from '@/types';
 
@@ -90,6 +91,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
   const [showWishSelector, setShowWishSelector] = useState(false);
   const [activeTab, setActiveTab] = useState('entry');
+  const tabTransition = useTabTransition();
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showEditExpense, setShowEditExpense] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -930,7 +932,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   if (!selectedWishId) {
     return (
-      <div className="w-full max-w-4xl mx-auto px-2.5 sm:px-0">
+      <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex items-center mb-6">
           <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472]">选择旅行</h3>
         </div>
@@ -947,7 +949,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/40 border rounded-lg p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? 'border-[#CEA472]' : 'border-[#CEA472]/20'}`}
+                  className={`bg-black/40  rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors ${isDefault ? '' : ''}`}
                   onClick={() => {
                     if (hasRecord) {
                       setSelectedWishId(String(wish.id));
@@ -1037,7 +1039,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo && currentWish) {
             onEditTripInfo({
@@ -1056,7 +1058,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               <div className="flex items-center gap-1.5">
                 <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
                 {currentTripPlan?.frozen && (
-                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20 border border-blue-500/40 rounded text-[10px] text-blue-400">
+                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-[10px] text-blue-400">
                     <Snowflake className="w-2.5 h-2.5" />
                     已冻结
                   </span>
@@ -1070,7 +1072,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </div>
 
       {showWishSelector && (
-        <div className="p-4 bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg">
+        <div className="p-4 bg-black/40 backdrop-blur-md   rounded-none">
           <div className="space-y-3">
             {confirmedWishes.map(wish => {
               const existingRecord = tripExpenses.find(record => record.wishId === String(wish.id));
@@ -1086,10 +1088,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       createExpenseRecord(wish);
                     }
                   }}
-                  className={`w-full p-4 rounded-lg text-left transition-all ${
+                  className={`w-full p-4 rounded-none text-left transition-all ${
                     isSelected
-                      ? 'bg-[#CEA472]/10 border border-[#CEA472] text-[#CEA472]'
-                      : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF] hover:bg-black/70'
+                      ? 'bg-[#CEA472]/10   text-[#CEA472]'
+                      : 'bg-black/40   text-[#FFFFFF] hover:bg-black/70'
                   }`}
                 >
                   <div className="font-medium text-sm">{wish.destination}</div>
@@ -1106,35 +1108,37 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className={`w-full ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
-        <TabsList className="grid w-full grid-cols-3 bg-black/40 backdrop-blur-sm border border-[#CEA472]/20 rounded-lg p-1 gap-1 h-[48px] sm:h-[44px]">
+      <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className={`w-full ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
+        <TabsList className="grid w-full grid-cols-3 gap-1 h-[48px] sm:h-[44px] bg-transparent rounded-none p-0">
           <TabsTrigger 
             value="entry"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
           >
             消费录入
           </TabsTrigger>
           <TabsTrigger 
             value="query"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
           >
             消费查询
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="data-[state=active]:text-[#CEA472] data-[state=active]:bg-black/60 text-[#FFFFFF]/60 hover:text-[#FFFFFF]/80 transition-all duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
           >
             消费分析
           </TabsTrigger>
         </TabsList>
+        <div className="relative">
+          <div className="transition-opacity duration-200" style={{ opacity: tabTransition.contentOpacity }}>
 
         <TabsContent value="entry" className="mt-4">
           {isCurrentTripFrozen && (
-            <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+            <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
               <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改消费记录</span>
             </div>
           )}
-          <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className={`bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
                   {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
@@ -1148,10 +1152,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={key}
                         onClick={() => setNewExpense({ ...newExpense, category: key })}
-                        className={`flex items-center gap-2 p-3 rounded-lg border transition-all text-xs ${
+                        className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
                           newExpense.category === key
-                            ? 'border-[#CEA472] bg-[#CEA472]/10 text-[#CEA472]'
-                            : 'border-[#CEA472]/20 bg-black/40 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            ? ' bg-[#CEA472]/10 text-[#CEA472]'
+                            : ' bg-black/40 text-[#FFFFFF]/60 '
                         }`}
                       >
                         {expenseCategoryIcons[key]}
@@ -1181,10 +1185,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         }
                       }}
                     >
-                      <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                      <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full">
                         <SelectValue placeholder="选择活动行程" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                      <SelectContent className="bg-[#0a0a0f]  ">
                         {filteredLocations.map((activity, idx) => (
                           <SelectItem key={idx} value={activity.activityId}>
                             Day{activity.dayNumber} - {activity.location}
@@ -1201,7 +1205,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       setNewExpense({ ...newExpense, location: e.target.value });
                       setSelectedActivity(null);
                     }}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                    className="bg-black/40   text-[#FFFFFF] text-xs h-10"
                     placeholder="输入活动地点"
                   />
                 </div>
@@ -1216,7 +1220,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             placeholder="YYYY-MM-DD"
                             value={newExpense.date}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10"
+                            className="bg-black/40   text-[#FFFFFF] text-xs h-10"
                           />
                         </div>
                         <div>
@@ -1225,7 +1229,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                             type="time"
                             value={newExpense.time}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
-                            className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                            className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
                           />
                         </div>
                         <div>
@@ -1237,17 +1241,17 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               step="0.01"
                               value={newExpense.amount}
                               onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
-                              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs flex-1"
+                              className="bg-black/40   text-[#FFFFFF] text-xs flex-1"
                               placeholder="0.00"
                             />
                             <Select
                               value={newExpense.currency}
                               onValueChange={(value) => setNewExpense({ ...newExpense, currency: value })}
                             >
-                              <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-[120px]">
+                              <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs w-[120px]">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                              <SelectContent className="bg-[#0a0a0f]  ">
                                 <SelectItem key="CNY" value="CNY">
                                   {getCurrencySymbol('CNY')} CNY
                                 </SelectItem>
@@ -1267,7 +1271,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <Input
                     value={newExpense.description}
                     onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs"
+                    className="bg-black/40   text-[#FFFFFF] text-xs"
                     placeholder="输入消费描述"
                   />
                 </div>
@@ -1279,10 +1283,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={idx}
                         onClick={() => handlePayerToggle(traveler)}
-                        className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payers.includes(traveler)
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/40   text-[#FFFFFF]/60 '
                         }`}
                       >
                         {traveler}
@@ -1298,10 +1302,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={idx}
                         onClick={() => setNewExpense({ ...newExpense, payer: traveler })}
-                        className={`px-4 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payer === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/40   text-[#FFFFFF]/60 '
                         }`}
                       >
                         {traveler}
@@ -1325,11 +1329,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
         <TabsContent value="query" className="mt-4">
           {isCurrentTripFrozen && (
-            <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-center gap-2">
+            <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
               <span className="text-blue-400 text-xs">此行程已冻结，无法修改消费记录</span>
             </div>
           )}
-          <div className={`bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className={`bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
               {/* 筛选结果统计 - 始终显示 */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-xs text-[#FFFFFF]/60">
@@ -1364,7 +1368,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   })()}
                   <button
                     onClick={() => setQueryFiltersCollapsed(!queryFiltersCollapsed)}
-                    className="p-1.5 rounded-md bg-black/40 border border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
+                    className="p-1.5 rounded-none bg-black/40   text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
                     title={queryFiltersCollapsed ? '展开筛选' : '收起筛选'}
                   >
                     {queryFiltersCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
@@ -1385,7 +1389,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         dateFrom: '',
                         dateTo: '',
                       })}
-                      className="p-1.5 rounded-md bg-black/40 border border-[#CEA472]/20 text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
+                      className="p-1.5 rounded-none bg-black/40   text-[#CEA472] hover:bg-[#CEA472]/10 transition-colors"
                       title="清除筛选"
                     >
                       <X className="w-4 h-4" />
@@ -1398,10 +1402,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         onClick={() => setQueryFilters({ ...queryFilters, category: null })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        className={`px-2.5 py-1 rounded-none text-[10px] transition-all ${
                           queryFilters.category === null
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/40   text-[#FFFFFF]/60 '
                         }`}
                       >
                         全部
@@ -1410,10 +1414,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         <button
                           key={key}
                           onClick={() => setQueryFilters({ ...queryFilters, category: key })}
-                          className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          className={`px-2.5 py-1 rounded-none text-[10px] transition-all ${
                             queryFilters.category === key
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                              : 'bg-black/40   text-[#FFFFFF]/60 '
                           }`}
                         >
                           {label}
@@ -1428,10 +1432,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         onClick={() => setQueryFilters({ ...queryFilters, payer: null })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        className={`px-2.5 py-1 rounded-none text-[10px] transition-all ${
                           queryFilters.payer === null
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/40   text-[#FFFFFF]/60 '
                         }`}
                       >
                         全部
@@ -1440,10 +1444,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         <button
                           key={traveler}
                           onClick={() => setQueryFilters({ ...queryFilters, payer: traveler })}
-                          className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          className={`px-2.5 py-1 rounded-none text-[10px] transition-all ${
                             queryFilters.payer === traveler
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                              : 'bg-black/40   text-[#FFFFFF]/60 '
                           }`}
                         >
                           {traveler}
@@ -1458,10 +1462,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         onClick={() => setQueryFilters({ ...queryFilters, currency: null })}
-                        className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                        className={`px-2.5 py-1 rounded-none text-[10px] transition-all ${
                           queryFilters.currency === null
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/40   text-[#FFFFFF]/60 '
                         }`}
                       >
                         全部
@@ -1470,10 +1474,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         <button
                           key={currencyId}
                           onClick={() => setQueryFilters({ ...queryFilters, currency: currencyId })}
-                          className={`px-2.5 py-1 rounded-full text-[10px] transition-all ${
+                          className={`px-2.5 py-1 rounded-none text-[10px] transition-all ${
                             queryFilters.currency === currencyId
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                              : 'bg-black/40   text-[#FFFFFF]/60 '
                           }`}
                         >
                           {getCurrencySymbol(currencyId)} {getCurrencyName(currencyId)}
@@ -1490,14 +1494,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         type="date"
                         value={queryFilters.dateFrom}
                         onChange={(e) => setQueryFilters({ ...queryFilters, dateFrom: e.target.value })}
-                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
+                        className="bg-black/40   text-[#FFFFFF] text-xs h-9 w-auto flex-1"
                       />
                       <span className="text-[#FFFFFF]/40 text-xs">至</span>
                       <Input
                         type="date"
                         value={queryFilters.dateTo}
                         onChange={(e) => setQueryFilters({ ...queryFilters, dateTo: e.target.value })}
-                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-9 w-auto flex-1"
+                        className="bg-black/40   text-[#FFFFFF] text-xs h-9 w-auto flex-1"
                       />
                     </div>
                   </div>
@@ -1512,7 +1516,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     return (
                       <div
                         key={expense.id}
-                        className="p-3.5 sm:p-4 rounded-lg bg-black/40 border border-[#CEA472]/20 hover:bg-black/70 transition-colors"
+                        className="p-3.5 sm:p-4 rounded-none bg-black/40   hover:bg-black/70 transition-colors"
                       >
                         <div className="flex gap-3">
                           <div className="text-xl sm:text-2xl text-[#FFFFFF] flex-shrink-0 pt-0.5">
@@ -1625,17 +1629,17 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
         </TabsContent>
 
         <TabsContent value="analysis" className="mt-4">
-          <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+          <div className="bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
               <div className="space-y-5 sm:space-y-6">
                 <div>
                   <div className="text-xs text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setAnalysisConsumerFilter(null)}
-                      className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
+                      className={`px-3 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[60px] ${
                         analysisConsumerFilter === null
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          : 'bg-black/40   text-[#FFFFFF]/60 '
                       }`}
                     >
                       全部
@@ -1644,10 +1648,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       <button
                         key={traveler}
                         onClick={() => setAnalysisConsumerFilter(traveler)}
-                        className={`px-3 py-2 rounded-full text-xs transition-all min-h-[44px] min-w-[60px] ${
+                        className={`px-3 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[60px] ${
                           analysisConsumerFilter === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                            : 'bg-black/40   text-[#FFFFFF]/60 '
                         }`}
                       >
                         {traveler}
@@ -1660,7 +1664,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按类别统计</h4>
                   <div className="space-y-2">
                     {Object.entries(filteredStats.categories).map(([category, amount]) => (
-                      <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
+                      <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-none">
                         <div className="flex items-center gap-3">
                           {expenseCategoryIcons[category]}
                           <span className="text-[#FFFFFF] text-xs">{expenseCategories[category] || category}</span>
@@ -1676,7 +1680,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按支付人统计</h4>
                     <div className="space-y-2">
                       {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
-                        <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-lg">
+                        <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/40 rounded-none">
                           <span className="text-[#FFFFFF] text-xs">{payer}</span>
                           <span className="text-[#CEA472] font-medium text-xs">¥{amount.toFixed(2)}</span>
                         </div>
@@ -1695,7 +1699,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                         const consumed = stats.byConsumer[traveler] || 0;
                         const difference = paid - consumed;
                         return (
-                          <div key={traveler} className="p-3 sm:p-3 bg-black/40 rounded-lg">
+                          <div key={traveler} className="p-3 sm:p-3 bg-black/40 rounded-none">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-[#FFFFFF] text-xs">{traveler}</span>
                             </div>
@@ -1723,10 +1727,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               </div>
           </div>
         </TabsContent>
+          </div>
+          {tabTransition.isLoading && <TabSwitchSkeleton />}
+        </div>
       </Tabs>
 
       <Dialog open={showEditExpense} onOpenChange={setShowEditExpense}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20 max-h-[90vh] overflow-hidden flex flex-col sm:max-w-lg">
+        <DialogContent className="bg-[#0a0a0f]   max-h-[90vh] overflow-hidden flex flex-col sm:max-w-lg">
           <DialogHeader className="flex-shrink-0 pb-2">
             <DialogTitle className="text-[#FFFFFF]">编辑支出</DialogTitle>
           </DialogHeader>
@@ -1743,7 +1750,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     placeholder="YYYY-MM-DD"
                     value={editingExpense.date}
                     onChange={(e) => setEditingExpense({ ...editingExpense, date: e.target.value })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                    className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
                   />
                 </div>
                 <div>
@@ -1752,7 +1759,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     type="time"
                     value={editingExpense.time || ''}
                     onChange={(e) => setEditingExpense({ ...editingExpense, time: e.target.value })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                    className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
                   />
                 </div>
               </div>
@@ -1764,10 +1771,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   value={editingExpense.category}
                   onValueChange={(value) => setEditingExpense({ ...editingExpense, category: value as ExpenseCategory })}
                 >
-                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full">
+                  <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                  <SelectContent className="bg-[#0a0a0f]  ">
                     {Object.entries(expenseCategories).map(([category, name]) => (
                       <SelectItem key={category} value={category}>
                         {expenseCategoryIcons[category]} {name}
@@ -1787,16 +1794,16 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     step="0.01"
                     value={String(editingExpense.amount)}
                     onChange={(e) => setEditingExpense({ ...editingExpense, amount: parseFloat(e.target.value) || 0 })}
-                    className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 flex-1 min-w-0"
+                    className="bg-black/40   text-[#FFFFFF] text-xs h-10 flex-1 min-w-0"
                   />
                   <Select
                     value={editingExpense.currency || 'CNY'}
                     onValueChange={(value) => setEditingExpense({ ...editingExpense, currency: value })}
                   >
-                    <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-20 sm:w-24">
+                    <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-20 sm:w-24">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                    <SelectContent className="bg-[#0a0a0f]  ">
                       <SelectItem key="CNY" value="CNY">
                         {getCurrencySymbol('CNY')} CNY
                       </SelectItem>
@@ -1816,7 +1823,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 <Input
                   value={editingExpense.description || ''}
                   onChange={(e) => setEditingExpense({ ...editingExpense, description: e.target.value })}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
                   placeholder="输入描述或备注"
                 />
               </div>
@@ -1831,7 +1838,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     setEditingExpense({ ...editingExpense, location: e.target.value });
                     setEditingSelectedActivity(null);
                   }}
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-10 w-full"
+                  className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
                   placeholder="手工输入或从下方选择"
                 />
                 {/* 可选活动列表 */}
@@ -1857,10 +1864,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                               onClick={() => {
                                 handleEditActivitySelect(activity);
                               }}
-                              className={`px-2.5 py-1 rounded-full text-[10px] transition-all whitespace-nowrap ${
+                              className={`px-2.5 py-1 rounded-none text-[10px] transition-all whitespace-nowrap ${
                                 isSelected
                                   ? 'bg-[#CEA472] text-[#0a0a0f]'
-                                  : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40 hover:text-[#FFFFFF]/80'
+                                  : 'bg-black/40   text-[#FFFFFF]/60  hover:text-[#FFFFFF]/80'
                               }`}
                             >
                               Day{activity.dayNumber} · {activity.location}
@@ -1888,10 +1895,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           : [...currentPayers, traveler];
                         setEditingExpense({ ...editingExpense, payers: newPayers });
                       }}
-                      className={`px-3 py-1.5 rounded-full text-xs transition-all ${
+                      className={`px-3 py-1.5 rounded-none text-xs transition-all ${
                         (editingExpense.payers || []).includes(traveler)
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          : 'bg-black/40   text-[#FFFFFF]/60 '
                       }`}
                     >
                       {traveler}
@@ -1909,10 +1916,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                       key={idx}
                       type="button"
                       onClick={() => setEditingExpense({ ...editingExpense, payer: traveler })}
-                      className={`px-3 py-1.5 rounded-full text-xs transition-all ${
+                      className={`px-3 py-1.5 rounded-none text-xs transition-all ${
                         editingExpense.payer === traveler
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/40 border border-[#CEA472]/20 text-[#FFFFFF]/60 hover:border-[#CEA472]/40'
+                          : 'bg-black/40   text-[#FFFFFF]/60 '
                       }`}
                     >
                       {traveler}
@@ -1931,7 +1938,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   setEditingExpense(null);
                   setEditingSelectedActivity(null);
                 }}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10 h-10 px-4"
+                className="bg-black/40   text-[#FFFFFF] hover:bg-[#CEA472]/10 h-10 px-4"
               >
                 取消
               </Button>
@@ -1947,7 +1954,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       </Dialog>
 
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <DialogContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+        <DialogContent className="bg-[#0a0a0f]  ">
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">删除支出</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">
@@ -1961,7 +1968,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 setShowDeleteConfirm(false);
                 setDeletingExpenseId(null);
               }}
-              className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/40   text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1977,7 +1984,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
       {/* 汇率管理模式内容 */}
       {showExchangeRateEditor && (
-        <div className="bg-black/40 backdrop-blur-md border border-[#CEA472]/20 rounded-lg p-3.5 sm:p-6">
+        <div className="bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
               <Coins className="w-5 h-5 text-[#CEA472]" />
@@ -1989,7 +1996,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
               <div className="space-y-2">
                 {editingActiveCurrencies.map((currencyId) => (
-                  <div key={currencyId} className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-lg">
+                  <div key={currencyId} className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-none">
                     <div className="flex items-center gap-2">
                       <span className="text-[#CEA472] font-medium text-xs w-20">{getEditingCurrencySymbol(currencyId)}</span>
                       <span className="text-[#FFFFFF] text-xs">{getEditingCurrencyName(currencyId)}</span>
@@ -2004,7 +2011,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                           ...editingExchangeRates,
                           [currencyId]: parseFloat(e.target.value) || 0
                         })}
-                        className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs w-28 h-8"
+                        className="bg-black/40   text-[#FFFFFF] text-xs w-28 h-8"
                       />
                       <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
                       <Button
@@ -2035,10 +2042,10 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                     }
                   }}
                 >
-                  <SelectTrigger className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-32">
+                  <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs h-8 w-32">
                     <SelectValue placeholder="选择货币" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0a0a0f] border border-[#CEA472]/20">
+                  <SelectContent className="bg-[#0a0a0f]  ">
                     {(Object.keys(currencyNames) as CurrencyCode[])
                       .map((code) => (
                         <SelectItem key={code} value={code}>
@@ -2051,7 +2058,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   value={newCurrencyNote}
                   onChange={(e) => setNewCurrencyNote(e.target.value)}
                   placeholder="备注（现金/信用卡等）"
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-32"
+                  className="bg-black/40   text-[#FFFFFF] text-xs h-8 w-32"
                 />
                 <Input
                   type="number"
@@ -2060,7 +2067,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   value={newCurrencyRate}
                   onChange={(e) => setNewCurrencyRate(e.target.value)}
                   placeholder="汇率"
-                  className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] text-xs h-8 w-24"
+                  className="bg-black/40   text-[#FFFFFF] text-xs h-8 w-24"
                 />
                 <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
                 <Button
@@ -2107,7 +2114,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
               <Button
                 variant="outline"
                 onClick={() => setShowExchangeRateEditor(false)}
-                className="bg-black/40 border border-[#CEA472]/30 text-[#FFFFFF] hover:bg-[#CEA472]/10"
+                className="bg-black/40   text-[#FFFFFF] hover:bg-[#CEA472]/10"
               >
                 取消
               </Button>

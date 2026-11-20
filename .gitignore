@@ -107,3 +107,6 @@ Desktop.ini
 # Preview files
 .preview
 .codegraph
+
+# 本地 Trae 技能/设计参考
+.trae/
