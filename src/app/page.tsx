@@ -1066,7 +1066,7 @@ export default function Home() {
 
           {/* 子标签页 */}
           <Tabs value={activeTab} onValueChange={(v) => wishTabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] bg-transparent rounded-none p-0">
+            <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
               <TabsTrigger
                 value="make-wish"
                 className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
@@ -1532,7 +1532,7 @@ export default function Home() {
         {/* 主标签页 */}
         <div className="w-full max-w-7xl mx-auto px-4">
           <Tabs value={mainTab} onValueChange={(v) => mainTabTransition.switchTo(v, () => setMainTab(v))} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px] bg-transparent rounded-none p-0">
+            <TabsList className="grid w-full grid-cols-4 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
               <TabsTrigger
                 value="wish"
                 style={{ animationDelay: '0ms' }}

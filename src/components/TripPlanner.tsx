@@ -1696,7 +1696,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
       {showTripEditor && !showWishSelector && (
         <Tabs value={String(selectedDay)} onValueChange={(v) => tabTransition.switchTo(v, () => setSelectedDay(Number(v)))} className="w-full">
-        <TabsList className="inline-flex h-[48px] sm:h-[56px] gap-1 w-full justify-start overflow-x-auto bg-transparent rounded-none p-0">
+        <TabsList className="inline-flex h-[48px] sm:h-[56px] gap-1 w-full justify-start overflow-x-auto backdrop-blur-md rounded-none p-0">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
             <TabsTrigger
               key={day}

@@ -910,7 +910,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       )}
 
       <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className={`w-full ${isLotteryMode || showWishSelector ? 'hidden' : ''}`}>
-        <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} gap-1 h-[48px] sm:h-[44px] bg-transparent rounded-none p-0`}>
+        <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} gap-1 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0`}>
           {!isOverviewMode && (
             <TabsTrigger 
               value="entry"
