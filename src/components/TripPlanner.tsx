@@ -778,7 +778,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
     if (isEditing) {
       return (
-        <Card key={transport.id} className="  bg-black/40">
+        <Card key={transport.id} className="  bg-black/60">
           <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -786,7 +786,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <select
                   value={editingData.type}
                   onChange={(e) => setEditingTransportData({ ...editingData, type: e.target.value })}
-                  className="w-full h-10 rounded-none bg-black/40   text-[#FFFFFF] px-3 text-xs"
+                  className="w-full h-10 rounded-none bg-black/60   text-[#FFFFFF] px-3 text-xs"
                 >
                   <option value="taxi">出租车</option>
                   <option value="flight">飞机</option>
@@ -802,7 +802,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingData.from}
                   onChange={(e) => setEditingTransportData({ ...editingData, from: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs"
+                  className="bg-black/60   text-[#FFFFFF] text-xs"
                   placeholder="从哪里出发"
                 />
               </div>
@@ -811,7 +811,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingData.to}
                   onChange={(e) => setEditingTransportData({ ...editingData, to: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs"
+                  className="bg-black/60   text-[#FFFFFF] text-xs"
                   placeholder="到哪里去"
                 />
               </div>
@@ -821,7 +821,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.departureTime || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, departureTime: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
+                  className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               {(transport.position === 'arrival' || transport.position === 'departure') && (
@@ -831,7 +831,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     type="time"
                     value={editingData.arrivalTime || ''}
                     onChange={(e) => setEditingTransportData({ ...editingData, arrivalTime: e.target.value })}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                   />
                 </div>
               )}
@@ -840,7 +840,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingData.details || ''}
                   onChange={(e) => setEditingTransportData({ ...editingData, details: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs"
+                  className="bg-black/60   text-[#FFFFFF] text-xs"
                   placeholder="其他说明信息"
                 />
               </div>
@@ -875,7 +875,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={transport.id}
-        className={`bg-black/40   rounded-none p-3 transition-colors ${
+        className={`bg-black/60   rounded-none p-3 transition-colors ${
           isCurrentTripFrozen ? '' : 'cursor-pointer hover:bg-black/50'
         }`}
         onClick={() => {
@@ -920,7 +920,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
     if (isEditing) {
       return (
-        <Card key={activity.id} className="  bg-black/40">
+        <Card key={activity.id} className="  bg-black/60">
           <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -928,7 +928,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <select
                   value={editingData.type}
                   onChange={(e) => setEditingActivityData(handleActivityTypeChange(e.target.value, editingData) as ActivityItem)}
-                  className="w-full h-10 rounded-none bg-black/40   text-[#FFFFFF] px-3 text-xs"
+                  className="w-full h-10 rounded-none bg-black/60   text-[#FFFFFF] px-3 text-xs"
                 >
                   <option value="accommodation">住宿</option>
                   <option value="attraction">景点</option>
@@ -943,7 +943,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingData.location || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, location: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs"
+                  className="bg-black/60   text-[#FFFFFF] text-xs"
                   placeholder="活动地点"
                 />
               </div>
@@ -953,13 +953,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.startTime}
                   onChange={(e) => setEditingActivityData({ ...editingData, startTime: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
+                  className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                 />
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
-                  <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                  <label className="flex items-center gap-1 text-xs cursor-pointer">
                     <input
                       type="checkbox"
                       checked={isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset)}
@@ -981,10 +981,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   type="time"
                   value={editingData.endTime || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, endTime: e.target.value || undefined } as ActivityItem)}
-                  className={`bg-black/40  text-[#FFFFFF] text-xs h-10 w-full ${isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) ? 'border-[#FF9500]/60' : ''}`}
+                  className={`bg-black/60  text-[#FFFFFF] text-xs h-10 w-full ${isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) ? 'border-[#FF9500]/60' : ''}`}
                 />
                 {isOvernight(editingData.startTime, editingData.endTime, editingData.endDayOffset) && editingData.endTime && (
-                  <div className="text-[10px] text-[#FF9500] mt-1">
+                  <div className="text-xs text-[#FF9500] mt-1">
                     次日 {editingData.endTime} 结束
                   </div>
                 )}
@@ -994,7 +994,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingData.content || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, content: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40   text-[#FFFFFF] text-xs"
+                  className="bg-black/60   text-[#FFFFFF] text-xs"
                   placeholder="活动内容"
                 />
               </div>
@@ -1003,7 +1003,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingData.notes || ''}
                   onChange={(e) => setEditingActivityData({ ...editingData, notes: e.target.value || undefined } as ActivityItem)}
-                  className="bg-black/40   text-[#FFFFFF] text-xs"
+                  className="bg-black/60   text-[#FFFFFF] text-xs"
                   placeholder="备注"
                 />
               </div>
@@ -1038,7 +1038,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div 
         key={activity.id}
-        className={`bg-black/40   rounded-none p-3.5 sm:p-4 transition-colors ${
+        className={`bg-black/60   rounded-none p-3.5 sm:p-4 transition-colors ${
           isCurrentTripFrozen ? '' : 'cursor-pointer hover:bg-black/50'
         }`}
         onClick={() => {
@@ -1067,7 +1067,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               <p className="text-[#FFFFFF]/60 text-xs mt-1"><MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1" /> {activity.location}</p>
             )}
             {activity.notes && (
-              <p className="text-[#FFFFFF]/40 text-[10px] sm:text-xs mt-1 truncate">{activity.notes}</p>
+              <p className="text-[#FFFFFF]/40 text-xs mt-1 truncate">{activity.notes}</p>
             )}
           </div>
         </div>
@@ -1087,7 +1087,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex items-center mb-5">
-          <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472]">选择旅行</h3>
+          <h3 className="text-lg font-semibold text-[#CEA472]">选择旅行</h3>
         </div>
 
         {confirmedWishes.length === 0 ? (
@@ -1102,7 +1102,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/40  rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors ${isDefault ? '' : ''}`}
+                  className={`bg-black/60  rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/50 transition-colors ${isDefault ? '' : ''}`}
                   onClick={() => selectWish(wish)}
                 >
                   <div className="flex items-start justify-between gap-2.5">
@@ -1137,7 +1137,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     <div className="w-full">
       <div className="flex justify-between items-center mb-5">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
+          <h3 className="text-lg font-semibold text-[#CEA472] truncate">
             {showWishSelector ? '选择旅行' : `${currentTripPlan.destination} 旅行规划`}
           </h3>
         </div>
@@ -1153,7 +1153,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       </div>
 
       <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
+        className={`mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
         onClick={() => {
           if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo) {
             onEditTripInfo({
@@ -1173,7 +1173,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 {currentTripPlan.destination}
               </h4>
               {currentTripPlan.frozen && (
-                <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-[10px] text-blue-400">
+                <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
                   <Snowflake className="w-2.5 h-2.5" />
                   已冻结
                 </span>
@@ -1188,7 +1188,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       </div>
 
       {showSchedule && (
-        <Card className="mb-4 sm:mb-6   bg-black/40">
+        <Card className="mb-4 sm:mb-6   bg-black/60">
           <CardContent className="pt-3 sm:pt-4">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -1203,7 +1203,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-none text-xs font-medium transition-all ${
                   expandEarlyMorning
                     ? 'bg-[#CEA472]/20 text-[#CEA472]  '
-                    : 'bg-black/40 text-[#FFFFFF]/60    hover:text-[#FFFFFF]/80'
+                    : 'bg-black/60 text-[#FFFFFF]/60    hover:text-[#FFFFFF]/80'
                 }`}
               >
                 {expandEarlyMorning ? (
@@ -1229,7 +1229,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     className={`flex-shrink-0 px-3 py-1.5 rounded-none text-xs font-medium transition-all ${
                       selectedDay === day
                         ? 'bg-[#CEA472] text-[#0a0a0f]'
-                        : 'bg-black/40   text-[#FFFFFF]/60 '
+                        : 'bg-black/60   text-[#FFFFFF]/60 '
                     }`}
                   >
                     Day {day}
@@ -1563,7 +1563,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         <div key={day.id} className="flex-1 min-w-[140px] sm:min-w-[160px] max-w-[180px] sm:max-w-[200px] flex flex-col border-l border-[#CEA472]/20">
                           <div className="h-12 border-b border-[#CEA472]/20 p-1.5 sm:p-2 text-center">
                             <div className="text-[#CEA472] font-medium text-xs">Day {day.dayNumber}</div>
-                            {date && <div className="text-[#FFFFFF]/60 text-[10px] sm:text-xs">{date}</div>}
+                            {date && <div className="text-[#FFFFFF]/60 text-xs">{date}</div>}
                           </div>
                           <div className="flex-1 relative">
                             {Array.from({ length: 24 - earliestHour }, (_, i) => i + earliestHour).map(hour => (
@@ -1641,10 +1641,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                     <div className="flex-1 min-w-0">
                                       <div className="text-[#FFFFFF] font-medium text-xs truncate">{title}</div>
                                       {subtitle && (
-                                        <div className="text-[#FFFFFF]/60 text-[10px] truncate">{subtitle}</div>
+                                        <div className="text-[#FFFFFF]/60 text-xs truncate">{subtitle}</div>
                                       )}
                                       {transportText && (
-                                        <div className="text-[#CEA472]/80 text-[10px] truncate">{transportText}</div>
+                                        <div className="text-[#CEA472]/80 text-xs truncate">{transportText}</div>
                                       )}
                                     </div>
                                   </div>
@@ -1666,7 +1666,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       )}
 
       {showWishSelector && (
-        <div className="p-4 bg-black/40 backdrop-blur-md   rounded-none">
+        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
           <div className="space-y-3">
             {confirmedWishes.map(wish => {
               const isDefault = defaultTripId === String(wish.id);
@@ -1680,7 +1680,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   className={`w-full text-left p-4 rounded-none transition-all ${
                     selectedWishId === String(wish.id) 
                       ? 'bg-[#CEA472]/10   text-[#CEA472]' 
-                      : 'bg-black/40   text-[#FFFFFF] hover:bg-black/70'
+                      : 'bg-black/60   text-[#FFFFFF] hover:bg-black/70'
                   }`}
                 >
                   <div className="font-medium text-sm">{wish.destination}</div>
@@ -1705,7 +1705,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
             >
               <span className="text-xs font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
-                <span className="text-[10px] sm:text-xs opacity-70 whitespace-nowrap hidden sm:inline">{getDateDisplay(day)}</span>
+                <span className="text-xs opacity-70 whitespace-nowrap hidden sm:inline">{getDateDisplay(day)}</span>
               )}
             </TabsTrigger>
           ))}
@@ -1721,7 +1721,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改行程规划</span>
               </div>
             )}
-            <div className={`bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
               {/* 构建按时间排序的统一列表 */}
               {(() => {
                 type ItemType = 'arrival' | 'departure' | 'activity';
@@ -1895,7 +1895,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               <Button
                                 onClick={() => addTransport(day, 'between', prevItem.activity!.id, 'arrival')}
                                 variant="outline"
-                                className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                                className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
                                 <Plus className="w-4 h-4 mr-2" />
                                 添加交通
@@ -1920,7 +1920,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               <Button
                                 onClick={() => addTransport(day, 'between', 'departure', item.afterActivityId)}
                                 variant="outline"
-                                className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                                className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
                                 <Plus className="w-4 h-4 mr-2" />
                                 添加交通
@@ -1946,7 +1946,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                               <Button
                                 onClick={() => addTransport(day, 'between', 'arrival', activity.id)}
                                 variant="outline"
-                                className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                                className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                               >
                                 <Plus className="w-4 h-4 mr-2" />
                                 添加交通
@@ -1978,7 +1978,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                                     nextItem.type === 'activity' ? nextItem.activity!.id : 'departure'
                                   )}
                                   variant="outline"
-                                  className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
+                                  className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs"
                                 >
                                   <Plus className="w-4 h-4 mr-2" />
                                   添加交通
@@ -1999,7 +1999,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Button
                   onClick={() => addTransport(day, 'arrival')}
                   variant="outline"
-                  className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
+                  className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   添加到达
@@ -2011,7 +2011,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <Button
                   onClick={() => addTransport(day, 'departure')}
                   variant="outline"
-                  className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
+                  className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   添加离开
@@ -2021,7 +2021,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
               {/* 添加活动按钮 */}
               {!isCurrentTripFrozen && showAddActivity ? (
                 <div className="mt-4">
-                  <div className="  bg-black/40 rounded-none p-4">
+                  <div className="  bg-black/60 rounded-none p-4">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="text-[#CEA472] font-medium text-xs">添加新活动</h4>
                       <Button
@@ -2039,7 +2039,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                         <select
                           value={newActivity.type}
                           onChange={(e) => setNewActivity(handleActivityTypeChange(e.target.value, newActivity) as Omit<ActivityItem, 'id'>)}
-                          className="w-full h-10 rounded-none bg-black/40   text-[#FFFFFF] px-3 text-xs"
+                          className="w-full h-10 rounded-none bg-black/60   text-[#FFFFFF] px-3 text-xs"
                         >
                           <option value="accommodation">住宿</option>
                           <option value="attraction">景点</option>
@@ -2054,7 +2054,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <Input
                             value={newActivity.location || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, location: e.target.value })}
-                            className="bg-black/40   text-[#FFFFFF] text-xs"
+                            className="bg-black/60   text-[#FFFFFF] text-xs"
                             placeholder="活动地点"
                           />
                         </div>
@@ -2064,13 +2064,13 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             type="time"
                             value={newActivity.startTime}
                             onChange={(e) => setNewActivity({ ...newActivity, startTime: e.target.value })}
-                            className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
+                            className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                           />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <Label className="text-[#FFFFFF]/60 text-xs">结束时间 <span className="text-[#FFFFFF]/40">(可选)</span></Label>
-                            <label className="flex items-center gap-1 text-[10px] cursor-pointer">
+                            <label className="flex items-center gap-1 text-xs cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset)}
@@ -2092,10 +2092,10 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                             type="time"
                             value={newActivity.endTime || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value || undefined })}
-                            className={`bg-black/40  text-[#FFFFFF] text-xs h-10 w-full ${isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) ? 'border-[#FF9500]/60' : ''}`}
+                            className={`bg-black/60  text-[#FFFFFF] text-xs h-10 w-full ${isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) ? 'border-[#FF9500]/60' : ''}`}
                           />
                           {isOvernight(newActivity.startTime, newActivity.endTime, newActivity.endDayOffset) && newActivity.endTime && (
-                            <div className="text-[10px] text-[#FF9500] mt-1">
+                            <div className="text-xs text-[#FF9500] mt-1">
                               次日 {newActivity.endTime} 结束
                             </div>
                           )}
@@ -2105,7 +2105,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <Input
                             value={newActivity.content || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, content: e.target.value || undefined })}
-                            className="bg-black/40   text-[#FFFFFF] text-xs"
+                            className="bg-black/60   text-[#FFFFFF] text-xs"
                             placeholder="活动内容"
                           />
                         </div>
@@ -2114,7 +2114,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                           <Input
                             value={newActivity.notes || ''}
                             onChange={(e) => setNewActivity({ ...newActivity, notes: e.target.value || undefined })}
-                            className="bg-black/40   text-[#FFFFFF] text-xs"
+                            className="bg-black/60   text-[#FFFFFF] text-xs"
                             placeholder="备注"
                           />
                         </div>
@@ -2136,7 +2136,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                     <Button
                       onClick={() => setShowAddActivity(true)}
                       variant="outline"
-                      className="w-full justify-start bg-black/40   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
+                      className="w-full justify-start bg-black/60   hover:bg-[#CEA472]/10 text-[#FFFFFF]/60 text-xs mt-4"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       添加活动

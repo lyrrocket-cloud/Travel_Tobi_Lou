@@ -16,8 +16,14 @@ export const metadata: Metadata = {
     '旅行驾驶',
     '旅行',
   ],
-  authors: [{ name: 'Coze Code Team', url: 'https://code.coze.cn' }],
-  generator: 'Coze Code',
+  authors: [{ name: 'Tobi Lou', url: 'https://travel.tobilou.top' }],
+  openGraph: {
+    title: '旅行工具箱',
+    description: '旅行工具箱 - 包含许愿、规划、记账、驾驶等功能',
+    siteName: '旅行工具箱',
+    locale: 'zh_CN',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -28,8 +34,14 @@ export default function RootLayout({
   const isDev = process.env.NODE_ENV === 'development';
 
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body className={`antialiased`}>
+        {/* 仅当 JS 可用时才隐藏 .reveal 内容；若 3s 内 ScrollReveal 未接管，自动恢复可见 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js');setTimeout(function(){if(!document.documentElement.classList.contains('reveal-ready')){document.documentElement.classList.remove('js')}},3000)`,
+          }}
+        />
         <SmoothScroll />
         <ScrollReveal />
         <ScrollProgress />

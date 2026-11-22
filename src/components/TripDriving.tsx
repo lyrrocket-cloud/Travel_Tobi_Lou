@@ -524,7 +524,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex items-center mb-6">
-          <h3 className="text-lg sm:text-xl font-semibold text-[#CEA472]">选择旅行</h3>
+          <h3 className="text-lg font-semibold text-[#CEA472]">选择旅行</h3>
         </div>
 
         {confirmedWishes.length === 0 ? (
@@ -538,7 +538,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               return (
                 <div
                   key={wish.id}
-                  className="bg-black/40   rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/40 transition-colors"
+                  className="bg-black/60   rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/60 transition-colors"
                   onClick={() => {
                     setSelectedWishId(String(wish.id));
                     setActiveTab('entry');
@@ -615,7 +615,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg sm:text-xl font-semibold text-[#CEA472] truncate">
+        <h2 className="text-lg font-semibold text-[#CEA472] truncate">
           {isOverviewMode ? '驾驶记录总览' : isLotteryMode ? '驾驶抽签' : showWishSelector ? '选择旅行' : `${currentWish?.destination} 旅行驾驶`}
         </h2>
         <div className="flex items-center gap-2">
@@ -732,7 +732,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
       {!isOverviewMode && (
         <div 
-          className={`mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
+          className={`mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
           onClick={() => {
             if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo && currentWish) {
               onEditTripInfo({
@@ -751,7 +751,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 <div className="flex items-center gap-1.5">
                   <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
                   {currentTripPlan?.frozen && (
-                    <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-[10px] text-blue-400">
+                    <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
                       <Snowflake className="w-2.5 h-2.5" />
                       已冻结
                     </span>
@@ -766,7 +766,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
       )}
 
       {isOverviewMode && (
-        <div className="mb-4 p-3.5 sm:p-4 bg-black/40 backdrop-blur-md   rounded-none">
+        <div className="mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none">
           <div className="px-1">
             <div className="flex justify-between items-start gap-2 mb-3">
               <div className="min-w-0 flex-1">
@@ -800,14 +800,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
       {/* 抽签模式内容 */}
       {isLotteryMode && (
-        <div className="p-4 bg-black/40 backdrop-blur-md   rounded-none">
+        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
           <div className="flex gap-2">
             <button
               onClick={() => setLotteryMode('fair')}
               className={`flex-1 p-3 rounded-none text-center transition-all ${
                 lotteryMode === 'fair'
                   ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                  : 'bg-black/40   text-[#FFFFFF]/80 hover:bg-black/70'
+                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
               }`}
             >
               <div className="font-medium text-sm">公平模式</div>
@@ -818,7 +818,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               className={`flex-1 p-3 rounded-none text-center transition-all ${
                 lotteryMode === 'random'
                   ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                  : 'bg-black/40   text-[#FFFFFF]/80 hover:bg-black/70'
+                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
               }`}
             >
               <div className="font-medium text-sm">随机模式</div>
@@ -869,14 +869,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             }, 100);
           }}
           disabled={isLotteryRunning || !currentWish?.travelers}
-          className="w-full -mt-2.5 sm:-mt-4 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs sm:text-xs"
+          className="w-full -mt-2.5 sm:-mt-4 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
         >
           {isLotteryRunning ? '抽签中...' : '开始抽签'}
         </Button>
       )}
 
       {showWishSelector && (
-        <div className="p-4 bg-black/40 backdrop-blur-md   rounded-none">
+        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
           <div className="space-y-3">
             {confirmedWishes.map(wish => {
               const existingRecord = tripDrivingRecords.find(record => record.wishId === String(wish.id));
@@ -892,7 +892,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   className={`w-full p-4 rounded-none text-left transition-all ${
                     isSelected
                       ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                      : 'bg-black/40   text-[#FFFFFF] hover:bg-black/70'
+                      : 'bg-black/60   text-[#FFFFFF] hover:bg-black/70'
                   }`}
                 >
                   <div className="font-medium text-sm">{wish.destination}</div>
@@ -942,7 +942,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改驾驶记录</span>
               </div>
             )}
-            <div className={`bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-center gap-3 mb-4">
                 <Car className="w-5 h-5 text-[#CEA472]" />
@@ -960,7 +960,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newDrivingRecord.driver === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/40   text-[#FFFFFF]/60 '
+                            : 'bg-black/60   text-[#FFFFFF]/60 '
                         }`}
                       >
                         {traveler}
@@ -971,7 +971,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   <Input
                     value={newDrivingRecord.driver}
                     onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, driver: e.target.value })}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                     placeholder="输入驾驶员姓名"
                   />
                 )}
@@ -1006,7 +1006,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         }
                       }}
                     >
-                      <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full">
+                      <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full">
                         <SelectValue placeholder="选择自驾行程" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0a0a0f]  ">
@@ -1027,7 +1027,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       <Input
                         value={newDrivingRecord.startLocation}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, startLocation: e.target.value })}
-                        className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                        className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="输入出发地点"
                       />
                     </div>
@@ -1036,7 +1036,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       <Input
                         value={newDrivingRecord.endLocation}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, endLocation: e.target.value })}
-                        className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                        className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="输入目的地点"
                       />
                     </div>
@@ -1050,7 +1050,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         step="0.1"
                         value={newDrivingRecord.distance}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, distance: e.target.value })}
-                        className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                        className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="0.0"
                       />
                     </div>
@@ -1062,7 +1062,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         step="1"
                         value={newDrivingRecord.duration}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, duration: e.target.value })}
-                        className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                        className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="0"
                       />
                     </div>
@@ -1080,7 +1080,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     placeholder="YYYY-MM-DD"
                     value={newDrivingRecord.date}
                     onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, date: e.target.value })}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                   />
                 </div>
                 <div>
@@ -1089,7 +1089,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     type="time"
                     value={newDrivingRecord.time}
                     onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, time: e.target.value })}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                   />
                 </div>
               </div>
@@ -1104,7 +1104,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
                         newDrivingRecord.behaviors.includes(key as DrivingBehavior)
                           ? ' bg-[#CEA472]/10 text-[#CEA472]'
-                          : ' bg-black/40 text-[#FFFFFF]/60 '
+                          : ' bg-black/60 text-[#FFFFFF]/60 '
                       }`}
                     >
                       <span className={config.color}>{config.icon}</span>
@@ -1124,7 +1124,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       newDrivingRecord.duration ? parseFloat(newDrivingRecord.duration) : undefined
                     );
                     return score !== 0 ? (
-                      <div className="mt-3 p-3 bg-black/40 rounded-none  ">
+                      <div className="mt-3 p-3 bg-black/60 rounded-none  ">
                         <div className="text-xs text-[#FFFFFF]/60 mb-2">本次积分：</div>
                         <div className={`text-lg font-semibold ${score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           {score >= 0 ? '+' : ''}{score} 分
@@ -1153,14 +1153,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
               <span className="text-blue-400 text-xs">此行程已冻结，无法修改驾驶记录</span>
             </div>
           )}
-          <div className={`bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
             {(!isOverviewMode && currentDrivingRecord && sortedDrivingRecords.length > 0) ||
              (isOverviewMode && allDrivingRecords.length > 0) ? (
               <div className="space-y-3 sm:space-y-3">
                 {(isOverviewMode ? allDrivingRecords : sortedDrivingRecords).map(record => (
                   <div
                     key={record.id}
-                    className="p-3.5 sm:p-4 rounded-none bg-black/40   hover:bg-black/70 transition-colors"
+                    className="p-3.5 sm:p-4 rounded-none bg-black/60   hover:bg-black/70 transition-colors"
                   >
                     <div className="flex gap-3">
                       <div className="text-xl sm:text-2xl text-[#CEA472] flex-shrink-0 pt-0.5">
@@ -1201,7 +1201,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                                 {record.behaviors.map((behavior, idx) => (
                                   <span
                                     key={idx}
-                                    className={`px-2 py-0.5 rounded-none text-xs ${drivingBehaviors[behavior.type]?.color || 'text-gray-400'} bg-black/40`}
+                                    className={`px-2 py-0.5 rounded-none text-xs ${drivingBehaviors[behavior.type]?.color || 'text-gray-400'} bg-black/60`}
                                   >
                                     {drivingBehaviors[behavior.type]?.label || behavior.type}
                                   </span>
@@ -1257,28 +1257,28 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         </TabsContent>
 
         <TabsContent value="analysis" className="mt-4">
-          <div className="bg-black/40 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
+          <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             <div className="space-y-5 sm:space-y-6">
               <div>
                 <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h4>
                 <div className="space-y-3">
                   {driverStats.map(stat => (
-                    <div key={stat.driver} className="p-4 bg-black/40 rounded-none  ">
+                    <div key={stat.driver} className="p-4 bg-black/60 rounded-none  ">
                       <div className="text-[#CEA472] font-medium text-sm mb-3">{stat.driver}</div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                        <div className="text-center p-2 bg-black/40 rounded-none">
+                        <div className="text-center p-2 bg-black/60 rounded-none">
                           <div className="text-[#FFFFFF]/60">总次数</div>
                           <div className="text-[#FFFFFF] font-medium mt-1">{stat.totalTrips}</div>
                         </div>
-                        <div className="text-center p-2 bg-black/40 rounded-none">
+                        <div className="text-center p-2 bg-black/60 rounded-none">
                           <div className="text-[#FFFFFF]/60">总里程</div>
                           <div className="text-[#FFFFFF] font-medium mt-1">{stat.totalDistance.toFixed(1)} km</div>
                         </div>
-                        <div className="text-center p-2 bg-black/40 rounded-none">
+                        <div className="text-center p-2 bg-black/60 rounded-none">
                           <div className="text-[#FFFFFF]/60">总时长</div>
                           <div className="text-[#FFFFFF] font-medium mt-1">{stat.totalDuration} min</div>
                         </div>
-                        <div className="text-center p-2 bg-black/40 rounded-none">
+                        <div className="text-center p-2 bg-black/60 rounded-none">
                           <div className="text-[#FFFFFF]/60">总积分</div>
                           <div className="font-medium mt-1 text-[#FFFFFF]">
                             {stat.totalScore}
@@ -1317,7 +1317,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                   value={editingRecord.driver}
                   onValueChange={(value) => setEditingRecord({ ...editingRecord, driver: value })}
                 >
-                  <SelectTrigger className="bg-black/40   text-[#FFFFFF] mt-1">
+                  <SelectTrigger className="bg-black/60   text-[#FFFFFF] mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0a0a0f]  ">
@@ -1339,7 +1339,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     placeholder="YYYY-MM-DD"
                     value={editingRecord.date}
                     onChange={(e) => setEditingRecord({ ...editingRecord, date: e.target.value })}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                   />
                 </div>
                 <div>
@@ -1348,7 +1348,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     type="time"
                     value={editingRecord.time || ''}
                     onChange={(e) => setEditingRecord({ ...editingRecord, time: e.target.value })}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                   />
                 </div>
               </div>
@@ -1376,7 +1376,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       }
                     }}
                   >
-                    <SelectTrigger className="bg-black/40   text-[#FFFFFF] text-xs h-10 w-full">
+                    <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full">
                       <SelectValue placeholder="选择自驾行程" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0a0a0f]  ">
@@ -1394,7 +1394,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingRecord.startLocation}
                   onChange={(e) => setEditingRecord({ ...editingRecord, startLocation: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                   placeholder="输入出发地点"
                 />
               </div>
@@ -1403,7 +1403,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 <Input
                   value={editingRecord.endLocation}
                   onChange={(e) => setEditingRecord({ ...editingRecord, endLocation: e.target.value })}
-                  className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                  className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                   placeholder="输入目的地点"
                 />
               </div>
@@ -1423,7 +1423,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         score: calculateScore(editingRecord.behaviors.map(b => b.type), newDistance, editingRecord.duration)
                       });
                     }}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                     placeholder="0.0"
                   />
                 </div>
@@ -1442,7 +1442,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                         score: calculateScore(editingRecord.behaviors.map(b => b.type), editingRecord.distance, newDuration)
                       });
                     }}
-                    className="bg-black/40   text-[#FFFFFF] text-xs h-10"
+                    className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                     placeholder="0"
                   />
                 </div>
@@ -1466,7 +1466,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                       className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
                         editingRecord.behaviors.some(b => b.type === key)
                           ? ' bg-[#CEA472]/10 text-[#CEA472]'
-                          : ' bg-black/40 text-[#FFFFFF]/60 '
+                          : ' bg-black/60 text-[#FFFFFF]/60 '
                       }`}
                     >
                       <span className={config.color}>{config.icon}</span>
@@ -1479,7 +1479,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                     </button>
                   ))}
                 </div>
-                <div className="mt-3 p-3 bg-black/40 rounded-none  ">
+                <div className="mt-3 p-3 bg-black/60 rounded-none  ">
                   <div className="text-xs text-[#FFFFFF]/60 mb-2">本次积分：</div>
                   <div className={`text-lg font-semibold ${editingRecord.score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                     {editingRecord.score >= 0 ? '+' : ''}{editingRecord.score} 分
@@ -1495,7 +1495,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 setShowEditDriving(false);
                 setEditingRecord(null);
               }}
-              className="bg-black/40   text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60   text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1524,7 +1524,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 setShowDeleteConfirm(false);
                 setDeletingRecordId(null);
               }}
-              className="bg-black/40   text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60   text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>

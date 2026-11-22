@@ -865,10 +865,9 @@ export default function Home() {
     if (mainTab === 'wish') {
       return (
         <div className="space-y-5">
-          {/* 年度时间轴 */}
-          {wishes.length > 0 && (
-            <Card className="w-full max-w-7xl mx-auto bg-black/40 mb-5">
-              <CardContent className="pt-3.5 sm:pt-6 px-2.5 sm:px-6">
+          {/* 年度时间轴（常驻渲染，加载期用骨架占位，避免数据到达后整页下推） */}
+          <Card className="w-full max-w-7xl mx-auto bg-black/60 mb-5">
+            <CardContent className="pt-3.5 sm:pt-6 px-2.5 sm:px-6">
                 {/* 年度切换 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 mb-3.5 sm:mb-6">
                   <button
@@ -903,12 +902,22 @@ export default function Home() {
                   </button>
                 </div>
                 
+                {loading ? (
+                  /* 骨架占位高度与最终内容一致（含月份行 33px + 移动端列表），避免加载完成时整页下推 */
+                  <div className="min-h-[663px] sm:min-h-[147px] flex flex-col gap-3 pt-1">
+                    <div className="skeleton-shimmer h-[24px] sm:h-[32px] w-full shrink-0" />
+                    {[0, 1, 2, 3].map(i => (
+                      <div key={i} className="skeleton-shimmer flex-1 w-full" />
+                    ))}
+                  </div>
+                ) : (
                 <div className="relative">
                   {/* 时间轴主线 */}
                   <div className="absolute top-4.5 sm:top-6 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#CEA472]/50 to-transparent" />
                   
-                  {/* 月份节点 */}
-                  <div className="grid grid-cols-12 gap-0.5 sm:gap-2 relative">
+                  {/* 月份节点：移动端横向滚动 + scroll-snap，桌面端保持 12 列 */}
+                  <div className="-mx-2.5 sm:mx-0">
+                    <div className="grid grid-flow-col auto-cols-[16.6667%] gap-0.5 overflow-x-auto snap-x snap-mandatory scroll-px-4 px-4 pt-0.5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-16px),transparent)] sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-12 sm:gap-2 sm:overflow-visible sm:px-0 sm:pb-2 sm:[mask-image:none]">
                     {monthsShort.map((month, idx) => {
                       const monthNum = idx + 1;
                       const now = new Date();
@@ -939,7 +948,7 @@ export default function Home() {
                       const showGray = isPastMonth || hasExpiredTrips;
                       
                       return (
-                        <div key={month} className="flex flex-col items-center min-w-0">
+                        <div key={month} className="flex flex-col items-center min-w-0 snap-start">
                           {/* 月份节点 */}
                           <div 
                             className={`w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
@@ -953,7 +962,7 @@ export default function Home() {
                             }`}
                           />
                           {/* 月份标签 */}
-                          <span className={`text-[8px] sm:text-xs mt-2 sm:mt-4 ${
+                          <span className={`text-xs text-center leading-normal pb-1 mt-2 sm:mt-4 ${
                             hasAnyWishes
                               ? showGray ? 'text-gray-400 font-semibold' : 'text-[#CEA472] font-semibold'
                               : isPastMonth ? 'text-gray-400/50' : 'text-[#FFFFFF]/40'
@@ -979,8 +988,8 @@ export default function Home() {
                                         : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
                                     }`}
                                   >
-                                    <div className={`font-semibold truncate text-[10px] sm:text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
-                                    <div className="text-[#FFFFFF]/60 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
+                                    <div className={`font-semibold truncate text-xs ${isExpired ? 'text-gray-400' : 'text-[#CEA472]'}`}>{trip.destination}</div>
+                                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">{formattedDate}</div>
                                   </div>
                                 );
                               })}
@@ -995,8 +1004,8 @@ export default function Home() {
                                     onClick={() => handleUnconfirmedWishClick(wish.id)}
                                     className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/5    hover:bg-gray-500/10"
                                   >
-                                    <div className="font-semibold truncate text-[10px] sm:text-xs text-gray-400">{wish.destination}</div>
-                                    <div className="text-gray-500 text-[8px] sm:text-[10px] mt-0.5">{formattedDate}</div>
+                                    <div className="font-semibold truncate text-xs text-gray-400">{wish.destination}</div>
+                                    <div className="text-gray-500 text-xs mt-0.5">{formattedDate}</div>
                                   </div>
                                 );
                               })}
@@ -1005,6 +1014,7 @@ export default function Home() {
                         </div>
                       );
                     })}
+                    </div>
                   </div>
                   
                   {/* 手机端：已确认旅行和未成行愿望列表 */}
@@ -1060,22 +1070,22 @@ export default function Home() {
                       })}
                   </div>
                 </div>
+                )}
               </CardContent>
             </Card>
-          )}
 
-          {/* 子标签页 */}
-          <Tabs value={activeTab} onValueChange={(v) => wishTabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
+          {/* 子标签页（首屏之下，进入视口后再入场） */}
+          <Tabs value={activeTab} onValueChange={(v) => wishTabTransition.switchTo(v, () => setActiveTab(v))} className="w-full reveal">
             <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
               <TabsTrigger
                 value="make-wish"
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
               >
                 抛硬币
               </TabsTrigger>
               <TabsTrigger
                 value="wish-pool"
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
               >
                 许愿池
               </TabsTrigger>
@@ -1084,11 +1094,12 @@ export default function Home() {
             <div className="relative">
               <div className="transition-opacity duration-200" style={{ opacity: wishTabTransition.contentOpacity }}>
             {/* Make Wish Tab */}
-            <TabsContent value="make-wish" className="space-y-4.5 sm:space-y-6 min-h-[400px]">
-              <Card className="  bg-black/40 backdrop-blur-sm">
+            <TabsContent value="make-wish" className="min-h-[400px]">
+              <div className="reveal reveal-group space-y-4.5 sm:space-y-6">
+              <Card className="bg-black/60 backdrop-blur-sm">
                 <CardContent className="space-y-4.5 pt-3.5 sm:pt-6 px-3.5 sm:px-6">
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
+                    <Label htmlFor="destination" className="flex items-center gap-2 text-[#FFFFFF] text-xs">
                       <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       目的地
                     </Label>
@@ -1097,13 +1108,13 @@ export default function Home() {
                       placeholder="例如：巴黎、东京、马尔代夫..."
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/60  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs"
                       disabled={isAnimating}
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
+                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-xs">
                       <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       希望出行年月
                     </Label>
@@ -1112,13 +1123,13 @@ export default function Home() {
                       placeholder="YYYY-MM（如：2026-03）"
                       value={travelYearMonth}
                       onChange={(e) => setTravelYearMonth(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/60  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs"
                       disabled={isAnimating}
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF] text-xs sm:text-xs">
+                    <Label htmlFor="name" className="flex items-center gap-2 text-[#FFFFFF] text-xs">
                       <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       许愿人姓名
                     </Label>
@@ -1127,7 +1138,7 @@ export default function Home() {
                       placeholder="请输入您的姓名"
                       value={wisherName}
                       onChange={(e) => setWisherName(e.target.value)}
-                      className="h-10 sm:h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs sm:text-xs"
+                      className="h-10 sm:h-11 bg-black/60  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40  text-xs"
                       disabled={isAnimating}
                     />
                   </div>
@@ -1139,7 +1150,7 @@ export default function Home() {
               <Button
                 onClick={handleMakeWish}
                 disabled={isAnimating}
-                className="w-full -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs sm:text-xs"
+                className="w-full -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs"
               >
                 {isAnimating ? (
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -1154,6 +1165,7 @@ export default function Home() {
                   <span>抛硬币</span>
                 )}
               </Button>
+              </div>
 
               {isAnimating && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
@@ -1191,12 +1203,17 @@ export default function Home() {
 
             {/* Wish Pool Tab */}
             <TabsContent value="wish-pool" className="space-y-5 min-h-[400px]">
-              <Card className="  bg-black/40 backdrop-blur-sm">
+              <Card className="reveal bg-black/60 backdrop-blur-sm">
                 <CardContent className="pt-5 sm:pt-6 px-2.5 sm:px-6">
                   {loading ? (
-                    <div className="text-center py-12">
-                      <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#CEA472] border-t-transparent" />
-                      <p className="mt-4 text-[#FFFFFF]/60">加载中...</p>
+                    <div className="space-y-3" aria-busy="true" aria-label="加载中">
+                      {[0, 1, 2].map(i => (
+                        <div key={i} className="p-3.5 sm:p-6 space-y-2.5">
+                          <div className="skeleton-shimmer h-4 w-2/5" />
+                          <div className="skeleton-shimmer h-3.5 w-3/5" />
+                          <div className="skeleton-shimmer h-3.5 w-1/3" />
+                        </div>
+                      ))}
                     </div>
                   ) : wishes.length === 0 ? (
                     <div className="text-center py-12">
@@ -1215,7 +1232,7 @@ export default function Home() {
                               ? ' bg-gray-500/5'
                               : wish.is_confirmed === 1
                                 ? ' bg-[#CEA472]/10 cursor-pointer hover:scale-[1.01] hover:bg-[#CEA472]/15' 
-                                : ' bg-black/40  hover:bg-black/60'
+                                : ' bg-black/60  hover:bg-black/70'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2.5">
@@ -1226,11 +1243,11 @@ export default function Home() {
                                   {wish.destination}
                                 </h3>
                                 {wish.is_expired === 1 ? (
-                                  <span className="px-1.5 py-0.5 text-[9px] sm:text-xs bg-gray-500/50 text-gray-300 rounded-none font-semibold flex-shrink-0">
+                                  <span className="px-1.5 py-0.5 text-xs bg-gray-500/50 text-gray-300 rounded-none font-semibold flex-shrink-0">
                                     已过期
                                   </span>
                                 ) : wish.is_confirmed === 1 && (
-                                  <span className="px-1.5 py-0.5 text-[9px] sm:text-xs bg-[#CEA472] text-[#0a0a0f] rounded-none font-semibold flex-shrink-0">
+                                  <span className="px-1.5 py-0.5 text-xs bg-[#CEA472] text-[#0a0a0f] rounded-none font-semibold flex-shrink-0">
                                     已成行
                                   </span>
                                 )}
@@ -1264,17 +1281,17 @@ export default function Home() {
                               )}
 
                               {/* 跟随人信息 - 所有愿望都显示 */}
-                              <div className={`text-[9px] sm:text-xs pl-4.5 sm:pl-6 ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>
+                              <div className={`text-xs pl-4.5 sm:pl-6 ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>
                                 {wish.followers.length > 0 ? (
                                   <div className="flex flex-wrap items-center gap-1">
                                     <div className="flex items-center gap-0.5 flex-shrink-0">
                                       <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                      <span className={`text-[9px] sm:text-xs ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>{wish.followers.length} 人跟随：</span>
+                                      <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`}>{wish.followers.length} 人跟随：</span>
                                     </div>
                                     <div className="flex flex-wrap gap-1 overflow-hidden">
                                       {wish.followers.map((name, idx) => (
-                                        <div key={idx} className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-none ${wish.is_expired === 1 ? 'bg-gray-500/20 ' : 'bg-black/40  '}`}>
-                                          <span className={`text-[9px] sm:text-xs truncate max-w-[60px] sm:max-w-none ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
+                                        <div key={idx} className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-none ${wish.is_expired === 1 ? 'bg-gray-500/20 ' : 'bg-black/60  '}`}>
+                                          <span className={`text-xs truncate max-w-[60px] sm:max-w-none ${wish.is_expired === 1 ? 'text-gray-400/80' : 'text-[#FFFFFF]/80'}`}>{name}</span>
                                           {isAdminMode && (
                                             <button
                                               onClick={() => handleOpenDeleteFollowerDialog(wish.id, name)}
@@ -1291,7 +1308,7 @@ export default function Home() {
                                 ) : (
                                   <div className="flex items-center gap-1">
                                     <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${wish.is_expired === 1 ? 'text-gray-400' : 'text-[#CEA472]'}`} />
-                                    <span className={`text-[9px] sm:text-xs ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>暂无跟随</span>
+                                    <span className={`text-xs ${wish.is_expired === 1 ? 'text-gray-400/50' : 'text-[#FFFFFF]/50'}`}>暂无跟随</span>
                                   </div>
                                 )}
                               </div>
@@ -1485,7 +1502,7 @@ export default function Home() {
         <div className="flex items-center justify-between mb-5 max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* 图标容器 - 金色衬底 + 黑色线框 */}
-            <div className="glow-icon animate-hero-avatar w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-none sm:rounded-none md:rounded-none" style={{
+            <div className="animate-hero-avatar w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-none sm:rounded-none md:rounded-none" style={{
               backgroundColor: '#CEA472',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
             }}>
@@ -1493,7 +1510,7 @@ export default function Home() {
             </div>
             <SplitTextTitle
               as="h1"
-              className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-wide"
+              className="text-3xl md:text-[40px] font-semibold leading-[1.1] tracking-wide"
               lines={[{ text: '旅行工具箱', className: 'text-[#CEA472]' }]}
             />
           </div>
@@ -1536,7 +1553,7 @@ export default function Home() {
               <TabsTrigger
                 value="wish"
                 style={{ animationDelay: '0ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Plane className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行许愿</span>
@@ -1544,7 +1561,7 @@ export default function Home() {
               <TabsTrigger
                 value="plan"
                 style={{ animationDelay: '60ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Map className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行规划</span>
@@ -1552,7 +1569,7 @@ export default function Home() {
               <TabsTrigger
                 value="account"
                 style={{ animationDelay: '120ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Receipt className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行记账</span>
@@ -1560,7 +1577,7 @@ export default function Home() {
               <TabsTrigger
                 value="drive"
                 style={{ animationDelay: '180ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs sm:text-sm md:text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
+                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
               >
                 <Car className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
                 <span className="truncate leading-tight">旅行驾驶</span>
@@ -1592,7 +1609,7 @@ export default function Home() {
               type="password"
               value={adminPassword}
               onChange={(e) => setAdminPassword(e.target.value)}
-              className="bg-black/40  text-[#FFFFFF]"
+              className="bg-black/60  text-[#FFFFFF]"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleAdminLogin();
@@ -1604,7 +1621,7 @@ export default function Home() {
             <Button
               variant="outline"
               onClick={() => setPasswordModalOpen(false)}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1630,7 +1647,7 @@ export default function Home() {
               id="edit-destination"
               value={editingWish?.destination || ''}
               onChange={(e) => editingWish && setEditingWish({ ...editingWish, destination: e.target.value })}
-              className="bg-black/40  text-[#FFFFFF]"
+              className="bg-black/60  text-[#FFFFFF]"
             />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -1640,7 +1657,7 @@ export default function Home() {
                   type="number"
                   value={editingWish?.travel_year || ''}
                   onChange={(e) => editingWish && setEditingWish({ ...editingWish, travel_year: parseInt(e.target.value) })}
-                  className="bg-black/40  text-[#FFFFFF]"
+                  className="bg-black/60  text-[#FFFFFF]"
                 />
               </div>
               <div className="space-y-2">
@@ -1649,7 +1666,7 @@ export default function Home() {
                   id="edit-month"
                   value={editingWish?.travel_month || ''}
                   onChange={(e) => editingWish && setEditingWish({ ...editingWish, travel_month: e.target.value })}
-                  className="w-full h-11 rounded-none bg-black/40   text-[#FFFFFF] px-3"
+                  className="w-full h-11 rounded-none bg-black/60   text-[#FFFFFF] px-3"
                 >
                   {months.map((month) => (
                     <option key={month} value={month}>{month}</option>
@@ -1662,7 +1679,7 @@ export default function Home() {
               id="edit-wisher"
               value={editingWish?.wisher_name || ''}
               onChange={(e) => editingWish && setEditingWish({ ...editingWish, wisher_name: e.target.value })}
-              className="bg-black/40  text-[#FFFFFF]"
+              className="bg-black/60  text-[#FFFFFF]"
             />
           </div>
           <DialogFooter>
@@ -1672,7 +1689,7 @@ export default function Home() {
                 setEditModalOpen(false);
                 setEditingWish(null);
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1700,7 +1717,7 @@ export default function Home() {
               placeholder="YYYY-MM-DD"
               value={confirmDate}
               onChange={(e) => setConfirmDate(e.target.value.replace(/\//g, '-'))}
-              className="bg-black/40  text-[#FFFFFF]"
+              className="bg-black/60  text-[#FFFFFF]"
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -1712,7 +1729,7 @@ export default function Home() {
                   max="30"
                   value={confirmTravelDays}
                   onChange={(e) => setConfirmTravelDays(e.target.value)}
-                  className="bg-black/40  text-[#FFFFFF]"
+                  className="bg-black/60  text-[#FFFFFF]"
                 />
               </div>
               <div>
@@ -1721,7 +1738,7 @@ export default function Home() {
                   id="confirm-travelers"
                   value={confirmTravelers}
                   onChange={(e) => setConfirmTravelers(e.target.value)}
-                  className="bg-black/40  text-[#FFFFFF]"
+                  className="bg-black/60  text-[#FFFFFF]"
                   placeholder="例如：张三、李四、王五"
                 />
               </div>
@@ -1737,7 +1754,7 @@ export default function Home() {
                 setConfirmTravelers('');
                 setConfirmTravelDays('3');
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1765,7 +1782,7 @@ export default function Home() {
                 setCancelConfirmModalOpen(false);
                 setCancelingWishId('');
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1793,7 +1810,7 @@ export default function Home() {
                 setDeleteModalOpen(false);
                 setDeletingWishId('');
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1827,7 +1844,7 @@ export default function Home() {
                 placeholder="YYYY-MM-DD"
                 value={editingTripInfo?.confirmed_date || ''}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, confirmed_date: e.target.value } : null)}
-                className="bg-black/40   text-[#FFFFFF] mt-1 text-xs"
+                className="bg-black/60   text-[#FFFFFF] mt-1 text-xs"
               />
             </div>
             <div>
@@ -1839,7 +1856,7 @@ export default function Home() {
                 max="30"
                 value={editingTripInfo?.travelDays || 3}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelDays: parseInt(e.target.value) || 1 } : null)}
-                className="bg-black/40   text-[#FFFFFF] mt-1 text-xs"
+                className="bg-black/60   text-[#FFFFFF] mt-1 text-xs"
               />
             </div>
             <div>
@@ -1848,7 +1865,7 @@ export default function Home() {
                 id="trip-info-travelers"
                 value={editingTripInfo?.travelers || ''}
                 onChange={(e) => setEditingTripInfo(prev => prev ? { ...prev, travelers: e.target.value } : null)}
-                className="bg-black/40   text-[#FFFFFF] mt-1 text-xs"
+                className="bg-black/60   text-[#FFFFFF] mt-1 text-xs"
                 placeholder="例如：张三、李四、王五"
               />
             </div>
@@ -1860,7 +1877,7 @@ export default function Home() {
                 setTripInfoEditModalOpen(false);
                 setEditingTripInfo(null);
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
             >
               取消
             </Button>
@@ -1888,14 +1905,14 @@ export default function Home() {
               placeholder="YYYY-MM-DD"
               value={editingTrip?.confirmed_date || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, confirmed_date: e.target.value })}
-              className="bg-black/40  text-[#FFFFFF] text-xs"
+              className="bg-black/60  text-[#FFFFFF] text-xs"
             />
             <Label htmlFor="edit-trip-travelers" className="text-[#FFFFFF] text-xs">同行人员</Label>
             <Input
               id="edit-trip-travelers"
               value={editingTrip?.travelers || ''}
               onChange={(e) => editingTrip && setEditingTrip({ ...editingTrip, travelers: e.target.value })}
-              className="bg-black/40  text-[#FFFFFF] text-xs"
+              className="bg-black/60  text-[#FFFFFF] text-xs"
               placeholder="例如：张三、李四、王五"
             />
           </div>
@@ -1906,7 +1923,7 @@ export default function Home() {
                 setEditTripModalOpen(false);
                 setEditingTrip(null);
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10 text-xs"
             >
               取消
             </Button>
@@ -1933,7 +1950,7 @@ export default function Home() {
               placeholder="请输入您的姓名"
               value={followerName}
               onChange={(e) => setFollowerName(e.target.value)}
-              className="h-11 bg-black/40  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 "
+              className="h-11 bg-black/60  text-[#FFFFFF] placeholder:text-[#FFFFFF]/40 "
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleFollow();
@@ -1949,7 +1966,7 @@ export default function Home() {
                 setFollowingWishId('');
                 setFollowerName('');
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>
@@ -1978,7 +1995,7 @@ export default function Home() {
                 setDeletingFollowerWishId('');
                 setDeleteFollowerName('');
               }}
-              className="bg-black/40  text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-black/60  text-[#FFFFFF] hover:bg-[#CEA472]/10"
             >
               取消
             </Button>

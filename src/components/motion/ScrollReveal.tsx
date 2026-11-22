@@ -11,6 +11,9 @@ export function ScrollReveal() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // 标记 reveal 已接管，取消 <head> 里的 3s 兜底恢复
+    document.documentElement.classList.add('reveal-ready');
+
     const revealAll = () => {
       document
         .querySelectorAll('.reveal')
@@ -22,17 +25,28 @@ export function ScrollReveal() {
       return;
     }
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
-    );
+    if (typeof IntersectionObserver === 'undefined') {
+      revealAll();
+      return;
+    }
+
+    let io: IntersectionObserver;
+    try {
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: '0px 0px -8% 0px' },
+      );
+    } catch {
+      revealAll();
+      return;
+    }
 
     const observeAll = () => {
       document

@@ -59,14 +59,21 @@ export function SplitTextTitle({
     const splits: SplitText[] = [];
     const chars: Element[] = [];
 
-    root.querySelectorAll<HTMLElement>('[data-split-line]').forEach((line) => {
-      const split = new SplitText(line, {
-        type: 'chars',
-        charsClass: 'split-char',
+    try {
+      root.querySelectorAll<HTMLElement>('[data-split-line]').forEach((line) => {
+        const split = new SplitText(line, {
+          type: 'chars',
+          charsClass: 'split-char',
+        });
+        splits.push(split);
+        chars.push(...split.chars);
       });
-      splits.push(split);
-      chars.push(...split.chars);
-    });
+    } catch {
+      // 拆分失败时直接呈现最终态，避免标题永久不可见
+      splits.forEach((s) => s.revert());
+      revealMasks();
+      return;
+    }
 
     if (!chars.length) {
       revealMasks();
@@ -81,7 +88,6 @@ export function SplitTextTitle({
       yPercent: 115,
       opacity: 0,
       rotateX: -75,
-      filter: 'blur(8px)',
       duration: 0.95,
       ease: 'power3.out',
       stagger: 0.045,
@@ -110,7 +116,6 @@ export function SplitTextTitle({
             maskRefs.current[i] = el;
           }}
           className="split-line-mask block overflow-hidden"
-          style={{ opacity: 0 }}
         >
           <span
             data-split-line
