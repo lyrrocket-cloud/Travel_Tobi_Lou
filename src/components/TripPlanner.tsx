@@ -1087,7 +1087,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex items-center mb-5">
-          <h3 className="text-lg font-semibold text-[#CEA472]">选择旅行</h3>
+          <h2 className="text-lg font-semibold text-[#CEA472]">选择旅行</h2>
         </div>
 
         {confirmedWishes.length === 0 ? (
@@ -1108,7 +1108,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
+                        <h3 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h3>
                       </div>
                       <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
@@ -1137,9 +1137,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     <div className="w-full">
       <div className="flex justify-between items-center mb-5">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          <h3 className="text-lg font-semibold text-[#CEA472] truncate">
+          <h2 className="text-lg font-semibold text-[#CEA472] truncate">
             {showWishSelector ? '选择旅行' : `${currentTripPlan.destination} 旅行规划`}
-          </h3>
+          </h2>
         </div>
         <Button
           variant="ghost"
@@ -1169,9 +1169,9 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <h4 className="text-[#FFFFFF] font-medium text-xs truncate">
+              <h3 className="text-[#FFFFFF] font-medium text-xs truncate">
                 {currentTripPlan.destination}
-              </h4>
+              </h3>
               {currentTripPlan.frozen && (
                 <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
                   <Snowflake className="w-2.5 h-2.5" />
@@ -1195,7 +1195,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-none bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
                   <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#0a0a0f]" />
                 </div>
-                <h4 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h4>
+                <h3 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h3>
               </div>
               {/* 折叠/展开凌晨时段按钮 */}
               <button
@@ -2023,7 +2023,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
                 <div className="mt-4">
                   <div className="  bg-black/60 rounded-none p-4">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-[#CEA472] font-medium text-xs">添加新活动</h4>
+                      <h3 className="text-[#CEA472] font-medium text-xs">添加新活动</h3>
                       <Button
                         size="icon"
                         variant="ghost"

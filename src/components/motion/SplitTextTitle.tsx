@@ -104,11 +104,13 @@ export function SplitTextTitle({
 
   return createElement(
     as,
-    { ref: rootRef, className },
+    {
+      ref: rootRef,
+      className,
+      // 拆分后的字符 span 不参与可访问名，标题语义由完整文本提供
+      'aria-label': lines.map((line) => line.text).join(' '),
+    },
     <>
-      <noscript>
-        <style>{`.split-line-mask{opacity:1 !important}`}</style>
-      </noscript>
       {lines.map((line, i) => (
         <span
           key={i}

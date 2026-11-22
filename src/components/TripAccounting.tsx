@@ -88,7 +88,12 @@ interface TripAccountingProps {
 export default function TripAccounting({ confirmedWishes, isAdminMode = false, onEditTripInfo }: TripAccountingProps) {
   const [tripExpenses, setTripExpenses] = useState<TripExpenseRecord[]>([]);
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
-  const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
+  // 首次渲染即从 localStorage 恢复选中的旅行（该组件只在“旅行记账”标签激活时挂载），
+  // 避免先渲染“选择旅行”界面、随后再跳回具体行程造成的闪烁
+  const [selectedWishId, setSelectedWishId] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return window.localStorage.getItem('travel-toolbox-selected-wish-id');
+  });
   const [showWishSelector, setShowWishSelector] = useState(false);
   const [activeTab, setActiveTab] = useState('entry');
   const tabTransition = useTabTransition();
@@ -319,6 +324,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }
     setInitializedTabFromStorage(true);
 
+    // 同步恢复上次选中的旅行，不等待默认旅行接口返回
+    if (savedWishId) {
+      setSelectedWishId(savedWishId);
+    }
+
     // 从数据库获取默认旅行
     const fetchDefaultTrip = async () => {
       try {
@@ -330,10 +340,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
       } catch (error) {
         console.error('[Trip Accounting] Failed to fetch default trip:', error);
       } finally {
-        // 如果有保存的愿望ID，使用它（包括刷新页面）
-        if (savedWishId) {
-          setSelectedWishId(savedWishId);
-        }
         setInitializedFromStorage(true);
       }
     };
@@ -930,11 +936,20 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     }));
   };
 
+  // 初始化或自动选中完成前先显示骨架，避免闪出“选择旅行”界面
+  if (!selectedWishId && (!initializedFromStorage || loading || confirmedWishes.length > 0)) {
+    return (
+      <div className="relative w-full min-h-[320px]">
+        <TabSwitchSkeleton />
+      </div>
+    );
+  }
+
   if (!selectedWishId) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex items-center mb-6">
-          <h3 className="text-lg font-semibold text-[#CEA472]">选择旅行</h3>
+          <h2 className="text-lg font-semibold text-[#CEA472]">选择旅行</h2>
         </div>
 
         {confirmedWishes.length === 0 ? (
@@ -962,7 +977,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
+                        <h3 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h3>
                       </div>
                       <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
@@ -1056,7 +1071,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           <div className="flex justify-between items-start gap-2">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
+                <h3 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h3>
                 {currentTripPlan?.frozen && (
                   <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
                     <Snowflake className="w-2.5 h-2.5" />
@@ -1661,7 +1676,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 </div>
 
                 <div>
-                  <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按类别统计</h4>
+                  <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">按类别统计</h3>
                   <div className="space-y-2">
                     {Object.entries(filteredStats.categories).map(([category, amount]) => (
                       <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/60 rounded-none">
@@ -1677,7 +1692,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
                 {Object.keys(filteredStats.byPayer).length > 0 && (
                   <div>
-                    <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">按支付人统计</h4>
+                    <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">按支付人统计</h3>
                     <div className="space-y-2">
                       {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
                         <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/60 rounded-none">
@@ -1690,7 +1705,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
                 )}
 
                 <div>
-                  <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">收支结算</h4>
+                  <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">收支结算</h3>
                   <div className="space-y-2">
                     {travelers
                       .filter(traveler => !analysisConsumerFilter || traveler === analysisConsumerFilter)

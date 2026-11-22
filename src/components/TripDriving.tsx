@@ -524,7 +524,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     return (
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex items-center mb-6">
-          <h3 className="text-lg font-semibold text-[#CEA472]">选择旅行</h3>
+          <h2 className="text-lg font-semibold text-[#CEA472]">选择旅行</h2>
         </div>
 
         {confirmedWishes.length === 0 ? (
@@ -547,7 +547,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
                 >
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h4>
+                      <h3 className="text-[#FFFFFF] font-medium text-xs truncate">{wish.destination}</h3>
                       <p className="text-[#FFFFFF]/60 text-xs mt-1">
                         {wish.confirmed_date} · {wish.travelers}
                       </p>
@@ -749,7 +749,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             <div className="flex justify-between items-start gap-2">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <h4 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h4>
+                  <h3 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h3>
                   {currentTripPlan?.frozen && (
                     <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
                       <Snowflake className="w-2.5 h-2.5" />
@@ -770,7 +770,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <div className="px-1">
             <div className="flex justify-between items-start gap-2 mb-3">
               <div className="min-w-0 flex-1">
-                <h4 className="text-[#CEA472] font-medium text-xs">总览</h4>
+                <h3 className="text-[#CEA472] font-medium text-xs">总览</h3>
                 <p className="text-[#FFFFFF]/60 text-xs mt-0.5">所有旅行驾驶记录</p>
               </div>
             </div>
@@ -1260,7 +1260,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <h4 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h4>
+                <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h3>
                 <div className="space-y-3">
                   {driverStats.map(stat => (
                     <div key={stat.driver} className="p-4 bg-black/60 rounded-none  ">

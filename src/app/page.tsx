@@ -871,29 +871,31 @@ export default function Home() {
                 {/* 年度切换 */}
                 <div className="flex items-center justify-center gap-2.5 sm:gap-4 mb-3.5 sm:mb-6">
                   <button
+                    aria-label={`切换到 ${selectedYear - 1} 年`}
                     onClick={() => {
                       if (selectedYear > 2025) {
                         setSelectedYear(selectedYear - 1);
                       }
                     }}
-                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    className="hit-expand hit-expand-icon text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                     disabled={selectedYear <= 2025}
                   >
                     <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <h3 className="text-[#CEA472] font-semibold flex items-center gap-1.5 sm:gap-2 min-w-[100px] sm:min-w-[140px] justify-center text-sm sm:text-base md:text-lg">
+                  <h2 className="text-[#CEA472] font-semibold flex items-center gap-1.5 sm:gap-2 min-w-[100px] sm:min-w-[140px] justify-center text-sm sm:text-base md:text-lg">
                     <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:w-5 sm:h-5" />
                     {selectedYear} 旅行计划
-                  </h3>
+                  </h2>
                   <button
+                    aria-label={`切换到 ${selectedYear + 1} 年`}
                     onClick={() => {
                       if (selectedYear < 2030) {
                         setSelectedYear(selectedYear + 1);
                       }
                     }}
-                    className="text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                    className="hit-expand hit-expand-icon text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-[#CEA472]/10 p-2 rounded-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                     disabled={selectedYear >= 2030}
                   >
                     <svg className="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1114,11 +1116,12 @@ export default function Home() {
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="flex items-center gap-2 text-[#FFFFFF] text-xs">
+                    <Label htmlFor="travel-year-month" className="flex items-center gap-2 text-[#FFFFFF] text-xs">
                       <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472]" />
                       希望出行年月
                     </Label>
                     <Input
+                      id="travel-year-month"
                       type="text"
                       placeholder="YYYY-MM（如：2026-03）"
                       value={travelYearMonth}
@@ -1203,6 +1206,7 @@ export default function Home() {
 
             {/* Wish Pool Tab */}
             <TabsContent value="wish-pool" className="space-y-5 min-h-[400px]">
+              <h2 className="sr-only">许愿池</h2>
               <Card className="reveal bg-black/60 backdrop-blur-sm">
                 <CardContent className="pt-5 sm:pt-6 px-2.5 sm:px-6">
                   {loading ? (
@@ -1518,7 +1522,8 @@ export default function Home() {
             <button
               onClick={handleShare}
               title="分享当前页面"
-              className="flex items-center gap-1 text-xs sm:text-sm text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors"
+              aria-label="分享页面"
+              className="hit-expand hit-expand-share flex items-center gap-1 text-xs sm:text-sm text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors"
             >
               {shareSuccess ? (
                 <>
@@ -1535,6 +1540,8 @@ export default function Home() {
             <span className={`text-xs sm:text-sm ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40'}`}>管理</span>
             <Switch
               checked={isAdminMode}
+              className="hit-expand hit-expand-switch"
+              aria-label="切换管理模式"
               onCheckedChange={(checked) => {
                 if (checked) {
                   setPasswordModalOpen(true);
