@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Star, RefreshCw, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, X, Snowflake } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -76,16 +76,9 @@ const currencySymbols: Record<CurrencyCode, string> = {
 interface TripAccountingProps {
   confirmedWishes: Wish[];
   isAdminMode?: boolean;
-  onEditTripInfo?: (info: {
-    id: string;
-    confirmed_date?: string;
-    travelDays?: number;
-    travelers?: string;
-    destination?: string;
-  }) => void;
 }
 
-export default function TripAccounting({ confirmedWishes, isAdminMode = false, onEditTripInfo }: TripAccountingProps) {
+export default function TripAccounting({ confirmedWishes, isAdminMode = false }: TripAccountingProps) {
   const [tripExpenses, setTripExpenses] = useState<TripExpenseRecord[]>([]);
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   // 首次渲染即从 localStorage 恢复选中的旅行（该组件只在“旅行记账”标签激活时挂载），
@@ -347,12 +340,28 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     fetchDefaultTrip();
   }, []);
 
-  // 保存选中的旅行到 localStorage（与 TripPlanner 共享）
+  // 保存选中的旅行到 localStorage（与 TripPlanner 共享），并同步页面级头部
   useEffect(() => {
     if (typeof window !== 'undefined' && selectedWishId && initializedFromStorage) {
       localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+      window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: selectedWishId } }));
     }
   }, [selectedWishId, initializedFromStorage]);
+
+  // 监听外部（页面级切换旅行）的行程变化
+  useEffect(() => {
+    const handleSelectedWishChanged = (e: Event) => {
+      const wishId = (e as CustomEvent).detail?.wishId;
+      if (!wishId) return;
+      setSelectedWishId(String(wishId));
+      setShowWishSelector(false);
+      setShowExchangeRateEditor(false);
+    };
+    window.addEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
+    return () => {
+      window.removeEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
+    };
+  }, []);
 
   // 保存记账子标签页到 localStorage
   useEffect(() => {
@@ -790,12 +799,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
     return 0;
   });
 
-  const getTravelDays = () => {
-    const plan = tripPlans?.find(p => String(p.wishId) === String(selectedWishId));
-    if (plan) return plan.travelDays;
-    return 3;
-  };
-
   const getTravelers = () => {
     const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
     return wish?.travelers?.split(',').map(t => t.trim()).filter(t => t) || [];
@@ -1006,11 +1009,28 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-[#CEA472] truncate">
-          {showWishSelector ? '选择旅行' : showExchangeRateEditor ? '汇率管理' : `${currentWish?.destination} 旅行记账`}
-        </h2>
-        <div className="flex items-center gap-2">
+      <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 gap-1 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
+          <TabsTrigger 
+            value="entry"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+          >
+            消费录入
+          </TabsTrigger>
+          <TabsTrigger 
+            value="query"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+          >
+            消费查询
+          </TabsTrigger>
+          <TabsTrigger 
+            value="analysis"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+          >
+            消费分析
+          </TabsTrigger>
+        </TabsList>
+        <div className="flex justify-end items-center">
           {/* 汇率管理按钮 - 始终显示 */}
           <Button
             variant="ghost"
@@ -1034,117 +1054,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, o
           >
             <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Button>
-          {/* 切换旅行按钮 */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              // 打开切换行程时，自动退出汇率管理（要求是切换而不是叠加）
-              if (!showWishSelector) {
-                setShowExchangeRateEditor(false);
-              }
-              setShowWishSelector(!showWishSelector);
-            }}
-            className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-            title="切换旅行"
-          >
-            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </Button>
         </div>
-      </div>
-
-      <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
-        onClick={() => {
-          if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo && currentWish) {
-            onEditTripInfo({
-              id: String(selectedWishId),
-              confirmed_date: currentWish.confirmed_date,
-              travelDays: getTravelDays(),
-              travelers: currentWish.travelers,
-              destination: currentWish.destination,
-            });
-          }
-        }}
-      >
-        <div className="px-1">
-          <div className="flex justify-between items-start gap-2">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h3>
-                {currentTripPlan?.frozen && (
-                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
-                    <Snowflake className="w-2.5 h-2.5" />
-                    已冻结
-                  </span>
-                )}
-              </div>
-              <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{getTravelDays()}天 · {currentWish?.travelers}</p>
-            </div>
-            {isAdminMode && !isCurrentTripFrozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
-          </div>
-        </div>
-      </div>
-
-      {showWishSelector && (
-        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
-          <div className="space-y-3">
-            {confirmedWishes.map(wish => {
-              const existingRecord = tripExpenses.find(record => record.wishId === String(wish.id));
-              const isSelected = String(wish.id) === String(selectedWishId);
-              return (
-                <button
-                  key={wish.id}
-                  onClick={() => {
-                    if (existingRecord) {
-                      setSelectedWishId(String(wish.id));
-                      setShowWishSelector(false);
-                    } else {
-                      createExpenseRecord(wish);
-                    }
-                  }}
-                  className={`w-full p-4 rounded-none text-left transition-all ${
-                    isSelected
-                      ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                      : 'bg-black/60   text-[#FFFFFF] hover:bg-black/70'
-                  }`}
-                >
-                  <div className="font-medium text-sm">{wish.destination}</div>
-                  <div className="text-xs text-[#FFFFFF]/60 mt-1">
-                    {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
-                  </div>
-                  {!existingRecord && (
-                    <div className="text-xs text-[#CEA472]/80 mt-1">点击创建账单记录</div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className={`w-full ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
-        <TabsList className="grid w-full grid-cols-3 gap-1 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
-          <TabsTrigger 
-            value="entry"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
-          >
-            消费录入
-          </TabsTrigger>
-          <TabsTrigger 
-            value="query"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
-          >
-            消费查询
-          </TabsTrigger>
-          <TabsTrigger 
-            value="analysis"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
-          >
-            消费分析
-          </TabsTrigger>
-        </TabsList>
-        <div className="relative">
+        <div className={`relative ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
           <div className="transition-opacity duration-200" style={{ opacity: tabTransition.contentOpacity }}>
 
         <TabsContent value="entry" className="mt-4">

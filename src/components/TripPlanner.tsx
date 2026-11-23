@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown, Snowflake } from 'lucide-react';
+import { Plus, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown, Snowflake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -51,14 +51,6 @@ const transportNames: Record<string, string> = {
 
 interface TripPlannerProps {
   confirmedWishes: Wish[];
-  isAdminMode?: boolean;
-  onEditTripInfo?: (info: {
-    id: string;
-    confirmed_date?: string;
-    travelDays?: number;
-    travelers?: string;
-    destination?: string;
-  }) => void;
 }
 
 const calculateDate = (startDate: string, dayOffset: number): string => {
@@ -70,10 +62,9 @@ const calculateDate = (startDate: string, dayOffset: number): string => {
   return `${year}-${month}-${day}`;
 };
 
-export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEditTripInfo }: TripPlannerProps) {
+export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
-  const [showWishSelector, setShowWishSelector] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const tabTransition = useTabTransition();
   const [editingActivity, setEditingActivity] = useState<{ dayNumber: number; activityId: string } | null>(null);
@@ -197,10 +188,11 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     }
   }, [selectedDay]);
 
-  // 保存选中的旅行到 localStorage（用于切换标签页后恢复）
+  // 保存选中的旅行到 localStorage（用于切换标签页后恢复），并同步页面级头部
   useEffect(() => {
     if (typeof window !== 'undefined' && selectedWishId) {
       localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+      window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: selectedWishId } }));
     }
   }, [selectedWishId]);
 
@@ -325,7 +317,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
       if (response.ok) {
         await fetchTripPlans();
         setSelectedWishId(String(wish.id));
-        setShowWishSelector(false);
       } else {
         alert('创建旅行规划失败');
       }
@@ -342,7 +333,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
     
     if (existingPlan) {
       setSelectedWishId(String(wish.id));
-      setShowWishSelector(false);
     } else {
       await createTripPlan(wish);
     }
@@ -1135,58 +1125,6 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-5">
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          <h2 className="text-lg font-semibold text-[#CEA472] truncate">
-            {showWishSelector ? '选择旅行' : `${currentTripPlan.destination} 旅行规划`}
-          </h2>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowWishSelector(!showWishSelector)}
-          className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-          title="切换行程"
-        >
-          <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-        </Button>
-      </div>
-
-      <div 
-        className={`mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
-        onClick={() => {
-          if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo) {
-            onEditTripInfo({
-              id: String(selectedWishId),
-              confirmed_date: currentTripPlan.startDate,
-              travelDays: currentTripPlan.travelDays,
-              travelers: currentTripPlan.travelers,
-              destination: currentTripPlan.destination,
-            });
-          }
-        }}
-      >
-        <div className="flex justify-between items-start gap-2">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <h3 className="text-[#FFFFFF] font-medium text-xs truncate">
-                {currentTripPlan.destination}
-              </h3>
-              {currentTripPlan.frozen && (
-                <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
-                  <Snowflake className="w-2.5 h-2.5" />
-                  已冻结
-                </span>
-              )}
-            </div>
-            <p className="text-[#FFFFFF]/60 text-xs mt-0.5">
-              {currentTripPlan.travelDays}天 · {currentTripPlan.travelers}
-            </p>
-          </div>
-          {isAdminMode && !isCurrentTripFrozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
-        </div>
-      </div>
-
       {showSchedule && (
         <Card className="mb-4 sm:mb-6   bg-black/60">
           <CardContent className="pt-3 sm:pt-4">
@@ -1665,36 +1603,7 @@ export default function TripPlanner({ confirmedWishes, isAdminMode = false, onEd
         </Card>
       )}
 
-      {showWishSelector && (
-        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
-          <div className="space-y-3">
-            {confirmedWishes.map(wish => {
-              const isDefault = defaultTripId === String(wish.id);
-              return (
-                <button
-                  key={wish.id}
-                  onClick={() => {
-                    setSelectedWishId(String(wish.id));
-                    setShowWishSelector(false);
-                  }}
-                  className={`w-full text-left p-4 rounded-none transition-all ${
-                    selectedWishId === String(wish.id) 
-                      ? 'bg-[#CEA472]/10   text-[#CEA472]' 
-                      : 'bg-black/60   text-[#FFFFFF] hover:bg-black/70'
-                  }`}
-                >
-                  <div className="font-medium text-sm">{wish.destination}</div>
-                  <div className="text-xs text-[#FFFFFF]/60 mt-1">
-                    {wish.confirmed_date} · {wish.travelers}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {showTripEditor && !showWishSelector && (
+      {showTripEditor && (
         <Tabs value={String(selectedDay)} onValueChange={(v) => tabTransition.switchTo(v, () => setSelectedDay(Number(v)))} className="w-full">
         <TabsList className="inline-flex h-[48px] sm:h-[56px] gap-1 w-full justify-start overflow-x-auto backdrop-blur-md rounded-none p-0">
           {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (

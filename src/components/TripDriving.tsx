@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, RefreshCw, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route, LayoutDashboard, Dice1, Snowflake } from 'lucide-react';
+import { Plus, Edit2, Trash2, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route, LayoutDashboard, Dice1 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,16 +24,9 @@ const drivingBehaviors: Record<string, { icon: React.ReactNode; label: string; s
 interface TripDrivingProps {
   confirmedWishes: Wish[];
   isAdminMode?: boolean;
-  onEditTripInfo?: (info: {
-    id: string;
-    confirmed_date?: string;
-    travelDays?: number;
-    travelers?: string;
-    destination?: string;
-  }) => void;
 }
 
-export default function TripDriving({ confirmedWishes, isAdminMode = false, onEditTripInfo }: TripDrivingProps) {
+export default function TripDriving({ confirmedWishes, isAdminMode = false }: TripDrivingProps) {
   const [tripDrivingRecords, setTripDrivingRecords] = useState<TripDrivingRecord[]>([]);
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
@@ -156,17 +149,31 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     setInitializedFromStorage(true);
   }, []);
 
-  // 保存选中的旅行到 localStorage（与 TripPlanner/TripAccounting 共享）
+  // 保存选中的旅行到 localStorage（与 TripPlanner/TripAccounting 共享），并同步页面级头部
   useEffect(() => {
-    if (typeof window !== 'undefined' && selectedWishId && initializedFromStorage) {
-      // 不保存总览模式到 localStorage
-      if (selectedWishId !== OVERVIEW_WISH_ID) {
-        localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
-      } else {
-        localStorage.removeItem('travel-toolbox-selected-wish-id');
-      }
+    if (typeof window !== 'undefined' && selectedWishId && initializedFromStorage && selectedWishId !== OVERVIEW_WISH_ID) {
+      localStorage.setItem('travel-toolbox-selected-wish-id', selectedWishId);
+      window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: selectedWishId } }));
     }
   }, [selectedWishId, initializedFromStorage]);
+
+  // 监听外部（页面级切换旅行）的行程变化
+  useEffect(() => {
+    const handleSelectedWishChanged = (e: Event) => {
+      const wishId = (e as CustomEvent).detail?.wishId;
+      if (!wishId || wishId === OVERVIEW_WISH_ID) return;
+      setSelectedWishId(String(wishId));
+      setShowLottery(false);
+      setLotteryResult(null);
+      setShowWishSelector(false);
+      setPreviousWishIdBeforeOverview(null);
+      setActiveTab('entry');
+    };
+    window.addEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
+    return () => {
+      window.removeEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     console.debug('[Trip Driving] Initializing...');
@@ -505,12 +512,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
     return wish?.travelers?.split(',').map(t => t.trim()).filter(t => t) || [];
   };
 
-  const getTravelDays = () => {
-    const plan = tripPlans?.find(p => String(p.wishId) === String(selectedWishId));
-    if (plan) return plan.travelDays;
-    return 3;
-  };
-
   const handleBehaviorToggle = (behavior: DrivingBehavior) => {
     setNewDrivingRecord(prev => ({
       ...prev,
@@ -614,157 +615,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-[#CEA472] truncate">
-          {isOverviewMode ? '驾驶记录总览' : isLotteryMode ? '驾驶抽签' : showWishSelector ? '选择旅行' : `${currentWish?.destination} 旅行驾驶`}
-        </h2>
-        <div className="flex items-center gap-2">
-          {/* 抽签按钮 - 始终显示 */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (isLotteryMode) {
-                // 退出抽签模式
-                setShowLottery(false);
-                setLotteryResult(null);
-              } else {
-                // 进入抽签模式，先退出其他模式
-                setShowLottery(true);
-                setShowWishSelector(false);
-                if (isOverviewMode) {
-                  // 从总览进入，恢复之前的选择
-                  if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
-                    setSelectedWishId(String(previousWishIdBeforeOverview));
-                  } else {
-                    const firstWishWithRecord = confirmedWishes.find(wish =>
-                      tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-                    );
-                    if (firstWishWithRecord) {
-                      setSelectedWishId(String(firstWishWithRecord.id));
-                    } else if (confirmedWishes.length > 0) {
-                      setSelectedWishId(String(confirmedWishes[0].id));
-                    }
-                  }
-                  setPreviousWishIdBeforeOverview(null);
-                }
-                setLotteryMode('fair');
-                setLotteryResult(null);
-              }
-            }}
-            className={isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-            title="抽签"
-          >
-            <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </Button>
-          {/* 总览按钮 - 始终显示 */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (isOverviewMode) {
-                // 退出总览，恢复之前选择的旅行
-                if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
-                  setSelectedWishId(String(previousWishIdBeforeOverview));
-                } else {
-                  const firstWishWithRecord = confirmedWishes.find(wish =>
-                    tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-                  );
-                  if (firstWishWithRecord) {
-                    setSelectedWishId(String(firstWishWithRecord.id));
-                  } else if (confirmedWishes.length > 0) {
-                    setSelectedWishId(String(confirmedWishes[0].id));
-                  }
-                }
-                setActiveTab('entry');
-                setPreviousWishIdBeforeOverview(null);
-              } else {
-                // 进入总览，先退出其他模式
-                setPreviousWishIdBeforeOverview(selectedWishId);
-                setSelectedWishId(OVERVIEW_WISH_ID);
-                setActiveTab('analysis');
-                setShowLottery(false);
-                setShowWishSelector(false);
-              }
-            }}
-            className={isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-            title={isOverviewMode ? '退出总览' : '总览'}
-          >
-            <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </Button>
-          {/* 切换旅行按钮 - 始终显示 */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (showWishSelector) {
-                // 退出切换旅行模式
-                setShowWishSelector(false);
-              } else {
-                // 进入切换旅行模式，先退出其他模式
-                setShowWishSelector(true);
-                setShowLottery(false);
-                if (isOverviewMode) {
-                  // 从总览进入，恢复之前的选择
-                  if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
-                    setSelectedWishId(String(previousWishIdBeforeOverview));
-                  } else {
-                    const firstWishWithRecord = confirmedWishes.find(wish =>
-                      tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-                    );
-                    if (firstWishWithRecord) {
-                      setSelectedWishId(String(firstWishWithRecord.id));
-                    } else if (confirmedWishes.length > 0) {
-                      setSelectedWishId(String(confirmedWishes[0].id));
-                    }
-                  }
-                  setPreviousWishIdBeforeOverview(null);
-                }
-              }
-            }}
-            className={showWishSelector ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-            title="切换旅行"
-          >
-            <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </Button>
-        </div>
-      </div>
-
-      {!isOverviewMode && (
-        <div 
-          className={`mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none ${isAdminMode && !isCurrentTripFrozen ? 'cursor-pointer hover:bg-black/50 transition-colors' : ''}`}
-          onClick={() => {
-            if (isAdminMode && !isCurrentTripFrozen && onEditTripInfo && currentWish) {
-              onEditTripInfo({
-                id: String(selectedWishId),
-                confirmed_date: currentWish.confirmed_date,
-                travelDays: getTravelDays(),
-                travelers: currentWish.travelers,
-                destination: currentWish.destination,
-              });
-            }
-          }}
-        >
-          <div className="px-1">
-            <div className="flex justify-between items-start gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
-                  <h3 className="text-[#FFFFFF] font-medium text-xs">{currentWish?.destination}</h3>
-                  {currentTripPlan?.frozen && (
-                    <span className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-500/20   rounded-none text-xs text-blue-400">
-                      <Snowflake className="w-2.5 h-2.5" />
-                      已冻结
-                    </span>
-                  )}
-                </div>
-                <p className="text-[#FFFFFF]/60 text-xs mt-0.5">{getTravelDays()}天 · {currentWish?.travelers}</p>
-              </div>
-              {isAdminMode && !isCurrentTripFrozen && <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#CEA472] flex-shrink-0 mt-0.5" />}
-            </div>
-          </div>
-        </div>
-      )}
-
       {isOverviewMode && (
         <div className="mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none">
           <div className="px-1">
@@ -798,118 +648,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
         </div>
       )}
 
-      {/* 抽签模式内容 */}
-      {isLotteryMode && (
-        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setLotteryMode('fair')}
-              className={`flex-1 p-3 rounded-none text-center transition-all ${
-                lotteryMode === 'fair'
-                  ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
-              }`}
-            >
-              <div className="font-medium text-sm">公平模式</div>
-              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
-            </button>
-            <button
-              onClick={() => setLotteryMode('random')}
-              className={`flex-1 p-3 rounded-none text-center transition-all ${
-                lotteryMode === 'random'
-                  ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
-              }`}
-            >
-              <div className="font-medium text-sm">随机模式</div>
-              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isLotteryMode && lotteryResult && !isLotteryRunning && (
-        <div className="text-center py-3">
-          <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
-          <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
-        </div>
-      )}
-
-      {isLotteryMode && (
-        <Button
-          onClick={() => {
-            const travelersStr = currentWish?.travelers || '';
-            const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
-            if (travelersList.length === 0) return;
-            setIsLotteryRunning(true);
-            setLotteryResult(null);
-            let count = 0;
-            const maxCount = 20;
-            const interval = setInterval(() => {
-              count++;
-              if (count >= maxCount) {
-                clearInterval(interval);
-                if (lotteryMode === 'fair') {
-                  const driverScores = travelersList.map(name => {
-                    const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
-                    const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
-                    return { name, score: totalScore };
-                  });
-                  const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
-                  setLotteryResult(lowest.name);
-                } else {
-                  const randomIndex = Math.floor(Math.random() * travelersList.length);
-                  setLotteryResult(travelersList[randomIndex]);
-                }
-                setIsLotteryRunning(false);
-              } else {
-                const randomIndex = Math.floor(Math.random() * travelersList.length);
-                setLotteryResult(travelersList[randomIndex]);
-              }
-            }, 100);
-          }}
-          disabled={isLotteryRunning || !currentWish?.travelers}
-          className="w-full -mt-2.5 sm:-mt-4 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
-        >
-          {isLotteryRunning ? '抽签中...' : '开始抽签'}
-        </Button>
-      )}
-
-      {showWishSelector && (
-        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
-          <div className="space-y-3">
-            {confirmedWishes.map(wish => {
-              const existingRecord = tripDrivingRecords.find(record => record.wishId === String(wish.id));
-              const isSelected = String(wish.id) === String(selectedWishId);
-              return (
-                <button
-                  key={wish.id}
-                  onClick={() => {
-                    setSelectedWishId(String(wish.id));
-                    setActiveTab('entry');
-                    setShowWishSelector(false);
-                  }}
-                  className={`w-full p-4 rounded-none text-left transition-all ${
-                    isSelected
-                      ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                      : 'bg-black/60   text-[#FFFFFF] hover:bg-black/70'
-                  }`}
-                >
-                  <div className="font-medium text-sm">{wish.destination}</div>
-                  <div className="text-xs text-[#FFFFFF]/60 mt-1">
-                    {wish.confirmed_date ? `${wish.confirmed_date} · ` : ''}{wish.travelers}
-                  </div>
-                  {!existingRecord && (
-                    <div className="text-xs text-[#CEA472]/80 mt-1">点击创建驾驶记录</div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className={`w-full ${isLotteryMode || showWishSelector ? 'hidden' : ''}`}>
+      <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
         <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} gap-1 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0`}>
           {!isOverviewMode && (
             <TabsTrigger 
@@ -932,7 +671,84 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
             驾驶分析
           </TabsTrigger>
         </TabsList>
-        <div className="relative">
+        <div className="flex justify-end items-center">
+          <div className="flex items-center gap-2">
+            {/* 抽签按钮 - 始终显示 */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                if (isLotteryMode) {
+                  // 退出抽签模式
+                  setShowLottery(false);
+                  setLotteryResult(null);
+                } else {
+                  // 进入抽签模式，先退出其他模式
+                  setShowLottery(true);
+                  setShowWishSelector(false);
+                  if (isOverviewMode) {
+                    // 从总览进入，恢复之前的选择
+                    if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
+                      setSelectedWishId(String(previousWishIdBeforeOverview));
+                    } else {
+                      const firstWishWithRecord = confirmedWishes.find(wish =>
+                        tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+                      );
+                      if (firstWishWithRecord) {
+                        setSelectedWishId(String(firstWishWithRecord.id));
+                      } else if (confirmedWishes.length > 0) {
+                        setSelectedWishId(String(confirmedWishes[0].id));
+                      }
+                    }
+                    setPreviousWishIdBeforeOverview(null);
+                  }
+                  setLotteryMode('fair');
+                  setLotteryResult(null);
+                }
+              }}
+              className={isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+              title="抽签"
+            >
+              <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+            {/* 总览按钮 - 始终显示 */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                if (isOverviewMode) {
+                  // 退出总览，恢复之前选择的旅行
+                  if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
+                    setSelectedWishId(String(previousWishIdBeforeOverview));
+                  } else {
+                    const firstWishWithRecord = confirmedWishes.find(wish =>
+                      tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
+                    );
+                    if (firstWishWithRecord) {
+                      setSelectedWishId(String(firstWishWithRecord.id));
+                    } else if (confirmedWishes.length > 0) {
+                      setSelectedWishId(String(confirmedWishes[0].id));
+                    }
+                  }
+                  setActiveTab('entry');
+                  setPreviousWishIdBeforeOverview(null);
+                } else {
+                  // 进入总览，先退出其他模式
+                  setPreviousWishIdBeforeOverview(selectedWishId);
+                  setSelectedWishId(OVERVIEW_WISH_ID);
+                  setActiveTab('analysis');
+                  setShowLottery(false);
+                  setShowWishSelector(false);
+                }
+              }}
+              className={isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
+              title={isOverviewMode ? '退出总览' : '总览'}
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </Button>
+          </div>
+        </div>
+        <div className={`relative ${isLotteryMode || showWishSelector ? 'hidden' : ''}`}>
           <div className="transition-opacity duration-200" style={{ opacity: tabTransition.contentOpacity }}>
 
         {!isOverviewMode && (
@@ -1303,6 +1119,83 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, onEd
           {tabTransition.isLoading && <TabSwitchSkeleton />}
         </div>
       </Tabs>
+
+      {/* 抽签模式内容 */}
+      {isLotteryMode && (
+        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setLotteryMode('fair')}
+              className={`flex-1 p-3 rounded-none text-center transition-all ${
+                lotteryMode === 'fair'
+                  ? 'bg-[#CEA472]/10   text-[#CEA472]'
+                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
+              }`}
+            >
+              <div className="font-medium text-sm">公平模式</div>
+              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
+            </button>
+            <button
+              onClick={() => setLotteryMode('random')}
+              className={`flex-1 p-3 rounded-none text-center transition-all ${
+                lotteryMode === 'random'
+                  ? 'bg-[#CEA472]/10   text-[#CEA472]'
+                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
+              }`}
+            >
+              <div className="font-medium text-sm">随机模式</div>
+              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isLotteryMode && lotteryResult && !isLotteryRunning && (
+        <div className="text-center py-3">
+          <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
+          <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
+        </div>
+      )}
+
+      {isLotteryMode && (
+        <Button
+          onClick={() => {
+            const travelersStr = currentWish?.travelers || '';
+            const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
+            if (travelersList.length === 0) return;
+            setIsLotteryRunning(true);
+            setLotteryResult(null);
+            let count = 0;
+            const maxCount = 20;
+            const interval = setInterval(() => {
+              count++;
+              if (count >= maxCount) {
+                clearInterval(interval);
+                if (lotteryMode === 'fair') {
+                  const driverScores = travelersList.map(name => {
+                    const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
+                    const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
+                    return { name, score: totalScore };
+                  });
+                  const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
+                  setLotteryResult(lowest.name);
+                } else {
+                  const randomIndex = Math.floor(Math.random() * travelersList.length);
+                  setLotteryResult(travelersList[randomIndex]);
+                }
+                setIsLotteryRunning(false);
+              } else {
+                const randomIndex = Math.floor(Math.random() * travelersList.length);
+                setLotteryResult(travelersList[randomIndex]);
+              }
+            }, 100);
+          }}
+          disabled={isLotteryRunning || !currentWish?.travelers}
+          className="w-full -mt-2.5 sm:-mt-4 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
+        >
+          {isLotteryRunning ? '抽签中...' : '开始抽签'}
+        </Button>
+      )}
 
       <Dialog open={showEditDriving} onOpenChange={setShowEditDriving}>
         <DialogContent className="bg-[#0a0a0f]   max-h-[90vh] overflow-hidden flex flex-col">

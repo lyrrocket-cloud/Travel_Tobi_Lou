@@ -1,20 +1,19 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Receipt, Route, Map, Coins, Car, XCircle, Snowflake, Share2 } from 'lucide-react';
+import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Route, Coins, XCircle, Snowflake, Share2, Settings, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
 import TripPlanner from '@/components/TripPlanner';
 import TripAccounting from '@/components/TripAccounting';
 import TripDriving from '@/components/TripDriving';
 import { Wish } from '@/types';
-import { SplitTextTitle } from '@/components/motion/SplitTextTitle';
 import { useTabTransition, TabSwitchSkeleton } from '@/components/motion/TabTransition';
+import { ToolTabNav, type ToolTab } from '@/components/ToolTabNav';
 
 const months = [
   '一月', '二月', '三月', '四月', '五月', '六月',
@@ -88,11 +87,18 @@ export default function Home() {
   const [tripFrozenStatus, setTripFrozenStatus] = useState<Record<string, boolean>>({});
 
   const [mainTab, setMainTab] = useState('wish');
+  // 旅行工具共用的当前行程（页面级持有，切换工具时头部不重挂载）
+  const [selectedToolWishId, setSelectedToolWishId] = useState<string | null>(null);
+  const [toolWishSelectorOpen, setToolWishSelectorOpen] = useState(false);
+  const [tripDays, setTripDays] = useState<Record<string, number>>({});
+  const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
+  const [defaultTripLoaded, setDefaultTripLoaded] = useState(false);
 
   // 跳转到旅行规划页面并选中对应的愿望
   const navigateToPlan = (wishId: string | number) => {
     // 保存选中的愿望 ID
     localStorage.setItem('travel-toolbox-selected-wish-id', String(wishId));
+    setSelectedToolWishId(String(wishId));
     // 切换到规划标签页
     setMainTab('plan');
     // 保存当前标签页选择
@@ -113,7 +119,10 @@ export default function Home() {
       
       const savedMainTab = localStorage.getItem('travel-toolbox-main-tab');
       if (savedMainTab) setMainTab(savedMainTab);
-      
+
+      const savedToolWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
+      if (savedToolWishId) setSelectedToolWishId(savedToolWishId);
+
       const savedActiveTab = localStorage.getItem('travel-toolbox-active-tab');
       if (savedActiveTab) setActiveTab(savedActiveTab);
     }
@@ -201,6 +210,7 @@ export default function Home() {
     }
     if (urlWish) {
       localStorage.setItem('travel-toolbox-selected-wish-id', urlWish);
+      setSelectedToolWishId(urlWish);
       // 通知 TripPlanner 切换到对应行程
       window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: urlWish } }));
     }
@@ -259,18 +269,22 @@ export default function Home() {
       const confirmedWishes = wishesData.filter((w: Wish) => w.is_confirmed === 1);
       if (confirmedWishes.length > 0) {
         const frozenStatus: Record<string, boolean> = {};
+        const daysStatus: Record<string, number> = {};
         for (const wish of confirmedWishes) {
           try {
             const planRes = await fetch(`/api/trip-plans?wishId=${wish.id}`);
             const planData = await planRes.json();
             if (planData.tripPlans && planData.tripPlans.length > 0) {
-              frozenStatus[String(wish.id)] = !!planData.tripPlans[0].frozen;
+              const plan = planData.tripPlans[0];
+              frozenStatus[String(wish.id)] = !!plan.frozen;
+              daysStatus[String(wish.id)] = plan.travelDays || plan.travel_days || 3;
             }
           } catch (e) {
             // 忽略单个行程的加载错误
           }
         }
         setTripFrozenStatus(frozenStatus);
+        setTripDays(daysStatus);
       }
       
       if (data.usingInMemory) {
@@ -287,6 +301,65 @@ export default function Home() {
   useEffect(() => {
     fetchWishes();
   }, []);
+
+  // 读取默认旅行（用于首次进入旅行工具时选择行程）
+  useEffect(() => {
+    fetch('/api/default-trip')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.wishId) setDefaultTripId(String(data.wishId));
+      })
+      .catch(() => {
+        // 忽略默认旅行读取失败
+      })
+      .finally(() => setDefaultTripLoaded(true));
+  }, []);
+
+  // 与三个旅行工具组件保持选中行程同步
+  useEffect(() => {
+    const handleSelectedWishChanged = (event: Event) => {
+      const wishId = (event as CustomEvent).detail?.wishId;
+      if (!wishId || wishId === '__overview__') return;
+      setSelectedToolWishId(prev => (prev === String(wishId) ? prev : String(wishId)));
+    };
+    window.addEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
+    return () => {
+      window.removeEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
+    };
+  }, []);
+
+  // 校验选中行程；无效时回退到默认旅行或最新确认的旅行
+  useEffect(() => {
+    if (loading || !defaultTripLoaded) return;
+    const confirmedWishes = wishes.filter(w => w.is_confirmed === 1);
+    if (confirmedWishes.length === 0) return;
+    const isValid = (id: string | null) => !!id && confirmedWishes.some(w => String(w.id) === id);
+    if (isValid(selectedToolWishId)) {
+      localStorage.setItem('travel-toolbox-selected-wish-id', selectedToolWishId!);
+      return;
+    }
+    const fallbackId = isValid(defaultTripId)
+      ? defaultTripId!
+      : String([...confirmedWishes].sort((a, b) => (b.confirmed_date || '').localeCompare(a.confirmed_date || ''))[0].id);
+    setSelectedToolWishId(fallbackId);
+    localStorage.setItem('travel-toolbox-selected-wish-id', fallbackId);
+    window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: fallbackId } }));
+  }, [loading, wishes, selectedToolWishId, defaultTripId, defaultTripLoaded]);
+
+  // 选中旅行工具中的行程
+  const handleToolWishSelect = (wish: Wish) => {
+    const wishId = String(wish.id);
+    setSelectedToolWishId(wishId);
+    localStorage.setItem('travel-toolbox-selected-wish-id', wishId);
+    setToolWishSelectorOpen(false);
+    window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId } }));
+  };
+
+  // 切换旅行工具（规划 / 记账 / 驾驶），只替换下方内容
+  const handleToolTabChange = (tab: ToolTab) => {
+    if (tab === mainTab) return;
+    mainTabTransition.switchTo(tab, () => setMainTab(tab));
+  };
 
   // 当愿望数据加载后，设置选中的年份为最新有数据的年份
   useEffect(() => {
@@ -1457,27 +1530,28 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <TripPlanner confirmedWishes={sortedConfirmedWishes} isAdminMode={isAdminMode} onEditTripInfo={handleOpenTripInfoEdit} />
+        <TripPlanner confirmedWishes={sortedConfirmedWishes} />
       );
     } else if (mainTab === 'account') {
       return (
-        <TripAccounting
-          confirmedWishes={sortedConfirmedWishes}
-          isAdminMode={isAdminMode}
-          onEditTripInfo={handleOpenTripInfoEdit}
-        />
+        <TripAccounting confirmedWishes={sortedConfirmedWishes} isAdminMode={isAdminMode} />
       );
     } else if (mainTab === 'drive') {
       return (
-        <TripDriving
-          confirmedWishes={sortedConfirmedWishes}
-          isAdminMode={isAdminMode}
-          onEditTripInfo={handleOpenTripInfoEdit}
-        />
+        <TripDriving confirmedWishes={sortedConfirmedWishes} isAdminMode={isAdminMode} />
       );
     }
     return null;
   };
+
+  // 旅行工具头部展示的当前行程
+  const confirmedWishesNewestFirst = [...wishes.filter(w => w.is_confirmed === 1)].sort((a, b) =>
+    (b.confirmed_date || '').localeCompare(a.confirmed_date || '')
+  );
+  const activeToolWish = confirmedWishesNewestFirst.find(w => String(w.id) === selectedToolWishId) || confirmedWishesNewestFirst[0];
+  const activeToolWishId = activeToolWish ? String(activeToolWish.id) : '';
+  const activeTripFrozen = !!tripFrozenStatus[activeToolWishId];
+  const activeTripDays = tripDays[activeToolWishId] || 3;
 
   return (
     <div className="min-h-screen w-full relative">
@@ -1500,99 +1574,154 @@ export default function Home() {
         <div className="bg-blob-c" />
       </div>
 
-      {/* 内容区域 */}
-      <div className="relative z-10 py-6 px-3 sm:px-6 lg:px-8">
-        {/* 标题和管理按钮 */}
-        <div className="flex items-center justify-between mb-5 max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* 图标容器 - 金色衬底 + 黑色线框 */}
-            <div className="animate-hero-avatar w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 flex items-center justify-center rounded-none sm:rounded-none md:rounded-none" style={{
+      {/* 顶部导航：吸顶 + 毛玻璃 */}
+      <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-black/60 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto h-14 px-4 flex items-center">
+          {/* 品牌图标（左） */}
+          <div className="flex flex-1 items-center">
+            <div className="animate-hero-avatar flex-shrink-0 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center" style={{
               backgroundColor: '#CEA472',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
             }}>
-              <Plane className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" style={{ color: '#0a0a0f' }} />
+              <Plane className="w-3.5 h-3.5 sm:w-5 sm:h-5" style={{ color: '#0a0a0f' }} />
             </div>
-            <SplitTextTitle
-              as="h1"
-              className="text-3xl md:text-[40px] font-semibold leading-[1.1] tracking-wide"
-              lines={[{ text: '旅行工具箱', className: 'text-[#CEA472]' }]}
-            />
           </div>
-          <div className="animate-hero-sub flex items-center gap-1.5 sm:gap-2">
+
+          {/* 一级导航：旅行许愿 / 旅行工具（居中，仅文字） */}
+          <nav aria-label="主导航" className="animate-hero-sub flex flex-1 items-center justify-center gap-3 sm:gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (mainTab !== 'wish') {
+                  mainTabTransition.switchTo('wish', () => setMainTab('wish'));
+                }
+              }}
+              aria-current={mainTab === 'wish' ? 'page' : undefined}
+              className={`flex h-9 items-center px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap transition-colors duration-300 ${
+                mainTab === 'wish' ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
+              }`}
+            >
+              <span>旅行许愿</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (mainTab === 'wish') {
+                  mainTabTransition.switchTo('plan', () => setMainTab('plan'));
+                }
+              }}
+              aria-current={mainTab !== 'wish' ? 'page' : undefined}
+              className={`flex h-9 items-center px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap transition-colors duration-300 ${
+                mainTab !== 'wish' ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
+              }`}
+            >
+              <span>旅行工具</span>
+            </button>
+          </nav>
+
+          {/* 右侧操作：分享图标 + 管理齿轮（点击输入密码打卡） */}
+          <div className="animate-hero-sub flex flex-1 items-center justify-end gap-1 sm:gap-2">
             <button
               onClick={handleShare}
               title="分享当前页面"
               aria-label="分享页面"
-              className="hit-expand hit-expand-share flex items-center gap-1 text-xs sm:text-sm text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors"
+              className="hit-expand hit-expand-share p-2 text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors"
             >
               {shareSuccess ? (
-                <>
-                  <span className="hidden sm:inline">已复制</span>
-                  <CheckCircle className="w-4 h-4" />
-                </>
+                <CheckCircle className="w-4 h-4" />
               ) : (
-                <>
-                  <span className="hidden sm:inline">分享</span>
-                  <Share2 className="w-4 h-4" />
-                </>
+                <Share2 className="w-4 h-4" />
               )}
             </button>
-            <span className={`text-xs sm:text-sm ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40'}`}>管理</span>
-            <Switch
-              checked={isAdminMode}
-              className="hit-expand hit-expand-switch"
-              aria-label="切换管理模式"
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setPasswordModalOpen(true);
-                } else {
+            <button
+              type="button"
+              onClick={() => {
+                if (isAdminMode) {
                   setIsAdminMode(false);
+                } else {
+                  setPasswordModalOpen(true);
                 }
               }}
-            />
+              title={isAdminMode ? '退出管理模式' : '管理登录'}
+              aria-label="管理"
+              className={`hit-expand hit-expand-icon p-2 transition-colors ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
+            >
+              <Settings className="w-4 h-4" />
+            </button>
           </div>
         </div>
+      </header>
 
-        {/* 主标签页 */}
+      {/* 旅行项目栏：独立一栏，与上方导航分离 */}
+      {mainTab !== 'wish' && (
+        <div className="mt-3 px-3 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="border-b border-white/[0.08] bg-black/60 backdrop-blur-md py-2">
+              <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <h2 className="text-[#FFFFFF] font-medium text-xs sm:text-sm truncate">
+                    {activeToolWish ? activeToolWish.destination : '选择旅行'}
+                  </h2>
+                  {activeTripFrozen && (
+                    <span className="flex flex-shrink-0 items-center gap-1 px-1.5 py-0.5 bg-blue-500/20 text-xs text-blue-400">
+                      <Snowflake className="w-2.5 h-2.5" />
+                      已冻结
+                    </span>
+                  )}
+                </div>
+                <p className="text-[#FFFFFF]/60 text-[11px] sm:text-xs mt-0.5 truncate">
+                  {activeToolWish?.confirmed_date ? `${activeToolWish.confirmed_date} · ` : ''}
+                  {activeTripDays}天{activeToolWish?.travelers ? ` · ${activeToolWish.travelers}` : ''}
+                </p>
+              </div>
+              <div className="flex flex-shrink-0 items-center gap-1">
+                {isAdminMode && activeToolWish && !activeTripFrozen && (
+                  <button
+                    type="button"
+                    onClick={() => handleOpenTripInfoEdit({
+                      id: activeToolWishId,
+                      confirmed_date: activeToolWish.confirmed_date,
+                      travelDays: activeTripDays,
+                      travelers: activeToolWish.travelers,
+                      destination: activeToolWish.destination,
+                    })}
+                    title="编辑行程信息"
+                    aria-label="编辑行程信息"
+                    className="hit-expand hit-expand-icon p-2 text-[#CEA472] hover:text-[#CEA472]/80 transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setToolWishSelectorOpen(true)}
+                  title="切换旅行"
+                  aria-label="切换旅行"
+                  className="hit-expand hit-expand-icon p-2 text-[#CEA472] hover:text-[#CEA472]/80 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 二级导航栏：与旅行项目分离，与下方三级导航贴齐 */}
+      {mainTab !== 'wish' && (
+        <div className="px-3 sm:px-6 lg:px-8 mt-2 sm:mt-3">
+          <div className="max-w-7xl mx-auto px-4">
+            <ToolTabNav value={mainTab as ToolTab} onChange={handleToolTabChange} />
+          </div>
+        </div>
+      )}
+
+      {/* 内容区域：工具模式下顶部不留间距，使三级导航紧贴二级导航 */}
+      <div className={`relative z-10 px-3 sm:px-6 lg:px-8 ${mainTab === 'wish' ? 'py-6' : 'pt-0 pb-6'}`}>
+        {/* 主内容 */}
         <div className="w-full max-w-7xl mx-auto px-4">
-          <Tabs value={mainTab} onValueChange={(v) => mainTabTransition.switchTo(v, () => setMainTab(v))} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-5 gap-0.5 sm:gap-0 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
-              <TabsTrigger
-                value="wish"
-                style={{ animationDelay: '0ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
-              >
-                <Plane className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
-                <span className="truncate leading-tight">旅行许愿</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="plan"
-                style={{ animationDelay: '60ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
-              >
-                <Map className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
-                <span className="truncate leading-tight">旅行规划</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="account"
-                style={{ animationDelay: '120ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
-              >
-                <Receipt className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
-                <span className="truncate leading-tight">旅行记账</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="drive"
-                style={{ animationDelay: '180ms' }}
-                className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-sm h-full flex flex-col items-center gap-0.5 sm:gap-0 sm:flex-row px-1 sm:px-2"
-              >
-                <Car className="w-4 h-4 sm:w-4 sm:h-4 sm:mr-1.5 md:mr-2" />
-                <span className="truncate leading-tight">旅行驾驶</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* 主标签页内容 */}
           <div className="relative">
             <div className="transition-opacity duration-200" style={{ opacity: mainTabTransition.contentOpacity }}>
               {renderMainContent()}
@@ -1601,6 +1730,44 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* 切换旅行（旅行工具共用） */}
+      <Dialog open={toolWishSelectorOpen} onOpenChange={setToolWishSelectorOpen}>
+        <DialogContent className="bg-[#0a0a0f]">
+          <DialogHeader>
+            <DialogTitle className="text-[#FFFFFF]">选择旅行</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF]/60">切换旅行工具当前查看的行程</DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[60vh] space-y-2 overflow-y-auto py-2">
+            {confirmedWishesNewestFirst.map(wish => {
+              const isSelected = String(wish.id) === selectedToolWishId;
+              return (
+                <button
+                  key={wish.id}
+                  type="button"
+                  onClick={() => handleToolWishSelect(wish)}
+                  className={`w-full p-3 text-left transition-colors ${
+                    isSelected ? 'bg-[#CEA472]/10 text-[#CEA472]' : 'bg-black/60 text-[#FFFFFF] hover:bg-black/70'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium truncate">{wish.destination}</div>
+                      <div className="text-xs text-[#FFFFFF]/60 mt-0.5 truncate">
+                        {wish.confirmed_date} · {wish.travelers}
+                      </div>
+                    </div>
+                    {isSelected && <CheckCircle className="w-4 h-4 flex-shrink-0" />}
+                  </div>
+                </button>
+              );
+            })}
+            {confirmedWishesNewestFirst.length === 0 && (
+              <p className="py-6 text-center text-xs text-[#FFFFFF]/60">暂无已确认成行的愿望</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* 密码对话框 */}
       <Dialog open={passwordModalOpen} onOpenChange={setPasswordModalOpen}>

@@ -149,9 +149,13 @@ body {
    ======================================== */
 
 /* 隐藏所有默认滚动条 */
-html,
-body {
+html {
   overflow: auto !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+
+body {
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE/Edge */
 }
