@@ -12,7 +12,7 @@ export type TabPhase = 'idle' | 'leaving' | 'loading' | 'entering';
  *   <Tabs value={tab} onValueChange={(v) => tt.switchTo(v, () => setTab(v))}>
  *   内容容器：
  *     <div className="relative">
- *       <div className="transition-opacity duration-200" style={{ opacity: tt.contentOpacity }}>
+ *       <div className={tt.contentClassName} style={{ opacity: tt.contentOpacity }}>
  *         {content}
  *       </div>
  *       {tt.isLoading && <TabSwitchSkeleton />}
@@ -25,6 +25,8 @@ export function useTabTransition(options?: { leaveMs?: number; loadMs?: number }
   const leaveMs = options?.leaveMs ?? 180;
   const loadMs = options?.loadMs ?? 260;
   const [phase, setPhase] = useState<TabPhase>('idle');
+  // 是否已经发生过真实切换：用于只在切换后挂载进入动画，首屏与普通输入更新不重放
+  const [hasSwitched, setHasSwitched] = useState(false);
   const timers = useRef<number[]>([]);
   const busy = useRef(false);
 
@@ -47,6 +49,7 @@ export function useTabTransition(options?: { leaveMs?: number; loadMs?: number }
       timers.current.push(
         window.setTimeout(() => {
           commit(); // 真正切换受控值，挂载新内容
+          setHasSwitched(true);
           setPhase('entering');
           timers.current.push(
             window.setTimeout(() => {
@@ -63,7 +66,11 @@ export function useTabTransition(options?: { leaveMs?: number; loadMs?: number }
   useEffect(() => clear, []);
 
   const contentOpacity = phase === 'idle' ? 1 : 0;
-  return { phase, switchTo, contentOpacity, isLoading: phase === 'loading' };
+  const contentClassName =
+    hasSwitched && phase !== 'leaving' && phase !== 'loading'
+      ? 'tab-section-in'
+      : 'tab-section-out';
+  return { phase, switchTo, contentOpacity, contentClassName, isLoading: phase === 'loading' };
 }
 
 /** Tab 切换骨架屏（覆盖在内容区，配合内容淡出使用） */

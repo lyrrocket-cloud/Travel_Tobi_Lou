@@ -571,7 +571,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
               return (
                 <div
                   key={wish.id}
-                  className="bg-black/60   rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/60 transition-colors"
+                  className="bg-black/40 backdrop-blur-sm rounded-none border-0 p-3.5 sm:p-4 cursor-pointer hover:bg-black/60 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
                   onClick={() => {
                     setSelectedWishId(String(wish.id));
                     setActiveTab('entry');
@@ -685,20 +685,20 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           {!isOverviewMode && (
             <TabsTrigger 
               value="entry"
-              className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+              className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
             >
               驾驶录入
             </TabsTrigger>
           )}
           <TabsTrigger 
             value="query"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
             驾驶查询
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
             驾驶分析
           </TabsTrigger>
@@ -781,7 +781,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           </div>
         </div>
         <div className={`relative ${isLotteryMode || showWishSelector ? 'hidden' : ''}`}>
-          <div className="transition-opacity duration-200" style={{ opacity: tabTransition.contentOpacity }}>
+          <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
         {!isOverviewMode && (
           <TabsContent value="entry" className="mt-4">
@@ -1027,7 +1027,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                 {(isOverviewMode ? allDrivingRecords : sortedDrivingRecords).map(record => (
                   <div
                     key={record.id}
-                    className="p-3.5 sm:p-4 rounded-none bg-black/60   hover:bg-black/70 transition-colors"
+                    className="p-3.5 sm:p-4 rounded-none border-0 bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
                   >
                     <div className="flex gap-3">
                       <div className="text-xl sm:text-2xl text-[#CEA472] flex-shrink-0 pt-0.5">

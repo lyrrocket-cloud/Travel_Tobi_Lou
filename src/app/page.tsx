@@ -1199,20 +1199,20 @@ export default function Home() {
             <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
               <TabsTrigger
                 value="make-wish"
-                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs h-full flex items-center justify-center"
               >
                 抛硬币
               </TabsTrigger>
               <TabsTrigger
                 value="wish-pool"
-                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 text-xs h-full flex items-center justify-center"
+                className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs h-full flex items-center justify-center"
               >
                 许愿池
               </TabsTrigger>
             </TabsList>
 
             <div className="relative">
-              <div className="transition-opacity duration-200" style={{ opacity: wishTabTransition.contentOpacity }}>
+              <div className={wishTabTransition.contentClassName} style={{ opacity: wishTabTransition.contentOpacity }}>
             {/* Make Wish Tab */}
             <TabsContent value="make-wish" className="min-h-[400px]">
               <div className="reveal reveal-group space-y-4.5 sm:space-y-6">
@@ -1349,12 +1349,12 @@ export default function Home() {
                         <div
                           key={wish.id}
                           onClick={() => wish.is_confirmed === 1 && !wish.is_expired && navigateToPlan(wish.id)}
-                          className={`group overflow-hidden p-3.5 sm:p-6 rounded-none  backdrop-blur-sm transition-all duration-500 ${
+                          className={`group overflow-hidden p-3.5 sm:p-6 rounded-none border-0 backdrop-blur-sm transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             wish.is_expired === 1
                               ? ' bg-gray-500/5'
                               : wish.is_confirmed === 1
-                                ? ' bg-[#CEA472]/10 cursor-pointer hover:scale-[1.01] hover:bg-[#CEA472]/15' 
-                                : ' bg-black/60  hover:bg-black/70'
+                                ? ' bg-[#CEA472]/10 cursor-pointer hover:scale-[1.01] hover:bg-[#CEA472]/15'
+                                : ' bg-black/40  hover:bg-black/60'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2.5">
@@ -1635,9 +1635,9 @@ export default function Home() {
         <div className="bg-blob-c" />
       </div>
 
-      {/* 顶部导航：吸顶 + 毛玻璃 */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-black/60 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto h-14 px-4 flex items-center">
+      {/* 顶部导航：固定悬浮 + 毛玻璃（44px 高，正文用等高占位避免遮挡） */}
+      <header className="fixed top-0 left-0 right-0 z-[100] h-11 bg-black/20 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto h-11 px-4 flex items-center">
           {/* 品牌图标（左） */}
           <div className="flex flex-1 items-center">
             <div role="img" aria-label="旅行工具箱" className="animate-hero-avatar flex-shrink-0 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center" style={{
@@ -1658,7 +1658,7 @@ export default function Home() {
                 }
               }}
               aria-current={mainTab === 'wish' ? 'page' : undefined}
-              className={`flex h-9 items-center px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap transition-colors duration-300 ${
+              className={`flex h-11 min-h-[44px] items-center px-2 sm:px-3 text-sm font-medium whitespace-nowrap transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 mainTab === 'wish' ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
               }`}
             >
@@ -1672,7 +1672,7 @@ export default function Home() {
                 }
               }}
               aria-current={mainTab !== 'wish' ? 'page' : undefined}
-              className={`flex h-9 items-center px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap transition-colors duration-300 ${
+              className={`flex h-11 min-h-[44px] items-center px-2 sm:px-3 text-sm font-medium whitespace-nowrap transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 mainTab !== 'wish' ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
               }`}
             >
@@ -1686,7 +1686,7 @@ export default function Home() {
               onClick={handleShare}
               title="分享当前页面"
               aria-label="分享页面"
-              className="hit-expand hit-expand-share p-2 text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors"
+              className="hit-expand hit-expand-share p-2 text-[#FFFFFF]/40 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]"
             >
               {shareSuccess ? (
                 <CheckCircle className="w-4 h-4" />
@@ -1705,13 +1705,15 @@ export default function Home() {
               }}
               title={isAdminMode ? '退出管理模式' : '管理登录'}
               aria-label="管理"
-              className={`hit-expand hit-expand-icon p-2 transition-colors ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
+              className={`hit-expand hit-expand-icon p-2 transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${isAdminMode ? 'text-[#CEA472]' : 'text-[#FFFFFF]/40 hover:text-[#CEA472]'}`}
             >
               <Settings className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
+      {/* 固定导航占位：保证任何页面首屏内容都不被遮挡 */}
+      <div aria-hidden="true" className="h-11" />
 
       <main>
         <h1 className="sr-only">旅行工具箱</h1>
@@ -1752,7 +1754,7 @@ export default function Home() {
                     })}
                     title="编辑行程信息"
                     aria-label="编辑行程信息"
-                    className="hit-expand hit-expand-icon p-2 text-[#CEA472] hover:text-[#CEA472]/80 transition-colors"
+                    className="hit-expand hit-expand-icon p-2 text-[#CEA472] hover:text-[#CEA472]/80 transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
@@ -1787,7 +1789,7 @@ export default function Home() {
         {/* 主内容 */}
         <div className="w-full max-w-7xl mx-auto px-4">
           <div className="relative">
-            <div className="transition-opacity duration-200" style={{ opacity: mainTabTransition.contentOpacity }}>
+            <div className={mainTabTransition.contentClassName} style={{ opacity: mainTabTransition.contentOpacity }}>
               {renderMainContent()}
             </div>
             {mainTabTransition.isLoading && <TabSwitchSkeleton />}

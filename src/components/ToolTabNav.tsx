@@ -28,7 +28,7 @@ export function ToolTabNav({ value, onChange }: ToolTabNavProps) {
           onClick={() => onChange(itemValue)}
           style={{ animationDelay: `${delay}ms` }}
           className={cn(
-            'animate-chip-in flex items-center justify-center px-1 sm:px-2 text-xs transition-colors duration-300',
+            'animate-chip-in flex items-center justify-center px-1 sm:px-2 text-sm font-medium transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]',
             value === itemValue ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
           )}
         >

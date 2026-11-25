@@ -1628,7 +1628,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
             <TabsTrigger
               key={day}
               value={String(day)}
-              className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] flex flex-col items-center justify-center px-3 sm:px-4 rounded-none transition-colors duration-300 min-w-[70px] sm:min-w-[80px] h-full"
+              className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] flex flex-col items-center justify-center px-3 sm:px-4 rounded-none transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-w-[70px] sm:min-w-[80px] h-full"
             >
               <span className="text-xs font-medium whitespace-nowrap">Day {day}</span>
               {getDateDisplay(day) && (
@@ -1638,7 +1638,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
           ))}
         </TabsList>
         <div className="relative">
-          <div className="transition-opacity duration-200" style={{ opacity: tabTransition.contentOpacity }}>
+          <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
           <TabsContent key={day} value={String(day)} className="mt-6">

@@ -1019,7 +1019,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
               return (
                 <div
                   key={wish.id}
-                  className={`bg-black/60  rounded-none p-3.5 sm:p-4 cursor-pointer hover:bg-black/60 transition-colors ${isDefault ? '' : ''}`}
+                  className={`bg-black/40 backdrop-blur-sm rounded-none border-0 p-3.5 sm:p-4 cursor-pointer hover:bg-black/60 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isDefault ? '' : ''}`}
                   onClick={() => {
                     if (hasRecord) {
                       setSelectedWishId(String(wish.id));
@@ -1065,19 +1065,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
         <TabsList className="grid w-full grid-cols-3 gap-1 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
           <TabsTrigger 
             value="entry"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
             消费录入
           </TabsTrigger>
           <TabsTrigger 
             value="query"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
             消费查询
           </TabsTrigger>
           <TabsTrigger 
             value="analysis"
-            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-300 h-full flex items-center justify-center text-xs"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
             消费分析
           </TabsTrigger>
@@ -1108,7 +1108,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
           </Button>
         </div>
         <div className={`relative ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
-          <div className="transition-opacity duration-200" style={{ opacity: tabTransition.contentOpacity }}>
+          <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
         <TabsContent value="entry" className="mt-4">
           {isCurrentTripFrozen && (
@@ -1532,7 +1532,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                               return (
                       <div
                         key={expense.id}
-                        className="p-3.5 sm:p-4 rounded-none bg-black/60   hover:bg-black/70 transition-colors"
+                        className="p-3.5 sm:p-4 rounded-none border-0 bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
                       >
                         <div className="flex gap-3">
                           <div className="text-xl sm:text-2xl text-[#FFFFFF] flex-shrink-0 pt-0.5">
