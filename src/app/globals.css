@@ -145,23 +145,50 @@ body {
 }
 
 /* ========================================
-   悬浮滚动条样式（解决页面跳动问题）
+   页面滚动条：右侧垂直（金色细条），禁止页面横向滚动
    ======================================== */
 
-/* 隐藏所有默认滚动条 */
+/* 整页只在右侧保留垂直滚动条，任何情况下都不出现横向滚动条 */
 html {
-  overflow: auto !important;
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE/Edge */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin !important; /* Firefox */
+  scrollbar-color: rgba(206, 164, 114, 0.6) rgba(0, 0, 0, 0.15) !important;
 }
 
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 0;
+  display: block;
+  background: transparent;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgba(206, 164, 114, 0.45);
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(206, 164, 114, 0.7);
+}
+
+html::-webkit-scrollbar-corner,
+html::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* body 不再显示第二根滚动条 */
 body {
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE/Edge */
 }
 
-/* Webkit浏览器：隐藏默认滚动条 */
-html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   width: 0px !important;
   height: 0px !important;
@@ -213,21 +240,6 @@ body::-webkit-scrollbar {
   scrollbar-color: rgba(206, 164, 114, 0.6) rgba(0, 0, 0, 0.1);
 }
 
-/* 全屏页面使用悬浮滚动条 */
-html,
-body,
-#__next,
-main {
-  scrollbar-width: none;
-}
-
-html:hover,
-body:hover,
-#__next:hover,
-main:hover {
-  scrollbar-width: thin;
-}
-
 /* 阻止Radix UI Dialog修改任何样式 */
 body {
   padding-right: 0 !important;
@@ -243,6 +255,21 @@ body {
 
 .hide-scrollbar-x::-webkit-scrollbar {
   display: none;
+}
+
+/* 标签页横向滚动容器：可横向滑动，但完全不渲染滚动条
+   （普通类而非 Tailwind 任意属性，避免被工具类层级覆盖） */
+.tabs-scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tabs-scroll-x::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .hide-scrollbar-y {

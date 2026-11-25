@@ -1197,7 +1197,7 @@ export default function Home() {
 
           {/* 子标签页（首屏之下，进入视口后再入场） */}
           <Tabs value={activeTab} onValueChange={(v) => wishTabTransition.switchTo(v, () => setActiveTab(v))} className="w-full reveal">
-            <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] backdrop-blur-md rounded-none p-0">
+            <TabsList className="grid w-full grid-cols-2 gap-0.5 h-[48px] sm:h-[44px] bg-black/60 backdrop-blur-md rounded-none p-0">
               <TabsTrigger
                 value="make-wish"
                 className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs h-full flex items-center justify-center"
@@ -1706,7 +1706,7 @@ export default function Home() {
       {mainTab !== 'wish' && (
         <div className="mt-3 px-3 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="border-b border-white/[0.08] bg-black/60 backdrop-blur-md py-2">
+            <div className="border-b border-white/[0.08] bg-black/60 backdrop-blur-md py-2 px-3.5 sm:px-4">
               <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 min-w-0">
@@ -1748,7 +1748,7 @@ export default function Home() {
                   onClick={() => setToolWishSelectorOpen(true)}
                   title="切换旅行"
                   aria-label="切换旅行"
-                  className="hit-expand hit-expand-icon p-2 text-[#CEA472] hover:text-[#CEA472]/80 transition-colors"
+                  className="hit-expand hit-expand-icon p-2 text-[#CEA472] hover:text-[#CEA472]/80 transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)]"
                 >
                   <RefreshCw className="w-4 h-4" />
                 </button>
