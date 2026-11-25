@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Inspector } from 'react-dev-inspector';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { ScrollReveal } from '@/components/motion/ScrollReveal';
-import { ScrollProgress } from '@/components/motion/ScrollProgress';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -60,7 +59,6 @@ export default function RootLayout({
         />
         <SmoothScroll />
         <ScrollReveal />
-        <ScrollProgress />
         {isDev && <Inspector />}
         {children}
       </body>

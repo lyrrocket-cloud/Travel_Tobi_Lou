@@ -790,18 +790,6 @@ html.js .reveal-group [data-slot='card'] {
 }
 .carousel-slide-snap { transition: none; }
 
-/* L0/L4 · 滚动进度 */
-.scroll-progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #CEA472, rgba(206,164,114,0.4));
-  z-index: 200;
-  transform-origin: left;
-  will-change: transform;
-  box-shadow: 0 0 12px rgba(206,164,114,0.6);
-}
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
