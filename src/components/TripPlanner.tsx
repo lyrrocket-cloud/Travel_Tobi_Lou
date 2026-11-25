@@ -1176,7 +1176,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
                 tabIndex={0}
                 role="region"
                 aria-label="按天切换行程，可使用左右方向键滚动"
-                className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-thin sm:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#CEA472] focus-visible:outline-offset-2"
+                className="flex gap-1.5 mb-3 overflow-x-auto tabs-scroll-x sm:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#CEA472] focus-visible:outline-offset-2"
               >
                 {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
                   <button
