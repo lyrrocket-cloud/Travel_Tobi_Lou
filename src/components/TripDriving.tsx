@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route, LayoutDashboard, Dice1 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -24,14 +24,31 @@ const drivingBehaviors: Record<string, { icon: React.ReactNode; label: string; s
 interface TripDrivingProps {
   confirmedWishes: Wish[];
   isAdminMode?: boolean;
+  // 受控的子标签（entry/query/analysis），由页面级 URL 状态统一管理
+  subTab?: string;
+  onSubTabChange?: (tab: string) => void;
 }
 
-export default function TripDriving({ confirmedWishes, isAdminMode = false }: TripDrivingProps) {
+const VALID_DRIVE_SUB = ['entry', 'query', 'analysis'];
+
+export default function TripDriving({ confirmedWishes, isAdminMode = false, subTab, onSubTabChange }: TripDrivingProps) {
   const [tripDrivingRecords, setTripDrivingRecords] = useState<TripDrivingRecord[]>([]);
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
   const [showWishSelector, setShowWishSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState('entry');
+  // 受控的子标签：父组件（URL 状态）为单一事实来源；内部镜像避免被默认值覆盖
+  const [internalTab, setInternalTab] = useState<string>(
+    subTab && VALID_DRIVE_SUB.includes(subTab) ? subTab : 'entry'
+  );
+  const activeTab = internalTab;
+  const setActiveTab = (tab: string) => {
+    setInternalTab(tab);
+    onSubTabChange?.(tab);
+  };
+  // 标记首次 selected-wish-changed（页面挂载还原），避免其把子标签重置为 entry 而覆盖 URL 还原
+  const isInitialWishRestore = useRef(true);
+  // 记录上一次收到的行程 id，过滤掉自身 selectedWishId 变化回显派发的同名事件，避免误重置子标签
+  const prevWishIdRef = useRef<string | null>(null);
   const tabTransition = useTabTransition();
   const [showAddDriving, setShowAddDriving] = useState(false);
   const [showEditDriving, setShowEditDriving] = useState(false);
@@ -157,23 +174,38 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
     }
   }, [selectedWishId, initializedFromStorage]);
 
+  // 外部（URL 还原）子标签切换时同步到内部
+  useEffect(() => {
+    if (subTab && VALID_DRIVE_SUB.includes(subTab) && subTab !== internalTab) {
+      setInternalTab(subTab);
+    }
+  }, [subTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // 监听外部（页面级切换旅行）的行程变化
   useEffect(() => {
     const handleSelectedWishChanged = (e: Event) => {
       const wishId = (e as CustomEvent).detail?.wishId;
       if (!wishId || wishId === OVERVIEW_WISH_ID) return;
-      setSelectedWishId(String(wishId));
+      const id = String(wishId);
+      // 过滤自身 selectedWishId 变化后回显派发的同 id 事件，避免误重置子标签
+      const isSameAsPrev = prevWishIdRef.current === id;
+      prevWishIdRef.current = id;
+      setSelectedWishId(id);
       setShowLottery(false);
       setLotteryResult(null);
       setShowWishSelector(false);
       setPreviousWishIdBeforeOverview(null);
-      setActiveTab('entry');
+      // 首次挂载还原不重置；回显同 id 不重置；仅真正切换行程时回到 entry
+      if (!isInitialWishRestore.current && !isSameAsPrev) {
+        setActiveTab('entry');
+      }
+      isInitialWishRestore.current = false;
     };
     window.addEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
     return () => {
       window.removeEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     console.debug('[Trip Driving] Initializing...');
@@ -758,7 +790,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                 <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改驾驶记录</span>
               </div>
             )}
-            <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-center gap-3 mb-4">
                 <Car className="w-5 h-5 text-[#CEA472]" />
@@ -766,12 +798,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
               </div>
 
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶员</Label>
+                <Label htmlFor="drive-driver" className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶员</Label>
                 {travelers.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
                         key={idx}
+                        disabled={isCurrentTripFrozen}
+                        aria-pressed={newDrivingRecord.driver === traveler}
                         onClick={() => setNewDrivingRecord({ ...newDrivingRecord, driver: traveler })}
                         className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newDrivingRecord.driver === traveler
@@ -785,7 +819,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                   </div>
                 ) : (
                   <Input
+                    id="drive-driver"
                     value={newDrivingRecord.driver}
+                    readOnly={isCurrentTripFrozen}
                     onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, driver: e.target.value })}
                     className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                     placeholder="输入驾驶员姓名"
@@ -802,6 +838,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                     <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择自驾行程</Label>
                     <Select
                       value={selectedRouteId || ''}
+                      disabled={isCurrentTripFrozen}
                       onValueChange={(value) => {
                         setSelectedRouteId(value);
                         if (value) {
@@ -822,7 +859,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                         }
                       }}
                     >
-                      <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full">
+                      <SelectTrigger aria-label="选择自驾行程" className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full">
                         <SelectValue placeholder="选择自驾行程" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0a0a0f]  ">
@@ -839,18 +876,22 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                     <div>
-                      <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">出发地点</Label>
+                      <Label htmlFor="drive-start" className="text-[#FFFFFF]/40 mb-1.5 block text-xs">出发地点</Label>
                       <Input
+                        id="drive-start"
                         value={newDrivingRecord.startLocation}
+                        readOnly={isCurrentTripFrozen}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, startLocation: e.target.value })}
                         className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="输入出发地点"
                       />
                     </div>
                     <div>
-                      <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">目的地点</Label>
+                      <Label htmlFor="drive-end" className="text-[#FFFFFF]/40 mb-1.5 block text-xs">目的地点</Label>
                       <Input
+                        id="drive-end"
                         value={newDrivingRecord.endLocation}
+                        readOnly={isCurrentTripFrozen}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, endLocation: e.target.value })}
                         className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="输入目的地点"
@@ -859,24 +900,28 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                     <div>
-                      <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">行驶里程（公里）</Label>
+                      <Label htmlFor="drive-distance" className="text-[#FFFFFF]/40 mb-1.5 block text-xs">行驶里程（公里）</Label>
                       <Input
+                        id="drive-distance"
                         type="number"
                         min="0"
                         step="0.1"
                         value={newDrivingRecord.distance}
+                        readOnly={isCurrentTripFrozen}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, distance: e.target.value })}
                         className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="0.0"
                       />
                     </div>
                     <div>
-                      <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">行驶时长（分钟）</Label>
+                      <Label htmlFor="drive-duration" className="text-[#FFFFFF]/40 mb-1.5 block text-xs">行驶时长（分钟）</Label>
                       <Input
+                        id="drive-duration"
                         type="number"
                         min="0"
                         step="1"
                         value={newDrivingRecord.duration}
+                        readOnly={isCurrentTripFrozen}
                         onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, duration: e.target.value })}
                         className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                         placeholder="0"
@@ -888,22 +933,26 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
+                  <Label htmlFor="drive-date" className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
                   <Input
+                    id="drive-date"
                     type="text"
                     inputMode="numeric"
                     pattern="\d{4}-\d{2}-\d{2}"
                     placeholder="YYYY-MM-DD"
                     value={newDrivingRecord.date}
+                    readOnly={isCurrentTripFrozen}
                     onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, date: e.target.value })}
                     className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                   />
                 </div>
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
+                  <Label htmlFor="drive-time" className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
                   <Input
+                    id="drive-time"
                     type="time"
                     value={newDrivingRecord.time}
+                    readOnly={isCurrentTripFrozen}
                     onChange={(e) => setNewDrivingRecord({ ...newDrivingRecord, time: e.target.value })}
                     className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                   />
@@ -916,6 +965,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
                   {Object.entries(drivingBehaviors).map(([key, config]) => (
                     <button
                       key={key}
+                      disabled={isCurrentTripFrozen}
+                      aria-pressed={newDrivingRecord.behaviors.includes(key as DrivingBehavior)}
                       onClick={() => handleBehaviorToggle(key as DrivingBehavior)}
                       className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
                         newDrivingRecord.behaviors.includes(key as DrivingBehavior)
@@ -954,7 +1005,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
             <div className="mt-4 px-2.5 sm:px-0">
               <Button
                 onClick={addDrivingRecord}
-                disabled={!newDrivingRecord.driver || !newDrivingRecord.startLocation || !newDrivingRecord.endLocation}
+                disabled={isCurrentTripFrozen || !newDrivingRecord.driver || !newDrivingRecord.startLocation || !newDrivingRecord.endLocation}
                 className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
               >
                 保存驾驶记录
@@ -969,7 +1020,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false }: Tr
               <span className="text-blue-400 text-xs">此行程已冻结，无法修改驾驶记录</span>
             </div>
           )}
-          <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             {(!isOverviewMode && currentDrivingRecord && sortedDrivingRecords.length > 0) ||
              (isOverviewMode && allDrivingRecords.length > 0) ? (
               <div className="space-y-3 sm:space-y-3">

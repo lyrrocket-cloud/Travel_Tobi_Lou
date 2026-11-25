@@ -189,13 +189,9 @@ export async function GET() {
       }
     }
     
-    // 数据库不可用时返回详细错误信息
-    console.error('[Trip Driving API] Database not available:', dbResult.error);
-    return NextResponse.json({ 
-      error: 'Database not available', 
-      details: dbResult.error,
-      hint: dbResult.hint 
-    }, { status: 503 });
+    // 数据库不可用时回退到文件存储
+    console.log('[Trip Driving API] Using file storage for driving records');
+    return NextResponse.json({ tripDrivingRecords: inMemoryDrivingRecords });
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -262,13 +258,23 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // 数据库不可用时返回详细错误信息
-    console.error('[Trip Driving API] Database not available:', dbResult.error);
-    return NextResponse.json({ 
-      error: 'Database not available', 
-      details: dbResult.error,
-      hint: dbResult.hint 
-    }, { status: 503 });
+    // 数据库不可用时回退到文件存储
+    if (inMemoryDrivingRecords.some(r => String(r.wishId) === String(wishId))) {
+      return NextResponse.json({ error: 'Driving record already exists for this wish' }, { status: 400 });
+    }
+    const now = new Date().toISOString();
+    const newRecord = {
+      id: `driving_${wishId}_${Date.now()}`,
+      wishId,
+      destination: destination || '',
+      startDate: startDate || null,
+      records: [],
+      createdAt: now,
+      updatedAt: now,
+    };
+    inMemoryDrivingRecords.push(newRecord);
+    saveDrivingRecords();
+    return NextResponse.json(newRecord);
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -321,13 +327,19 @@ export async function PUT(request: NextRequest) {
       }
     }
     
-    // 数据库不可用时返回详细错误信息
-    console.error('[Trip Driving API] Database not available:', dbResult.error);
-    return NextResponse.json({ 
-      error: 'Database not available', 
-      details: dbResult.error,
-      hint: dbResult.hint 
-    }, { status: 503 });
+    // 数据库不可用时回退到文件存储
+    const index = inMemoryDrivingRecords.findIndex(r => String(r.id) === String(id));
+    if (index === -1) {
+      return NextResponse.json({ error: 'Driving record not found' }, { status: 404 });
+    }
+    const updatedRecord = {
+      ...inMemoryDrivingRecords[index],
+      records: records || [],
+      updatedAt: new Date().toISOString(),
+    };
+    inMemoryDrivingRecords[index] = updatedRecord;
+    saveDrivingRecords();
+    return NextResponse.json(updatedRecord);
   } catch (error) {
     console.error('[API] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

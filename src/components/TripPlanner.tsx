@@ -51,6 +51,8 @@ const transportNames: Record<string, string> = {
 
 interface TripPlannerProps {
   confirmedWishes: Wish[];
+  selectedDay?: number;
+  onSelectedDayChange?: (day: number) => void;
 }
 
 const calculateDate = (startDate: string, dayOffset: number): string => {
@@ -62,11 +64,30 @@ const calculateDate = (startDate: string, dayOffset: number): string => {
   return `${year}-${month}-${day}`;
 };
 
-export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
+export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayProp, onSelectedDayChange }: TripPlannerProps) {
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   const [selectedWishId, setSelectedWishId] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState<number>(1);
+  // 受控的 day：父组件（URL 状态）为单一事实来源；内部仅做镜像，避免被 localStorage 默认值覆盖
+  const [internalDay, setInternalDay] = useState<number>(selectedDayProp ?? 1);
+  const selectedDay = internalDay;
+  const setSelectedDay = (day: number) => {
+    setInternalDay(day);
+    onSelectedDayChange?.(day);
+  };
   const tabTransition = useTabTransition();
+
+  // 外部（URL 还原）切换 day 时同步到内部；越界时安全回退到合法范围
+  useEffect(() => {
+    if (selectedDayProp != null && selectedDayProp !== internalDay) {
+      setInternalDay(selectedDayProp);
+    }
+  }, [selectedDayProp]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const plan = tripPlans.find(p => String(p.wishId) === String(selectedWishId));
+    const max = plan?.travelDays;
+    if (max && internalDay > max) setInternalDay(max);
+    if (internalDay < 1) setInternalDay(1);
+  }, [tripPlans, selectedWishId, internalDay]);
   const [editingActivity, setEditingActivity] = useState<{ dayNumber: number; activityId: string } | null>(null);
   const [editingActivityData, setEditingActivityData] = useState<ActivityItem | null>(null);
   const [editingTransport, setEditingTransport] = useState<{ dayNumber: number; transportId: string } | null>(null);
@@ -146,7 +167,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
   const [expandEarlyMorning, setExpandEarlyMorning] = useState(false); // 是否展开0-7点时段
 
   useEffect(() => {
-    const savedDay = localStorage.getItem('travel-toolbox-selected-day');
+    // day 由父组件（URL 状态）受控，不再从 localStorage 读取，避免覆盖 URL 还原
     const savedShowSchedule = localStorage.getItem('travel-toolbox-show-schedule');
     // 读取保存的选中愿望ID（保留上一次的行程）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
@@ -170,10 +191,6 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
       }
     };
     
-    if (savedDay) {
-      setSelectedDay(parseInt(savedDay, 10));
-    }
-    
     if (savedShowSchedule === 'true') {
       setShowSchedule(true);
       setShowTripEditor(false);
@@ -182,11 +199,7 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
     fetchDefaultTrip();
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('travel-toolbox-selected-day', String(selectedDay));
-    }
-  }, [selectedDay]);
+  // day 的持久化与 URL 同步由父组件统一管理，此处不再写入 localStorage
 
   // 保存选中的旅行到 localStorage（用于切换标签页后恢复），并同步页面级头部
   useEffect(() => {
@@ -1159,7 +1172,12 @@ export default function TripPlanner({ confirmedWishes }: TripPlannerProps) {
             </div>
             {/* Day切换按钮 - 手机端 */}
             {currentTripPlan && (
-              <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-thin sm:hidden">
+              <div
+                tabIndex={0}
+                role="region"
+                aria-label="按天切换行程，可使用左右方向键滚动"
+                className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-thin sm:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#CEA472] focus-visible:outline-offset-2"
+              >
                 {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
                   <button
                     key={day}

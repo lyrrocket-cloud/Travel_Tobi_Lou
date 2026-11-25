@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Star, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Plus, Edit2, Trash2, Star, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useTabTransition, TabSwitchSkeleton } from '@/components/motion/TabTransition';
 import { Wish, TripExpenseRecord, ExpenseItem, ExpenseCategory, CurrencyCode, ExchangeRateRecord } from '@/types';
 import { TripPlan } from '@/types';
+import type { AccountQueryFilters } from '@/lib/url-state';
+import { EMPTY_FILTERS, filtersEqual } from '@/lib/url-state';
 
 const expenseCategories: Record<string, string> = {
   accommodation: '住宿',
@@ -76,9 +78,17 @@ const currencySymbols: Record<CurrencyCode, string> = {
 interface TripAccountingProps {
   confirmedWishes: Wish[];
   isAdminMode?: boolean;
+  // 受控的子标签（entry/query/analysis），由页面级 URL 状态统一管理
+  subTab?: string;
+  onSubTabChange?: (tab: string) => void;
+  // 受控的查询筛选条件（分享还原用），由页面级 URL 状态统一管理
+  filters?: AccountQueryFilters | null;
+  onFiltersChange?: (filters: AccountQueryFilters) => void;
 }
 
-export default function TripAccounting({ confirmedWishes, isAdminMode = false }: TripAccountingProps) {
+const VALID_ACCOUNT_SUB = ['entry', 'query', 'analysis'];
+
+export default function TripAccounting({ confirmedWishes, isAdminMode = false, subTab, onSubTabChange, filters, onFiltersChange }: TripAccountingProps) {
   const [tripExpenses, setTripExpenses] = useState<TripExpenseRecord[]>([]);
   const [tripPlans, setTripPlans] = useState<TripPlan[]>([]);
   // 首次渲染即从 localStorage 恢复选中的旅行（该组件只在“旅行记账”标签激活时挂载），
@@ -88,7 +98,15 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     return window.localStorage.getItem('travel-toolbox-selected-wish-id');
   });
   const [showWishSelector, setShowWishSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState('entry');
+  // 受控的子标签：父组件（URL 状态）为单一事实来源；内部镜像避免被 localStorage 默认值覆盖
+  const [internalTab, setInternalTab] = useState<string>(
+    subTab && VALID_ACCOUNT_SUB.includes(subTab) ? subTab : 'entry'
+  );
+  const activeTab = internalTab;
+  const setActiveTab = (tab: string) => {
+    setInternalTab(tab);
+    onSubTabChange?.(tab);
+  };
   const tabTransition = useTabTransition();
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [showEditExpense, setShowEditExpense] = useState(false);
@@ -98,7 +116,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
   const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
-  const [initializedTabFromStorage, setInitializedTabFromStorage] = useState(false);
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
     CNY: 1,
@@ -156,23 +173,27 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
 
   const [analysisConsumerFilter, setAnalysisConsumerFilter] = useState<string | null>(null);
   
-  // 消费查询筛选状态
-  const [queryFilters, setQueryFilters] = useState<{
-    category: string | null;
-    payer: string | null;     // 支付人
-    currency: string | null;
-    dateFrom: string;
-    dateTo: string;
-  }>({
-    category: null,
-    payer: null,
-    currency: null,
-    dateFrom: '',
-    dateTo: '',
-  });
+  // 消费查询筛选状态：父组件（URL 状态）为单一事实来源；内部镜像用于分享还原，不被默认值覆盖
+  const [internalFilters, setInternalFilters] = useState<AccountQueryFilters>(
+    filters && !filtersEqual(filters, EMPTY_FILTERS) ? filters : EMPTY_FILTERS
+  );
+  const queryFilters = internalFilters;
+  const setQueryFilters = (
+    next: AccountQueryFilters | ((prev: AccountQueryFilters) => AccountQueryFilters)
+  ) => {
+    setInternalFilters(prev => {
+      const resolved = typeof next === 'function' ? (next as (p: AccountQueryFilters) => AccountQueryFilters)(prev) : next;
+      if (!filtersEqual(resolved, prev)) onFiltersChange?.(resolved);
+      return resolved;
+    });
+  };
   
   // 消费查询筛选区域折叠状态
   const [queryFiltersCollapsed, setQueryFiltersCollapsed] = useState(true);
+
+  // 消费查询按月分组的展开状态：仅默认展开最新一个月
+  const [expandedMonths, setExpandedMonths] = useState<Set<string>>(() => new Set());
+  const didSeedExpandedMonths = useRef(false);
   
   const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
   const [editingExchangeRates, setEditingExchangeRates] = useState<Record<string, number>>(exchangeRates);
@@ -308,14 +329,9 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
   };
 
   useEffect(() => {
+    // 子标签由父组件（URL 状态）受控，不再从 localStorage 读取，避免覆盖 URL 还原
     // 读取保存的选中愿望ID（与 TripPlanner 共享，保留上一次的行程）
     const savedWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-    // 读取保存的记账子标签页
-    const savedAccountTab = localStorage.getItem('travel-toolbox-account-tab');
-    if (savedAccountTab && ['entry', 'query', 'analysis'].includes(savedAccountTab)) {
-      setActiveTab(savedAccountTab);
-    }
-    setInitializedTabFromStorage(true);
 
     // 同步恢复上次选中的旅行，不等待默认旅行接口返回
     if (savedWishId) {
@@ -363,12 +379,20 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     };
   }, []);
 
-  // 保存记账子标签页到 localStorage
+  // 子标签持久化与 URL 同步由父组件统一管理；外部（URL 还原）切换时同步到内部
   useEffect(() => {
-    if (typeof window !== 'undefined' && initializedTabFromStorage) {
-      localStorage.setItem('travel-toolbox-account-tab', activeTab);
+    if (subTab && VALID_ACCOUNT_SUB.includes(subTab) && subTab !== internalTab) {
+      setInternalTab(subTab);
     }
-  }, [activeTab, initializedTabFromStorage]);
+  }, [subTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 外部（URL 还原）筛选变化时同步到内部；空筛选等价于默认，不触发无意义更新
+  useEffect(() => {
+    const incoming = filters ?? EMPTY_FILTERS;
+    if (!filtersEqual(incoming, internalFilters)) {
+      setInternalFilters(incoming);
+    }
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (typeof window !== 'undefined' && initializedFromStorage && defaultTripId) {
@@ -398,20 +422,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     window.addEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
     return () => {
       window.removeEventListener('default-trip-changed', handleDefaultTripChanged as EventListener);
-    };
-  }, []);
-
-  // 监听外部触发的记账子标签页切换（分享链接恢复）
-  useEffect(() => {
-    const handleAccountTabChanged = (e: any) => {
-      if (e.detail && e.detail.tab && ['entry', 'query', 'analysis'].includes(e.detail.tab)) {
-        setActiveTab(e.detail.tab);
-      }
-    };
-
-    window.addEventListener('account-tab-changed', handleAccountTabChanged as EventListener);
-    return () => {
-      window.removeEventListener('account-tab-changed', handleAccountTabChanged as EventListener);
     };
   }, []);
 
@@ -799,6 +809,48 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
     return 0;
   });
 
+  // 消费查询按月分组（仅用于展示；筛选与合计仍基于全部 sortedExpenses）
+  type ExpenseMonthGroup = {
+    key: string;
+    label: string;
+    items: ExpenseItem[];
+    count: number;
+    cnyTotal: number;
+  };
+  const expenseGroups: ExpenseMonthGroup[] = (() => {
+    const map = new Map<string, ExpenseItem[]>();
+    for (const expense of sortedExpenses) {
+      const key = (expense.date || '').slice(0, 7) || 'unknown';
+      const list = map.get(key);
+      if (list) list.push(expense);
+      else map.set(key, [expense]);
+    }
+    const groups = Array.from(map.entries()).map(([key, items]) => {
+      const cnyTotal = items.reduce((sum, e) => sum + convertToCNY(e.amount, e.currency), 0);
+      const label = key === 'unknown'
+        ? '未知日期'
+        : `${key.slice(0, 4)}年${key.slice(5, 7)}月`;
+      return { key, label, items, count: items.length, cnyTotal };
+    });
+    // sortedExpenses 按日期升序；反转使最新月份排在最前
+    return groups.reverse();
+  })();
+
+  // 首次渲染时默认展开最新月份（render 中条件性 setState，React 在绘制前重渲染，无闪烁）
+  if (!didSeedExpandedMonths.current && expenseGroups.length > 0) {
+    didSeedExpandedMonths.current = true;
+    setExpandedMonths(new Set([expenseGroups[0].key]));
+  }
+
+  const toggleExpenseMonth = (key: string) => {
+    setExpandedMonths(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
   const getTravelers = () => {
     const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
     return wish?.travelers?.split(',').map(t => t.trim()).filter(t => t) || [];
@@ -1064,7 +1116,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
               <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改消费记录</span>
             </div>
           )}
-          <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
               <div className="space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-3 mb-4">
                   {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
@@ -1077,6 +1129,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                     {Object.entries(expenseCategories).map(([key, label]) => (
                       <button
                         key={key}
+                        disabled={isCurrentTripFrozen}
+                        aria-pressed={newExpense.category === key}
                         onClick={() => setNewExpense({ ...newExpense, category: key })}
                         className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
                           newExpense.category === key
@@ -1099,6 +1153,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                     <Label className="text-[#FFFFFF]/40 mb-1.5 block text-xs">从旅行规划选择活动行程</Label>
                     <Select
                       value={selectedActivity?.activityId || ''}
+                      disabled={isCurrentTripFrozen}
                       onValueChange={(value) => {
                         if (value) {
                           const activity = filteredLocations.find(l => l.activityId === value);
@@ -1111,7 +1166,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                         }
                       }}
                     >
-                      <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full">
+                      <SelectTrigger aria-label="选择活动行程" className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full">
                         <SelectValue placeholder="选择活动行程" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0a0a0f]  ">
@@ -1124,9 +1179,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                     </Select>
                   </div>
                   
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
+                  <Label htmlFor="expense-location" className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
                   <Input
+                    id="expense-location"
                     value={newExpense.location}
+                    readOnly={isCurrentTripFrozen}
                     onChange={(e) => {
                       setNewExpense({ ...newExpense, location: e.target.value });
                       setSelectedActivity(null);
@@ -1138,43 +1195,50 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
+                          <Label htmlFor="expense-date" className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
                           <Input
+                            id="expense-date"
                             type="text"
                             inputMode="numeric"
                             pattern="\d{4}-\d{2}-\d{2}"
                             placeholder="YYYY-MM-DD"
                             value={newExpense.date}
+                            readOnly={isCurrentTripFrozen}
                             onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
                             className="bg-black/60   text-[#FFFFFF] text-xs h-10"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
+                          <Label htmlFor="expense-time" className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
                           <Input
+                            id="expense-time"
                             type="time"
                             value={newExpense.time}
+                            readOnly={isCurrentTripFrozen}
                             onChange={(e) => setNewExpense({ ...newExpense, time: e.target.value })}
                             className="bg-black/60   text-[#FFFFFF] text-xs h-10 w-full"
                           />
                         </div>
                         <div>
-                          <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费金额</Label>
+                          <Label htmlFor="expense-amount" className="text-[#FFFFFF]/60 mb-2 block text-xs">消费金额</Label>
                           <div className="flex gap-2">
                             <Input
+                              id="expense-amount"
                               type="number"
                               min="0"
                               step="0.01"
                               value={newExpense.amount}
+                              readOnly={isCurrentTripFrozen}
                               onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
                               className="bg-black/60   text-[#FFFFFF] text-xs flex-1"
                               placeholder="0.00"
                             />
                             <Select
                               value={newExpense.currency}
+                              disabled={isCurrentTripFrozen}
                               onValueChange={(value) => setNewExpense({ ...newExpense, currency: value })}
                             >
-                              <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs w-[120px]">
+                              <SelectTrigger aria-label="消费货币" className="bg-black/60   text-[#FFFFFF] text-xs w-[120px]">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="bg-[#0a0a0f]  ">
@@ -1193,9 +1257,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                       </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费描述</Label>
+                  <Label htmlFor="expense-desc" className="text-[#FFFFFF]/60 mb-2 block text-xs">消费描述</Label>
                   <Input
+                    id="expense-desc"
                     value={newExpense.description}
+                    readOnly={isCurrentTripFrozen}
                     onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
                     className="bg-black/60   text-[#FFFFFF] text-xs"
                     placeholder="输入消费描述"
@@ -1208,6 +1274,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                     {travelers.map((traveler, idx) => (
                       <button
                         key={idx}
+                        disabled={isCurrentTripFrozen}
+                        aria-pressed={newExpense.payers.includes(traveler)}
                         onClick={() => handlePayerToggle(traveler)}
                         className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payers.includes(traveler)
@@ -1227,6 +1295,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                     {travelers.map((traveler, idx) => (
                       <button
                         key={idx}
+                        disabled={isCurrentTripFrozen}
+                        aria-pressed={newExpense.payer === traveler}
                         onClick={() => setNewExpense({ ...newExpense, payer: traveler })}
                         className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
                           newExpense.payer === traveler
@@ -1245,7 +1315,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
           <div className="mt-4 px-2.5 sm:px-0">
             <Button
               onClick={addExpense}
-              disabled={!newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0) || !newExpense.payer}
+              disabled={isCurrentTripFrozen || !newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0) || !newExpense.payer}
               className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
             >
               保存消费
@@ -1259,7 +1329,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
               <span className="text-blue-400 text-xs">此行程已冻结，无法修改消费记录</span>
             </div>
           )}
-          <div className={`bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6 ${isCurrentTripFrozen ? 'opacity-50 pointer-events-none' : ''}`}>
+          <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
               {/* 筛选结果统计 - 始终显示 */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="text-xs text-[#FFFFFF]/60">
@@ -1276,16 +1346,16 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                     
                     return (
                       <>
-                        {/* 人民币合计 */}
+                        {/* 折算人民币合计：全部消费按当前汇率折算为 CNY（非各币种原币直接相加） */}
                         <span className="text-xs text-[#FFFFFF]/60">
-                          合计：<span className="text-[#CEA472] font-medium">¥{sortedExpenses.reduce((sum, e) => sum + convertToCNY(e.amount, e.currency), 0).toFixed(2)}</span>
+                          折算人民币合计：<span className="text-[#CEA472] font-medium">¥{sortedExpenses.reduce((sum, e) => sum + convertToCNY(e.amount, e.currency), 0).toFixed(2)}</span>
                         </span>
-                        {/* 其他货币合计 */}
+                        {/* 各币种原币合计：按币种分别汇总，不跨币种相加 */}
                         {Object.entries(currencyTotals)
                           .filter(([currency]) => currency !== 'CNY')
                           .map(([currency, total]) => (
                             <span key={currency} className="text-xs text-[#FFFFFF]/60">
-                              <span className="text-[#CEA472] font-medium">{getCurrencySymbol(currency)}{total.toFixed(2)}</span>
+                              {getCurrencyName(currency)}合计：<span className="text-[#CEA472] font-medium">{getCurrencySymbol(currency)}{total.toFixed(2)}</span>
                             </span>
                           ))
                         }
@@ -1434,12 +1504,32 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                 </div>
               )}
               
-              {currentExpenseRecord && sortedExpenses.length > 0 ? (
-                <div className="space-y-3 sm:space-y-3">
-                  {sortedExpenses.map(expense => {
-                    const payerCount = expense.payers?.length || 1;
-                    const perPersonAmount = expense.amount / payerCount;
+              {currentExpenseRecord && expenseGroups.length > 0 ? (
+                <div className="space-y-4">
+                  {expenseGroups.map(group => {
+                    const expanded = expandedMonths.has(group.key);
                     return (
+                      <div key={group.key} className="space-y-2">
+                        <button
+                          type="button"
+                          onClick={() => toggleExpenseMonth(group.key)}
+                          aria-expanded={expanded}
+                          aria-controls={`expense-month-${group.key}`}
+                          className="w-full flex items-center justify-between p-2.5 rounded-none bg-[#CEA472]/10 hover:bg-[#CEA472]/20 transition-colors text-left min-h-[44px]"
+                        >
+                          <span className="flex items-center gap-2 text-[#CEA472] text-xs font-medium">
+                            {expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                            {group.label}
+                            <span className="text-[#FFFFFF]/50">({group.count} 条)</span>
+                          </span>
+                          <span className="text-[#CEA472] text-xs font-medium">¥{group.cnyTotal.toFixed(2)}</span>
+                        </button>
+                        {expanded && (
+                          <div id={`expense-month-${group.key}`} className="space-y-3 sm:space-y-3">
+                            {group.items.map(expense => {
+                              const payerCount = expense.payers?.length || 1;
+                              const perPersonAmount = expense.amount / payerCount;
+                              return (
                       <div
                         key={expense.id}
                         className="p-3.5 sm:p-4 rounded-none bg-black/60   hover:bg-black/70 transition-colors"
@@ -1539,6 +1629,11 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false }:
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                            })}
                           </div>
                         )}
                       </div>

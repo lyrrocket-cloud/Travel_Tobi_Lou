@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Route, Coins, XCircle, Snowflake, Share2, Settings, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -14,6 +14,12 @@ import TripDriving from '@/components/TripDriving';
 import { Wish } from '@/types';
 import { useTabTransition, TabSwitchSkeleton } from '@/components/motion/TabTransition';
 import { ToolTabNav, type ToolTab } from '@/components/ToolTabNav';
+import {
+  readUrlState,
+  writeUrlState,
+  serializeUrlState,
+  type MainTab as UrlMainTab,
+} from '@/lib/url-state';
 
 const months = [
   '一月', '二月', '三月', '四月', '五月', '六月',
@@ -43,6 +49,14 @@ const extractYYYYMMFromDate = (dateStr: string): string => {
   }
   return dateStr;
 };
+
+// 服务端与客户端首帧统一使用默认导航状态，避免 hydration 不匹配；
+// URL/localStorage 状态在客户端挂载后的 layout effect 中恢复（绘制前完成，不闪烁）。
+const DEFAULT_MAIN_TAB: UrlMainTab = 'wish';
+const DEFAULT_WISH_SUB = 'make-wish';
+const DEFAULT_PLAN_DAY = 1;
+const DEFAULT_ACCOUNT_SUB = 'entry';
+const DEFAULT_DRIVE_SUB = 'entry';
 
 export default function Home() {
   const [destination, setDestination] = useState('');
@@ -86,13 +100,19 @@ export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [tripFrozenStatus, setTripFrozenStatus] = useState<Record<string, boolean>>({});
 
-  const [mainTab, setMainTab] = useState('wish');
+  const [mainTab, setMainTab] = useState<UrlMainTab>(DEFAULT_MAIN_TAB);
   // 旅行工具共用的当前行程（页面级持有，切换工具时头部不重挂载）
   const [selectedToolWishId, setSelectedToolWishId] = useState<string | null>(null);
   const [toolWishSelectorOpen, setToolWishSelectorOpen] = useState(false);
   const [tripDays, setTripDays] = useState<Record<string, number>>({});
   const [defaultTripId, setDefaultTripId] = useState<string | null>(null);
   const [defaultTripLoaded, setDefaultTripLoaded] = useState(false);
+  // 受控的子页面导航状态：页面级唯一来源，与 URL 同步，通过 props 下发给子组件
+  const [planDay, setPlanDay] = useState<number>(DEFAULT_PLAN_DAY);
+  const [accountSub, setAccountSub] = useState<string>(DEFAULT_ACCOUNT_SUB);
+  const [driveSub, setDriveSub] = useState<string>(DEFAULT_DRIVE_SUB);
+  // 记账查询筛选（仅 URL 提供时初始化为非空，用于分享还原）
+  const [accountFilters, setAccountFilters] = useState<import('@/lib/url-state').AccountQueryFilters | null>(null);
 
   // 跳转到旅行规划页面并选中对应的愿望
   const navigateToPlan = (wishId: string | number) => {
@@ -107,40 +127,73 @@ export default function Home() {
     window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: String(wishId) } }));
   };
 
-  const [activeTab, setActiveTab] = useState('make-wish');
+  const [activeTab, setActiveTab] = useState<string>(DEFAULT_WISH_SUB);
   const wishTabTransition = useTabTransition();
   const mainTabTransition = useTabTransition();
 
-  // 从 localStorage 加载初始值
+  // 客户端挂载后恢复导航状态：URL 优先，其次 localStorage，最后默认值。
+  // 放在 layout effect 中，在浏览器绘制前完成，分享链接不会先闪默认页；
+  // 同时保证服务端首帧与客户端首帧一致，避免 hydration 不匹配。
+  useLayoutEffect(() => {
+    const url = readUrlState();
+    setMainTab((url.tab || localStorage.getItem('travel-toolbox-main-tab') || DEFAULT_MAIN_TAB) as UrlMainTab);
+
+    if (url.tab === 'wish' && url.sub) {
+      setActiveTab(url.sub);
+    } else {
+      setActiveTab(localStorage.getItem('travel-toolbox-active-tab') || DEFAULT_WISH_SUB);
+    }
+
+    if (url.wish) {
+      setSelectedToolWishId(url.wish);
+    } else {
+      setSelectedToolWishId(localStorage.getItem('travel-toolbox-selected-wish-id'));
+    }
+
+    if (url.tab === 'plan' && url.day) {
+      setPlanDay(url.day);
+    } else {
+      const savedDay = localStorage.getItem('travel-toolbox-selected-day');
+      const n = savedDay ? parseInt(savedDay, 10) : NaN;
+      setPlanDay(Number.isFinite(n) && n >= 1 ? n : DEFAULT_PLAN_DAY);
+    }
+
+    setAccountSub(
+      url.tab === 'account' && url.sub
+        ? url.sub
+        : localStorage.getItem('travel-toolbox-account-tab') || DEFAULT_ACCOUNT_SUB
+    );
+    setDriveSub(
+      url.tab === 'drive' && url.sub
+        ? url.sub
+        : localStorage.getItem('travel-toolbox-drive-tab') || DEFAULT_DRIVE_SUB
+    );
+    if (url.filters) setAccountFilters(url.filters);
+  }, []);
+
+  // 当前导航状态的唯一序列化快照（供 URL 同步与分享使用，保证地址栏与真实状态一致）
+  const currentUrlState = {
+    tab: mainTab as UrlMainTab,
+    sub:
+      mainTab === 'wish'
+        ? activeTab
+        : mainTab === 'account'
+        ? accountSub
+        : mainTab === 'drive'
+        ? driveSub
+        : null,
+    wish: mainTab !== 'wish' ? selectedToolWishId : null,
+    day: mainTab === 'plan' ? planDay : null,
+    filters: mainTab === 'account' ? accountFilters : null,
+  };
+
+  // 从 localStorage 加载非导航类初始值（导航状态已由 useState 懒初始化，URL 优先）
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedYear = localStorage.getItem('travel-toolbox-selected-year');
       if (savedYear) setSelectedYear(parseInt(savedYear, 10));
-      
-      const savedMainTab = localStorage.getItem('travel-toolbox-main-tab');
-      if (savedMainTab) setMainTab(savedMainTab);
-
-      const savedToolWishId = localStorage.getItem('travel-toolbox-selected-wish-id');
-      if (savedToolWishId) setSelectedToolWishId(savedToolWishId);
-
-      const savedActiveTab = localStorage.getItem('travel-toolbox-active-tab');
-      if (savedActiveTab) setActiveTab(savedActiveTab);
     }
   }, []);
-
-  // 保存 activeTab 到 localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined' && activeTab) {
-      localStorage.setItem('travel-toolbox-active-tab', activeTab);
-    }
-  }, [activeTab]);
-
-  // 保存 mainTab 到 localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined' && mainTab) {
-      localStorage.setItem('travel-toolbox-main-tab', mainTab);
-    }
-  }, [mainTab]);
 
   // 保存 selectedYear 到 localStorage
   useEffect(() => {
@@ -149,27 +202,41 @@ export default function Home() {
     }
   }, [selectedYear]);
 
+  // 导航状态变化时：同步写入 URL（单一事实来源，replaceState 不产生历史）与 localStorage 缓存。
+  // 写完整快照保证切换主标签时不会残留过期的 sub/day/filters 参数。
+  // 首次提交时导航状态尚未从 URL 恢复，跳过以免把分享链接参数冲掉。
+  const skipFirstUrlSync = useRef(true);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (skipFirstUrlSync.current) {
+      skipFirstUrlSync.current = false;
+      return;
+    }
+    writeUrlState(currentUrlState);
+    localStorage.setItem('travel-toolbox-main-tab', mainTab);
+    localStorage.setItem('travel-toolbox-active-tab', activeTab);
+    if (selectedToolWishId) {
+      localStorage.setItem('travel-toolbox-selected-wish-id', selectedToolWishId);
+    }
+    if (mainTab === 'plan') {
+      localStorage.setItem('travel-toolbox-selected-day', String(planDay));
+    }
+    if (mainTab === 'account') {
+      localStorage.setItem('travel-toolbox-account-tab', accountSub);
+    }
+    if (mainTab === 'drive') {
+      localStorage.setItem('travel-toolbox-drive-tab', driveSub);
+    }
+  }, [mainTab, activeTab, selectedToolWishId, planDay, accountSub, driveSub, accountFilters]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // 分享按钮：生成当前页面状态的链接并复制到剪贴板
   const [shareSuccess, setShareSuccess] = useState(false);
   const handleShare = async () => {
-    const params = new URLSearchParams();
-    params.set('tab', mainTab);
-    if (mainTab === 'wish') {
-      params.set('sub', activeTab);
-    }
-    // 读取当前选中的行程 ID
-    const selectedWishId = typeof window !== 'undefined' ? localStorage.getItem('travel-toolbox-selected-wish-id') : null;
-    if ((mainTab === 'plan' || mainTab === 'account' || mainTab === 'drive') && selectedWishId) {
-      params.set('wish', selectedWishId);
-    }
-    // 读取记账子标签页
-    if (mainTab === 'account') {
-      const accountTab = typeof window !== 'undefined' ? localStorage.getItem('travel-toolbox-account-tab') : null;
-      if (accountTab) {
-        params.set('subTab', accountTab);
-      }
-    }
-    const shareUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    // 直接基于当前真实 React 状态序列化，不读取可能过期的 localStorage
+    const qs = serializeUrlState(currentUrlState);
+    const shareUrl = qs
+      ? `${window.location.origin}${window.location.pathname}?${qs}`
+      : `${window.location.origin}${window.location.pathname}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
       setShareSuccess(true);
@@ -187,38 +254,16 @@ export default function Home() {
     }
   };
 
-  // 从 URL 参数恢复页面状态（优先级高于 localStorage）
+  // 挂载后通知仍基于事件同步行程的子组件（导航状态本身已由 useState 懒初始化从 URL 读取，URL 优先）。
+  // 不再清除 URL 参数：地址栏始终反映真实状态，便于刷新保持与分享直接复制当前链接。
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlTab = urlParams.get('tab');
-    const urlSub = urlParams.get('sub');
-    const urlWish = urlParams.get('wish');
-    const urlSubTab = urlParams.get('subTab');
-    if (urlTab) {
-      setMainTab(urlTab);
-      localStorage.setItem('travel-toolbox-main-tab', urlTab);
+    if (selectedToolWishId) {
+      window.dispatchEvent(
+        new CustomEvent('selected-wish-changed', { detail: { wishId: selectedToolWishId } })
+      );
     }
-    if (urlSub) {
-      setActiveTab(urlSub);
-      localStorage.setItem('travel-toolbox-active-tab', urlSub);
-    }
-    if (urlSubTab) {
-      localStorage.setItem('travel-toolbox-account-tab', urlSubTab);
-      // 通知 TripAccounting 切换到对应子标签页
-      window.dispatchEvent(new CustomEvent('account-tab-changed', { detail: { tab: urlSubTab } }));
-    }
-    if (urlWish) {
-      localStorage.setItem('travel-toolbox-selected-wish-id', urlWish);
-      setSelectedToolWishId(urlWish);
-      // 通知 TripPlanner 切换到对应行程
-      window.dispatchEvent(new CustomEvent('selected-wish-changed', { detail: { wishId: urlWish } }));
-    }
-    // 清除 URL 参数，避免刷新后残留
-    if (urlTab || urlSub || urlWish || urlSubTab) {
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 恢复滚动位置
   useEffect(() => {
@@ -1530,15 +1575,31 @@ export default function Home() {
       );
     } else if (mainTab === 'plan') {
       return (
-        <TripPlanner confirmedWishes={sortedConfirmedWishes} />
+        <TripPlanner
+          confirmedWishes={sortedConfirmedWishes}
+          selectedDay={planDay}
+          onSelectedDayChange={setPlanDay}
+        />
       );
     } else if (mainTab === 'account') {
       return (
-        <TripAccounting confirmedWishes={sortedConfirmedWishes} isAdminMode={isAdminMode} />
+        <TripAccounting
+          confirmedWishes={sortedConfirmedWishes}
+          isAdminMode={isAdminMode}
+          subTab={accountSub}
+          onSubTabChange={setAccountSub}
+          filters={accountFilters}
+          onFiltersChange={setAccountFilters}
+        />
       );
     } else if (mainTab === 'drive') {
       return (
-        <TripDriving confirmedWishes={sortedConfirmedWishes} isAdminMode={isAdminMode} />
+        <TripDriving
+          confirmedWishes={sortedConfirmedWishes}
+          isAdminMode={isAdminMode}
+          subTab={driveSub}
+          onSubTabChange={setDriveSub}
+        />
       );
     }
     return null;
@@ -1579,11 +1640,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto h-14 px-4 flex items-center">
           {/* 品牌图标（左） */}
           <div className="flex flex-1 items-center">
-            <div className="animate-hero-avatar flex-shrink-0 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center" style={{
+            <div role="img" aria-label="旅行工具箱" className="animate-hero-avatar flex-shrink-0 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center" style={{
               backgroundColor: '#CEA472',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
             }}>
-              <Plane className="w-3.5 h-3.5 sm:w-5 sm:h-5" style={{ color: '#0a0a0f' }} />
+              <Plane className="w-3.5 h-3.5 sm:w-5 sm:h-5" style={{ color: '#0a0a0f' }} aria-hidden="true" />
             </div>
           </div>
 
@@ -1652,6 +1713,9 @@ export default function Home() {
         </div>
       </header>
 
+      <main>
+        <h1 className="sr-only">旅行工具箱</h1>
+
       {/* 旅行项目栏：独立一栏，与上方导航分离 */}
       {mainTab !== 'wish' && (
         <div className="mt-3 px-3 sm:px-6 lg:px-8">
@@ -1670,7 +1734,7 @@ export default function Home() {
                     </span>
                   )}
                 </div>
-                <p className="text-[#FFFFFF]/60 text-[11px] sm:text-xs mt-0.5 truncate">
+                <p className="text-[#FFFFFF]/60 text-xs mt-0.5 break-words">
                   {activeToolWish?.confirmed_date ? `${activeToolWish.confirmed_date} · ` : ''}
                   {activeTripDays}天{activeToolWish?.travelers ? ` · ${activeToolWish.travelers}` : ''}
                 </p>
@@ -1730,21 +1794,43 @@ export default function Home() {
           </div>
         </div>
       </div>
+      </main>
 
       {/* 切换旅行（旅行工具共用） */}
       <Dialog open={toolWishSelectorOpen} onOpenChange={setToolWishSelectorOpen}>
-        <DialogContent className="bg-[#0a0a0f]">
+        <DialogContent
+          className="bg-[#0a0a0f]"
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            // 行程列表异步渲染：onOpenAutoFocus 触发时当前项可能尚未挂载，做短重试，
+            // 优先聚焦当前行程（aria-current=page），无当前项时退到第一个按钮。
+            const tryFocus = (attempt: number) => {
+              const list = document.getElementById('tool-wish-selector-list');
+              const current = list?.querySelector('[aria-current="page"]') as HTMLElement | null;
+              const first = list?.querySelector('button') as HTMLElement | null;
+              if (current) { current.focus(); return; }
+              if (first && attempt >= 6) { first.focus(); return; }
+              if (attempt < 20) { window.setTimeout(() => tryFocus(attempt + 1), 50); }
+            };
+            tryFocus(0);
+          }}
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            (document.querySelector('button[aria-label="切换旅行"]') as HTMLElement | null)?.focus();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">选择旅行</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">切换旅行工具当前查看的行程</DialogDescription>
           </DialogHeader>
-          <div className="max-h-[60vh] space-y-2 overflow-y-auto py-2">
+          <div id="tool-wish-selector-list" className="max-h-[60vh] space-y-2 overflow-y-auto py-2">
             {confirmedWishesNewestFirst.map(wish => {
               const isSelected = String(wish.id) === selectedToolWishId;
               return (
                 <button
                   key={wish.id}
                   type="button"
+                  aria-current={isSelected ? 'page' : undefined}
                   onClick={() => handleToolWishSelect(wish)}
                   className={`w-full p-3 text-left transition-colors ${
                     isSelected ? 'bg-[#CEA472]/10 text-[#CEA472]' : 'bg-black/60 text-[#FFFFFF] hover:bg-black/70'
@@ -1771,7 +1857,17 @@ export default function Home() {
 
       {/* 密码对话框 */}
       <Dialog open={passwordModalOpen} onOpenChange={setPasswordModalOpen}>
-        <DialogContent className="bg-[#0a0a0f]  ">
+        <DialogContent
+          className="bg-[#0a0a0f]"
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            document.getElementById('admin-password')?.focus();
+          }}
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            (document.querySelector('button[aria-label="管理"]') as HTMLElement | null)?.focus();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className="text-[#FFFFFF]">进入管理模式</DialogTitle>
             <DialogDescription className="text-[#FFFFFF]/60">请输入管理员密码以进入管理模式</DialogDescription>
