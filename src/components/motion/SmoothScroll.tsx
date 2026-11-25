@@ -19,7 +19,7 @@ export function SmoothScroll() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const lenis = new Lenis({
-      lerp: 0.1,
+      duration: 1.1, // 与主站一致：固定时长（秒），替代 lerp
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.5,

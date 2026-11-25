@@ -1132,7 +1132,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         disabled={isCurrentTripFrozen}
                         aria-pressed={newExpense.category === key}
                         onClick={() => setNewExpense({ ...newExpense, category: key })}
-                        className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
+                        className={`flex items-center gap-2 p-3 rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
                           newExpense.category === key
                             ? ' bg-[#CEA472]/10 text-[#CEA472]'
                             : ' bg-black/60 text-[#FFFFFF]/60 '
@@ -1277,7 +1277,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         disabled={isCurrentTripFrozen}
                         aria-pressed={newExpense.payers.includes(traveler)}
                         onClick={() => handlePayerToggle(traveler)}
-                        className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[80px] ${
                           newExpense.payers.includes(traveler)
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1298,7 +1298,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         disabled={isCurrentTripFrozen}
                         aria-pressed={newExpense.payer === traveler}
                         onClick={() => setNewExpense({ ...newExpense, payer: traveler })}
-                        className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[80px] ${
                           newExpense.payer === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1398,7 +1398,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         onClick={() => setQueryFilters({ ...queryFilters, category: null })}
-                        className={`px-2.5 py-1 rounded-none text-xs transition-all ${
+                        className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           queryFilters.category === null
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1410,7 +1410,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         <button
                           key={key}
                           onClick={() => setQueryFilters({ ...queryFilters, category: key })}
-                          className={`px-2.5 py-1 rounded-none text-xs transition-all ${
+                          className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             queryFilters.category === key
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
                               : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1428,7 +1428,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         onClick={() => setQueryFilters({ ...queryFilters, payer: null })}
-                        className={`px-2.5 py-1 rounded-none text-xs transition-all ${
+                        className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           queryFilters.payer === null
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1440,7 +1440,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         <button
                           key={traveler}
                           onClick={() => setQueryFilters({ ...queryFilters, payer: traveler })}
-                          className={`px-2.5 py-1 rounded-none text-xs transition-all ${
+                          className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             queryFilters.payer === traveler
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
                               : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1458,7 +1458,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         onClick={() => setQueryFilters({ ...queryFilters, currency: null })}
-                        className={`px-2.5 py-1 rounded-none text-xs transition-all ${
+                        className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           queryFilters.currency === null
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1470,7 +1470,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         <button
                           key={currencyId}
                           onClick={() => setQueryFilters({ ...queryFilters, currency: currencyId })}
-                          className={`px-2.5 py-1 rounded-none text-xs transition-all ${
+                          className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             queryFilters.currency === currencyId
                               ? 'bg-[#CEA472] text-[#0a0a0f]'
                               : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1657,7 +1657,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setAnalysisConsumerFilter(null)}
-                      className={`px-3 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[60px] ${
+                      className={`px-3 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[60px] ${
                         analysisConsumerFilter === null
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1669,7 +1669,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                       <button
                         key={traveler}
                         onClick={() => setAnalysisConsumerFilter(traveler)}
-                        className={`px-3 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[60px] ${
+                        className={`px-3 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[60px] ${
                           analysisConsumerFilter === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1885,7 +1885,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                               onClick={() => {
                                 handleEditActivitySelect(activity);
                               }}
-                              className={`px-2.5 py-1 rounded-none text-xs transition-all whitespace-nowrap ${
+                              className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] whitespace-nowrap ${
                                 isSelected
                                   ? 'bg-[#CEA472] text-[#0a0a0f]'
                                   : 'bg-black/60   text-[#FFFFFF]/60  hover:text-[#FFFFFF]/80'
@@ -1916,7 +1916,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                           : [...currentPayers, traveler];
                         setEditingExpense({ ...editingExpense, payers: newPayers });
                       }}
-                      className={`px-3 py-1.5 rounded-none text-xs transition-all ${
+                      className={`px-3 py-1.5 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                         (editingExpense.payers || []).includes(traveler)
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -1937,7 +1937,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                       key={idx}
                       type="button"
                       onClick={() => setEditingExpense({ ...editingExpense, payer: traveler })}
-                      className={`px-3 py-1.5 rounded-none text-xs transition-all ${
+                      className={`px-3 py-1.5 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                         editingExpense.payer === traveler
                           ? 'bg-[#CEA472] text-[#0a0a0f]'
                           : 'bg-black/60   text-[#FFFFFF]/60 '

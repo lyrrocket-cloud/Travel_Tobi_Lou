@@ -14,6 +14,7 @@ import TripDriving from '@/components/TripDriving';
 import { Wish } from '@/types';
 import { useTabTransition, TabSwitchSkeleton } from '@/components/motion/TabTransition';
 import { ToolTabNav, type ToolTab } from '@/components/ToolTabNav';
+import { GlobalBackground } from '@/components/GlobalBackground';
 import {
   readUrlState,
   writeUrlState,
@@ -1071,7 +1072,7 @@ export default function Home() {
                         <div key={month} className="flex flex-col items-center min-w-0 snap-start">
                           {/* 月份节点 */}
                           <div 
-                            className={`w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full relative z-10 transition-all duration-300 ${
+                            className={`w-1.5 h-1.5 sm:w-3 sm:h-3 rounded-full relative z-10 transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                               hasAnyWishes 
                                 ? showGray
                                   ? 'bg-gray-400 shadow-lg shadow-gray-400/30' 
@@ -1102,7 +1103,7 @@ export default function Home() {
                                   <div
                                     key={trip.id}
                                     onClick={() => navigateToPlan(trip.id)}
-                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-all duration-200 hover:scale-105 ${
+                                    className={`text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                                       isExpired
                                         ? 'text-[#FFFFFF]/60 bg-gray-500/20 hover:bg-gray-500/30'
                                         : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
@@ -1122,7 +1123,7 @@ export default function Home() {
                                   <div
                                     key={wish.id}
                                     onClick={() => handleUnconfirmedWishClick(wish.id)}
-                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-all duration-200 hover:scale-105 bg-gray-500/5    hover:bg-gray-500/10"
+                                    className="text-xs px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-none text-center cursor-pointer transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] bg-gray-500/5    hover:bg-gray-500/10"
                                   >
                                     <div className="font-semibold truncate text-xs text-gray-400">{wish.destination}</div>
                                     <div className="text-gray-500 text-xs mt-0.5">{formattedDate}</div>
@@ -1151,7 +1152,7 @@ export default function Home() {
                           <div
                             key={trip.id}
                             onClick={() => navigateToPlan(trip.id)}
-                            className={`flex items-center justify-between text-sm px-3 py-2.5 rounded-none cursor-pointer transition-all duration-200 ${
+                            className={`flex items-center justify-between text-sm px-3 py-2.5 rounded-none cursor-pointer transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                               isExpired
                                 ? 'text-[#FFFFFF]/60 bg-gray-500/20 hover:bg-gray-500/30'
                                 : 'text-[#FFFFFF] bg-[#CEA472]/20 hover:bg-[#CEA472]/30'
@@ -1179,7 +1180,7 @@ export default function Home() {
                           <div
                             key={wish.id}
                             onClick={() => handleUnconfirmedWishClick(wish.id)}
-                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-none cursor-pointer transition-all duration-200 bg-gray-500/5    hover:bg-gray-500/10"
+                            className="flex items-center justify-between text-sm px-3 py-2.5 rounded-none cursor-pointer transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] bg-gray-500/5    hover:bg-gray-500/10"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span className="font-semibold truncate text-gray-400">{wish.destination}</span>
@@ -1353,7 +1354,7 @@ export default function Home() {
                             wish.is_expired === 1
                               ? ' bg-gray-500/5'
                               : wish.is_confirmed === 1
-                                ? ' bg-[#CEA472]/10 cursor-pointer hover:scale-[1.01] hover:bg-[#CEA472]/15'
+                                ? ' bg-[#CEA472]/10 cursor-pointer hover:bg-[#CEA472]/15'
                                 : ' bg-black/40  hover:bg-black/60'
                           }`}
                         >
@@ -1616,24 +1617,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full relative">
-      {/* 背景图片 - fixed定位确保不跳动 */}
-      <div 
-        className="fixed inset-0 w-full h-full -z-10"
-        style={{
-          backgroundImage: 'url("/matterhorn-bg.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-        }}
-      />
-      {/* 深色叠加层，确保文字可读 */}
-      <div className="fixed inset-0 bg-black/60 -z-10" />
-      {/* 背景光斑（golden-dark-ui 标准氛围层，叠加在雪山背景之上） */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="bg-blob-a" />
-        <div className="bg-blob-b" />
-        <div className="bg-blob-c" />
-      </div>
+      <GlobalBackground />
 
       {/* 顶部导航：固定悬浮 + 毛玻璃（44px 高，正文用等高占位避免遮挡） */}
       <header className="fixed top-0 left-0 right-0 z-[100] h-11 bg-black/20 backdrop-blur-md">

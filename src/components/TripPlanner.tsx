@@ -1151,7 +1151,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
               {/* 折叠/展开凌晨时段按钮 */}
               <button
                 onClick={() => setExpandEarlyMorning(!expandEarlyMorning)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-none text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-none text-xs font-medium transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                   expandEarlyMorning
                     ? 'bg-[#CEA472]/20 text-[#CEA472]  '
                     : 'bg-black/60 text-[#FFFFFF]/60    hover:text-[#FFFFFF]/80'
@@ -1182,7 +1182,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
                   <button
                     key={day}
                     onClick={() => setSelectedDay(day)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded-none text-xs font-medium transition-all ${
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-none text-xs font-medium transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                       selectedDay === day
                         ? 'bg-[#CEA472] text-[#0a0a0f]'
                         : 'bg-black/60   text-[#FFFFFF]/60 '

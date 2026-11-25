@@ -807,7 +807,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                         disabled={isCurrentTripFrozen}
                         aria-pressed={newDrivingRecord.driver === traveler}
                         onClick={() => setNewDrivingRecord({ ...newDrivingRecord, driver: traveler })}
-                        className={`px-4 py-2 rounded-none text-xs transition-all min-h-[44px] min-w-[80px] ${
+                        className={`px-4 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[80px] ${
                           newDrivingRecord.driver === traveler
                             ? 'bg-[#CEA472] text-[#0a0a0f]'
                             : 'bg-black/60   text-[#FFFFFF]/60 '
@@ -968,7 +968,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                       disabled={isCurrentTripFrozen}
                       aria-pressed={newDrivingRecord.behaviors.includes(key as DrivingBehavior)}
                       onClick={() => handleBehaviorToggle(key as DrivingBehavior)}
-                      className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
+                      className={`flex items-center gap-2 p-3 rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
                         newDrivingRecord.behaviors.includes(key as DrivingBehavior)
                           ? ' bg-[#CEA472]/10 text-[#CEA472]'
                           : ' bg-black/60 text-[#FFFFFF]/60 '
@@ -1177,7 +1177,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           <div className="flex gap-2">
             <button
               onClick={() => setLotteryMode('fair')}
-              className={`flex-1 p-3 rounded-none text-center transition-all ${
+              className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 lotteryMode === 'fair'
                   ? 'bg-[#CEA472]/10   text-[#CEA472]'
                   : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
@@ -1188,7 +1188,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
             </button>
             <button
               onClick={() => setLotteryMode('random')}
-              className={`flex-1 p-3 rounded-none text-center transition-all ${
+              className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 lotteryMode === 'random'
                   ? 'bg-[#CEA472]/10   text-[#CEA472]'
                   : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
@@ -1407,7 +1407,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                         score: calculateScore(newBehaviors.map(b => b.type), editingRecord.distance, editingRecord.duration)
                       });
                       }}
-                      className={`flex items-center gap-2 p-3 rounded-none  transition-all text-xs ${
+                      className={`flex items-center gap-2 p-3 rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
                         editingRecord.behaviors.some(b => b.type === key)
                           ? ' bg-[#CEA472]/10 text-[#CEA472]'
                           : ' bg-black/60 text-[#FFFFFF]/60 '
