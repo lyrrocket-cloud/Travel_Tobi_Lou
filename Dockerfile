@@ -16,7 +16,8 @@ RUN npm install --registry=https://registry.npmmirror.com --no-audit --no-fund
 COPY . .
 
 # 将 next.config.ts 转换为纯 JS（运行时不需要 TS runtime，避免启动时动态安装 typescript）
-RUN rm -f next.config.ts && cat > next.config.js <<'EOF'
+# 同时移除 babel 配置：生产构建无需 react-dev-inspector 插件，交给 SWC/Turbopack 编译更快
+RUN rm -f next.config.ts babel.config.js .babelrc && cat > next.config.js <<'EOF'
 const path = require('path');
 
 /** @type {import('next').NextConfig} */
@@ -63,7 +64,6 @@ COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/postcss.config.mjs ./
 COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/components.json ./
-COPY --from=builder /app/.babelrc ./
 
 # 创建数据持久化目录
 RUN mkdir -p /app/data

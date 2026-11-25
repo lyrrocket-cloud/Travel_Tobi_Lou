@@ -7,6 +7,7 @@ out
 .env
 .env.local
 .env.production
+.env.nas
 
 # 数据文件（容器内用挂载卷）
 data
