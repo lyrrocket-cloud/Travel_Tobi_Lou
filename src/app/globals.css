@@ -141,7 +141,6 @@ body {
   background-color: #0a0a0f;
   color: #FFFFFF;
   min-height: 100vh;
-  letter-spacing: 0.025em;
 }
 
 /* ========================================
@@ -388,11 +387,6 @@ div::-webkit-scrollbar-corner {
 /* ========================================
    高级动效层 (Premium Motion Layer)
    ======================================== */
-
-::selection {
-  background: #0a0a0f;
-  color: #fff;
-}
 
 /* ---------- 背景流光 ---------- */
 @keyframes aurora-drift {
@@ -647,7 +641,6 @@ html.lenis body {
 .bg-blob-b,
 .bg-blob-c {
   position: absolute;
-  border-radius: 50%;
   pointer-events: none;
 }
 /* 光斑柔边与主站一致：径向渐变叠加模糊滤镜 */
@@ -670,15 +663,21 @@ html.lenis body {
   animation: drift-c 22s ease-in-out infinite alternate;
 }
 
-/* 噪点层：与主站相同的 SVG 噪点，opacity .035 + overlay 混合 */
-.grain {
-  position: absolute;
+/* 鼠标聚光：与主站一致 */
+.cursor-glow {
+  position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.035;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+@media (pointer: coarse) {
+  .cursor-glow { opacity: 0; }
+}
+/* travel 增强：减少动态效果时直接隐藏聚光 */
+@media (prefers-reduced-motion: reduce) {
+  .cursor-glow { display: none; }
 }
 
 /* L2 · Hero 首屏入场 */
@@ -775,7 +774,7 @@ html.js .reveal-group [data-slot='card'] {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 .animate-chip-in {
-  animation: chip-pop-in 0.32s cubic-bezier(0.22,1,0.36,1) both;
+  animation: chip-pop-in 0.45s cubic-bezier(0.22,1,0.36,1) both;
 }
 @keyframes timeline-dot-in {
   from { opacity: 0; transform: translateX(-10px); }
