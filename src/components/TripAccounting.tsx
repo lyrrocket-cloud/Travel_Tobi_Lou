@@ -86,7 +86,7 @@ interface TripAccountingProps {
   onFiltersChange?: (filters: AccountQueryFilters) => void;
 }
 
-const VALID_ACCOUNT_SUB = ['entry', 'query', 'analysis'];
+const VALID_ACCOUNT_SUB = ['entry', 'query', 'analysis', 'rates'];
 
 export default function TripAccounting({ confirmedWishes, isAdminMode = false, subTab, onSubTabChange, filters, onFiltersChange }: TripAccountingProps) {
   const [tripExpenses, setTripExpenses] = useState<TripExpenseRecord[]>([]);
@@ -195,7 +195,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
   const [expandedMonths, setExpandedMonths] = useState<Set<string>>(() => new Set());
   const didSeedExpandedMonths = useRef(false);
   
-  const [showExchangeRateEditor, setShowExchangeRateEditor] = useState(false);
   const [editingExchangeRates, setEditingExchangeRates] = useState<Record<string, number>>(exchangeRates);
 
   const getCurrencyBaseCode = (currencyId: string): CurrencyCode => {
@@ -261,7 +260,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
         if (data.currencyMeta) {
           setCurrencyMeta(data.currencyMeta);
         }
-        setShowExchangeRateEditor(false);
       }
     } catch (error) {
       console.error('[Trip Accounting] Error saving exchange rates:', error);
@@ -371,7 +369,6 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
       if (!wishId) return;
       setSelectedWishId(String(wishId));
       setShowWishSelector(false);
-      setShowExchangeRateEditor(false);
     };
     window.addEventListener('selected-wish-changed', handleSelectedWishChanged as EventListener);
     return () => {
@@ -385,6 +382,17 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
       setInternalTab(subTab);
     }
   }, [subTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 进入「汇率管理」标签时，用当前汇率数据初始化草稿
+  useEffect(() => {
+    if (activeTab !== 'rates') return;
+    setEditingExchangeRates(exchangeRates);
+    setEditingActiveCurrencies(activeCurrencies);
+    setEditingCurrencyMeta(currencyMeta);
+    setNewCurrencyBaseCode('');
+    setNewCurrencyNote('');
+    setNewCurrencyRate('');
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 外部（URL 还原）筛选变化时同步到内部；空筛选等价于默认，不触发无意义更新
   useEffect(() => {
@@ -1062,7 +1070,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 gap-1 h-[48px] sm:h-[44px] bg-black/30 backdrop-blur-md rounded-none p-0">
+        <TabsList className="grid w-full grid-cols-4 gap-1 h-[48px] sm:h-[44px] bg-black/30 backdrop-blur-md rounded-none p-0">
           <TabsTrigger 
             value="entry"
             className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
@@ -1081,33 +1089,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
           >
             消费分析
           </TabsTrigger>
-        </TabsList>
-        <div className="flex justify-end items-center">
-          {/* 汇率管理按钮 - 始终显示 */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (showExchangeRateEditor) {
-                setShowExchangeRateEditor(false);
-              } else {
-                setEditingExchangeRates(exchangeRates);
-                setEditingActiveCurrencies(activeCurrencies);
-                setEditingCurrencyMeta(currencyMeta);
-                setNewCurrencyBaseCode('');
-                setNewCurrencyNote('');
-                setNewCurrencyRate('');
-                setShowExchangeRateEditor(true);
-                setShowWishSelector(false);
-              }
-            }}
-            className={showExchangeRateEditor ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-            title={showExchangeRateEditor ? '退出汇率管理' : '汇率管理'}
+          <TabsTrigger 
+            value="rates"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
-            <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </Button>
-        </div>
-        <div className={`relative ${showWishSelector || showExchangeRateEditor ? 'hidden' : ''}`}>
+            汇率管理
+          </TabsTrigger>
+        </TabsList>
+        <div className={`relative ${showWishSelector || activeTab === 'rates' ? 'hidden' : ''}`}>
           <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
         <TabsContent value="entry" className="mt-4">
@@ -2003,8 +1992,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
         </DialogContent>
       </Dialog>
 
-      {/* 汇率管理模式内容 */}
-      {showExchangeRateEditor && (
+      {/* 汇率管理标签内容 */}
+      {activeTab === 'rates' && (
         <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
@@ -2134,7 +2123,14 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
             <div className="flex justify-end gap-2 pt-4 border-t border-[#CEA472]/20">
               <Button
                 variant="outline"
-                onClick={() => setShowExchangeRateEditor(false)}
+                onClick={() => {
+                  setEditingExchangeRates(exchangeRates);
+                  setEditingActiveCurrencies(activeCurrencies);
+                  setEditingCurrencyMeta(currencyMeta);
+                  setNewCurrencyBaseCode('');
+                  setNewCurrencyNote('');
+                  setNewCurrencyRate('');
+                }}
                 className="bg-black/60   text-[#FFFFFF] hover:bg-[#CEA472]/10"
               >
                 取消

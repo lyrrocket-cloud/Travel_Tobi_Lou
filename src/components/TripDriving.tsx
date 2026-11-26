@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit2, Trash2, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route, LayoutDashboard, Dice1 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Car, Navigation, Clock, TrendingUp, Award, MapPin, Route } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -29,7 +29,7 @@ interface TripDrivingProps {
   onSubTabChange?: (tab: string) => void;
 }
 
-const VALID_DRIVE_SUB = ['entry', 'query', 'analysis'];
+const VALID_DRIVE_SUB = ['entry', 'query', 'analysis', 'lottery'];
 
 export default function TripDriving({ confirmedWishes, isAdminMode = false, subTab, onSubTabChange }: TripDrivingProps) {
   const [tripDrivingRecords, setTripDrivingRecords] = useState<TripDrivingRecord[]>([]);
@@ -55,17 +55,12 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editingRecord, setEditingRecord] = useState<DrivingRecordItem | null>(null);
   const [deletingRecordId, setDeletingRecordId] = useState<string | null>(null);
-  const [showLottery, setShowLottery] = useState(false);
   const [lotteryMode, setLotteryMode] = useState<'fair' | 'random'>('fair');
   const [lotteryResult, setLotteryResult] = useState<string | null>(null);
   const [isLotteryRunning, setIsLotteryRunning] = useState(false);
 
-  // 抽签模式
-  const isLotteryMode = showLottery;
-
   const [loading, setLoading] = useState(true);
   const [initializedFromStorage, setInitializedFromStorage] = useState(false);
-  const [previousWishIdBeforeOverview, setPreviousWishIdBeforeOverview] = useState<string | null>(null);
 
   // 总览模式 ID
   const OVERVIEW_WISH_ID = '__overview__';
@@ -191,10 +186,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
       const isSameAsPrev = prevWishIdRef.current === id;
       prevWishIdRef.current = id;
       setSelectedWishId(id);
-      setShowLottery(false);
       setLotteryResult(null);
       setShowWishSelector(false);
-      setPreviousWishIdBeforeOverview(null);
       // 首次挂载还原不重置；回显同 id 不重置；仅真正切换行程时回到 entry
       if (!isInitialWishRestore.current && !isSameAsPrev) {
         setActiveTab('entry');
@@ -607,89 +600,37 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
   const currentWish = confirmedWishes.find(wish => String(wish.id) === selectedWishId);
   const travelers = getTravelers();
 
-  // 总览模式下获取所有旅行的驾驶员
-  const getAllDrivers = (): string[] => {
-    const driverSet = new Set<string>();
-    tripDrivingRecords.forEach(tripRecord => {
-      tripRecord.records?.forEach(record => {
-        if (record.driver) driverSet.add(record.driver);
-      });
-    });
-    // 同时也从愿望列表中获取所有 travelers
-    confirmedWishes.forEach(wish => {
-      wish.travelers?.split(',').map(t => t.trim()).filter(t => t).forEach(t => driverSet.add(t));
-    });
-    return Array.from(driverSet);
-  };
-
-  // 总览模式下按目的地查找
+  // 按目的地查找（「驾驶分析」记录列表使用）
   const getDestinationByWishId = (wishId: string): string => {
     const wish = confirmedWishes.find(w => String(w.id) === String(wishId));
     return wish?.destination || '未知';
   };
 
-  // 总览模式下的所有记录
-  const allDrivingRecords = isOverviewMode
-    ? tripDrivingRecords.flatMap(tripRecord => 
-        (tripRecord.records || []).map(record => ({
-          ...record,
-          destination: getDestinationByWishId(tripRecord.wishId),
-        }))
-      ).sort((a, b) => {
-        const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
-        if (dateCompare !== 0) return dateCompare;
-        if (a.time && b.time) return a.time.localeCompare(b.time);
-        if (a.time) return 1;
-        if (b.time) return -1;
-        return 0;
-      })
-    : [];
+  // 全部旅行的驾驶记录（用于「驾驶分析」总览统计）
+  const allDrivingRecords = tripDrivingRecords.flatMap(tripRecord => 
+      (tripRecord.records || []).map(record => ({
+        ...record,
+        destination: getDestinationByWishId(tripRecord.wishId),
+      }))
+    ).sort((a, b) => {
+      const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
+      if (dateCompare !== 0) return dateCompare;
+      if (a.time && b.time) return a.time.localeCompare(b.time);
+      if (a.time) return 1;
+      if (b.time) return -1;
+      return 0;
+    });
 
   return (
     <div className="space-y-4">
-      {isOverviewMode && (
-        <div className="mb-4 p-3.5 sm:p-4 bg-black/60 backdrop-blur-md   rounded-none">
-          <div className="px-1">
-            <div className="flex justify-between items-start gap-2 mb-3">
-              <div className="min-w-0 flex-1">
-                <h3 className="text-[#CEA472] font-medium text-xs">总览</h3>
-                <p className="text-[#FFFFFF]/60 text-xs mt-0.5">所有旅行驾驶记录</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="text-center">
-                <div className="text-[#CEA472] font-medium text-lg">
-                  {tripDrivingRecords.length}
-                </div>
-                <div className="text-[#FFFFFF]/60 text-xs mt-0.5">旅行数</div>
-              </div>
-              <div className="text-center">
-                <div className="text-[#CEA472] font-medium text-lg">
-                  {tripDrivingRecords.reduce((sum, r) => sum + (r.records?.length || 0), 0)}
-                </div>
-                <div className="text-[#FFFFFF]/60 text-xs mt-0.5">驾驶记录</div>
-              </div>
-              <div className="text-center">
-                <div className="text-[#CEA472] font-medium text-lg">
-                  {tripDrivingRecords.reduce((sum, r) => sum + (r.records || []).reduce((s, rec) => s + (rec.score || 0), 0), 0)}
-                </div>
-                <div className="text-[#FFFFFF]/60 text-xs mt-0.5">总积分</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
-        <TabsList className={`grid w-full ${isOverviewMode ? 'grid-cols-2' : 'grid-cols-3'} gap-1 h-[48px] sm:h-[44px] bg-black/30 backdrop-blur-md rounded-none p-0`}>
-          {!isOverviewMode && (
-            <TabsTrigger 
-              value="entry"
-              className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
-            >
-              驾驶录入
-            </TabsTrigger>
-          )}
+        <TabsList className="grid w-full grid-cols-4 gap-1 h-[48px] sm:h-[44px] bg-black/30 backdrop-blur-md rounded-none p-0">
+          <TabsTrigger 
+            value="entry"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
+          >
+            驾驶录入
+          </TabsTrigger>
           <TabsTrigger 
             value="query"
             className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
@@ -702,89 +643,17 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           >
             驾驶分析
           </TabsTrigger>
+          <TabsTrigger 
+            value="lottery"
+            className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
+          >
+            驾驶抽签
+          </TabsTrigger>
         </TabsList>
-        <div className="flex justify-end items-center">
-          <div className="flex items-center gap-2">
-            {/* 抽签按钮 - 始终显示 */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                if (isLotteryMode) {
-                  // 退出抽签模式
-                  setShowLottery(false);
-                  setLotteryResult(null);
-                } else {
-                  // 进入抽签模式，先退出其他模式
-                  setShowLottery(true);
-                  setShowWishSelector(false);
-                  if (isOverviewMode) {
-                    // 从总览进入，恢复之前的选择
-                    if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
-                      setSelectedWishId(String(previousWishIdBeforeOverview));
-                    } else {
-                      const firstWishWithRecord = confirmedWishes.find(wish =>
-                        tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-                      );
-                      if (firstWishWithRecord) {
-                        setSelectedWishId(String(firstWishWithRecord.id));
-                      } else if (confirmedWishes.length > 0) {
-                        setSelectedWishId(String(confirmedWishes[0].id));
-                      }
-                    }
-                    setPreviousWishIdBeforeOverview(null);
-                  }
-                  setLotteryMode('fair');
-                  setLotteryResult(null);
-                }
-              }}
-              className={isLotteryMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-              title="抽签"
-            >
-              <Dice1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-            {/* 总览按钮 - 始终显示 */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                if (isOverviewMode) {
-                  // 退出总览，恢复之前选择的旅行
-                  if (previousWishIdBeforeOverview && confirmedWishes.some(w => String(w.id) === String(previousWishIdBeforeOverview))) {
-                    setSelectedWishId(String(previousWishIdBeforeOverview));
-                  } else {
-                    const firstWishWithRecord = confirmedWishes.find(wish =>
-                      tripDrivingRecords.some(record => String(record.wishId) === String(wish.id))
-                    );
-                    if (firstWishWithRecord) {
-                      setSelectedWishId(String(firstWishWithRecord.id));
-                    } else if (confirmedWishes.length > 0) {
-                      setSelectedWishId(String(confirmedWishes[0].id));
-                    }
-                  }
-                  setActiveTab('entry');
-                  setPreviousWishIdBeforeOverview(null);
-                } else {
-                  // 进入总览，先退出其他模式
-                  setPreviousWishIdBeforeOverview(selectedWishId);
-                  setSelectedWishId(OVERVIEW_WISH_ID);
-                  setActiveTab('analysis');
-                  setShowLottery(false);
-                  setShowWishSelector(false);
-                }
-              }}
-              className={isOverviewMode ? 'bg-[#CEA472] text-[#0a0a0f]' : 'text-[#CEA472] hover:text-[#CEA472]/80 hover:bg-transparent'}
-              title={isOverviewMode ? '退出总览' : '总览'}
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Button>
-          </div>
-        </div>
-        <div className={`relative ${isLotteryMode || showWishSelector ? 'hidden' : ''}`}>
+        <div className={`relative ${showWishSelector || activeTab === 'lottery' ? 'hidden' : ''}`}>
           <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
-        {!isOverviewMode && (
-          <TabsContent value="entry" className="mt-4">
+        <TabsContent value="entry" className="mt-4">
             {isCurrentTripFrozen && (
               <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
                 <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改驾驶记录</span>
@@ -1012,7 +881,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
               </Button>
             </div>
           </TabsContent>
-        )}
 
         <TabsContent value="query" className="mt-4">
           {isCurrentTripFrozen && (
@@ -1127,6 +995,88 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             <div className="space-y-5 sm:space-y-6">
               <div>
+                <h3 className="text-[#CEA472] font-medium text-xs">总览</h3>
+                <p className="text-[#FFFFFF]/60 text-xs mt-0.5 mb-3">所有旅行驾驶记录</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="text-center">
+                    <div className="text-[#CEA472] font-medium text-lg">
+                      {tripDrivingRecords.length}
+                    </div>
+                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">旅行数</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[#CEA472] font-medium text-lg">
+                      {tripDrivingRecords.reduce((sum, r) => sum + (r.records?.length || 0), 0)}
+                    </div>
+                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">驾驶记录</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[#CEA472] font-medium text-lg">
+                      {tripDrivingRecords.reduce((sum, r) => sum + (r.records || []).reduce((s, rec) => s + (rec.score || 0), 0), 0)}
+                    </div>
+                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">总积分</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶记录</h3>
+                {allDrivingRecords.length > 0 ? (
+                  <div className="space-y-3">
+                    {allDrivingRecords.map(record => (
+                      <div
+                        key={record.id}
+                        className="p-3.5 sm:p-4 rounded-none border-0 bg-black/40 backdrop-blur-sm"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{record.driver}</span>
+                              <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{record.date} {record.time || ''}</span>
+                              {record.destination && (
+                                <span className="text-[#CEA472]/70 text-xs whitespace-nowrap">· {record.destination}</span>
+                              )}
+                            </div>
+                            <div className="mt-1.5 flex items-center gap-1">
+                              <MapPin className="w-3 h-3 text-[#FFFFFF]/40" />
+                              <span className="text-[#FFFFFF] text-xs">{record.startLocation}</span>
+                              <span className="text-[#FFFFFF]/40 text-xs mx-1">→</span>
+                              <span className="text-[#FFFFFF] text-xs">{record.endLocation}</span>
+                            </div>
+                            <div className="mt-1 flex items-center gap-3 text-xs text-[#FFFFFF]/60">
+                              {record.distance && (
+                                <span className="flex items-center gap-1">
+                                  <Route className="w-3 h-3" />
+                                  {record.distance}公里
+                                </span>
+                              )}
+                              {record.duration && (
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {record.duration}分钟
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <div className="text-xs text-[#FFFFFF]/60 mb-1">本次积分</div>
+                            <div className={`text-base font-semibold ${record.score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              {record.score >= 0 ? '+' : ''}{record.score}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Car className="w-12 h-12 text-[#CEA472]/40 mx-auto mb-4" />
+                    <p className="text-[#FFFFFF]/60 text-xs">暂无驾驶记录</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
                 <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h3>
                 <div className="space-y-3">
                   {driverStats.map(stat => (
@@ -1171,8 +1121,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
         </div>
       </Tabs>
 
-      {/* 抽签模式内容 */}
-      {isLotteryMode && (
+      {/* 驾驶抽签标签内容 */}
+      {activeTab === 'lottery' && (
         <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
           <div className="flex gap-2">
             <button
@@ -1201,14 +1151,14 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
         </div>
       )}
 
-      {isLotteryMode && lotteryResult && !isLotteryRunning && (
+      {activeTab === 'lottery' && lotteryResult && !isLotteryRunning && (
         <div className="text-center py-3">
           <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
           <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
         </div>
       )}
 
-      {isLotteryMode && (
+      {activeTab === 'lottery' && (
         <Button
           onClick={() => {
             const travelersStr = currentWish?.travelers || '';
