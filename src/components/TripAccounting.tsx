@@ -1994,7 +1994,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
 
       {/* 汇率管理标签内容 */}
       {activeTab === 'rates' && (
-        <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
+        <div className="tab-section-in bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
               <Coins className="w-5 h-5 text-[#CEA472]" />

@@ -473,10 +473,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
     const statsMap = new Map<string, DriverStatistics>();
 
-    const isOverview = selectedWishId === OVERVIEW_WISH_ID;
-    const recordsToProcess = isOverview
-      ? tripDrivingRecords
-      : tripDrivingRecords.filter(r => String(r.wishId) === String(selectedWishId));
+    const recordsToProcess = tripDrivingRecords;
 
     recordsToProcess.forEach(tripRecord => {
       tripRecord.records.forEach(record => {
@@ -610,6 +607,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
   const allDrivingRecords = tripDrivingRecords.flatMap(tripRecord => 
       (tripRecord.records || []).map(record => ({
         ...record,
+        wishId: tripRecord.wishId,
         destination: getDestinationByWishId(tripRecord.wishId),
       }))
     ).sort((a, b) => {
@@ -641,7 +639,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
             value="analysis"
             className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
-            驾驶分析
+            驾驶总览
           </TabsTrigger>
           <TabsTrigger 
             value="lottery"
@@ -889,10 +887,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
             </div>
           )}
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
-            {(!isOverviewMode && currentDrivingRecord && sortedDrivingRecords.length > 0) ||
-             (isOverviewMode && allDrivingRecords.length > 0) ? (
+            {allDrivingRecords.length > 0 ? (
               <div className="space-y-3 sm:space-y-3">
-                {(isOverviewMode ? allDrivingRecords : sortedDrivingRecords).map(record => (
+                {allDrivingRecords.map(record => (
                   <div
                     key={record.id}
                     className="p-3.5 sm:p-4 rounded-none border-0 bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
@@ -907,8 +904,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                             <div className="flex flex-wrap items-center gap-2">
                               <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{record.driver}</span>
                               <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{record.date} {record.time || ''}</span>
-                              {isOverviewMode && (record as any).destination && (
-                                <span className="text-[#CEA472]/70 text-xs whitespace-nowrap">· {(record as any).destination}</span>
+                              {record.destination && (
+                                <span className="text-[#CEA472]/70 text-xs whitespace-nowrap">· {record.destination}</span>
                               )}
                             </div>
                             <div className="mt-1.5 flex items-center gap-1">
@@ -953,7 +950,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                         </div>
                       </div>
                     </div>
-                    {isAdminMode && !isCurrentTripFrozen && (
+                    {isAdminMode && !isCurrentTripFrozen && String(record.wishId) === String(selectedWishId) && (
                       <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-[#CEA472]/20">
                         <Button
                           size="icon"
@@ -995,89 +992,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <h3 className="text-[#CEA472] font-medium text-xs">总览</h3>
-                <p className="text-[#FFFFFF]/60 text-xs mt-0.5 mb-3">所有旅行驾驶记录</p>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="text-center">
-                    <div className="text-[#CEA472] font-medium text-lg">
-                      {tripDrivingRecords.length}
-                    </div>
-                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">旅行数</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[#CEA472] font-medium text-lg">
-                      {tripDrivingRecords.reduce((sum, r) => sum + (r.records?.length || 0), 0)}
-                    </div>
-                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">驾驶记录</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[#CEA472] font-medium text-lg">
-                      {tripDrivingRecords.reduce((sum, r) => sum + (r.records || []).reduce((s, rec) => s + (rec.score || 0), 0), 0)}
-                    </div>
-                    <div className="text-[#FFFFFF]/60 text-xs mt-0.5">总积分</div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶记录</h3>
-                {allDrivingRecords.length > 0 ? (
-                  <div className="space-y-3">
-                    {allDrivingRecords.map(record => (
-                      <div
-                        key={record.id}
-                        className="p-3.5 sm:p-4 rounded-none border-0 bg-black/40 backdrop-blur-sm"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-[#CEA472] font-medium text-xs whitespace-nowrap">{record.driver}</span>
-                              <span className="text-[#FFFFFF]/60 text-xs whitespace-nowrap">{record.date} {record.time || ''}</span>
-                              {record.destination && (
-                                <span className="text-[#CEA472]/70 text-xs whitespace-nowrap">· {record.destination}</span>
-                              )}
-                            </div>
-                            <div className="mt-1.5 flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-[#FFFFFF]/40" />
-                              <span className="text-[#FFFFFF] text-xs">{record.startLocation}</span>
-                              <span className="text-[#FFFFFF]/40 text-xs mx-1">→</span>
-                              <span className="text-[#FFFFFF] text-xs">{record.endLocation}</span>
-                            </div>
-                            <div className="mt-1 flex items-center gap-3 text-xs text-[#FFFFFF]/60">
-                              {record.distance && (
-                                <span className="flex items-center gap-1">
-                                  <Route className="w-3 h-3" />
-                                  {record.distance}公里
-                                </span>
-                              )}
-                              {record.duration && (
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {record.duration}分钟
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <div className="text-xs text-[#FFFFFF]/60 mb-1">本次积分</div>
-                            <div className={`text-base font-semibold ${record.score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                              {record.score >= 0 ? '+' : ''}{record.score}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Car className="w-12 h-12 text-[#CEA472]/40 mx-auto mb-4" />
-                    <p className="text-[#FFFFFF]/60 text-xs">暂无驾驶记录</p>
-                  </div>
-                )}
-              </div>
-
-              <div>
                 <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h3>
+                <p className="text-[#FFFFFF]/60 text-xs -mt-2 mb-3">所有历史行程汇总</p>
                 <div className="space-y-3">
                   {driverStats.map(stat => (
                     <div key={stat.driver} className="p-4 bg-black/60 rounded-none  ">
@@ -1123,79 +1039,79 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
       {/* 驾驶抽签标签内容 */}
       {activeTab === 'lottery' && (
-        <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setLotteryMode('fair')}
-              className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                lotteryMode === 'fair'
-                  ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
-              }`}
-            >
-              <div className="font-medium text-sm">公平模式</div>
-              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
-            </button>
-            <button
-              onClick={() => setLotteryMode('random')}
-              className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                lotteryMode === 'random'
-                  ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                  : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
-              }`}
-            >
-              <div className="font-medium text-sm">随机模式</div>
-              <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
-            </button>
+        <div className="tab-section-in space-y-3">
+          <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setLotteryMode('fair')}
+                className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                  lotteryMode === 'fair'
+                    ? 'bg-[#CEA472]/10   text-[#CEA472]'
+                    : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
+                }`}
+              >
+                <div className="font-medium text-sm">公平模式</div>
+                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">选择积分最低的人驾驶</div>
+              </button>
+              <button
+                onClick={() => setLotteryMode('random')}
+                className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                  lotteryMode === 'random'
+                    ? 'bg-[#CEA472]/10   text-[#CEA472]'
+                    : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
+                }`}
+              >
+                <div className="font-medium text-sm">随机模式</div>
+                <div className="text-xs text-[#FFFFFF]/60 mt-0.5">随机选择一个同行人</div>
+              </button>
+            </div>
           </div>
-        </div>
-      )}
 
-      {activeTab === 'lottery' && lotteryResult && !isLotteryRunning && (
-        <div className="text-center py-3">
-          <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
-          <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
-        </div>
-      )}
+          {lotteryResult && !isLotteryRunning && (
+            <div className="text-center py-3">
+              <div className="text-xs text-[#FFFFFF]/60 mb-1">抽签结果</div>
+              <div className="text-2xl font-bold text-[#CEA472]">{lotteryResult}</div>
+            </div>
+          )}
 
-      {activeTab === 'lottery' && (
-        <Button
-          onClick={() => {
-            const travelersStr = currentWish?.travelers || '';
-            const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
-            if (travelersList.length === 0) return;
-            setIsLotteryRunning(true);
-            setLotteryResult(null);
-            let count = 0;
-            const maxCount = 20;
-            const interval = setInterval(() => {
-              count++;
-              if (count >= maxCount) {
-                clearInterval(interval);
-                if (lotteryMode === 'fair') {
-                  const driverScores = travelersList.map(name => {
-                    const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
-                    const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
-                    return { name, score: totalScore };
-                  });
-                  const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
-                  setLotteryResult(lowest.name);
+          <Button
+            onClick={() => {
+              const travelersStr = currentWish?.travelers || '';
+              const travelersList = travelersStr.split(/[、,，;；]/).map(t => t.trim()).filter(t => t);
+              if (travelersList.length === 0) return;
+              setIsLotteryRunning(true);
+              setLotteryResult(null);
+              let count = 0;
+              const maxCount = 20;
+              const interval = setInterval(() => {
+                count++;
+                if (count >= maxCount) {
+                  clearInterval(interval);
+                  if (lotteryMode === 'fair') {
+                    const driverScores = travelersList.map(name => {
+                      const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
+                      const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
+                      return { name, score: totalScore };
+                    });
+                    const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
+                    setLotteryResult(lowest.name);
+                  } else {
+                    const randomIndex = Math.floor(Math.random() * travelersList.length);
+                    setLotteryResult(travelersList[randomIndex]);
+                  }
+                  setIsLotteryRunning(false);
                 } else {
                   const randomIndex = Math.floor(Math.random() * travelersList.length);
                   setLotteryResult(travelersList[randomIndex]);
                 }
-                setIsLotteryRunning(false);
-              } else {
-                const randomIndex = Math.floor(Math.random() * travelersList.length);
-                setLotteryResult(travelersList[randomIndex]);
-              }
-            }, 100);
-          }}
-          disabled={isLotteryRunning || !currentWish?.travelers}
-          className="w-full -mt-2.5 sm:-mt-4 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
-        >
-          {isLotteryRunning ? '抽签中...' : '开始抽签'}
-        </Button>
+              }, 100);
+            }}
+            disabled={isLotteryRunning || !currentWish?.travelers}
+            className="w-full h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
+          >
+            {isLotteryRunning ? '抽签中...' : '开始抽签'}
+          </Button>
+        </div>
       )}
 
       <Dialog open={showEditDriving} onOpenChange={setShowEditDriving}>
