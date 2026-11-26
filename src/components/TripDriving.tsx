@@ -517,30 +517,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
   const driverStats = calculateDriverStatistics();
 
-  const sortedDrivingRecords = currentDrivingRecord ? 
-    [...currentDrivingRecord.records].sort((a, b) => {
-      const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
-      if (dateCompare !== 0) return dateCompare;
-      if (a.time && b.time) {
-        return a.time.localeCompare(b.time);
-      }
-      if (a.time) return 1;
-      if (b.time) return -1;
-      return 0;
-    }) : [];
-
   const getTravelers = () => {
     const wish = confirmedWishes.find(w => String(w.id) === selectedWishId);
     return wish?.travelers?.split(',').map(t => t.trim()).filter(t => t) || [];
-  };
-
-  const handleBehaviorToggle = (behavior: DrivingBehavior) => {
-    setNewDrivingRecord(prev => ({
-      ...prev,
-      behaviors: prev.behaviors.includes(behavior)
-        ? prev.behaviors.filter(b => b !== behavior)
-        : [...prev.behaviors, behavior]
-    }));
   };
 
   if (!selectedWishId) {
@@ -826,47 +805,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                 </div>
               </div>
 
-              <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶行为评分</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {Object.entries(drivingBehaviors).map(([key, config]) => (
-                    <button
-                      key={key}
-                      disabled={isCurrentTripFrozen}
-                      aria-pressed={newDrivingRecord.behaviors.includes(key as DrivingBehavior)}
-                      onClick={() => handleBehaviorToggle(key as DrivingBehavior)}
-                      className={`flex items-center gap-2 p-3 rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
-                        newDrivingRecord.behaviors.includes(key as DrivingBehavior)
-                          ? ' bg-[#CEA472]/10 text-[#CEA472]'
-                          : ' bg-black/60 text-[#FFFFFF]/60 '
-                      }`}
-                    >
-                      <span className={config.color}>{config.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="truncate">{config.label}</div>
-                        <div className={`text-xs ${config.score > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {config.score > 0 ? '+' : ''}{config.score}分
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                {(() => {
-                    const score = calculateScore(
-                      newDrivingRecord.behaviors,
-                      newDrivingRecord.distance ? parseFloat(newDrivingRecord.distance) : undefined,
-                      newDrivingRecord.duration ? parseFloat(newDrivingRecord.duration) : undefined
-                    );
-                    return score !== 0 ? (
-                      <div className="mt-3 p-3 bg-black/60 rounded-none  ">
-                        <div className="text-xs text-[#FFFFFF]/60 mb-2">本次积分：</div>
-                        <div className={`text-lg font-semibold ${score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {score >= 0 ? '+' : ''}{score} 分
-                        </div>
-                      </div>
-                    ) : null;
-                  })()}
-              </div>
             </div>
           </div>
             <div className="mt-4 px-2.5 sm:px-0">
@@ -881,11 +819,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           </TabsContent>
 
         <TabsContent value="query" className="mt-4">
-          {isCurrentTripFrozen && (
-            <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
-              <span className="text-blue-400 text-xs">此行程已冻结，无法修改驾驶记录</span>
-            </div>
-          )}
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             {allDrivingRecords.length > 0 ? (
               <div className="space-y-3 sm:space-y-3">
@@ -1089,8 +1022,10 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                   clearInterval(interval);
                   if (lotteryMode === 'fair') {
                     const driverScores = travelersList.map(name => {
-                      const records = currentDrivingRecord?.records?.filter(r => r.driver === name) || [];
-                      const totalScore = records.reduce((sum, r) => sum + (r.score || 0), 0);
+                      // 累计积分：统计该同行人所有历史行程的积分总和
+                      const totalScore = allDrivingRecords
+                        .filter(r => r.driver === name)
+                        .reduce((sum, r) => sum + (r.score || 0), 0);
                       return { name, score: totalScore };
                     });
                     const lowest = driverScores.reduce((min, curr) => curr.score < min.score ? curr : min, driverScores[0]);
