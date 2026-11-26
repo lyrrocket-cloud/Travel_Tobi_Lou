@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Plane, Route, Coins, XCircle, Snowflake, Share2, Settings, RefreshCw } from 'lucide-react';
+import { Plus, Heart, MapPin, Calendar, User, Edit2, CheckCircle, Trash2, Droplets, Route, Coins, XCircle, Snowflake, Share2, Settings, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -1269,10 +1269,11 @@ export default function Home() {
               </Card>
 
               {/* 抛硬币按钮 - 独立于毛玻璃框外，与生成日程表按钮样式相同 */}
+              <div className="-mt-2.5 sm:-mt-4 flex justify-center">
               <Button
                 onClick={handleMakeWish}
                 disabled={isAnimating}
-                className="w-full -mt-2.5 sm:-mt-4 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs"
+                className="w-44 h-10 sm:h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-100 disabled:bg-[#CEA472] disabled:text-[#0a0a0f] text-xs"
               >
                 {isAnimating ? (
                   <div className="flex items-center gap-2 sm:gap-3">
@@ -1287,6 +1288,7 @@ export default function Home() {
                   <span>抛硬币</span>
                 )}
               </Button>
+              </div>
               </div>
 
               {isAnimating && (
@@ -1623,14 +1625,7 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-[100] h-11 bg-black/20 backdrop-blur-md">
         <div className="max-w-7xl mx-auto h-11 px-4 flex items-center">
           {/* 品牌图标（左） */}
-          <div className="flex flex-1 items-center">
-            <div role="img" aria-label="旅行工具箱" className="animate-hero-avatar flex-shrink-0 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center" style={{
-              backgroundColor: '#CEA472',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2)'
-            }}>
-              <Plane className="w-3.5 h-3.5 sm:w-5 sm:h-5" style={{ color: '#0a0a0f' }} aria-hidden="true" />
-            </div>
-          </div>
+          <div className="flex flex-1 items-center" />
 
           {/* 一级导航：旅行许愿 / 旅行工具（居中，仅文字） */}
           <nav aria-label="主导航" className="animate-hero-sub flex flex-1 items-center justify-center gap-3 sm:gap-4">
@@ -1704,7 +1699,7 @@ export default function Home() {
 
       {/* 旅行项目栏：独立一栏，与上方导航分离 */}
       {mainTab !== 'wish' && (
-        <div className="mt-3 px-3 sm:px-6 lg:px-8">
+        <div className="mt-6 px-3 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto px-4">
             <div className="border-b border-white/[0.08] bg-black/60 backdrop-blur-md py-2 px-3.5 sm:px-4">
               <div className="flex items-center justify-between gap-2">
@@ -1761,7 +1756,7 @@ export default function Home() {
 
       {/* 二级导航栏：与旅行项目分离，与下方三级导航贴齐 */}
       {mainTab !== 'wish' && (
-        <div className="px-3 sm:px-6 lg:px-8 mt-2 sm:mt-3">
+        <div className="px-3 sm:px-6 lg:px-8 mt-6">
           <div className="max-w-7xl mx-auto px-4">
             <ToolTabNav value={mainTab as ToolTab} onChange={handleToolTabChange} />
           </div>

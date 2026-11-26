@@ -1,91 +1,4786 @@
 [
   {
-    "id": "trip-expense-1780303935151",
-    "wishId": "in-memory-1",
+    "id": "trip-expense-1780467964446",
+    "wishId": "22",
     "destination": "济州岛",
     "startDate": "2026-06-17",
     "expenses": [
       {
-        "id": "expense-1780651250603",
-        "wishId": "in-memory-1",
+        "id": "expense-1780468039586",
         "date": "2026-06-17",
-        "time": "09:00",
-        "category": "other",
-        "amount": 10000,
-        "currency": "KRW",
-        "description": "在 A 的活动",
-        "location": "A",
-        "payer": "秦瑜贲",
+        "time": "15:35",
+        "payer": "楼宜人",
+        "amount": 2339,
         "payers": [
           "楼宜人"
         ],
-        "createdAt": "2026-06-05T09:20:50.603Z",
-        "updatedAt": "2026-06-05T09:20:50.603Z"
+        "wishId": "22",
+        "category": "transportation",
+        "location": "上海浦东-济州岛",
+        "createdAt": "2026-06-03T06:27:19.586Z",
+        "updatedAt": "2026-06-05T13:54:59.513Z",
+        "description": "飞机"
       },
       {
-        "id": "expense-1780652469508",
-        "wishId": "in-memory-1",
-        "date": "2026-06-20",
-        "time": "13:00",
-        "category": "other",
-        "amount": 1000,
+        "id": "expense-1780879655307",
+        "date": "2026-06-17",
+        "time": "21:00",
+        "payer": "陆丽莎",
+        "amount": 2282.24,
+        "payers": [
+          "楼宜人",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "accommodation",
         "currency": "CNY",
-        "description": "在 E 的活动",
-        "location": "E",
+        "location": "天空花园一号酒店",
+        "createdAt": "2026-06-08T00:47:35.308Z",
+        "updatedAt": "2026-06-17T13:06:26.337Z",
+        "description": "在 天空花园一号酒店 的活动"
+      },
+      {
+        "id": "expense-1780879688557",
+        "date": "2026-06-17",
+        "time": "21:00",
+        "payer": "陆丽莎",
+        "amount": 2282.24,
+        "payers": [
+          "陆丽莎",
+          "谢秋怡",
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "天空花园一号酒店",
+        "createdAt": "2026-06-08T00:48:08.557Z",
+        "updatedAt": "2026-06-17T13:06:48.352Z",
+        "description": "在 天空花园一号酒店 的活动"
+      },
+      {
+        "id": "expense-1780883054092",
+        "date": "2026-06-08",
+        "time": "12:00",
         "payer": "楼宜人",
+        "amount": 28.13,
         "payers": [
           "楼宜人"
         ],
-        "createdAt": "2026-06-05T09:41:09.508Z",
-        "updatedAt": "2026-06-05T09:41:09.508Z"
+        "wishId": "22",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-06-08T01:44:14.092Z",
+        "updatedAt": "2026-06-08T01:44:31.628Z",
+        "description": "电话卡"
+      },
+      {
+        "id": "expense-1781255378811",
+        "date": "2026-06-12",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 84,
+        "payers": [
+          "陈瑾妮",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-06-12T09:09:38.811Z",
+        "updatedAt": "2026-06-12T09:09:38.811Z",
+        "description": "电话卡"
+      },
+      {
+        "id": "expense-1781690365331",
+        "date": "2026-06-17",
+        "time": "17:00",
+        "payer": "陈瑾妮",
+        "amount": 74000,
+        "payers": [
+          "陆丽莎",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "保健路",
+        "createdAt": "2026-06-17T09:59:25.331Z",
+        "updatedAt": "2026-06-24T05:48:22.073Z",
+        "description": "理发"
+      },
+      {
+        "id": "expense-1781690405308",
+        "date": "2026-06-18",
+        "time": "08:00",
+        "payer": "陈瑾妮",
+        "amount": 60000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_现金",
+        "location": "天空花园一号酒店-汉拿山",
+        "createdAt": "2026-06-17T10:00:05.308Z",
+        "updatedAt": "2026-06-24T05:48:15.442Z",
+        "description": "酒店包车"
+      },
+      {
+        "id": "expense-1781701186108",
+        "date": "2026-06-17",
+        "time": "18:30",
+        "payer": "楼宜人",
+        "amount": 39,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "济州岛机场-天空花园一号酒店",
+        "createdAt": "2026-06-17T12:59:46.108Z",
+        "updatedAt": "2026-06-17T12:59:46.108Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1781701374412",
+        "date": "2026-06-17",
+        "time": "20:05",
+        "payer": "楼宜人",
+        "amount": 34.88,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "7-11",
+        "createdAt": "2026-06-17T13:02:54.412Z",
+        "updatedAt": "2026-06-19T12:48:41.204Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781703081482",
+        "date": "2026-06-17",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 195,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "涯月邑",
+        "createdAt": "2026-06-17T13:31:21.482Z",
+        "updatedAt": "2026-06-22T03:07:21.390Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1781703153579",
+        "date": "2026-06-17",
+        "time": "20:02",
+        "payer": "陈瑾妮",
+        "amount": 98,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "GS25",
+        "createdAt": "2026-06-17T13:32:33.579Z",
+        "updatedAt": "2026-06-22T03:10:04.352Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781703840215",
+        "date": "2026-06-17",
+        "time": "20:00",
+        "payer": "陈瑾妮",
+        "amount": 320,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "Olive Young",
+        "createdAt": "2026-06-17T13:44:00.215Z",
+        "updatedAt": "2026-06-19T12:48:09.314Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781703860938",
+        "date": "2026-06-17",
+        "time": "20:00",
+        "payer": "陈瑾妮",
+        "amount": 241,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "Olive Young",
+        "createdAt": "2026-06-17T13:44:20.938Z",
+        "updatedAt": "2026-06-19T12:48:21.214Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781704159714",
+        "date": "2026-06-17",
+        "time": "09:30",
+        "payer": "陈瑾妮",
+        "amount": 8000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_现金",
+        "location": "济州岛机场",
+        "createdAt": "2026-06-17T13:49:19.714Z",
+        "updatedAt": "2026-06-25T01:17:32.970Z",
+        "description": "交通卡"
+      },
+      {
+        "id": "expense-1781791922825",
+        "date": "2026-06-18",
+        "time": "18:00",
+        "payer": "陈瑾妮",
+        "amount": 291,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "珍贵猪蹄",
+        "createdAt": "2026-06-18T14:12:02.825Z",
+        "updatedAt": "2026-06-18T14:12:02.825Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1781791946904",
+        "date": "2026-06-18",
+        "time": "21:00",
+        "payer": "陈瑾妮",
+        "amount": 267,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "谢秋怡",
+          "楼宜人",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "BHC",
+        "createdAt": "2026-06-18T14:12:26.904Z",
+        "updatedAt": "2026-06-18T14:12:26.904Z",
+        "description": "夜宵"
+      },
+      {
+        "id": "expense-1781792118259",
+        "date": "2026-06-18",
+        "time": "19:30",
+        "payer": "陈瑾妮",
+        "amount": 4687.5,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-18T14:15:18.259Z",
+        "updatedAt": "2026-06-24T05:48:02.897Z",
+        "description": "挂件和巧克力"
+      },
+      {
+        "id": "expense-1781792160883",
+        "date": "2026-06-18",
+        "time": "19:30",
+        "payer": "陈瑾妮",
+        "amount": 10312.5,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-18T14:16:00.883Z",
+        "updatedAt": "2026-06-24T05:47:56.920Z",
+        "description": "挂件和巧克力"
+      },
+      {
+        "id": "expense-1781792258994",
+        "date": "2026-06-18",
+        "time": "09:00",
+        "payer": "陈瑾妮",
+        "amount": 24.15,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "汉拿山",
+        "createdAt": "2026-06-18T14:17:38.994Z",
+        "updatedAt": "2026-06-19T12:49:08.469Z",
+        "description": "打印证书"
+      },
+      {
+        "id": "expense-1781792388601",
+        "date": "2026-06-18",
+        "time": "19:30",
+        "payer": "陈瑾妮",
+        "amount": 4687.5,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-18T14:19:48.601Z",
+        "updatedAt": "2026-06-24T05:47:52.308Z",
+        "description": "冰箱贴"
+      },
+      {
+        "id": "expense-1781792430914",
+        "date": "2026-06-18",
+        "time": "19:30",
+        "payer": "陈瑾妮",
+        "amount": 4687.5,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-18T14:20:30.914Z",
+        "updatedAt": "2026-06-24T05:47:48.295Z",
+        "description": "冰箱贴"
+      },
+      {
+        "id": "expense-1781792480703",
+        "date": "2026-06-18",
+        "time": "19:30",
+        "payer": "陈瑾妮",
+        "amount": 2812.5,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-18T14:21:20.703Z",
+        "updatedAt": "2026-06-24T05:47:42.821Z",
+        "description": "冰箱贴"
+      },
+      {
+        "id": "expense-1781792498144",
+        "date": "2026-06-18",
+        "time": "19:30",
+        "payer": "陈瑾妮",
+        "amount": 2812.5,
+        "payers": [
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-18T14:21:38.144Z",
+        "updatedAt": "2026-06-24T05:47:36.679Z",
+        "description": "纪念品"
+      },
+      {
+        "id": "expense-1781849694379",
+        "date": "2026-06-19",
+        "time": "15:00",
+        "payer": "陈瑾妮",
+        "amount": 30000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "谢秋怡",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "牛岛",
+        "createdAt": "2026-06-19T06:14:54.379Z",
+        "updatedAt": "2026-06-24T05:46:57.726Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1781873380048",
+        "date": "2026-06-19",
+        "time": "21:00",
+        "payer": "陈瑾妮",
+        "amount": 34000,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-19T12:49:40.048Z",
+        "updatedAt": "2026-06-24T05:46:38.392Z",
+        "description": "米菲兔盲盒"
+      },
+      {
+        "id": "expense-1781874186759",
+        "date": "2026-06-19",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 105000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "第一烤牛肠",
+        "createdAt": "2026-06-19T13:03:06.759Z",
+        "updatedAt": "2026-06-24T05:46:42.713Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1781876644886",
+        "date": "2026-06-19",
+        "time": "09:00",
+        "payer": "陈瑾妮",
+        "amount": 55000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_现金",
+        "location": "天空花园一号酒店-牛岛",
+        "createdAt": "2026-06-19T13:44:04.886Z",
+        "updatedAt": "2026-06-24T05:47:29.883Z",
+        "description": "船票"
+      },
+      {
+        "id": "expense-1781876741579",
+        "date": "2026-06-19",
+        "time": "17:00",
+        "payer": "陈瑾妮",
+        "amount": 60.9,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "新罗免税店",
+        "createdAt": "2026-06-19T13:45:41.579Z",
+        "updatedAt": "2026-06-22T03:27:28.081Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781876785442",
+        "date": "2026-06-19",
+        "time": "17:00",
+        "payer": "陈瑾妮",
+        "amount": 121.8,
+        "payers": [
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "新罗免税店",
+        "createdAt": "2026-06-19T13:46:25.442Z",
+        "updatedAt": "2026-06-22T03:27:35.063Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1781876832948",
+        "date": "2026-06-19",
+        "time": "17:00",
+        "payer": "陈瑾妮",
+        "amount": 311.33,
+        "payers": [
+          "陈瑾妮",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "新罗免税店",
+        "createdAt": "2026-06-19T13:47:12.948Z",
+        "updatedAt": "2026-06-22T03:27:42.496Z",
+        "description": "防晒霜"
+      },
+      {
+        "id": "expense-1781876890551",
+        "date": "2026-06-19",
+        "time": "17:00",
+        "payer": "陈瑾妮",
+        "amount": 115.06,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "新罗免税店",
+        "createdAt": "2026-06-19T13:48:10.551Z",
+        "updatedAt": "2026-06-22T03:27:47.452Z",
+        "description": "巧克力"
+      },
+      {
+        "id": "expense-1781876915932",
+        "date": "2026-06-19",
+        "time": "17:00",
+        "payer": "陈瑾妮",
+        "amount": 230.11,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "新罗免税店",
+        "createdAt": "2026-06-19T13:48:35.932Z",
+        "updatedAt": "2026-06-22T03:27:53.902Z",
+        "description": "巧克力"
+      },
+      {
+        "id": "expense-1781877154740",
+        "date": "2026-06-19",
+        "time": "21:00",
+        "payer": "陈瑾妮",
+        "amount": 90.46,
+        "payers": [
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-19T13:52:34.740Z",
+        "updatedAt": "2026-06-22T03:26:12.912Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781877189362",
+        "date": "2026-06-19",
+        "time": "21:00",
+        "payer": "陈瑾妮",
+        "amount": 37,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-19T13:53:09.362Z",
+        "updatedAt": "2026-06-22T03:34:42.158Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1781877225089",
+        "date": "2026-06-19",
+        "time": "09:30",
+        "payer": "陈瑾妮",
+        "amount": 6000,
+        "payers": [
+          "陈瑾妮",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_现金",
+        "location": "天空花园一号酒店-牛岛",
+        "createdAt": "2026-06-19T13:53:45.089Z",
+        "updatedAt": "2026-06-24T05:47:22.812Z",
+        "description": "公交车"
+      },
+      {
+        "id": "expense-1781877245336",
+        "date": "2026-06-19",
+        "time": "09:30",
+        "payer": "陈瑾妮",
+        "amount": 3000,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_现金",
+        "location": "天空花园一号酒店-牛岛",
+        "createdAt": "2026-06-19T13:54:05.336Z",
+        "updatedAt": "2026-06-24T05:47:17.397Z",
+        "description": "公交车"
+      },
+      {
+        "id": "expense-1781877346912",
+        "date": "2026-06-19",
+        "time": "09:00",
+        "payer": "楼宜人",
+        "amount": 8.89,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "MEGA",
+        "createdAt": "2026-06-19T13:55:46.912Z",
+        "updatedAt": "2026-06-19T13:55:46.912Z",
+        "description": "冰美式"
+      },
+      {
+        "id": "expense-1781877384786",
+        "date": "2026-06-19",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 13.23,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "牛岛-济州公交总站",
+        "createdAt": "2026-06-19T13:56:24.786Z",
+        "updatedAt": "2026-06-22T03:29:05.852Z",
+        "description": "公交车"
+      },
+      {
+        "id": "expense-1781877947642",
+        "date": "2026-06-19",
+        "time": "11:00",
+        "payer": "楼宜人",
+        "amount": 10.7,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "CU",
+        "createdAt": "2026-06-19T14:05:47.642Z",
+        "updatedAt": "2026-06-19T14:05:47.642Z",
+        "description": "可乐"
+      },
+      {
+        "id": "expense-1781878007836",
+        "date": "2026-06-19",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 52.96,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "My Jeju Gift",
+        "createdAt": "2026-06-19T14:06:47.836Z",
+        "updatedAt": "2026-06-19T14:06:47.836Z",
+        "description": "石爷爷"
+      },
+      {
+        "id": "expense-1781946695376",
+        "date": "2026-06-20",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 11200,
+        "payers": [
+          "秦瑜贲",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "CU",
+        "createdAt": "2026-06-20T09:11:35.376Z",
+        "updatedAt": "2026-06-24T05:46:20.458Z",
+        "description": "便利店午餐"
+      },
+      {
+        "id": "expense-1781952396950",
+        "date": "2026-06-20",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 5100,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "Olive young ",
+        "createdAt": "2026-06-20T10:46:36.950Z",
+        "updatedAt": "2026-06-24T05:45:47.737Z",
+        "description": "零食"
+      },
+      {
+        "id": "expense-1781952475910",
+        "date": "2026-06-20",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 7500,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "CU",
+        "createdAt": "2026-06-20T10:47:55.910Z",
+        "updatedAt": "2026-06-24T05:46:16.527Z",
+        "description": "便利店午餐"
+      },
+      {
+        "id": "expense-1782020217949",
+        "date": "2026-06-20",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 6900,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "CU",
+        "createdAt": "2026-06-21T05:36:57.949Z",
+        "updatedAt": "2026-06-24T05:46:11.015Z",
+        "description": "便利店午餐"
+      },
+      {
+        "id": "expense-1782020494546",
+        "date": "2026-06-17",
+        "time": "04:35",
+        "payer": "陈瑾妮",
+        "amount": 166,
+        "payers": [
+          "陈瑾妮",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "浦东机场",
+        "createdAt": "2026-06-21T05:41:34.546Z",
+        "updatedAt": "2026-06-22T03:03:12.986Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782020589135",
+        "date": "2026-06-20",
+        "time": "14:00",
+        "payer": "陈瑾妮",
+        "amount": 11.2,
+        "payers": [
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "Compose",
+        "createdAt": "2026-06-21T05:43:09.135Z",
+        "updatedAt": "2026-06-22T03:39:23.127Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1782020674261",
+        "date": "2026-06-20",
+        "time": "16:00",
+        "payer": "陈瑾妮",
+        "amount": 190000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "西归浦带鱼",
+        "createdAt": "2026-06-21T05:44:34.261Z",
+        "updatedAt": "2026-06-24T05:45:52.596Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1782021978915",
+        "date": "2026-06-20",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 105.1,
+        "payers": [
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "Olive young",
+        "createdAt": "2026-06-21T06:06:18.915Z",
+        "updatedAt": "2026-06-22T03:42:17.961Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1782022044540",
+        "date": "2026-06-20",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 41.11,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "Olive young",
+        "createdAt": "2026-06-21T06:07:24.540Z",
+        "updatedAt": "2026-06-22T03:40:09.806Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1782023364263",
+        "date": "2026-06-19",
+        "time": "11:00",
+        "payer": "陈瑾妮",
+        "amount": 25000,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "attraction",
+        "currency": "KRW_现金",
+        "location": "牛岛",
+        "createdAt": "2026-06-21T06:29:24.263Z",
+        "updatedAt": "2026-06-24T05:47:11.308Z",
+        "description": "自行车"
+      },
+      {
+        "id": "expense-1782023393205",
+        "date": "2026-06-19",
+        "time": "11:00",
+        "payer": "陈瑾妮",
+        "amount": 30000,
+        "payers": [
+          "谢秋怡",
+          "楼宜人",
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "attraction",
+        "currency": "KRW_现金",
+        "location": "牛岛",
+        "createdAt": "2026-06-21T06:29:53.205Z",
+        "updatedAt": "2026-06-24T05:47:07.595Z",
+        "description": "自行车"
+      },
+      {
+        "id": "expense-1782023720221",
+        "date": "2026-06-21",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 1000,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "other",
+        "currency": "KRW_现金",
+        "location": "",
+        "createdAt": "2026-06-21T06:35:20.221Z",
+        "updatedAt": "2026-06-24T05:45:23.399Z",
+        "description": "交通卡1剩余"
+      },
+      {
+        "id": "expense-1782024608598",
+        "date": "2026-06-20",
+        "time": "11:00",
+        "payer": "陈瑾妮",
+        "amount": 26.44,
+        "payers": [
+          "谢秋怡",
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "7-11",
+        "createdAt": "2026-06-21T06:50:08.598Z",
+        "updatedAt": "2026-06-22T03:40:48.480Z",
+        "description": "酸奶"
+      },
+      {
+        "id": "expense-1782024888828",
+        "date": "2026-06-20",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 109.32,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "Olive young",
+        "createdAt": "2026-06-21T06:54:48.828Z",
+        "updatedAt": "2026-06-22T03:41:18.480Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1782025837949",
+        "date": "2026-06-20",
+        "time": "15:00",
+        "payer": "谢秋怡",
+        "amount": 33.9,
+        "payers": [
+          "楼宜人",
+          "谢秋怡",
+          "陈瑾妮"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "偶来小路7号-西归浦带鱼",
+        "createdAt": "2026-06-21T07:10:37.949Z",
+        "updatedAt": "2026-06-22T03:44:26.887Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782026807631",
+        "date": "2026-06-20",
+        "time": "21:00",
+        "payer": "陈瑾妮",
+        "amount": 105100,
+        "payers": [
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "济州岛机场",
+        "createdAt": "2026-06-21T07:26:47.631Z",
+        "updatedAt": "2026-06-24T05:45:28.321Z",
+        "description": "香水"
+      },
+      {
+        "id": "expense-1782026994889",
+        "date": "2026-06-18",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 9000,
+        "payers": [
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "星巴克",
+        "createdAt": "2026-06-21T07:29:54.889Z",
+        "updatedAt": "2026-06-24T05:48:08.971Z",
+        "description": "橘子咖啡"
+      },
+      {
+        "id": "expense-1782027129778",
+        "date": "2026-06-19",
+        "time": "09:00",
+        "payer": "谢秋怡",
+        "amount": 43.1,
+        "payers": [
+          "陈瑾妮",
+          "楼宜人",
+          "陆丽莎",
+          "谢秋怡",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "天空花园一号酒店-济州公交总站",
+        "createdAt": "2026-06-21T07:32:09.778Z",
+        "updatedAt": "2026-06-22T03:24:35.133Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782027250567",
+        "date": "2026-06-17",
+        "time": "09:35",
+        "payer": "谢秋怡",
+        "amount": 33.2,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "济州岛机场-天空花园一号酒店",
+        "createdAt": "2026-06-21T07:34:10.567Z",
+        "updatedAt": "2026-06-22T03:08:56.768Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782027320559",
+        "date": "2026-06-17",
+        "time": "11:30",
+        "payer": "谢秋怡",
+        "amount": 103.1,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "天空花园一号酒店-崖月邑",
+        "createdAt": "2026-06-21T07:35:20.560Z",
+        "updatedAt": "2026-06-22T03:05:06.897Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782027380943",
+        "date": "2026-06-17",
+        "time": "16:21",
+        "payer": "谢秋怡",
+        "amount": 81,
+        "payers": [
+          "陈瑾妮",
+          "谢秋怡",
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "崖月邑-天空花园一号酒店",
+        "createdAt": "2026-06-21T07:36:20.943Z",
+        "updatedAt": "2026-06-22T03:07:50.276Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782028173019",
+        "date": "2026-06-19",
+        "time": "18:50",
+        "payer": "陈瑾妮",
+        "amount": 15000,
+        "payers": [
+          "陈瑾妮",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "GS25",
+        "createdAt": "2026-06-21T07:49:33.019Z",
+        "updatedAt": "2026-06-24T05:46:48.577Z",
+        "description": "购物"
+      },
+      {
+        "id": "expense-1782029813339",
+        "date": "2026-06-20",
+        "time": "20:00",
+        "payer": "陆丽莎",
+        "amount": 120,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "济州岛机场",
+        "createdAt": "2026-06-21T08:16:53.339Z",
+        "updatedAt": "2026-06-22T03:43:34.855Z",
+        "description": "快餐"
+      },
+      {
+        "id": "expense-1782029876813",
+        "date": "2026-06-20",
+        "time": "15:00",
+        "payer": "陆丽莎",
+        "amount": 48,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "偶来小路7号-西归浦带鱼",
+        "createdAt": "2026-06-21T08:17:56.813Z",
+        "updatedAt": "2026-06-22T03:44:37.746Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782029943097",
+        "date": "2026-06-19",
+        "time": "16:30",
+        "payer": "陆丽莎",
+        "amount": 61.7,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "济州公交总站-新罗免税店",
+        "createdAt": "2026-06-21T08:19:03.097Z",
+        "updatedAt": "2026-06-22T03:28:48.235Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782030104072",
+        "date": "2026-06-20",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 5700,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "KRW_现金",
+        "location": "Olive young",
+        "createdAt": "2026-06-21T08:21:44.072Z",
+        "updatedAt": "2026-06-24T05:45:33.330Z",
+        "description": "零食"
+      },
+      {
+        "id": "expense-1782031072792",
+        "date": "2026-06-17",
+        "time": "09:30",
+        "payer": "陈瑾妮",
+        "amount": 20000,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_现金",
+        "location": "济州岛机场",
+        "createdAt": "2026-06-21T08:37:52.792Z",
+        "updatedAt": "2026-06-24T05:44:35.581Z",
+        "description": "交通卡"
+      },
+      {
+        "id": "expense-1782093591260",
+        "date": "2026-06-17",
+        "time": "19:00",
+        "payer": "楼宜人",
+        "amount": 821.62,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "CNY",
+        "location": "石墙黑猪肉",
+        "createdAt": "2026-06-22T01:59:51.260Z",
+        "updatedAt": "2026-06-22T01:59:51.260Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1782107851465",
+        "date": "2026-06-19",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 13.23,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "牛岛-天空花园一号酒店",
+        "createdAt": "2026-06-22T05:57:31.465Z",
+        "updatedAt": "2026-06-22T05:57:31.465Z",
+        "description": "公交"
+      },
+      {
+        "id": "expense-1782107902806",
+        "date": "2026-06-20",
+        "time": "23:30",
+        "payer": "楼宜人",
+        "amount": 125,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海浦东",
+        "createdAt": "2026-06-22T05:58:22.806Z",
+        "updatedAt": "2026-06-22T05:58:22.806Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1782109124362",
+        "date": "2026-06-17",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 26,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海浦东",
+        "createdAt": "2026-06-22T06:18:44.362Z",
+        "updatedAt": "2026-06-22T06:18:44.363Z",
+        "description": "地铁"
+      },
+      {
+        "id": "expense-1782109294434",
+        "date": "2026-06-20",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 13.26,
+        "payers": [
+          "秦瑜贲",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "CU",
+        "createdAt": "2026-06-22T06:21:34.434Z",
+        "updatedAt": "2026-06-22T06:21:34.434Z",
+        "description": "可乐"
+      },
+      {
+        "id": "expense-1782109795943",
+        "date": "2026-06-20",
+        "time": "08:00",
+        "payer": "楼宜人",
+        "amount": 2400,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "transportation",
+        "currency": "KRW_信用卡",
+        "location": "天空花园一号酒店-偶来小路7号",
+        "createdAt": "2026-06-22T06:29:55.943Z",
+        "updatedAt": "2026-06-24T05:46:31.747Z",
+        "description": "大巴"
+      },
+      {
+        "id": "expense-1782109829923",
+        "date": "2026-06-20",
+        "time": "14:00",
+        "payer": "楼宜人",
+        "amount": 2900,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_信用卡",
+        "location": "Compose",
+        "createdAt": "2026-06-22T06:30:29.923Z",
+        "updatedAt": "2026-06-24T05:45:59.338Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1782145566150",
+        "date": "2026-06-19",
+        "time": "13:00",
+        "payer": "陈瑾妮",
+        "amount": 68000,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "牛岛海女亲捞",
+        "createdAt": "2026-06-22T16:26:06.150Z",
+        "updatedAt": "2026-06-24T05:47:02.008Z",
+        "description": "中餐"
+      },
+      {
+        "id": "expense-1782146640207",
+        "date": "2026-06-22",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 4800,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人",
+          "谢秋怡"
+        ],
+        "wishId": "22",
+        "category": "other",
+        "currency": "KRW_现金",
+        "location": "没对齐的现金差额",
+        "createdAt": "2026-06-22T16:44:00.207Z",
+        "updatedAt": "2026-06-24T05:45:19.244Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1782175495720",
+        "date": "2026-06-20",
+        "time": "09:50",
+        "payer": "陈瑾妮",
+        "amount": 9000,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "楼宜人"
+        ],
+        "wishId": "22",
+        "category": "food",
+        "currency": "KRW_现金",
+        "location": "酒店泡面",
+        "createdAt": "2026-06-23T00:44:55.720Z",
+        "updatedAt": "2026-06-24T05:46:25.992Z",
+        "description": ""
       }
     ],
-    "createdAt": "2026-06-01T08:52:15.151Z",
-    "updatedAt": "2026-06-05T09:41:11.046Z"
+    "createdAt": "2026-06-03T06:26:04.472421+00:00",
+    "updatedAt": "2026-06-03T06:26:04.472421+00:00"
   },
   {
-    "id": "trip-expense-1780408697379",
-    "wishId": "13",
-    "destination": "安吉",
-    "startDate": "2026-07-01",
-    "expenses": [],
-    "createdAt": "2026-06-02T13:58:17.408Z",
-    "updatedAt": "2026-06-02T13:58:17.408Z"
-  },
-  {
-    "id": "trip-expense-1780467614851",
-    "wishId": "13",
-    "destination": "安吉",
-    "startDate": "2026-07-01",
-    "expenses": [],
-    "createdAt": "2026-06-03T06:20:14.866Z",
-    "updatedAt": "2026-06-03T06:20:14.866Z"
-  },
-  {
-    "id": "trip-expense-1780467618032",
-    "wishId": "13",
-    "destination": "安吉",
-    "startDate": "2026-07-01",
-    "expenses": [],
-    "createdAt": "2026-06-03T06:20:18.088Z",
-    "updatedAt": "2026-06-03T06:20:18.088Z"
-  },
-  {
-    "id": "trip-expense-1781082199892",
-    "wishId": "in-memory-2",
-    "destination": "坦桑尼亚",
-    "startDate": "2026-10-01",
-    "expenses": [],
-    "createdAt": "2026-06-10T09:03:19.892Z",
-    "updatedAt": "2026-06-10T09:03:19.892Z"
-  },
-  {
-    "id": "trip-expense-1781168859937",
-    "wishId": "in-memory-4",
+    "id": "trip-expense-1780556780136",
+    "wishId": "5",
     "destination": "千岛湖",
     "startDate": "2026-05-23",
+    "expenses": [
+      {
+        "id": "expense-1780556808289",
+        "date": "2026-05-23",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 1740.25,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "accommodation",
+        "location": "千岛湖Voco酒店",
+        "createdAt": "2026-06-04T07:06:48.289Z",
+        "updatedAt": "2026-06-04T12:14:20.458Z",
+        "description": "在 千岛湖Voco酒店 的活动"
+      },
+      {
+        "id": "expense-1780556842173",
+        "date": "2026-05-23",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 287.2,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "千岛湖Voco酒店",
+        "createdAt": "2026-06-04T07:07:22.173Z",
+        "updatedAt": "2026-06-04T12:14:27.501Z",
+        "description": "自助晚餐"
+      },
+      {
+        "id": "expense-1780556863330",
+        "date": "2026-05-23",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 78,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "我家姐",
+        "createdAt": "2026-06-04T07:07:43.330Z",
+        "updatedAt": "2026-06-04T12:13:51.118Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1780556946959",
+        "date": "2026-05-23",
+        "time": "08:35",
+        "payer": "楼宜人",
+        "amount": 149,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "上海虹桥-千岛湖",
+        "createdAt": "2026-06-04T07:09:06.959Z",
+        "updatedAt": "2026-06-05T07:56:43.852Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1780556965221",
+        "date": "2026-05-23",
+        "time": "08:35",
+        "payer": "陆丽莎",
+        "amount": 350,
+        "payers": [
+          "陆丽莎",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "上海虹桥-千岛湖",
+        "createdAt": "2026-06-04T07:09:25.221Z",
+        "updatedAt": "2026-06-05T07:56:50.992Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1780556992602",
+        "date": "2026-05-23",
+        "time": "08:35",
+        "payer": "陈瑾妮",
+        "amount": 172,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "上海虹桥-千岛湖",
+        "createdAt": "2026-06-04T07:09:52.602Z",
+        "updatedAt": "2026-06-05T07:56:55.184Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1780557020210",
+        "date": "2026-05-24",
+        "time": "18:22",
+        "payer": "楼宜人",
+        "amount": 790,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "千岛湖-上海南",
+        "createdAt": "2026-06-04T07:10:20.210Z",
+        "updatedAt": "2026-06-05T07:58:47.389Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1780557187363",
+        "date": "2026-05-24",
+        "time": "13:00",
+        "payer": "陈瑾妮",
+        "amount": 880,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "entertainment",
+        "location": "逐浪者水上活动",
+        "createdAt": "2026-06-04T07:13:07.363Z",
+        "updatedAt": "2026-06-04T12:15:06.591Z",
+        "description": "浆板"
+      },
+      {
+        "id": "expense-1780557226650",
+        "date": "2026-05-24",
+        "time": "13:00",
+        "payer": "陆丽莎",
+        "amount": 10,
+        "payers": [
+          "陆丽莎",
+          "陈瑾妮"
+        ],
+        "wishId": "5",
+        "category": "entertainment",
+        "location": "逐浪者水上活动",
+        "createdAt": "2026-06-04T07:13:46.650Z",
+        "updatedAt": "2026-06-04T12:15:19.284Z",
+        "description": "浴巾"
+      },
+      {
+        "id": "expense-1780557401852",
+        "date": "2026-05-24",
+        "time": "21:00",
+        "payer": "陈瑾妮",
+        "amount": 394,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "西塔老太太",
+        "createdAt": "2026-06-04T07:16:41.852Z",
+        "updatedAt": "2026-06-05T07:59:18.962Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1780557501392",
+        "date": "2026-05-24",
+        "time": "08:01",
+        "payer": "陆丽莎",
+        "amount": 115.3,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "千岛湖Voco酒店-逐浪者水上活动",
+        "createdAt": "2026-06-04T07:18:21.392Z",
+        "updatedAt": "2026-06-05T07:58:17.712Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1780557617359",
+        "date": "2026-05-24",
+        "time": "08:01",
+        "payer": "楼宜人",
+        "amount": 133.38,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "千岛湖Voco酒店-逐浪者水上活动",
+        "createdAt": "2026-06-04T07:20:17.359Z",
+        "updatedAt": "2026-06-05T07:58:26.658Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1780557758226",
+        "date": "2026-05-24",
+        "time": "08:00",
+        "payer": "楼宜人",
+        "amount": 20,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "千岛湖Voco酒店",
+        "createdAt": "2026-06-04T07:22:38.226Z",
+        "updatedAt": "2026-06-05T07:58:10.752Z",
+        "description": "早餐"
+      },
+      {
+        "id": "expense-1780557855716",
+        "date": "2026-05-24",
+        "time": "15:00",
+        "payer": "陈瑾妮",
+        "amount": 35,
+        "payers": [
+          "陆丽莎",
+          "陈瑾妮"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "古茗",
+        "createdAt": "2026-06-04T07:24:15.716Z",
+        "updatedAt": "2026-06-05T07:58:36.545Z",
+        "description": "饮料"
+      },
+      {
+        "id": "expense-1780557874774",
+        "date": "2026-05-24",
+        "time": "15:00",
+        "payer": "陈瑾妮",
+        "amount": 278,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "桃花源",
+        "createdAt": "2026-06-04T07:24:34.774Z",
+        "updatedAt": "2026-06-04T12:16:14.068Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1780557905260",
+        "date": "2026-05-23",
+        "time": "18:00",
+        "payer": "陆丽莎",
+        "amount": 38,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "5",
+        "category": "food",
+        "location": "古茗",
+        "createdAt": "2026-06-04T07:25:05.260Z",
+        "updatedAt": "2026-06-05T07:57:39.623Z",
+        "description": "饮料"
+      },
+      {
+        "id": "expense-1780557948526",
+        "date": "2026-05-23",
+        "time": "16:00",
+        "payer": "陆丽莎",
+        "amount": 27.82,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "牧心谷-千岛湖Voco酒店",
+        "createdAt": "2026-06-04T07:25:48.526Z",
+        "updatedAt": "2026-06-05T07:57:20.294Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1780558000978",
+        "date": "2026-05-23",
+        "time": "11:30",
+        "payer": "楼宜人",
+        "amount": 76.15,
+        "payers": [
+          "楼宜人",
+          "陆丽莎",
+          "秦瑜贲",
+          "韩垚"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "千岛湖-我家姐",
+        "createdAt": "2026-06-04T07:26:40.978Z",
+        "updatedAt": "2026-06-05T07:57:00.390Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1780562837644",
+        "date": "2026-05-23",
+        "time": "11:30",
+        "payer": "陈瑾妮",
+        "amount": 41,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "5",
+        "category": "transportation",
+        "location": "千岛湖-我家姐",
+        "createdAt": "2026-06-04T08:47:17.644Z",
+        "updatedAt": "2026-06-05T07:57:05.490Z",
+        "description": "出租车"
+      }
+    ],
+    "createdAt": "2026-06-04T07:06:20.161227+00:00",
+    "updatedAt": "2026-06-04T07:06:20.161227+00:00"
+  },
+  {
+    "id": "trip-expense-1785942053422",
+    "wishId": "28",
+    "destination": "挪威",
+    "startDate": "2026-09-27",
+    "expenses": [
+      {
+        "id": "expense-1785942053710",
+        "date": "2026-09-23",
+        "time": "18:00",
+        "payer": "陆丽莎",
+        "amount": 8275,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "奥斯陆",
+        "createdAt": "2026-08-05T15:00:53.710Z",
+        "updatedAt": "2026-08-05T15:00:53.710Z",
+        "description": "飞机往返"
+      },
+      {
+        "id": "expense-1786021276179",
+        "date": "2026-09-30",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 5886,
+        "payers": [
+          "陈瑾妮",
+          "陆丽莎",
+          "秦瑜贲"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-08-06T13:01:16.179Z",
+        "updatedAt": "2026-08-10T13:07:10.154Z",
+        "description": "邮轮"
+      },
+      {
+        "id": "expense-1787187722854",
+        "date": "2026-10-1",
+        "time": "08:00",
+        "payer": "陆丽莎",
+        "amount": 2259,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-08-20T01:02:02.854Z",
+        "updatedAt": "2026-08-20T01:02:02.854Z",
+        "description": "租车"
+      },
+      {
+        "id": "expense-1787229267746",
+        "date": "2026-09-30",
+        "time": "19:00",
+        "payer": "陆丽莎",
+        "amount": 0,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "Svolvaer被鸽",
+        "createdAt": "2026-08-20T12:34:27.747Z",
+        "updatedAt": "2026-10-05T11:46:30.486Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1787618789715",
+        "date": "2026-10-03",
+        "time": "20:00",
+        "payer": "秦瑜贲",
+        "amount": 7599,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-08-25T00:46:29.715Z",
+        "updatedAt": "2026-10-06T06:02:50.699Z",
+        "description": "回奥斯陆飞机"
+      },
+      {
+        "id": "expense-1787756429993",
+        "date": "2026-09-28",
+        "time": "09:00",
+        "payer": "陆丽莎",
+        "amount": 0,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "海钓",
+        "createdAt": "2026-08-26T15:00:29.993Z",
+        "updatedAt": "2026-10-05T10:31:06.638Z",
+        "description": "在 海钓 的活动"
+      },
+      {
+        "id": "expense-1787756479751",
+        "date": "2026-09-26",
+        "time": "09:00",
+        "payer": "陆丽莎",
+        "amount": 3732.6,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "极光",
+        "createdAt": "2026-08-26T15:01:19.751Z",
+        "updatedAt": "2026-08-26T15:01:19.751Z",
+        "description": "在 极光 的活动"
+      },
+      {
+        "id": "expense-1787820258113",
+        "date": "2026-10-03",
+        "time": "22:00",
+        "payer": "秦瑜贲",
+        "amount": 1071.8,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "奥斯陆住宿",
+        "createdAt": "2026-08-27T08:44:18.113Z",
+        "updatedAt": "2026-08-27T08:44:18.113Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1788428234370",
+        "date": "2026-09-03",
+        "time": "12:00",
+        "payer": "秦瑜贲",
+        "amount": 390,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-03T09:37:14.370Z",
+        "updatedAt": "2026-09-03T09:37:14.370Z",
+        "description": "驾照公证"
+      },
+      {
+        "id": "expense-1788964269300",
+        "date": "2026-08-13",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 150,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-09T14:31:09.300Z",
+        "updatedAt": "2026-09-09T14:31:09.300Z",
+        "description": "vfs预约"
+      },
+      {
+        "id": "expense-1788964433720",
+        "date": "2026-08-13",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 2090.72,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-09T14:33:53.720Z",
+        "updatedAt": "2026-09-09T14:33:53.720Z",
+        "description": "签证费"
+      },
+      {
+        "id": "expense-1788964488781",
+        "date": "2026-09-25",
+        "time": "19:00",
+        "payer": "陈瑾妮",
+        "amount": 2977,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "特罗姆瑟",
+        "createdAt": "2026-09-09T14:34:48.781Z",
+        "updatedAt": "2026-09-09T14:34:48.781Z",
+        "description": "0925奥斯陆～特罗姆瑟 机票"
+      },
+      {
+        "id": "expense-1788964602105",
+        "date": "2026-09-23",
+        "time": "17:25",
+        "payer": "陈瑾妮",
+        "amount": 4232,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海-挪威",
+        "createdAt": "2026-09-09T14:36:42.105Z",
+        "updatedAt": "2026-09-09T14:36:42.105Z",
+        "description": "飞机"
+      },
+      {
+        "id": "expense-1788964680044",
+        "date": "2026-10-04",
+        "time": "07:25",
+        "payer": "陈瑾妮",
+        "amount": 4058,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "挪威-上海",
+        "createdAt": "2026-09-09T14:38:00.044Z",
+        "updatedAt": "2026-09-09T14:38:00.044Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1789476561736",
+        "date": "2026-09-15",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 166.96,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-15T12:49:21.736Z",
+        "updatedAt": "2026-10-07T09:33:56.441Z",
+        "description": "无人机注册"
+      },
+      {
+        "id": "expense-1790709009191",
+        "date": "2026-09-24",
+        "time": "18:00",
+        "payer": "陆丽莎",
+        "amount": 1564.23,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-29T19:10:09.191Z",
+        "updatedAt": "2026-09-29T19:16:44.240Z",
+        "description": "奥斯陆maya民宿"
+      },
+      {
+        "id": "expense-1790709306823",
+        "date": "2026-10-01",
+        "time": "18:00",
+        "payer": "陆丽莎",
+        "amount": 4140.72,
+        "payers": [
+          "陈瑾妮",
+          "秦瑜贲",
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "罗弗敦民宿",
+        "createdAt": "2026-09-29T19:15:06.823Z",
+        "updatedAt": "2026-09-29T19:15:06.823Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1790709542615",
+        "date": "2026-09-24",
+        "time": "21:00",
+        "payer": "陆丽莎",
+        "amount": 5610.63,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-29T19:19:02.615Z",
+        "updatedAt": "2026-09-29T19:19:02.615Z",
+        "description": "球赛"
+      },
+      {
+        "id": "expense-1790709592647",
+        "date": "2026-09-25",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 197.24,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "打车",
+        "createdAt": "2026-09-29T19:19:52.648Z",
+        "updatedAt": "2026-09-29T19:19:52.648Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1790709648402",
+        "date": "2026-09-25",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 69.95,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "food",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-29T19:20:48.402Z",
+        "updatedAt": "2026-09-29T19:20:48.402Z",
+        "description": "便利店"
+      },
+      {
+        "id": "expense-1790709705589",
+        "date": "2026-09-26",
+        "time": "08:00",
+        "payer": "陆丽莎",
+        "amount": 146.9,
+        "payers": [
+          "陆丽莎",
+          "陈瑾妮",
+          "秦瑜贲"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-29T19:21:45.589Z",
+        "updatedAt": "2026-09-29T19:21:45.589Z",
+        "description": "租车额外驾驶"
+      },
+      {
+        "id": "expense-1790709766852",
+        "date": "2026-09-26",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 133.9,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-29T19:22:46.852Z",
+        "updatedAt": "2026-09-29T19:22:46.852Z",
+        "description": "便利店"
+      },
+      {
+        "id": "expense-1791194796450",
+        "date": "2026-09-26",
+        "time": "09:00",
+        "payer": "陆丽莎",
+        "amount": 1069,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "特罗姆瑟",
+        "createdAt": "2026-10-05T10:06:36.450Z",
+        "updatedAt": "2026-10-05T10:06:36.450Z",
+        "description": "senja自驾租车"
+      },
+      {
+        "id": "expense-1791194877999",
+        "date": "2026-10-05",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 533.28,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:07:57.999Z",
+        "updatedAt": "2026-10-05T10:07:57.999Z",
+        "description": "抓绒衣"
+      },
+      {
+        "id": "expense-1791195032263",
+        "date": "2026-9-26",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 177,
+        "payers": [
+          "秦瑜贲"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:10:32.263Z",
+        "updatedAt": "2026-10-05T10:10:32.263Z",
+        "description": "小海豹"
+      },
+      {
+        "id": "expense-1791195122296",
+        "date": "2026-9-26",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 57,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:12:02.296Z",
+        "updatedAt": "2026-10-05T10:12:02.296Z",
+        "description": "lisa特罗姆瑟纪念品"
+      },
+      {
+        "id": "expense-1791195151896",
+        "date": "2026-9-26",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 75,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "food",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:12:31.896Z",
+        "updatedAt": "2026-10-05T10:12:31.896Z",
+        "description": "kiwi"
+      },
+      {
+        "id": "expense-1791195329231",
+        "date": "2026-9-29",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 437.93,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:15:29.231Z",
+        "updatedAt": "2026-10-05T10:15:29.231Z",
+        "description": "帽子"
+      },
+      {
+        "id": "expense-1791195400793",
+        "date": "2026-9-29",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 10.7,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:16:40.793Z",
+        "updatedAt": "2026-10-05T10:16:40.793Z",
+        "description": "麦当劳明信片"
+      },
+      {
+        "id": "expense-1791195481365",
+        "date": "2026-9-30",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 445.36,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:18:01.365Z",
+        "updatedAt": "2026-10-05T10:18:01.365Z",
+        "description": "senja租车sixt其他扣费"
+      },
+      {
+        "id": "expense-1791195946397",
+        "date": "2026-10-1",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 106.66,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "罗弗敦",
+        "createdAt": "2026-10-05T10:25:46.397Z",
+        "updatedAt": "2026-10-05T10:25:46.397Z",
+        "description": "斯沃尔维尔徒步停车"
+      },
+      {
+        "id": "expense-1791195988203",
+        "date": "2026-10-1",
+        "time": "09:00",
+        "payer": "陆丽莎",
+        "amount": 151.62,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:26:28.203Z",
+        "updatedAt": "2026-10-05T10:26:28.203Z",
+        "description": "斯沃尔维尔取车打车"
+      },
+      {
+        "id": "expense-1791196019145",
+        "date": "2026-10-2",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 38.16,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T10:26:59.145Z",
+        "updatedAt": "2026-10-05T10:26:59.145Z",
+        "description": "停车"
+      },
+      {
+        "id": "expense-1791196317864",
+        "date": "2026-10-3",
+        "time": "10:00",
+        "payer": "陆丽莎",
+        "amount": 2529,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "罗弗顿",
+        "createdAt": "2026-10-05T10:31:57.864Z",
+        "updatedAt": "2026-10-05T10:31:57.864Z",
+        "description": "海钓"
+      },
+      {
+        "id": "expense-1791200429594",
+        "date": "2026-9-27",
+        "time": "19:00",
+        "payer": "陆丽莎",
+        "amount": 2884,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "特罗姆瑟",
+        "createdAt": "2026-10-05T11:40:29.594Z",
+        "updatedAt": "2026-10-05T11:40:29.594Z",
+        "description": "特罗姆瑟住宿2晚"
+      },
+      {
+        "id": "expense-1791200502192",
+        "date": "2026-9-26",
+        "time": "18:00",
+        "payer": "陆丽莎",
+        "amount": 1825,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T11:41:42.192Z",
+        "updatedAt": "2026-10-05T11:41:42.192Z",
+        "description": "Senja住宿"
+      },
+      {
+        "id": "expense-1791200699253",
+        "date": "2026-9-25",
+        "time": "22:00",
+        "payer": "陆丽莎",
+        "amount": 813,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-05T11:44:59.253Z",
+        "updatedAt": "2026-10-05T11:44:59.253Z",
+        "description": "特罗姆瑟机场1晚住宿"
+      },
+      {
+        "id": "expense-1791200924464",
+        "date": "2026-09-28",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 1532,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "特罗姆瑟",
+        "createdAt": "2026-10-05T11:48:44.464Z",
+        "updatedAt": "2026-10-05T11:48:44.464Z",
+        "description": "峡湾野生动物游览tour"
+      },
+      {
+        "id": "expense-1791266672657",
+        "date": "2026-10-03",
+        "time": "23:00",
+        "payer": "陆丽莎",
+        "amount": 340.31,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "奥斯陆",
+        "createdAt": "2026-10-06T06:04:32.657Z",
+        "updatedAt": "2026-10-06T06:04:32.657Z",
+        "description": "奥斯陆回程机场大巴"
+      },
+      {
+        "id": "expense-1791369499449",
+        "date": "2026-10-07",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 5545.88,
+        "payers": [
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T10:38:19.449Z",
+        "updatedAt": "2026-10-07T11:40:29.241Z",
+        "description": "陈瑾妮信用卡支付"
+      },
+      {
+        "id": "expense-1791369543037",
+        "date": "2026-10-07",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 3768.79,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T10:39:03.037Z",
+        "updatedAt": "2026-10-07T11:40:43.914Z",
+        "description": "陈瑾妮信用卡消费"
+      },
+      {
+        "id": "expense-1791369562752",
+        "date": "2026-10-07",
+        "time": "12:00",
+        "payer": "陈瑾妮",
+        "amount": 3600.92,
+        "payers": [
+          "秦瑜贲"
+        ],
+        "wishId": "28",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T10:39:22.752Z",
+        "updatedAt": "2026-10-07T11:40:57.959Z",
+        "description": "陈瑾妮信用卡消费"
+      },
+      {
+        "id": "expense-1791371367873",
+        "date": "2026-9-30",
+        "time": "20:00",
+        "payer": "秦瑜贲",
+        "amount": 927.11,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "food",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T11:09:27.874Z",
+        "updatedAt": "2026-10-07T11:09:27.874Z",
+        "description": "晚餐+出租车"
+      },
+      {
+        "id": "expense-1791373138334",
+        "date": "2026-10-4",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 55.96,
+        "payers": [
+          "陆丽莎"
+        ],
+        "wishId": "28",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T11:38:58.334Z",
+        "updatedAt": "2026-10-07T11:38:58.334Z",
+        "description": "奥斯陆机场冰箱贴Lisa"
+      },
+      {
+        "id": "expense-1791373171275",
+        "date": "2026-10-4",
+        "time": "12:00",
+        "payer": "陆丽莎",
+        "amount": 90.74,
+        "payers": [
+          "陆丽莎",
+          "秦瑜贲",
+          "陈瑾妮"
+        ],
+        "wishId": "28",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T11:39:31.275Z",
+        "updatedAt": "2026-10-07T11:39:31.275Z",
+        "description": "土耳其机场甜品"
+      }
+    ],
+    "createdAt": "2026-08-05T15:00:53.461767+00:00",
+    "updatedAt": "2026-08-05T15:00:53.461767+00:00"
+  },
+  {
+    "id": "trip-expense-1787536322573",
+    "wishId": "18",
+    "destination": "长兴",
+    "startDate": "2026/8/22",
+    "expenses": [
+      {
+        "id": "expense-1787536322693",
+        "date": "2026-08-22",
+        "time": "22:00",
+        "payer": "楼宜人",
+        "amount": 1009,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "动物世界酒店",
+        "createdAt": "2026-08-24T01:52:02.693Z",
+        "updatedAt": "2026-08-24T02:07:09.143Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1787536348404",
+        "date": "2026-08-22",
+        "time": "22:00",
+        "payer": "楼宜人",
+        "amount": 969,
+        "payers": [
+          "王友凤",
+          "陈萦"
+        ],
+        "wishId": "18",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "动物世界酒店",
+        "createdAt": "2026-08-24T01:52:28.404Z",
+        "updatedAt": "2026-08-24T02:07:14.258Z",
+        "description": ""
+      },
+      {
+        "id": "expense-1787536537553",
+        "date": "2026-08-22",
+        "time": "10:00",
+        "payer": "楼宜人",
+        "amount": 186.36,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海-龙之梦往返",
+        "createdAt": "2026-08-24T01:55:37.553Z",
+        "updatedAt": "2026-08-24T01:58:44.106Z",
+        "description": "汽油+电费"
+      },
+      {
+        "id": "expense-1787536809826",
+        "date": "2026-08-22",
+        "time": "10:00",
+        "payer": "楼宜人",
+        "amount": 160.94,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海-龙之梦往返",
+        "createdAt": "2026-08-24T02:00:09.826Z",
+        "updatedAt": "2026-08-24T02:33:14.118Z",
+        "description": "过路费"
+      },
+      {
+        "id": "expense-1787536924896",
+        "date": "2026-08-22",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 800,
+        "payers": [
+          "韩垚",
+          "陈萦"
+        ],
+        "wishId": "18",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "冰雪世界",
+        "createdAt": "2026-08-24T02:02:04.896Z",
+        "updatedAt": "2026-08-24T02:33:05.456Z",
+        "description": "教练费"
+      },
+      {
+        "id": "expense-1787536984936",
+        "date": "2026-08-22",
+        "time": "15:00",
+        "payer": "王友凤",
+        "amount": 90,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "冰雪世界",
+        "createdAt": "2026-08-24T02:03:04.936Z",
+        "updatedAt": "2026-08-24T02:33:00.492Z",
+        "description": "门票"
+      },
+      {
+        "id": "expense-1787537210252",
+        "date": "2026-08-22",
+        "time": "19:00",
+        "payer": "楼宜人",
+        "amount": 40,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "冰雪世界",
+        "createdAt": "2026-08-24T02:06:50.252Z",
+        "updatedAt": "2026-08-24T02:06:50.252Z",
+        "description": "停车"
+      },
+      {
+        "id": "expense-1787537269592",
+        "date": "2026-08-22",
+        "time": "17:00",
+        "payer": "楼宜人",
+        "amount": 16,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "冰雪世界",
+        "createdAt": "2026-08-24T02:07:49.592Z",
+        "updatedAt": "2026-08-24T02:07:49.592Z",
+        "description": "饮料"
+      },
+      {
+        "id": "expense-1787537323233",
+        "date": "2026-08-22",
+        "time": "19:00",
+        "payer": "楼宜人",
+        "amount": 100,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "18",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "太湖演艺城",
+        "createdAt": "2026-08-24T02:08:43.233Z",
+        "updatedAt": "2026-08-24T02:08:43.233Z",
+        "description": "门票"
+      },
+      {
+        "id": "expense-1787537388776",
+        "date": "2026-08-22",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 186,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "太湖演艺城",
+        "createdAt": "2026-08-24T02:09:48.776Z",
+        "updatedAt": "2026-08-24T02:09:48.776Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1787537513341",
+        "date": "2026-08-23",
+        "time": "10:00",
+        "payer": "楼宜人",
+        "amount": 60,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "水世界",
+        "createdAt": "2026-08-24T02:11:53.341Z",
+        "updatedAt": "2026-08-24T02:11:53.341Z",
+        "description": "门票"
+      },
+      {
+        "id": "expense-1787537577906",
+        "date": "2026-08-22",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 52.9,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "太湖演艺城",
+        "createdAt": "2026-08-24T02:12:57.906Z",
+        "updatedAt": "2026-08-24T02:12:57.906Z",
+        "description": "古茗"
+      },
+      {
+        "id": "expense-1787537613207",
+        "date": "2026-08-23",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 20,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "太湖演艺城",
+        "createdAt": "2026-08-24T02:13:33.207Z",
+        "updatedAt": "2026-08-24T02:13:33.207Z",
+        "description": "停车"
+      },
+      {
+        "id": "expense-1787537681621",
+        "date": "2026-08-23",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 54.8,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "太湖演艺城",
+        "createdAt": "2026-08-24T02:14:41.621Z",
+        "updatedAt": "2026-08-24T02:14:41.621Z",
+        "description": "古茗"
+      },
+      {
+        "id": "expense-1787537813427",
+        "date": "2026-08-23",
+        "time": "14:30",
+        "payer": "楼宜人",
+        "amount": 422,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "王家大院",
+        "createdAt": "2026-08-24T02:16:53.427Z",
+        "updatedAt": "2026-08-24T02:16:53.427Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1787538840495",
+        "date": "2026-08-23",
+        "time": "10:30",
+        "payer": "楼宜人",
+        "amount": 20,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "水世界",
+        "createdAt": "2026-08-24T02:34:00.495Z",
+        "updatedAt": "2026-08-24T02:34:00.495Z",
+        "description": "储物柜"
+      },
+      {
+        "id": "expense-1787539152469",
+        "date": "2026-08-22",
+        "time": "12:00",
+        "payer": "韩垚",
+        "amount": 329,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "王友凤",
+          "陈萦",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "一品砂锅菜",
+        "createdAt": "2026-08-24T02:39:12.469Z",
+        "updatedAt": "2026-08-24T02:39:12.469Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1787542375384",
+        "date": "2026-08-23",
+        "time": "09:00",
+        "payer": "王友凤",
+        "amount": 38,
+        "payers": [
+          "楼宜人",
+          "韩垚",
+          "秦瑜贲"
+        ],
+        "wishId": "18",
+        "category": "food",
+        "currency": "CNY",
+        "location": "动物世界酒店",
+        "createdAt": "2026-08-24T03:32:55.384Z",
+        "updatedAt": "2026-08-24T03:32:55.384Z",
+        "description": "早餐"
+      }
+    ],
+    "createdAt": "2026-08-24T01:52:02.582337+00:00",
+    "updatedAt": "2026-08-24T01:52:02.582337+00:00"
+  },
+  {
+    "id": "trip-expense-1787541058729",
+    "wishId": "17",
+    "destination": "长沙",
+    "startDate": "2026-04-18",
     "expenses": [],
-    "createdAt": "2026-06-11T09:07:39.938Z",
-    "updatedAt": "2026-06-11T09:07:39.938Z"
+    "createdAt": "2026-08-24T03:10:58.744623+00:00",
+    "updatedAt": "2026-08-24T03:10:58.744623+00:00"
+  },
+  {
+    "id": "trip-expense-1789352540077",
+    "wishId": "29",
+    "destination": "九华山",
+    "startDate": "2026-09-26",
+    "expenses": [
+      {
+        "id": "expense-1789353101119",
+        "date": "2026-09-26",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 838,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "青峰隐",
+        "createdAt": "2026-09-14T02:31:41.119Z",
+        "updatedAt": "2026-09-14T02:32:32.121Z",
+        "description": "在 青峰隐 的活动"
+      },
+      {
+        "id": "expense-1789353164743",
+        "date": "2026-09-27",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 600,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "九华山温泉假日",
+        "createdAt": "2026-09-14T02:32:44.743Z",
+        "updatedAt": "2026-09-14T02:32:44.743Z",
+        "description": "在 九华山温泉假日 的活动"
+      },
+      {
+        "id": "expense-1789353188914",
+        "date": "2026-09-26",
+        "time": "08:45",
+        "payer": "楼宜人",
+        "amount": 274,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海南-九华山",
+        "createdAt": "2026-09-14T02:33:08.914Z",
+        "updatedAt": "2026-09-14T02:33:08.914Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1789353196886",
+        "date": "2026-09-28",
+        "time": "16:05",
+        "payer": "楼宜人",
+        "amount": 261,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "九华山-上海虹桥",
+        "createdAt": "2026-09-14T02:33:16.886Z",
+        "updatedAt": "2026-09-14T02:33:16.886Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1789353234795",
+        "date": "2026-09-26",
+        "time": "08:45",
+        "payer": "王一平",
+        "amount": 822,
+        "payers": [
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海南-九华山",
+        "createdAt": "2026-09-14T02:33:54.795Z",
+        "updatedAt": "2026-09-14T02:33:54.795Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1789353249230",
+        "date": "2026-09-28",
+        "time": "16:05",
+        "payer": "王一平",
+        "amount": 783,
+        "payers": [
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "九华山-上海虹桥",
+        "createdAt": "2026-09-14T02:34:09.231Z",
+        "updatedAt": "2026-09-14T02:34:09.231Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1790650556483",
+        "date": "2026-09-27",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 206,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "food",
+        "currency": "CNY",
+        "location": "九华山假日",
+        "createdAt": "2026-09-29T02:55:56.483Z",
+        "updatedAt": "2026-09-29T02:55:56.483Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1790650623596",
+        "date": "2026-09-26",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 294.31,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "food",
+        "currency": "CNY",
+        "location": "醉九华",
+        "createdAt": "2026-09-29T02:57:03.596Z",
+        "updatedAt": "2026-09-29T02:57:29.260Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1790650761410",
+        "date": "2026-09-26",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 14.92,
+        "payers": [
+          "楼宜人",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "food",
+        "currency": "CNY",
+        "location": "罗森",
+        "createdAt": "2026-09-29T02:59:21.410Z",
+        "updatedAt": "2026-09-29T02:59:21.410Z",
+        "description": "饮料"
+      },
+      {
+        "id": "expense-1790651117124",
+        "date": "2026-09-26",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 70,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "food",
+        "currency": "CNY",
+        "location": "吴记面馆",
+        "createdAt": "2026-09-29T03:05:17.124Z",
+        "updatedAt": "2026-09-29T03:22:56.874Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1790651608041",
+        "date": "2026-09-28",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 41.63,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "九华山-高铁站",
+        "createdAt": "2026-09-29T03:13:28.041Z",
+        "updatedAt": "2026-09-29T03:13:28.041Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1790651678357",
+        "date": "2026-09-28",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 68,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "29",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "大愿文化园",
+        "createdAt": "2026-09-29T03:14:38.357Z",
+        "updatedAt": "2026-09-29T03:14:38.357Z",
+        "description": "纪念品"
+      },
+      {
+        "id": "expense-1790651712226",
+        "date": "2026-09-27",
+        "time": "11:00",
+        "payer": "楼宜人",
+        "amount": 319.99,
+        "payers": [
+          "楼宜人",
+          "王一平"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "天台",
+        "createdAt": "2026-09-29T03:15:12.226Z",
+        "updatedAt": "2026-09-29T03:15:12.226Z",
+        "description": "索道"
+      },
+      {
+        "id": "expense-1790651762346",
+        "date": "2026-09-27",
+        "time": "10:00",
+        "payer": "楼宜人",
+        "amount": 55,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "百岁宫",
+        "createdAt": "2026-09-29T03:16:02.346Z",
+        "updatedAt": "2026-09-29T03:16:02.346Z",
+        "description": "索道"
+      },
+      {
+        "id": "expense-1790651814362",
+        "date": "2026-09-27",
+        "time": "09:00",
+        "payer": "楼宜人",
+        "amount": 50,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "food",
+        "currency": "CNY",
+        "location": "青峰隐",
+        "createdAt": "2026-09-29T03:16:54.362Z",
+        "updatedAt": "2026-09-29T03:16:54.362Z",
+        "description": "早餐"
+      },
+      {
+        "id": "expense-1790652146401",
+        "date": "2026-09-26",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 232,
+        "payers": [
+          "楼宜人",
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "高铁站-九华山",
+        "createdAt": "2026-09-29T03:22:26.401Z",
+        "updatedAt": "2026-09-29T03:22:26.401Z",
+        "description": "大巴"
+      },
+      {
+        "id": "expense-1790652162579",
+        "date": "2026-09-26",
+        "time": "12:30",
+        "payer": "楼宜人",
+        "amount": 320,
+        "payers": [
+          "楼宜人",
+          "王一平"
+        ],
+        "wishId": "29",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "九华山",
+        "createdAt": "2026-09-29T03:22:42.579Z",
+        "updatedAt": "2026-09-29T07:31:58.331Z",
+        "description": "门票"
+      },
+      {
+        "id": "expense-1790654366493",
+        "date": "2026-09-27",
+        "time": "10:00",
+        "payer": "王一平",
+        "amount": 300,
+        "payers": [
+          "王一平",
+          "俞幼琪",
+          "楼近浣"
+        ],
+        "wishId": "29",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "百岁宫",
+        "createdAt": "2026-09-29T03:59:26.493Z",
+        "updatedAt": "2026-09-29T03:59:26.493Z",
+        "description": "索道"
+      }
+    ],
+    "createdAt": "2026-09-14T02:22:20.092546+00:00",
+    "updatedAt": "2026-09-14T02:22:20.092546+00:00"
+  },
+  {
+    "id": "trip-expense-1789696453584",
+    "wishId": "26",
+    "destination": "潮汕",
+    "startDate": "2026-10-02",
+    "expenses": [
+      {
+        "id": "expense-1789868359648",
+        "date": "2026-10-02",
+        "time": "00:00",
+        "payer": "楼宜人",
+        "amount": 4920,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海-潮汕",
+        "createdAt": "2026-09-20T01:39:19.648Z",
+        "updatedAt": "2026-09-20T01:39:19.648Z",
+        "description": "飞机"
+      },
+      {
+        "id": "expense-1789868391296",
+        "date": "2026-10-02",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 1356,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "汕头澄海智选假日",
+        "createdAt": "2026-09-20T01:39:51.296Z",
+        "updatedAt": "2026-10-02T14:01:49.817Z",
+        "description": "住宿"
+      },
+      {
+        "id": "expense-1789868418380",
+        "date": "2026-10-03",
+        "time": "23:00",
+        "payer": "楼宜人",
+        "amount": 653,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "华怡金信酒店",
+        "createdAt": "2026-09-20T01:40:18.380Z",
+        "updatedAt": "2026-10-07T14:22:31.037Z",
+        "description": "住宿"
+      },
+      {
+        "id": "expense-1789868430941",
+        "date": "2026-10-04",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 899,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "深圳好日子皇冠假日",
+        "createdAt": "2026-09-20T01:40:30.941Z",
+        "updatedAt": "2026-10-07T14:26:12.916Z",
+        "description": "住宿"
+      },
+      {
+        "id": "expense-1789868454881",
+        "date": "2026-10-05",
+        "time": "22:00",
+        "payer": "楼宜人",
+        "amount": 845.57,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "香港旺角智选假日",
+        "createdAt": "2026-09-20T01:40:54.881Z",
+        "updatedAt": "2026-10-07T14:12:14.232Z",
+        "description": "住宿"
+      },
+      {
+        "id": "expense-1789868539331",
+        "date": "2026-10-01",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 15,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-09-20T01:42:19.331Z",
+        "updatedAt": "2026-09-20T01:42:19.331Z",
+        "description": "香港签注"
+      },
+      {
+        "id": "expense-1790734452854",
+        "date": "2026-10-04",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 138,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "潮汕-深圳",
+        "createdAt": "2026-09-30T02:14:12.854Z",
+        "updatedAt": "2026-10-07T14:24:08.442Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1790734464104",
+        "date": "2026-10-05",
+        "time": "08:00",
+        "payer": "楼宜人",
+        "amount": 136,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "福田-西九龙",
+        "createdAt": "2026-09-30T02:14:24.104Z",
+        "updatedAt": "2026-10-07T14:26:31.642Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1790734532171",
+        "date": "2026-10-06",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 136,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "西九龙-福田",
+        "createdAt": "2026-09-30T02:15:32.171Z",
+        "updatedAt": "2026-10-07T14:27:15.832Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1790859183342",
+        "date": "2026-10-03",
+        "time": "07:30",
+        "payer": "楼宜人",
+        "amount": 820,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "南澳岛",
+        "createdAt": "2026-10-01T12:53:03.342Z",
+        "updatedAt": "2026-10-04T14:09:08.471Z",
+        "description": "包车"
+      },
+      {
+        "id": "expense-1790949213045",
+        "date": "2026-10-02",
+        "time": "01:30",
+        "payer": "楼宜人",
+        "amount": 150,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "机场-汕头澄海智选假日",
+        "createdAt": "2026-10-02T13:53:33.045Z",
+        "updatedAt": "2026-10-07T14:20:39.844Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1790949277644",
+        "date": "2026-10-02",
+        "time": "08:30",
+        "payer": "楼宜人",
+        "amount": 70.93,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "汕头澄海智选假日-小公园",
+        "createdAt": "2026-10-02T13:54:37.644Z",
+        "updatedAt": "2026-10-02T14:06:38.201Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1790949321847",
+        "date": "2026-10-02",
+        "time": "10:00",
+        "payer": "楼宜人",
+        "amount": 28,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "小公园",
+        "createdAt": "2026-10-02T13:55:21.847Z",
+        "updatedAt": "2026-10-02T13:55:21.847Z",
+        "description": "冰箱贴"
+      },
+      {
+        "id": "expense-1790949344696",
+        "date": "2026-10-02",
+        "time": "10:00",
+        "payer": "韩垚",
+        "amount": 10,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "小公园",
+        "createdAt": "2026-10-02T13:55:44.696Z",
+        "updatedAt": "2026-10-02T13:55:44.696Z",
+        "description": "牛肉丸"
+      },
+      {
+        "id": "expense-1790949394638",
+        "date": "2026-10-02",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 29.43,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "小公园-潮博馆",
+        "createdAt": "2026-10-02T13:56:34.638Z",
+        "updatedAt": "2026-10-02T14:06:53.333Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1790949426077",
+        "date": "2026-10-02",
+        "time": "14:00",
+        "payer": "楼宜人",
+        "amount": 24,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "巳咖啡",
+        "createdAt": "2026-10-02T13:57:06.077Z",
+        "updatedAt": "2026-10-02T13:57:06.077Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1790949584268",
+        "date": "2026-10-02",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 41.42,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "龙眼南美食街-汕头澄海智选假日",
+        "createdAt": "2026-10-02T13:59:44.268Z",
+        "updatedAt": "2026-10-02T13:59:44.268Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1790949614416",
+        "date": "2026-10-02",
+        "time": "17:00",
+        "payer": "楼宜人",
+        "amount": 167.6,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "龙眼南美食街",
+        "createdAt": "2026-10-02T14:00:14.416Z",
+        "updatedAt": "2026-10-02T14:00:14.416Z",
+        "description": "牛肉火锅"
+      },
+      {
+        "id": "expense-1790949636243",
+        "date": "2026-10-02",
+        "time": "17:00",
+        "payer": "楼宜人",
+        "amount": 43,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "龙眼南美食街",
+        "createdAt": "2026-10-02T14:00:36.243Z",
+        "updatedAt": "2026-10-02T14:00:36.243Z",
+        "description": "一杯潮茶"
+      },
+      {
+        "id": "expense-1790949832383",
+        "date": "2026-10-02",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 28,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "小公园",
+        "createdAt": "2026-10-02T14:03:52.383Z",
+        "updatedAt": "2026-10-02T14:03:52.383Z",
+        "description": "腐乳鸡翅 粽球"
+      },
+      {
+        "id": "expense-1790949904702",
+        "date": "2026-10-02",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 50.1,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "汕头澄海智选假日酒店",
+        "createdAt": "2026-10-02T14:05:04.702Z",
+        "updatedAt": "2026-10-02T14:05:04.702Z",
+        "description": "卤鹅"
+      },
+      {
+        "id": "expense-1790950041703",
+        "date": "2026-10-02",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 8,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "潮博馆-龙眼南美食街",
+        "createdAt": "2026-10-02T14:07:21.703Z",
+        "updatedAt": "2026-10-07T14:21:27.406Z",
+        "description": "公交"
+      },
+      {
+        "id": "expense-1790950405660",
+        "date": "2026-10-02",
+        "time": "10:00",
+        "payer": "楼宜人",
+        "amount": 8,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "小公园",
+        "createdAt": "2026-10-02T14:13:25.660Z",
+        "updatedAt": "2026-10-02T14:13:25.660Z",
+        "description": "油柑汁"
+      },
+      {
+        "id": "expense-1791122890246",
+        "date": "2026-10-03",
+        "time": "08:00",
+        "payer": "韩垚",
+        "amount": 36,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "南澳岛",
+        "createdAt": "2026-10-04T14:08:10.246Z",
+        "updatedAt": "2026-10-04T14:08:10.246Z",
+        "description": "柠檬茶"
+      },
+      {
+        "id": "expense-1791122981445",
+        "date": "2026-10-03",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 204,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "南澳岛",
+        "createdAt": "2026-10-04T14:09:41.445Z",
+        "updatedAt": "2026-10-04T14:09:41.445Z",
+        "description": "海鲜排档"
+      },
+      {
+        "id": "expense-1791123026662",
+        "date": "2026-10-03",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 22,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "other",
+        "currency": "CNY",
+        "location": "南澳岛",
+        "createdAt": "2026-10-04T14:10:26.662Z",
+        "updatedAt": "2026-10-04T14:10:26.662Z",
+        "description": "海咖"
+      },
+      {
+        "id": "expense-1791123088616",
+        "date": "2026-10-03",
+        "time": "19:00",
+        "payer": "楼宜人",
+        "amount": 202,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "潮州古城",
+        "createdAt": "2026-10-04T14:11:28.616Z",
+        "updatedAt": "2026-10-04T14:15:48.879Z",
+        "description": "喜潮生腌"
+      },
+      {
+        "id": "expense-1791123214328",
+        "date": "2026-10-03",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 22,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "潮州古城",
+        "createdAt": "2026-10-04T14:13:34.328Z",
+        "updatedAt": "2026-10-04T14:13:34.328Z",
+        "description": "利和治茶"
+      },
+      {
+        "id": "expense-1791123250401",
+        "date": "2026-10-03",
+        "time": "22:00",
+        "payer": "楼宜人",
+        "amount": 98,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "潮州古城",
+        "createdAt": "2026-10-04T14:14:10.401Z",
+        "updatedAt": "2026-10-04T14:14:10.401Z",
+        "description": "瓷器"
+      },
+      {
+        "id": "expense-1791123289636",
+        "date": "2026-10-03",
+        "time": "22:30",
+        "payer": "楼宜人",
+        "amount": 15,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "潮州古城-华怡金信酒店",
+        "createdAt": "2026-10-04T14:14:49.636Z",
+        "updatedAt": "2026-10-07T14:22:22.648Z",
+        "description": "三轮车"
+      },
+      {
+        "id": "expense-1791123483123",
+        "date": "2026-10-04",
+        "time": "08:00",
+        "payer": "楼宜人",
+        "amount": 8.09,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "华怡金信酒店-潮州古城",
+        "createdAt": "2026-10-04T14:18:03.123Z",
+        "updatedAt": "2026-10-04T14:18:03.123Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1791123608638",
+        "date": "2026-10-04",
+        "time": "09:00",
+        "payer": "楼宜人",
+        "amount": 55,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "潮州古城",
+        "createdAt": "2026-10-04T14:20:08.638Z",
+        "updatedAt": "2026-10-04T14:20:08.638Z",
+        "description": "十八曲鱼饺"
+      },
+      {
+        "id": "expense-1791123633228",
+        "date": "2026-10-04",
+        "time": "11:00",
+        "payer": "楼宜人",
+        "amount": 30,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "广济桥",
+        "createdAt": "2026-10-04T14:20:33.228Z",
+        "updatedAt": "2026-10-07T14:22:46.732Z",
+        "description": "门票"
+      },
+      {
+        "id": "expense-1791123728175",
+        "date": "2026-10-04",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 39.1,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "韩文公祠-酒店",
+        "createdAt": "2026-10-04T14:22:08.175Z",
+        "updatedAt": "2026-10-07T14:23:29.773Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1791123768121",
+        "date": "2026-10-04",
+        "time": "13:30",
+        "payer": "楼宜人",
+        "amount": 122,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "酒店",
+        "createdAt": "2026-10-04T14:22:48.121Z",
+        "updatedAt": "2026-10-07T14:23:39.560Z",
+        "description": "龙龙茶坊"
+      },
+      {
+        "id": "expense-1791123809715",
+        "date": "2026-10-04",
+        "time": "14:00",
+        "payer": "楼宜人",
+        "amount": 49.3,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "酒店-潮汕站",
+        "createdAt": "2026-10-04T14:23:29.715Z",
+        "updatedAt": "2026-10-07T14:23:52.964Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1791123968374",
+        "date": "2026-10-04",
+        "time": "14:50",
+        "payer": "楼宜人",
+        "amount": 21,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "潮汕站",
+        "createdAt": "2026-10-04T14:26:08.374Z",
+        "updatedAt": "2026-10-07T14:24:29.384Z",
+        "description": "咖啡"
+      },
+      {
+        "id": "expense-1791123995059",
+        "date": "2026-10-04",
+        "time": "19:00",
+        "payer": "楼宜人",
+        "amount": 4,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "深圳北-福田",
+        "createdAt": "2026-10-04T14:26:35.059Z",
+        "updatedAt": "2026-10-07T14:30:29.004Z",
+        "description": "地铁"
+      },
+      {
+        "id": "expense-1791381132314",
+        "date": "2026-10-06",
+        "time": "19:35",
+        "payer": "楼宜人",
+        "amount": 7,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "福田-机场",
+        "createdAt": "2026-10-07T13:52:12.314Z",
+        "updatedAt": "2026-10-07T13:52:12.314Z",
+        "description": "地铁"
+      },
+      {
+        "id": "expense-1791381197403",
+        "date": "2026-10-06",
+        "time": "17:00",
+        "payer": "楼宜人",
+        "amount": 6.84,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "other",
+        "currency": "CNY",
+        "location": "黄大仙",
+        "createdAt": "2026-10-07T13:53:17.403Z",
+        "updatedAt": "2026-10-07T13:53:17.403Z",
+        "description": "充电宝"
+      },
+      {
+        "id": "expense-1791381228798",
+        "date": "2026-10-07",
+        "time": "01:00",
+        "payer": "楼宜人",
+        "amount": 157.1,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海-太仓",
+        "createdAt": "2026-10-07T13:53:48.798Z",
+        "updatedAt": "2026-10-07T13:53:48.798Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1791381345829",
+        "date": "2026-10-06",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 69.32,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "黄大仙",
+        "createdAt": "2026-10-07T13:55:45.829Z",
+        "updatedAt": "2026-10-07T13:55:45.829Z",
+        "description": "牛奶冰室"
+      },
+      {
+        "id": "expense-1791381436098",
+        "date": "2026-10-06",
+        "time": "09:00",
+        "payer": "楼宜人",
+        "amount": 130.14,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "西贡-破边州",
+        "createdAt": "2026-10-07T13:57:16.098Z",
+        "updatedAt": "2026-10-07T13:57:16.098Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1791381505847",
+        "date": "2026-10-06",
+        "time": "07:40",
+        "payer": "楼宜人",
+        "amount": 27.4,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "旺角",
+        "createdAt": "2026-10-07T13:58:25.847Z",
+        "updatedAt": "2026-10-07T13:58:25.847Z",
+        "description": "7-11"
+      },
+      {
+        "id": "expense-1791381546941",
+        "date": "2026-10-01",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 214.15,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "other",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-10-07T13:59:06.942Z",
+        "updatedAt": "2026-10-07T14:16:31.632Z",
+        "description": "八达通"
+      },
+      {
+        "id": "expense-1791381577737",
+        "date": "2026-10-05",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 7.28,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "旺角",
+        "createdAt": "2026-10-07T13:59:37.737Z",
+        "updatedAt": "2026-10-07T13:59:37.737Z",
+        "description": "7-11"
+      },
+      {
+        "id": "expense-1791381644292",
+        "date": "2026-10-05",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 73.63,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "旺角",
+        "createdAt": "2026-10-07T14:00:44.292Z",
+        "updatedAt": "2026-10-07T14:00:44.292Z",
+        "description": "满记甜品"
+      },
+      {
+        "id": "expense-1791381714986",
+        "date": "2026-10-05",
+        "time": "19:50",
+        "payer": "楼宜人",
+        "amount": 11.3,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "中环-旺角",
+        "createdAt": "2026-10-07T14:01:54.986Z",
+        "updatedAt": "2026-10-07T14:01:54.986Z",
+        "description": "地铁"
+      },
+      {
+        "id": "expense-1791381799619",
+        "date": "2026-10-05",
+        "time": "18:30",
+        "payer": "楼宜人",
+        "amount": 184.93,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "太平山",
+        "createdAt": "2026-10-07T14:03:19.619Z",
+        "updatedAt": "2026-10-07T14:03:19.619Z",
+        "description": "敏华冰厅"
+      },
+      {
+        "id": "expense-1791381921743",
+        "date": "2026-10-05",
+        "time": "16:00",
+        "payer": "楼宜人",
+        "amount": 195.57,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "太平山",
+        "createdAt": "2026-10-07T14:05:21.743Z",
+        "updatedAt": "2026-10-07T14:05:21.743Z",
+        "description": "缆车"
+      },
+      {
+        "id": "expense-1791382003829",
+        "date": "2026-10-05",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 8.48,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "尖沙咀",
+        "createdAt": "2026-10-07T14:06:43.830Z",
+        "updatedAt": "2026-10-07T14:06:43.830Z",
+        "description": "天星小轮"
+      },
+      {
+        "id": "expense-1791382087726",
+        "date": "2026-10-05",
+        "time": "14:00",
+        "payer": "楼宜人",
+        "amount": 59.93,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "尖沙咀",
+        "createdAt": "2026-10-07T14:08:07.726Z",
+        "updatedAt": "2026-10-07T14:08:07.726Z",
+        "description": "吃茶三千"
+      },
+      {
+        "id": "expense-1791382182139",
+        "date": "2026-10-05",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 51.37,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "food",
+        "currency": "CNY",
+        "location": "旺角",
+        "createdAt": "2026-10-07T14:09:42.139Z",
+        "updatedAt": "2026-10-07T14:09:42.139Z",
+        "description": "永年士多"
+      },
+      {
+        "id": "expense-1791382461504",
+        "date": "2026-10-06",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 90,
+        "payers": [
+          "楼宜人",
+          "韩垚"
+        ],
+        "wishId": "26",
+        "category": "other",
+        "currency": "CNY",
+        "location": "西湾-黄大仙",
+        "createdAt": "2026-10-07T14:14:21.504Z",
+        "updatedAt": "2026-10-07T14:14:21.504Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1791383153437",
+        "date": "2026-10-04",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 69,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "潮汕-深圳",
+        "createdAt": "2026-10-07T14:25:53.437Z",
+        "updatedAt": "2026-10-07T14:25:53.437Z",
+        "description": "火车"
+      },
+      {
+        "id": "expense-1791383715237",
+        "date": "2026-10-01",
+        "time": "21:00",
+        "payer": "楼宜人",
+        "amount": 60,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "26",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "太仓-上海",
+        "createdAt": "2026-10-07T14:35:15.237Z",
+        "updatedAt": "2026-10-07T14:35:15.237Z",
+        "description": "包车"
+      }
+    ],
+    "createdAt": "2026-09-18T01:54:13.609454+00:00",
+    "updatedAt": "2026-09-18T01:54:13.609454+00:00"
+  },
+  {
+    "id": "trip-expense-1793670921226",
+    "wishId": "30",
+    "destination": "党岭",
+    "startDate": "2026-10-29",
+    "expenses": [
+      {
+        "id": "expense-1793670957172",
+        "date": "2026-10-29",
+        "time": "17:30",
+        "payer": "楼宜人",
+        "amount": 136,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "常州-无锡机场",
+        "createdAt": "2026-11-03T01:55:57.172Z",
+        "updatedAt": "2026-11-03T05:27:28.692Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1793671252120",
+        "date": "2026-10-31",
+        "time": "06:00",
+        "payer": "楼宜人",
+        "amount": 210,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "甲玉拉错",
+        "createdAt": "2026-11-03T02:00:52.120Z",
+        "updatedAt": "2026-11-03T05:30:29.634Z",
+        "description": "门票+摩托车"
+      },
+      {
+        "id": "expense-1793671499027",
+        "date": "2026-10-31",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 20,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "葫芦海",
+        "createdAt": "2026-11-03T02:04:59.027Z",
+        "updatedAt": "2026-11-03T05:30:13.497Z",
+        "description": "可乐"
+      },
+      {
+        "id": "expense-1793671856687",
+        "date": "2026-10-29",
+        "time": "23:00",
+        "payer": "楼宜人",
+        "amount": 35,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "双流机场 - 维也纳酒店",
+        "createdAt": "2026-11-03T02:10:56.687Z",
+        "updatedAt": "2026-11-03T05:28:42.629Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1793672012965",
+        "date": "2026-10-30",
+        "time": "08:00",
+        "payer": "楼宜人",
+        "amount": 14,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "雅安服务区",
+        "createdAt": "2026-11-03T02:13:32.965Z",
+        "updatedAt": "2026-11-03T05:29:09.223Z",
+        "description": "饮料"
+      },
+      {
+        "id": "expense-1793672150253",
+        "date": "2026-10-30",
+        "time": "07:00",
+        "payer": "楼宜人",
+        "amount": 500,
+        "payers": [
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-11-03T02:15:50.253Z",
+        "updatedAt": "2026-11-03T06:46:59.256Z",
+        "description": "党岭团费"
+      },
+      {
+        "id": "expense-1793672219211",
+        "date": "2026-10-30",
+        "time": "07:00",
+        "payer": "楼宜人",
+        "amount": 980,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-11-03T02:16:59.211Z",
+        "updatedAt": "2026-11-03T06:44:23.679Z",
+        "description": "党岭团费"
+      },
+      {
+        "id": "expense-1793672563396",
+        "date": "2026-10-29",
+        "time": "23:30",
+        "payer": "楼宜人",
+        "amount": 175,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "成都",
+        "createdAt": "2026-11-03T02:22:43.396Z",
+        "updatedAt": "2026-11-03T05:28:12.701Z",
+        "description": "维也纳酒店"
+      },
+      {
+        "id": "expense-1793672596272",
+        "date": "2026-11-01",
+        "time": "22:30",
+        "payer": "楼宜人",
+        "amount": 413,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "accommodation",
+        "currency": "CNY",
+        "location": "成都",
+        "createdAt": "2026-11-03T02:23:16.272Z",
+        "updatedAt": "2026-11-03T06:43:09.121Z",
+        "description": "总府皇冠假日"
+      },
+      {
+        "id": "expense-1793672636824",
+        "date": "2026-10-29",
+        "time": "19:00",
+        "payer": "楼宜人",
+        "amount": 103,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "无锡机场",
+        "createdAt": "2026-11-03T02:23:56.824Z",
+        "updatedAt": "2026-11-03T05:27:15.987Z",
+        "description": "晚餐"
+      },
+      {
+        "id": "expense-1793677521793",
+        "date": "2026-10-30",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 5,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "党岭村",
+        "createdAt": "2026-11-03T03:45:21.793Z",
+        "updatedAt": "2026-11-03T05:29:35.104Z",
+        "description": "可乐"
+      },
+      {
+        "id": "expense-1793682359040",
+        "date": "2026-11-01",
+        "time": "18:00",
+        "payer": "楼宜人",
+        "amount": 57,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "shopping",
+        "currency": "CNY",
+        "location": "天全服务区",
+        "createdAt": "2026-11-03T05:05:59.040Z",
+        "updatedAt": "2026-11-03T06:42:50.433Z",
+        "description": "冰箱贴"
+      },
+      {
+        "id": "expense-1793682419235",
+        "date": "2026-11-02",
+        "time": "12:00",
+        "payer": "楼宜人",
+        "amount": 60,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "entertainment",
+        "currency": "CNY",
+        "location": "宽窄巷子",
+        "createdAt": "2026-11-03T05:06:59.235Z",
+        "updatedAt": "2026-11-03T06:43:37.858Z",
+        "description": "采耳"
+      },
+      {
+        "id": "expense-1793682485365",
+        "date": "2026-11-02",
+        "time": "15:00",
+        "payer": "楼宜人",
+        "amount": 169,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-11-03T05:08:05.365Z",
+        "updatedAt": "2026-11-03T05:16:33.334Z",
+        "description": "成都 - 天府机场"
+      },
+      {
+        "id": "expense-1793682601809",
+        "date": "2026-11-02",
+        "time": "11:00",
+        "payer": "楼宜人",
+        "amount": 12,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "",
+        "createdAt": "2026-11-03T05:10:01.809Z",
+        "updatedAt": "2026-11-03T05:10:01.809Z",
+        "description": "春熙路 - 宽窄巷子"
+      },
+      {
+        "id": "expense-1793682661602",
+        "date": "2026-11-01",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 65,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "丹巴",
+        "createdAt": "2026-11-03T05:11:01.602Z",
+        "updatedAt": "2026-11-03T06:42:37.923Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1793682685939",
+        "date": "2026-11-01",
+        "time": "08:00",
+        "payer": "楼宜人",
+        "amount": 100,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "attraction",
+        "currency": "CNY",
+        "location": "葫芦海",
+        "createdAt": "2026-11-03T05:11:25.939Z",
+        "updatedAt": "2026-11-03T06:42:11.835Z",
+        "description": "摩托车"
+      },
+      {
+        "id": "expense-1793683034335",
+        "date": "2026-11-02",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 60,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "虹桥机场 - 太仓",
+        "createdAt": "2026-11-03T05:17:14.335Z",
+        "updatedAt": "2026-11-03T05:17:14.335Z",
+        "description": "大巴"
+      },
+      {
+        "id": "expense-1793683067999",
+        "date": "2026-11-02",
+        "time": "13:00",
+        "payer": "楼宜人",
+        "amount": 77,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "将思味",
+        "createdAt": "2026-11-03T05:17:47.999Z",
+        "updatedAt": "2026-11-03T06:47:04.680Z",
+        "description": "午餐"
+      },
+      {
+        "id": "expense-1793683121848",
+        "date": "2026-11-01",
+        "time": "22:00",
+        "payer": "楼宜人",
+        "amount": 18,
+        "payers": [
+          "楼宜人",
+          "沈小华"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "成都 - 总府皇冠假日",
+        "createdAt": "2026-11-03T05:18:41.848Z",
+        "updatedAt": "2026-11-03T06:43:17.107Z",
+        "description": "出租车"
+      },
+      {
+        "id": "expense-1793683149056",
+        "date": "2026-11-01",
+        "time": "08:30",
+        "payer": "楼宜人",
+        "amount": 4,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "党岭村",
+        "createdAt": "2026-11-03T05:19:09.056Z",
+        "updatedAt": "2026-11-03T05:19:09.056Z",
+        "description": "可乐"
+      },
+      {
+        "id": "expense-1793683582688",
+        "date": "2026-10-29",
+        "time": "20:00",
+        "payer": "楼宜人",
+        "amount": 1850,
+        "payers": [
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "transportation",
+        "currency": "CNY",
+        "location": "上海 - 成都",
+        "createdAt": "2026-11-03T05:26:22.688Z",
+        "updatedAt": "2026-11-03T05:26:22.688Z",
+        "description": "飞机"
+      },
+      {
+        "id": "expense-1793694150818",
+        "date": "2026-11-01",
+        "time": "22:00",
+        "payer": "沈小华",
+        "amount": 290,
+        "payers": [
+          "沈小华",
+          "楼宜人"
+        ],
+        "wishId": "30",
+        "category": "food",
+        "currency": "CNY",
+        "location": "春熙路",
+        "createdAt": "2026-11-03T08:22:30.818Z",
+        "updatedAt": "2026-11-03T08:22:30.818Z",
+        "description": "火锅"
+      }
+    ],
+    "createdAt": "2026-11-03T01:55:21.257737+00:00",
+    "updatedAt": "2026-11-03T01:55:21.257737+00:00"
+  },
+  {
+    "id": "trip-expense-1794579913663",
+    "wishId": "10",
+    "destination": "海南",
+    "startDate": "2026-05-01",
+    "expenses": [],
+    "createdAt": "2026-11-13T14:25:13.674615+00:00",
+    "updatedAt": "2026-11-13T14:25:13.674615+00:00"
+  },
+  {
+    "id": "trip-expense-1794579917290",
+    "wishId": "25",
+    "destination": "绍兴",
+    "startDate": "2026-04-06",
+    "expenses": [],
+    "createdAt": "2026-11-13T14:25:17.29972+00:00",
+    "updatedAt": "2026-11-13T14:25:17.29972+00:00"
+  },
+  {
+    "id": "trip-expense-1794579920271",
+    "wishId": "12",
+    "destination": "南疆",
+    "startDate": "2026-02-18",
+    "expenses": [],
+    "createdAt": "2026-11-13T14:25:20.279356+00:00",
+    "updatedAt": "2026-11-13T14:25:20.279356+00:00"
+  },
+  {
+    "id": "trip-expense-1794579923691",
+    "wishId": "15",
+    "destination": "西双版纳",
+    "startDate": "2026-01-01",
+    "expenses": [],
+    "createdAt": "2026-11-13T14:25:23.701934+00:00",
+    "updatedAt": "2026-11-13T14:25:23.701934+00:00"
+  },
+  {
+    "id": "trip-expense-1795179624733",
+    "wishId": "32",
+    "destination": "安吉",
+    "startDate": "2026-12-19",
+    "expenses": [],
+    "createdAt": "2026-11-20T13:00:24.747311+00:00",
+    "updatedAt": "2026-11-20T13:00:24.747311+00:00"
   }
 ]

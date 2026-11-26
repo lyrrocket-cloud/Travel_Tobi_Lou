@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "wish_id": "13",
+    "follower_name": "Lisa"
+  },
+  {
+    "wish_id": "23",
+    "follower_name": "tobi"
+  }
+]

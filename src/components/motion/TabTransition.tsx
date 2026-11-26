@@ -76,11 +76,23 @@ export function useTabTransition(options?: { leaveMs?: number; loadMs?: number }
 /** Tab 切换骨架屏（覆盖在内容区，配合内容淡出使用） */
 export function TabSwitchSkeleton() {
   return (
-    <div className="absolute inset-0 z-10 flex flex-col gap-3 p-1" aria-hidden="true">
-      <div className="skeleton-shimmer h-5 w-1/3" />
-      <div className="skeleton-shimmer h-24 w-full" />
-      <div className="skeleton-shimmer h-4 w-2/3" />
-      <div className="skeleton-shimmer h-4 w-1/2" />
+    <div className="absolute inset-0 z-10 overflow-hidden" aria-hidden="true">
+      {/* 卡片外框与真实内容保持一致：同底色、同内边距，高度铺满原内容区域 */}
+      <div className="h-full min-h-[320px] bg-black/60 backdrop-blur-md p-3.5 sm:p-6">
+        <div className="flex flex-col gap-2.5">
+          <div className="skeleton-shimmer h-4 w-1/4" />
+          <div className="flex gap-2">
+            <div className="skeleton-shimmer h-11 flex-1" />
+            <div className="skeleton-shimmer h-11 flex-1" />
+            <div className="skeleton-shimmer h-11 flex-1" />
+          </div>
+          <div className="skeleton-shimmer h-11 w-full" />
+          <div className="skeleton-shimmer h-11 w-full" />
+          <div className="skeleton-shimmer h-4 w-2/5" />
+          <div className="skeleton-shimmer h-11 w-full" />
+          <div className="skeleton-shimmer h-11 w-full" />
+        </div>
+      </div>
     </div>
   );
 }

@@ -56,6 +56,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
   const [editingRecord, setEditingRecord] = useState<DrivingRecordItem | null>(null);
   const [deletingRecordId, setDeletingRecordId] = useState<string | null>(null);
   const [lotteryMode, setLotteryMode] = useState<'fair' | 'random'>('fair');
+  // 记录范围筛选：全部历史 / 本次旅行（查询与总览共用）
+  const [recordScope, setRecordScope] = useState<'all' | 'current'>('all');
   const [lotteryResult, setLotteryResult] = useState<string | null>(null);
   const [isLotteryRunning, setIsLotteryRunning] = useState(false);
 
@@ -473,7 +475,9 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
     const statsMap = new Map<string, DriverStatistics>();
 
-    const recordsToProcess = tripDrivingRecords;
+    const recordsToProcess = recordScope === 'current' && selectedWishId !== OVERVIEW_WISH_ID
+      ? tripDrivingRecords.filter(tripRecord => String(tripRecord.wishId) === String(selectedWishId))
+      : tripDrivingRecords;
 
     recordsToProcess.forEach(tripRecord => {
       tripRecord.records.forEach(record => {
@@ -598,6 +602,34 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
       return 0;
     });
 
+  // 按筛选范围取记录（查询与总览共用）
+  const scopedDrivingRecords = recordScope === 'current' && selectedWishId !== OVERVIEW_WISH_ID
+    ? allDrivingRecords.filter(record => String(record.wishId) === String(selectedWishId))
+    : allDrivingRecords;
+
+  // 范围筛选：全部 / 本次旅行
+  const scopeFilter = (
+    <div className="mb-3 flex flex-wrap items-center gap-1.5">
+      <button
+        onClick={() => setRecordScope('all')}
+        className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          recordScope === 'all' ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
+        }`}
+      >
+        全部
+      </button>
+      <span aria-hidden="true" className="h-4 w-px self-center bg-[#CEA472]/40" />
+      <button
+        onClick={() => setRecordScope('current')}
+        className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          recordScope === 'current' ? 'text-[#CEA472]' : 'text-white/80 hover:text-[#CEA472]'
+        }`}
+      >
+        本次旅行
+      </button>
+    </div>
+  );
+
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
@@ -630,7 +662,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
         <div className={`relative ${showWishSelector || activeTab === 'lottery' ? 'hidden' : ''}`}>
           <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
-        <TabsContent value="entry" className="mt-4">
+        <TabsContent value="entry" className="mt-3">
             {isCurrentTripFrozen && (
               <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
                 <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改驾驶记录</span>
@@ -638,13 +670,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
             )}
             <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
             <div className="space-y-4 sm:space-y-5">
-              <div className="flex items-center gap-3 mb-4">
-                <Car className="w-5 h-5 text-[#CEA472]" />
-                <span className="text-[#CEA472] font-medium text-xs">录入驾驶记录</span>
-              </div>
-
               <div>
-                <Label htmlFor="drive-driver" className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶员</Label>
+                <Label htmlFor="drive-driver" className="text-[#CEA472] mb-2 block text-xs">驾驶员</Label>
                 {travelers.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
@@ -655,8 +682,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                         onClick={() => setNewDrivingRecord({ ...newDrivingRecord, driver: traveler })}
                         className={`px-4 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[80px] ${
                           newDrivingRecord.driver === traveler
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         {traveler}
@@ -676,7 +703,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
               </div>
 
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">行程信息</Label>
+                <Label className="text-[#CEA472] mb-2 block text-xs">行程信息</Label>
                 
                 {/* 从旅行规划中选择自驾交通 */}
                 {selfDrivingRoutes.length > 0 && (
@@ -779,7 +806,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <div>
-                  <Label htmlFor="drive-date" className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
+                  <Label htmlFor="drive-date" className="text-[#CEA472] mb-2 block text-xs">日期</Label>
                   <Input
                     id="drive-date"
                     type="text"
@@ -793,7 +820,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                   />
                 </div>
                 <div>
-                  <Label htmlFor="drive-time" className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
+                  <Label htmlFor="drive-time" className="text-[#CEA472] mb-2 block text-xs">时间</Label>
                   <Input
                     id="drive-time"
                     type="time"
@@ -807,22 +834,23 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
             </div>
           </div>
-            <div className="mt-4 px-2.5 sm:px-0">
+            <div className="mt-4 flex justify-center">
               <Button
                 onClick={addDrivingRecord}
                 disabled={isCurrentTripFrozen || !newDrivingRecord.driver || !newDrivingRecord.startLocation || !newDrivingRecord.endLocation}
-                className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
+                className="w-44 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
               >
                 保存驾驶记录
               </Button>
             </div>
           </TabsContent>
 
-        <TabsContent value="query" className="mt-4">
+        <TabsContent value="query" className="mt-3">
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
-            {allDrivingRecords.length > 0 ? (
+            {scopeFilter}
+            {scopedDrivingRecords.length > 0 ? (
               <div className="space-y-3 sm:space-y-3">
-                {allDrivingRecords.map(record => (
+                {scopedDrivingRecords.map(record => (
                   <div
                     key={record.id}
                     className="p-3.5 sm:p-4 rounded-none border-0 bg-black/40 backdrop-blur-sm hover:bg-black/60 transition-colors duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
@@ -861,18 +889,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                                 </span>
                               )}
                             </div>
-                            {record.behaviors.length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-1">
-                                {record.behaviors.map((behavior, idx) => (
-                                  <span
-                                    key={idx}
-                                    className={`px-2 py-0.5 rounded-none text-xs ${drivingBehaviors[behavior.type]?.color || 'text-gray-400'} bg-black/60`}
-                                  >
-                                    {drivingBehaviors[behavior.type]?.label || behavior.type}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
                           </div>
                           <div className="sm:col-span-4 text-left sm:text-right">
                             <div className="text-xs text-[#FFFFFF]/60 mb-1">本次积分</div>
@@ -921,12 +937,11 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           </div>
         </TabsContent>
 
-        <TabsContent value="analysis" className="mt-4">
+        <TabsContent value="analysis" className="mt-3">
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
+            {scopeFilter}
             <div className="space-y-5 sm:space-y-6">
               <div>
-                <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">驾驶员统计</h3>
-                <p className="text-[#FFFFFF]/60 text-xs -mt-2 mb-3">所有历史行程汇总</p>
                 <div className="space-y-3">
                   {driverStats.map(stat => (
                     <div key={stat.driver} className="p-4 bg-black/60 rounded-none  ">
@@ -972,15 +987,15 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
 
       {/* 驾驶抽签标签内容 */}
       {activeTab === 'lottery' && (
-        <div className="tab-section-in space-y-3">
+        <div className="mt-3 tab-section-in space-y-3">
           <div className="p-4 bg-black/60 backdrop-blur-md   rounded-none">
             <div className="flex gap-2">
               <button
                 onClick={() => setLotteryMode('fair')}
                 className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                   lotteryMode === 'fair'
-                    ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                    : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
+                    ? 'text-[#CEA472]'
+                    : 'text-white/80 hover:text-[#CEA472]'
                 }`}
               >
                 <div className="font-medium text-sm">公平模式</div>
@@ -990,8 +1005,8 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                 onClick={() => setLotteryMode('random')}
                 className={`flex-1 p-3 rounded-none text-center transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                   lotteryMode === 'random'
-                    ? 'bg-[#CEA472]/10   text-[#CEA472]'
-                    : 'bg-black/60   text-[#FFFFFF]/80 hover:bg-black/70'
+                    ? 'text-[#CEA472]'
+                    : 'text-white/80 hover:text-[#CEA472]'
                 }`}
               >
                 <div className="font-medium text-sm">随机模式</div>
@@ -1007,6 +1022,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
             </div>
           )}
 
+          <div className="flex justify-center">
           <Button
             onClick={() => {
               const travelersStr = currentWish?.travelers || '';
@@ -1042,10 +1058,11 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
               }, 100);
             }}
             disabled={isLotteryRunning || !currentWish?.travelers}
-            className="w-full h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
+            className="w-44 h-11 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 text-xs"
           >
             {isLotteryRunning ? '抽签中...' : '开始抽签'}
           </Button>
+          </div>
         </div>
       )}
 
@@ -1057,7 +1074,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
           {editingRecord && (
             <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto flex-1">
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶员</Label>
+                <Label className="text-[#CEA472] mb-2 block text-xs">驾驶员</Label>
                 <Select
                   value={editingRecord.driver}
                   onValueChange={(value) => setEditingRecord({ ...editingRecord, driver: value })}
@@ -1076,7 +1093,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">日期</Label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -1088,7 +1105,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                   />
                 </div>
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">时间</Label>
                   <Input
                     type="time"
                     value={editingRecord.time || ''}
@@ -1135,7 +1152,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                 </div>
               )}
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">出发地点</Label>
+                <Label className="text-[#CEA472] mb-2 block text-xs">出发地点</Label>
                 <Input
                   value={editingRecord.startLocation}
                   onChange={(e) => setEditingRecord({ ...editingRecord, startLocation: e.target.value })}
@@ -1144,7 +1161,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                 />
               </div>
               <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">目的地点</Label>
+                <Label className="text-[#CEA472] mb-2 block text-xs">目的地点</Label>
                 <Input
                   value={editingRecord.endLocation}
                   onChange={(e) => setEditingRecord({ ...editingRecord, endLocation: e.target.value })}
@@ -1154,7 +1171,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">行驶里程（公里）</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">行驶里程（公里）</Label>
                   <Input
                     type="number"
                     min="0"
@@ -1173,7 +1190,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                   />
                 </div>
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">行驶时长（分钟）</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">行驶时长（分钟）</Label>
                   <Input
                     type="number"
                     min="0"
@@ -1192,45 +1209,6 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                   />
                 </div>
               </div>
-              <div>
-                <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">驾驶行为评分</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {Object.entries(drivingBehaviors).map(([key, config]) => (
-                    <button
-                      key={key}
-                      onClick={() => {
-                        const newBehaviors = editingRecord.behaviors.some(b => b.type === key)
-                          ? editingRecord.behaviors.filter(b => b.type !== key)
-                          : [...editingRecord.behaviors, { type: key as DrivingBehavior }];
-                        setEditingRecord({ 
-                        ...editingRecord, 
-                        behaviors: newBehaviors,
-                        score: calculateScore(newBehaviors.map(b => b.type), editingRecord.distance, editingRecord.duration)
-                      });
-                      }}
-                      className={`flex items-center gap-2 p-3 rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
-                        editingRecord.behaviors.some(b => b.type === key)
-                          ? ' bg-[#CEA472]/10 text-[#CEA472]'
-                          : ' bg-black/60 text-[#FFFFFF]/60 '
-                      }`}
-                    >
-                      <span className={config.color}>{config.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="truncate">{config.label}</div>
-                        <div className={`text-xs ${config.score > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {config.score > 0 ? '+' : ''}{config.score}分
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-3 p-3 bg-black/60 rounded-none  ">
-                  <div className="text-xs text-[#FFFFFF]/60 mb-2">本次积分：</div>
-                  <div className={`text-lg font-semibold ${editingRecord.score >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {editingRecord.score >= 0 ? '+' : ''}{editingRecord.score} 分
-                  </div>
-                </div>
-              </div>
             </div>
           )}
           <DialogFooter className="sticky bottom-0 bg-[#0a0a0f] pt-4 border-t border-[#CEA472]/20">
@@ -1240,13 +1218,13 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
                 setShowEditDriving(false);
                 setEditingRecord(null);
               }}
-              className="bg-black/60   text-[#FFFFFF] hover:bg-[#CEA472]/10"
+              className="bg-transparent text-white/80 hover:bg-transparent hover:text-[#CEA472]"
             >
               取消
             </Button>
             <Button
               onClick={saveEditedDriving}
-              className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+              className="bg-transparent text-[#CEA472] hover:bg-transparent hover:text-[#CEA472]/80"
             >
               保存
             </Button>

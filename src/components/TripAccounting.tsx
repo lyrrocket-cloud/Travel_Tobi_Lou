@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit2, Trash2, Star, Coins, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, ChevronRight, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, Receipt, Car, BedDouble, MapPin, ShoppingBag, Gamepad2, Clock, Plane, Train, Bus, Save, UtensilsCrossed, ChevronDown, ChevronUp, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -1002,7 +1002,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
   // 初始化或自动选中完成前先显示骨架，避免闪出“选择旅行”界面
   if (!selectedWishId && (!initializedFromStorage || loading || confirmedWishes.length > 0)) {
     return (
-      <div className="relative w-full min-h-[320px]">
+      <div className="relative w-full min-h-[400px]">
         <TabSwitchSkeleton />
       </div>
     );
@@ -1087,7 +1087,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
             value="analysis"
             className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
           >
-            消费分析
+            消费总览
           </TabsTrigger>
           <TabsTrigger 
             value="rates"
@@ -1099,7 +1099,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
         <div className={`relative ${showWishSelector || activeTab === 'rates' ? 'hidden' : ''}`}>
           <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
-        <TabsContent value="entry" className="mt-4">
+        <TabsContent value="entry" className="mt-3">
           {isCurrentTripFrozen && (
             <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
               <span className="text-blue-400 text-xs">此行程已冻结，无法添加或修改消费记录</span>
@@ -1107,24 +1107,19 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
           )}
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
               <div className="space-y-4 sm:space-y-5">
-                <div className="flex items-center gap-3 mb-4">
-                  {expenseCategoryIcons[newExpense.category] || expenseCategoryIcons.other}
-                  <span className="text-[#CEA472] font-medium text-xs">{expenseCategories[newExpense.category] || '其他'}</span>
-                </div>
-
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">活动类型</Label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <Label className="text-[#CEA472] mb-2 block text-xs">活动类型</Label>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     {Object.entries(expenseCategories).map(([key, label]) => (
                       <button
                         key={key}
                         disabled={isCurrentTripFrozen}
                         aria-pressed={newExpense.category === key}
                         onClick={() => setNewExpense({ ...newExpense, category: key })}
-                        className={`flex items-center gap-2 p-3 rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
+                        className={`flex items-center gap-1.5 px-1.5 py-1 min-h-[44px] rounded-none  transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] text-xs ${
                           newExpense.category === key
-                            ? ' bg-[#CEA472]/10 text-[#CEA472]'
-                            : ' bg-black/60 text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         {expenseCategoryIcons[key]}
@@ -1135,7 +1130,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">行程信息</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">行程信息</Label>
                   
                   {/* 从旅行规划中选择活动 */}
                   <div className="mb-3">
@@ -1168,7 +1163,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                     </Select>
                   </div>
                   
-                  <Label htmlFor="expense-location" className="text-[#FFFFFF]/60 mb-2 block text-xs">活动地点</Label>
+                  <Label htmlFor="expense-location" className="text-[#CEA472] mb-2 block text-xs">活动地点</Label>
                   <Input
                     id="expense-location"
                     value={newExpense.location}
@@ -1184,7 +1179,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
                         <div>
-                          <Label htmlFor="expense-date" className="text-[#FFFFFF]/60 mb-2 block text-xs">日期</Label>
+                          <Label htmlFor="expense-date" className="text-[#CEA472] mb-2 block text-xs">日期</Label>
                           <Input
                             id="expense-date"
                             type="text"
@@ -1198,7 +1193,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                           />
                         </div>
                         <div>
-                          <Label htmlFor="expense-time" className="text-[#FFFFFF]/60 mb-2 block text-xs">时间</Label>
+                          <Label htmlFor="expense-time" className="text-[#CEA472] mb-2 block text-xs">时间</Label>
                           <Input
                             id="expense-time"
                             type="time"
@@ -1209,7 +1204,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                           />
                         </div>
                         <div>
-                          <Label htmlFor="expense-amount" className="text-[#FFFFFF]/60 mb-2 block text-xs">消费金额</Label>
+                          <Label htmlFor="expense-amount" className="text-[#CEA472] mb-2 block text-xs">消费金额</Label>
                           <div className="flex gap-2">
                             <Input
                               id="expense-amount"
@@ -1246,7 +1241,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                       </div>
 
                 <div>
-                  <Label htmlFor="expense-desc" className="text-[#FFFFFF]/60 mb-2 block text-xs">消费描述</Label>
+                  <Label htmlFor="expense-desc" className="text-[#CEA472] mb-2 block text-xs">消费描述</Label>
                   <Input
                     id="expense-desc"
                     value={newExpense.description}
@@ -1258,7 +1253,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">消费人</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">消费人</Label>
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
@@ -1268,8 +1263,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         onClick={() => handlePayerToggle(traveler)}
                         className={`px-4 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[80px] ${
                           newExpense.payers.includes(traveler)
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         {traveler}
@@ -1279,7 +1274,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                 </div>
 
                 <div>
-                  <Label className="text-[#FFFFFF]/60 mb-2 block text-xs">支付人</Label>
+                  <Label className="text-[#CEA472] mb-2 block text-xs">支付人</Label>
                   <div className="flex flex-wrap gap-2">
                     {travelers.map((traveler, idx) => (
                       <button
@@ -1289,8 +1284,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         onClick={() => setNewExpense({ ...newExpense, payer: traveler })}
                         className={`px-4 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[80px] ${
                           newExpense.payer === traveler
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         {traveler}
@@ -1301,18 +1296,18 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
 
               </div>
           </div>
-          <div className="mt-4 px-2.5 sm:px-0">
+          <div className="mt-4 flex justify-center">
             <Button
               onClick={addExpense}
               disabled={isCurrentTripFrozen || !newExpense.amount || !newExpense.date || (!newExpense.payers || newExpense.payers.length === 0) || !newExpense.payer}
-              className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
+              className="w-44 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 min-h-[48px]"
             >
               保存消费
             </Button>
           </div>
         </TabsContent>
 
-        <TabsContent value="query" className="mt-4">
+        <TabsContent value="query" className="mt-3">
           {isCurrentTripFrozen && (
             <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
               <span className="text-blue-400 text-xs">此行程已冻结，无法修改消费记录</span>
@@ -1389,20 +1384,21 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         onClick={() => setQueryFilters({ ...queryFilters, category: null })}
                         className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           queryFilters.category === null
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         全部
                       </button>
+                      <span aria-hidden="true" className="h-4 w-px self-center bg-[#CEA472]/40" />
                       {Object.entries(expenseCategories).map(([key, label]) => (
                         <button
                           key={key}
                           onClick={() => setQueryFilters({ ...queryFilters, category: key })}
                           className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             queryFilters.category === key
-                              ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/60   text-[#FFFFFF]/60 '
+                              ? 'text-[#CEA472]'
+                              : 'text-white/80 hover:text-[#CEA472]'
                           }`}
                         >
                           {label}
@@ -1419,20 +1415,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         onClick={() => setQueryFilters({ ...queryFilters, payer: null })}
                         className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           queryFilters.payer === null
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         全部
                       </button>
+                      {travelers.length > 0 && (
+                        <span aria-hidden="true" className="h-4 w-px self-center bg-[#CEA472]/40" />
+                      )}
                       {travelers.map((traveler) => (
                         <button
                           key={traveler}
                           onClick={() => setQueryFilters({ ...queryFilters, payer: traveler })}
                           className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             queryFilters.payer === traveler
-                              ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/60   text-[#FFFFFF]/60 '
+                              ? 'text-[#CEA472]'
+                              : 'text-white/80 hover:text-[#CEA472]'
                           }`}
                         >
                           {traveler}
@@ -1449,20 +1448,23 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                         onClick={() => setQueryFilters({ ...queryFilters, currency: null })}
                         className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                           queryFilters.currency === null
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         全部
                       </button>
+                      {activeCurrencies.length > 0 && (
+                        <span aria-hidden="true" className="h-4 w-px self-center bg-[#CEA472]/40" />
+                      )}
                       {activeCurrencies.map((currencyId) => (
                         <button
                           key={currencyId}
                           onClick={() => setQueryFilters({ ...queryFilters, currency: currencyId })}
                           className={`px-2.5 py-1 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                             queryFilters.currency === currencyId
-                              ? 'bg-[#CEA472] text-[#0a0a0f]'
-                              : 'bg-black/60   text-[#FFFFFF]/60 '
+                              ? 'text-[#CEA472]'
+                              : 'text-white/80 hover:text-[#CEA472]'
                           }`}
                         >
                           {getCurrencySymbol(currencyId)} {getCurrencyName(currencyId)}
@@ -1638,30 +1640,32 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
           </div>
         </TabsContent>
 
-        <TabsContent value="analysis" className="mt-4">
+        <TabsContent value="analysis" className="mt-3">
           <div className="bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
               <div className="space-y-5 sm:space-y-6">
                 <div>
-                  <div className="text-xs text-[#FFFFFF]/40 mb-2">全局筛选消费人：</div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => setAnalysisConsumerFilter(null)}
                       className={`px-3 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[60px] ${
                         analysisConsumerFilter === null
-                          ? 'bg-[#CEA472] text-[#0a0a0f]'
-                          : 'bg-black/60   text-[#FFFFFF]/60 '
+                          ? 'text-[#CEA472]'
+                          : 'text-white/80 hover:text-[#CEA472]'
                       }`}
                     >
                       全部
                     </button>
+                    {travelers.length > 0 && (
+                      <span aria-hidden="true" className="h-4 w-px bg-[#CEA472]/40" />
+                    )}
                     {travelers.map((traveler) => (
                       <button
                         key={traveler}
                         onClick={() => setAnalysisConsumerFilter(traveler)}
                         className={`px-3 py-2 rounded-none text-xs transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] min-h-[44px] min-w-[60px] ${
                           analysisConsumerFilter === traveler
-                            ? 'bg-[#CEA472] text-[#0a0a0f]'
-                            : 'bg-black/60   text-[#FFFFFF]/60 '
+                            ? 'text-[#CEA472]'
+                            : 'text-white/80 hover:text-[#CEA472]'
                         }`}
                       >
                         {traveler}
@@ -1670,24 +1674,26 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">按类别统计</h3>
-                  <div className="space-y-2">
-                    {Object.entries(filteredStats.categories).map(([category, amount]) => (
-                      <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/60 rounded-none">
-                        <div className="flex items-center gap-3">
-                          {expenseCategoryIcons[category]}
-                          <span className="text-[#FFFFFF] text-xs">{expenseCategories[category] || category}</span>
+                {Object.keys(filteredStats.categories).length > 0 && (
+                  <div>
+                    <h3 className="text-[#CEA472] font-medium mb-3 text-xs">按类别统计</h3>
+                    <div className="space-y-2">
+                      {Object.entries(filteredStats.categories).map(([category, amount]) => (
+                        <div key={category} className="flex items-center justify-between p-3 sm:p-3 bg-black/60 rounded-none">
+                          <div className="flex items-center gap-3">
+                            {expenseCategoryIcons[category]}
+                            <span className="text-[#FFFFFF] text-xs">{expenseCategories[category] || category}</span>
+                          </div>
+                          <div className="text-[#CEA472] font-medium text-xs">¥{amount.toFixed(2)}</div>
                         </div>
-                        <div className="text-[#CEA472] font-medium text-xs">¥{amount.toFixed(2)}</div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {Object.keys(filteredStats.byPayer).length > 0 && (
                   <div>
-                    <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">按支付人统计</h3>
+                    <h3 className="text-[#CEA472] font-medium mb-3 text-xs">按支付人统计</h3>
                     <div className="space-y-2">
                       {Object.entries(filteredStats.byPayer).map(([payer, amount]) => (
                         <div key={payer} className="flex items-center justify-between p-3 sm:p-3 bg-black/60 rounded-none">
@@ -1700,7 +1706,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                 )}
 
                 <div>
-                  <h3 className="text-[#FFFFFF] font-medium mb-3 text-xs">收支结算</h3>
+                  <h3 className="text-[#CEA472] font-medium mb-3 text-xs">收支结算</h3>
                   <div className="space-y-2">
                     {travelers
                       .filter(traveler => !analysisConsumerFilter || traveler === analysisConsumerFilter)
@@ -1994,13 +2000,8 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
 
       {/* 汇率管理标签内容 */}
       {activeTab === 'rates' && (
-        <div className="tab-section-in bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
+        <div className="mt-3 tab-section-in bg-black/60 backdrop-blur-md   rounded-none p-3.5 sm:p-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-3 mb-2">
-              <Coins className="w-5 h-5 text-[#CEA472]" />
-              <span className="text-[#CEA472] font-medium text-xs">管理活跃货币和汇率设置</span>
-            </div>
-
             {/* 活跃货币列表 */}
             <div>
               <div className="text-xs text-[#CEA472] mb-2 font-medium">活跃货币</div>
@@ -2052,7 +2053,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                     }
                   }}
                 >
-                  <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs h-8 w-32">
+                  <SelectTrigger className="bg-black/60   text-[#FFFFFF] text-xs h-8 flex-1 basis-32 min-w-0">
                     <SelectValue placeholder="选择货币" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#0a0a0f]  ">
@@ -2068,7 +2069,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                   value={newCurrencyNote}
                   onChange={(e) => setNewCurrencyNote(e.target.value)}
                   placeholder="备注（现金/信用卡等）"
-                  className="bg-black/60   text-[#FFFFFF] text-xs h-8 w-32"
+                  className="bg-black/60   text-[#FFFFFF] text-xs h-8 flex-1 basis-32 min-w-0"
                 />
                 <Input
                   type="number"
@@ -2077,7 +2078,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                   value={newCurrencyRate}
                   onChange={(e) => setNewCurrencyRate(e.target.value)}
                   placeholder="汇率"
-                  className="bg-black/60   text-[#FFFFFF] text-xs h-8 w-24"
+                  className="bg-black/60   text-[#FFFFFF] text-xs h-8 flex-1 basis-32 min-w-0"
                 />
                 <span className="text-[#FFFFFF]/40 text-xs">CNY</span>
                 <Button
@@ -2112,7 +2113,7 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                     }
                   }}
                   disabled={!newCurrencyBaseCode || !newCurrencyRate}
-                  className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80 disabled:opacity-50 h-8"
+                  className="bg-transparent text-[#CEA472] hover:bg-transparent hover:text-[#CEA472]/80 disabled:opacity-50 h-8"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
@@ -2131,13 +2132,13 @@ export default function TripAccounting({ confirmedWishes, isAdminMode = false, s
                   setNewCurrencyNote('');
                   setNewCurrencyRate('');
                 }}
-                className="bg-black/60   text-[#FFFFFF] hover:bg-[#CEA472]/10"
+                className="bg-transparent text-white/80 hover:bg-transparent hover:text-[#CEA472]"
               >
                 取消
               </Button>
               <Button
                 onClick={saveExchangeRates}
-                className="bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+                className="bg-transparent text-[#CEA472] hover:bg-transparent hover:text-[#CEA472]/80"
               >
                 保存
               </Button>

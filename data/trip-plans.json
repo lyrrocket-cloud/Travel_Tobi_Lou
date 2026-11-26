@@ -1,872 +1,1540 @@
 [
   {
-    "id": "trip-plan-1780192503997",
-    "wishId": "in-memory-1",
+    "id": "trip-plan-1780467967317",
+    "wishId": "22",
     "destination": "济州岛",
     "startDate": "2026-06-17",
     "travelDays": 4,
-    "travelers": "秦瑜贲,楼宜人",
+    "travelers": "陈瑾妮,陆丽莎,秦瑜贲,楼宜人,谢秋怡",
     "days": [
       {
-        "id": "day-1-1780192503997",
+        "id": "day-1-1780467967317",
         "dayNumber": 1,
         "transport": [
           {
-            "id": "transport-1780197005668",
-            "type": "other",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": ""
-          },
-          {
-            "id": "transport-1780566194692",
-            "type": "taxi",
-            "from": "B",
+            "id": "transport-1780468005089",
             "to": "济州岛",
-            "departureTime": "16:00",
-            "arrivalTime": "18:00",
-            "details": "",
-            "position": "arrival"
-          },
-          {
-            "id": "transport-1780642980144",
-            "type": "car",
-            "from": "济州岛",
-            "to": "C",
-            "departureTime": "17:30",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "arrival",
-            "afterActivityId": "activity-1780642978344"
-          },
-          {
-            "id": "transport-1781150070687",
-            "type": "car",
-            "from": "A",
-            "to": "B",
-            "departureTime": "10:00",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780639292649",
-            "afterActivityId": "arrival"
-          },
-          {
-            "id": "transport-1781229546602",
-            "type": "taxi",
-            "from": "C",
-            "to": "",
-            "departureTime": "18:01",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780642978344",
-            "afterActivityId": "activity-1781157757523"
-          }
-        ],
-        "activities": [
-          {
-            "type": "other",
-            "startTime": "09:00",
-            "endTime": "10:00",
-            "location": "A",
-            "id": "activity-1780639292649"
-          },
-          {
-            "type": "other",
-            "startTime": "18:00",
-            "location": "C",
-            "id": "activity-1780642978344"
-          },
-          {
-            "type": "accommodation",
-            "startTime": "20:00",
-            "endTime": "08:00",
-            "endDayOffset": 1,
-            "location": "H",
-            "id": "activity-1781157757523"
-          }
-        ]
-      },
-      {
-        "id": "day-2-1780192503997",
-        "dayNumber": 2,
-        "transport": [
-          {
-            "id": "transport-1780197401530",
-            "type": "",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "breakfast"
-          },
-          {
-            "id": "transport-1780197403092",
-            "type": "",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "morning"
-          },
-          {
-            "id": "transport-1780197404814",
-            "type": "",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "lunch"
-          },
-          {
-            "id": "transport-1780197405716",
-            "type": "",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "afternoon"
-          },
-          {
-            "id": "transport-1780197406518",
-            "type": "",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "dinner"
-          },
-          {
-            "id": "transport-1780197607131",
-            "type": "",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "accommodation"
-          },
-          {
-            "id": "transport-1780197618093",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "after",
-            "afterTime": "evening"
-          },
-          {
-            "id": "transport-1781232426252",
-            "type": "taxi",
-            "from": "H",
-            "to": "",
-            "departureTime": "08:00",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1781157757523",
-            "afterActivityId": "activity-1781232425336"
-          }
-        ],
-        "activities": [
-          {
-            "type": "other",
-            "startTime": "09:00",
-            "endDayOffset": 0,
-            "location": "",
-            "id": "activity-1781232425336"
-          },
-          {
-            "type": "other",
-            "startTime": "09:00",
-            "endDayOffset": 0,
-            "location": "",
-            "id": "activity-1782466212208"
-          },
-          {
-            "type": "other",
-            "startTime": "09:00",
-            "endDayOffset": 0,
-            "location": "",
-            "id": "activity-1782466215388"
-          }
-        ]
-      },
-      {
-        "id": "day-3-1780192503997",
-        "dayNumber": 3,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-4-1780282115925",
-        "dayNumber": 4,
-        "activities": [
-          {
-            "type": "other",
-            "startTime": "17:00",
-            "location": "G",
-            "id": "activity-1780642626306"
-          },
-          {
-            "type": "other",
-            "startTime": "13:00",
-            "location": "E",
-            "id": "activity-1780642634797"
-          },
-          {
-            "type": "other",
-            "startTime": "20:00",
-            "endDayOffset": 0,
-            "location": "",
-            "id": "activity-1781229727121"
-          }
-        ],
-        "transport": [
-          {
-            "id": "transport-1780639351447",
-            "type": "taxi",
-            "from": "济州岛",
-            "to": "F",
-            "departureTime": "15:00",
-            "arrivalTime": "",
-            "details": "",
-            "position": "departure"
-          },
-          {
-            "id": "transport-1780643225644",
+            "from": "上海浦东",
             "type": "flight",
-            "from": "E",
-            "to": "济州岛",
-            "departureTime": "13:01",
-            "arrivalTime": "",
             "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780642634797",
-            "afterActivityId": "departure"
+            "position": "arrival",
+            "arrivalTime": "18:10",
+            "departureTime": "15:35"
           },
           {
-            "id": "transport-1780643281862",
-            "type": "train",
-            "from": "F",
-            "to": "G",
-            "departureTime": "16:30",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "departure",
-            "afterActivityId": "activity-1780642626306"
-          },
-          {
-            "id": "transport-1781229728486",
+            "id": "transport-1781699747619",
+            "to": "天空花园一号酒店",
+            "from": "济州岛",
             "type": "taxi",
-            "from": "G",
-            "to": "",
-            "departureTime": "17:01",
-            "arrivalTime": "",
             "details": "",
             "position": "between",
-            "beforeActivityId": "activity-1780642626306",
-            "afterActivityId": "activity-1781229727121"
+            "arrivalTime": "",
+            "departureTime": "19:30",
+            "afterActivityId": "activity-1781163816033",
+            "beforeActivityId": "arrival"
+          },
+          {
+            "id": "transport-1781699822378",
+            "to": "天空花园一号酒店",
+            "from": "济州岛机场",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "18:30",
+            "afterActivityId": "activity-1781699817494",
+            "beforeActivityId": "arrival"
+          },
+          {
+            "id": "transport-1781699850742",
+            "to": "天空花园一号酒店",
+            "from": "",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "19:30",
+            "afterActivityId": "activity-1781163816033",
+            "beforeActivityId": "activity-1781699817494"
+          },
+          {
+            "id": "transport-1781702438185",
+            "to": "Olive Young",
+            "from": "石墙黑猪肉",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "19:30",
+            "afterActivityId": "activity-1781702434604",
+            "beforeActivityId": "activity-1781699817494"
+          },
+          {
+            "id": "transport-1781702460273",
+            "to": "天空花园一号酒店",
+            "from": "Olive Young",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "20:30",
+            "afterActivityId": "activity-1781163816033",
+            "beforeActivityId": "activity-1781702434604"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1781163816033",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "天空花园一号酒店",
+            "startTime": "21:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1781699817494",
+            "type": "food",
+            "content": "晚餐",
+            "endTime": "19:30",
+            "location": "石墙黑猪肉",
+            "startTime": "19:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1781702434604",
+            "type": "shopping",
+            "endTime": "20:30",
+            "location": "Olive Young",
+            "startTime": "20:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-2-1780467967317",
+        "dayNumber": 2,
+        "transport": [
+          {
+            "id": "transport-1781701484707",
+            "to": "汉拿山",
+            "from": "天空花园一号酒店",
+            "type": "taxi",
+            "details": "酒店包车",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:00",
+            "afterActivityId": "activity-1781701416982",
+            "beforeActivityId": "activity-1781163816033"
+          },
+          {
+            "id": "transport-1781790978341",
+            "to": "天空花园一号酒店",
+            "from": "BHC",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "22:00",
+            "afterActivityId": "activity-1781163798853",
+            "beforeActivityId": "activity-1781790961231"
+          },
+          {
+            "id": "transport-1781790991208",
+            "to": "BHC",
+            "from": "珍贵猪蹄",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "19:00",
+            "afterActivityId": "activity-1781790961231",
+            "beforeActivityId": "activity-1781790924025"
+          },
+          {
+            "id": "transport-1781791349013",
+            "to": "My Jeju Gift",
+            "from": "珍贵猪蹄",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "19:00",
+            "afterActivityId": "activity-1781791345145",
+            "beforeActivityId": "activity-1781790924025"
+          },
+          {
+            "id": "transport-1781791355763",
+            "to": "BHC",
+            "from": "My Jeju Gift",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "21:00",
+            "afterActivityId": "activity-1781790961231",
+            "beforeActivityId": "activity-1781791345145"
+          },
+          {
+            "id": "transport-1782180347108",
+            "to": "珍贵猪蹄",
+            "from": "汉拿山",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:00",
+            "afterActivityId": "activity-1781790924025",
+            "beforeActivityId": "activity-1781701416982"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1781163798853",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "天空花园一号酒店",
+            "startTime": "22:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1781701416982",
+            "type": "attraction",
+            "endTime": "16:00",
+            "location": "汉拿山",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1781790924025",
+            "type": "food",
+            "content": "晚餐",
+            "endTime": "19:00",
+            "location": "珍贵猪蹄",
+            "startTime": "18:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1781790961231",
+            "type": "food",
+            "content": "夜宵",
+            "endTime": "22:00",
+            "location": "BHC",
+            "startTime": "21:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1781791345145",
+            "type": "shopping",
+            "content": "纪念品",
+            "endTime": "20:30",
+            "location": "My Jeju Gift",
+            "startTime": "19:30",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-3-1780467967317",
+        "dayNumber": 3,
+        "transport": [
+          {
+            "id": "transport-1781852678392",
+            "to": "牛岛",
+            "from": "天空花园一号酒店",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "09:00",
+            "afterActivityId": "activity-1781852674059",
+            "beforeActivityId": "activity-1781163798853"
+          },
+          {
+            "id": "transport-1781852701072",
+            "to": "天空花园一号酒店",
+            "from": "牛岛",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:00",
+            "afterActivityId": "activity-1781163837565",
+            "beforeActivityId": "activity-1781852674059"
+          },
+          {
+            "id": "transport-1781864597998",
+            "to": "新罗免税店",
+            "from": "牛岛",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "15:00",
+            "afterActivityId": "activity-1781864591856",
+            "beforeActivityId": "activity-1781852674059"
+          },
+          {
+            "id": "transport-1781864651637",
+            "to": "第一烤牛肠",
+            "from": "新罗免税店",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "18:00",
+            "afterActivityId": "activity-1781864645110",
+            "beforeActivityId": "activity-1781864591856"
+          },
+          {
+            "id": "transport-1782179016061",
+            "to": "天空花园一号酒店",
+            "from": "第一烤牛肠",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "20:00",
+            "afterActivityId": "activity-1781163837565",
+            "beforeActivityId": "activity-1781864645110"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1781163837565",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "天空花园一号酒店",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1781852674059",
+            "type": "attraction",
+            "endTime": "15:00",
+            "location": "牛岛",
+            "startTime": "11:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1781864591856",
+            "type": "shopping",
+            "endTime": "18:00",
+            "location": "新罗免税店",
+            "startTime": "17:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1781864645110",
+            "type": "food",
+            "content": "晚餐",
+            "endTime": "20:00",
+            "location": "第一烤牛肠",
+            "startTime": "19:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-4-1780468478435",
+        "dayNumber": 4,
+        "transport": [
+          {
+            "id": "transport-1780468483184",
+            "to": "上海浦东",
+            "from": "济州岛",
+            "type": "flight",
+            "details": "",
+            "position": "departure",
+            "arrivalTime": "22:50",
+            "departureTime": "22:00"
+          },
+          {
+            "id": "transport-1782099168786",
+            "to": "偶来小路7号",
+            "from": "天空花园一号酒店",
+            "type": "bus",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:00",
+            "afterActivityId": "activity-1782099164774",
+            "beforeActivityId": "activity-1781163837565"
+          },
+          {
+            "id": "transport-1782099211799",
+            "to": "西归浦带鱼",
+            "from": "偶来小路7号",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "15:00",
+            "afterActivityId": "activity-1782099210194",
+            "beforeActivityId": "activity-1782099164774"
+          },
+          {
+            "id": "transport-1782099214746",
+            "to": "济州岛",
+            "from": "西归浦带鱼",
+            "type": "bus",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:30",
+            "afterActivityId": "departure",
+            "beforeActivityId": "activity-1782099210194"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1782099164774",
+            "type": "attraction",
+            "endTime": "15:00",
+            "location": "偶来小路7号",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1782099210194",
+            "type": "food",
+            "content": "晚餐",
+            "endTime": "16:30",
+            "location": "西归浦带鱼",
+            "startTime": "16:00",
+            "endDayOffset": 0
           }
         ]
       }
     ],
-    "createdAt": "2026-05-31T01:55:03.997Z",
-    "updatedAt": "2026-06-26T09:30:15.438Z",
-    "frozen": true
+    "frozen": true,
+    "createdAt": "2026-06-03T06:26:07.318+00:00",
+    "updatedAt": "2026-06-03T06:26:07.318+00:00"
   },
   {
-    "id": "trip-plan-1780193545980",
-    "wishId": "in-memory-2",
-    "destination": "坦桑尼亚",
-    "startDate": "2026-10-01",
-    "travelDays": 15,
-    "travelers": "秦瑜贲",
-    "days": [
-      {
-        "id": "day-1-1780193545980",
-        "dayNumber": 1,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-2-1780193545980",
-        "dayNumber": 2,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-3-1780193545980",
-        "dayNumber": 3,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-4-1780193545980",
-        "dayNumber": 4,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-5-1780193545980",
-        "dayNumber": 5,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-6-1780193545980",
-        "dayNumber": 6,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-7-1780193545980",
-        "dayNumber": 7,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-8-1780193545980",
-        "dayNumber": 8,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-9-1780193545980",
-        "dayNumber": 9,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-10-1780193545980",
-        "dayNumber": 10,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-11-1780193545980",
-        "dayNumber": 11,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-12-1780193545980",
-        "dayNumber": 12,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-13-1780193545980",
-        "dayNumber": 13,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-14-1780193545980",
-        "dayNumber": 14,
-        "transport": [],
-        "activities": []
-      },
-      {
-        "id": "day-15-1780193545980",
-        "dayNumber": 15,
-        "transport": [],
-        "activities": []
-      }
-    ],
-    "createdAt": "2026-05-31T02:12:25.980Z",
-    "updatedAt": "2026-05-31T02:12:25.980Z"
-  },
-  {
-    "id": "trip-plan-1780200460413",
-    "wishId": "in-memory-4",
+    "id": "trip-plan-1780556377173",
+    "wishId": "5",
     "destination": "千岛湖",
     "startDate": "2026-05-23",
     "travelDays": 2,
-    "travelers": "韩垚,秦瑜贲,陆丽莎,陈瑾妮",
+    "travelers": "楼宜人,陆丽莎,秦瑜贲,陈瑾妮,韩垚",
     "days": [
       {
-        "id": "day-1-1780200460413",
+        "id": "day-1-1780556377174",
         "dayNumber": 1,
-        "activities": [
-          {
-            "type": "accommodation",
-            "startTime": "20:00",
-            "location": "千岛湖VOCO酒店",
-            "id": "activity-1780200583047"
-          },
-          {
-            "type": "afternoon",
-            "startTime": "13:00",
-            "content": "徒步轻松版",
-            "location": "牧心谷",
-            "id": "activity-1780200657098"
-          },
-          {
-            "type": "lunch",
-            "startTime": "11:30",
-            "location": "我家姐点心",
-            "id": "activity-1780201410818"
-          },
-          {
-            "type": "dinner",
-            "startTime": "18:00",
-            "content": "酒店自助餐",
-            "location": "千岛湖VOCO酒店",
-            "id": "activity-1780201520683"
-          },
-          {
-            "type": "afternoon",
-            "startTime": "15:00",
-            "content": "游泳",
-            "location": "千岛湖VOCO酒店",
-            "id": "activity-1780222915267"
-          }
-        ],
         "transport": [
           {
-            "id": "transport-1780200469227",
-            "type": "train",
-            "from": "上海虹桥",
+            "id": "transport-1780556400049",
             "to": "千岛湖",
-            "departureTime": "08:35",
+            "from": "上海虹桥",
+            "type": "train",
+            "details": "",
+            "position": "arrival",
             "arrivalTime": "10:45",
-            "details": "G7357",
-            "position": "arrival"
+            "departureTime": "08:35"
           },
           {
-            "id": "transport-1780200666670",
+            "id": "transport-1780573262134",
+            "to": "我家姐",
+            "from": "千岛湖",
             "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
             "details": "",
             "position": "between",
-            "beforeActivityId": "activity-1780200657098",
-            "afterActivityId": "activity-1780200583047"
-          },
-          {
-            "id": "transport-1780201522877",
-            "type": "walk",
-            "from": "",
-            "to": "",
-            "departureTime": "",
             "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780201520683",
-            "afterActivityId": "activity-1780200583047"
+            "departureTime": "11:30",
+            "afterActivityId": "activity-1780556515366",
+            "beforeActivityId": "arrival"
           },
           {
-            "id": "transport-1780201530014",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780200657098",
-            "afterActivityId": "activity-1780201520683"
-          },
-          {
-            "id": "transport-1780201806423",
-            "type": "car",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "arrival",
-            "afterActivityId": "activity-1780201410818"
-          },
-          {
-            "id": "transport-1780222921881",
-            "type": "walk",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780222915267",
-            "afterActivityId": "activity-1780201520683"
-          },
-          {
-            "id": "transport-1781235210008",
-            "type": "taxi",
-            "from": "我家姐点心",
+            "id": "transport-1780628122487",
             "to": "牧心谷",
-            "departureTime": "11:31",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780201410818",
-            "afterActivityId": "activity-1780200657098"
-          },
-          {
-            "id": "transport-1781235215070",
+            "from": "我家姐",
             "type": "taxi",
-            "from": "牧心谷",
-            "to": "千岛湖VOCO酒店",
-            "departureTime": "13:01",
-            "arrivalTime": "",
             "details": "",
             "position": "between",
-            "beforeActivityId": "activity-1780200657098",
-            "afterActivityId": "activity-1780222915267"
-          }
-        ]
-      },
-      {
-        "id": "day-2-1780200460413",
-        "dayNumber": 2,
-        "activities": [
-          {
-            "type": "breakfast",
-            "startTime": "08:00",
-            "location": "千岛湖VOCO酒店",
-            "id": "activity-1780202720575"
+            "arrivalTime": "",
+            "departureTime": "12:01",
+            "afterActivityId": "activity-1780567848338",
+            "beforeActivityId": "activity-1780556515366"
           },
           {
-            "type": "afternoon",
-            "startTime": "13:00",
-            "content": "桨板",
-            "location": "逐浪者",
-            "id": "activity-1780202794827"
+            "id": "transport-1780628129042",
+            "to": "千岛湖Voco酒店",
+            "from": "牧心谷",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:00",
+            "afterActivityId": "activity-1780573456697",
+            "beforeActivityId": "activity-1780567848338"
           },
           {
-            "type": "morning",
-            "startTime": "10:00",
-            "content": "游泳",
-            "location": "千岛湖VOCO酒店",
-            "id": "activity-1780202919105"
-          },
-          {
-            "type": "lunch",
-            "startTime": "15:00",
-            "location": "桃花源",
-            "id": "activity-1780202963556"
+            "id": "transport-1781163728344",
+            "to": "千岛湖Voco酒店",
+            "from": "千岛湖Voco酒店",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "18:01",
+            "afterActivityId": "activity-1781163722998",
+            "beforeActivityId": "activity-1780573456697"
           }
         ],
+        "activities": [
+          {
+            "id": "activity-1780556515366",
+            "type": "food",
+            "content": "午餐",
+            "location": "我家姐",
+            "startTime": "12:00"
+          },
+          {
+            "id": "activity-1780567848338",
+            "type": "entertainment",
+            "content": "徒步",
+            "endTime": "16:00",
+            "location": "牧心谷",
+            "startTime": "14:00"
+          },
+          {
+            "id": "activity-1780573456697",
+            "type": "food",
+            "content": "自助晚餐",
+            "location": "千岛湖Voco酒店",
+            "startTime": "18:00"
+          },
+          {
+            "id": "activity-1781163722998",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "千岛湖Voco酒店",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          }
+        ]
+      },
+      {
+        "id": "day-2-1780556377174",
+        "dayNumber": 2,
         "transport": [
           {
-            "id": "transport-1780202722790",
-            "type": "train",
-            "from": "千岛湖",
+            "id": "transport-1780556528924",
             "to": "上海南",
-            "departureTime": "18:35",
-            "arrivalTime": "20:25",
+            "from": "千岛湖",
+            "type": "train",
             "details": "",
-            "position": "departure"
+            "position": "departure",
+            "arrivalTime": "20:10",
+            "departureTime": "18:22"
           },
           {
-            "id": "transport-1780202754807",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780202720575",
-            "afterActivityId": "departure"
-          },
-          {
-            "id": "transport-1780202796604",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780202720575",
-            "afterActivityId": "activity-1780202794827"
-          },
-          {
-            "id": "transport-1780202925860",
-            "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780202919105",
-            "afterActivityId": "activity-1780202794827"
-          },
-          {
-            "id": "transport-1780202928926",
+            "id": "transport-1780556728303",
+            "to": "桃花源",
+            "from": "逐浪者水上活动",
             "type": "walk",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
             "details": "",
             "position": "between",
-            "beforeActivityId": "activity-1780202720575",
-            "afterActivityId": "activity-1780202919105"
-          },
-          {
-            "id": "transport-1780202966562",
-            "type": "walk",
-            "from": "",
-            "to": "",
-            "departureTime": "",
             "arrivalTime": "",
-            "details": "",
-            "position": "between",
-            "beforeActivityId": "activity-1780202794827",
-            "afterActivityId": "activity-1780202963556"
+            "departureTime": "",
+            "afterActivityId": "activity-1780556726713",
+            "beforeActivityId": "activity-1780556680918"
           },
           {
-            "id": "transport-1780202984089",
+            "id": "transport-1780557357456",
+            "to": "千岛湖站",
+            "from": "桃花源",
             "type": "taxi",
-            "from": "",
-            "to": "",
-            "departureTime": "",
-            "arrivalTime": "",
             "details": "",
             "position": "between",
-            "beforeActivityId": "activity-1780202963556",
-            "afterActivityId": "departure"
+            "arrivalTime": "",
+            "departureTime": "",
+            "afterActivityId": "activity-1780557306655",
+            "beforeActivityId": "activity-1780556726713"
+          },
+          {
+            "id": "transport-1780573356573",
+            "to": "西塔老太太",
+            "from": "上海南",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "20:30",
+            "afterActivityId": "activity-1780557306655",
+            "beforeActivityId": "departure"
+          },
+          {
+            "id": "transport-1780576154813",
+            "to": "逐浪者水上活动",
+            "from": "千岛湖Voco酒店",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:01",
+            "afterActivityId": "activity-1780556680918",
+            "beforeActivityId": "activity-1780557697254"
+          },
+          {
+            "id": "transport-1780628154923",
+            "to": "千岛湖",
+            "from": "桃花源",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "15:01",
+            "afterActivityId": "departure",
+            "beforeActivityId": "activity-1780556726713"
+          },
+          {
+            "id": "transport-1781163736046",
+            "to": "千岛湖Voco酒店",
+            "from": "千岛湖Voco酒店",
+            "type": "walk",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:00",
+            "afterActivityId": "activity-1780557697254",
+            "beforeActivityId": "activity-1781163722998"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1780556680918",
+            "type": "entertainment",
+            "content": "浆板",
+            "location": "逐浪者水上活动",
+            "startTime": "13:00"
+          },
+          {
+            "id": "activity-1780556726713",
+            "type": "food",
+            "content": "午餐",
+            "location": "桃花源",
+            "startTime": "15:00"
+          },
+          {
+            "id": "activity-1780557306655",
+            "type": "food",
+            "content": "晚餐",
+            "location": "西塔老太太",
+            "startTime": "21:00"
+          },
+          {
+            "id": "activity-1780557697254",
+            "type": "food",
+            "content": "早餐",
+            "location": "千岛湖Voco酒店",
+            "startTime": "08:00"
           }
         ]
       }
     ],
-    "createdAt": "2026-05-31T04:07:40.413Z",
-    "updatedAt": "2026-06-26T09:25:52.511Z",
-    "frozen": true
+    "frozen": true,
+    "createdAt": "2026-06-04T06:59:37.174+00:00",
+    "updatedAt": "2026-06-04T06:59:37.174+00:00"
   },
   {
-    "id": "trip-plan-1780229164499",
-    "wishId": "in-memory-5",
-    "destination": "安吉",
-    "startDate": "2026-06-18",
-    "travelDays": 3,
-    "travelers": "lou",
+    "id": "trip-plan-1781249645973",
+    "wishId": "25",
+    "destination": "绍兴",
+    "startDate": "2026-04-06",
+    "travelDays": 1,
+    "travelers": "楼宜人,秦瑜贲,韩垚",
     "days": [
       {
-        "id": "day-1-1780229164500",
+        "id": "day-1-1781249645974",
         "dayNumber": 1,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-2-1780229164500",
-        "dayNumber": 2,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-3-1780229164500",
-        "dayNumber": 3,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       }
     ],
-    "createdAt": "2026-05-31T12:06:04.500Z",
-    "updatedAt": "2026-05-31T12:06:04.500Z"
+    "frozen": true,
+    "createdAt": "2026-06-12T07:34:05.974+00:00",
+    "updatedAt": "2026-06-12T07:34:05.974+00:00"
   },
   {
-    "id": "trip-plan-1780229484801",
-    "wishId": 13,
-    "destination": "安吉",
-    "startDate": "2026-07-01",
+    "id": "trip-plan-1781253774621",
+    "wishId": "10",
+    "destination": "海南",
+    "startDate": "2026-05-01",
     "travelDays": 3,
-    "travelers": "tobi",
+    "travelers": "陆丽莎,秦瑜贲,马诗文,楼宜人",
     "days": [
       {
-        "id": "day-1-1780229484801",
+        "id": "day-1-1781253774621",
         "dayNumber": 1,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       },
       {
-        "id": "day-2-1780229484801",
+        "id": "day-2-1781253774621",
         "dayNumber": 2,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       },
       {
-        "id": "day-3-1780229484801",
+        "id": "day-3-1781253774621",
         "dayNumber": 3,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       }
     ],
-    "createdAt": "2026-05-31T12:11:24.801Z",
-    "updatedAt": "2026-05-31T12:11:24.801Z"
+    "frozen": true,
+    "createdAt": "2026-06-12T08:42:54.621+00:00",
+    "updatedAt": "2026-06-12T08:42:54.621+00:00"
   },
   {
-    "id": "trip-plan-1780229711807",
-    "wishId": 11,
-    "destination": "坦桑尼亚",
-    "startDate": "2026-10-15",
+    "id": "trip-plan-1782885654746",
+    "wishId": "18",
+    "destination": "长兴",
+    "startDate": "2026-08-22",
+    "travelDays": 2,
+    "travelers": "楼宜人,韩垚,王友凤,陈萦,秦瑜贲",
+    "days": [
+      {
+        "id": "day-1-1782885654746",
+        "dayNumber": 1,
+        "transport": [
+          {
+            "id": "transport-1782890901311",
+            "to": "长兴",
+            "from": "上海",
+            "type": "car",
+            "details": "",
+            "position": "arrival",
+            "arrivalTime": "10:00",
+            "departureTime": "08:00"
+          }
+        ],
+        "activities": []
+      },
+      {
+        "id": "day-2-1782885654746",
+        "dayNumber": 2,
+        "transport": [],
+        "activities": []
+      }
+    ],
+    "frozen": true,
+    "createdAt": "2026-07-01T06:00:54.747+00:00",
+    "updatedAt": "2026-07-01T06:00:54.747+00:00"
+  },
+  {
+    "id": "trip-plan-1785941837979",
+    "wishId": "28",
+    "destination": "挪威",
+    "startDate": "2026-09-23",
+    "travelDays": 10,
+    "travelers": "陆丽莎,秦瑜贲,陈瑾妮",
+    "days": [
+      {
+        "id": "day-1-1785941837979",
+        "dayNumber": 1,
+        "transport": [
+          {
+            "id": "transport-1785942073169",
+            "to": "挪威",
+            "from": "上海",
+            "type": "flight",
+            "details": "",
+            "position": "arrival",
+            "arrivalTime": "",
+            "departureTime": "17:25"
+          }
+        ],
+        "activities": []
+      },
+      {
+        "id": "day-2-1785941837979",
+        "dayNumber": 2,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1788185330083",
+            "type": "attraction",
+            "endTime": "19:00",
+            "location": "奥斯陆",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-3-1785941837979",
+        "dayNumber": 3,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1787756235767",
+            "type": "other",
+            "content": "抵达",
+            "endTime": "22:56",
+            "location": "特罗姆瑟",
+            "startTime": "19:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1788185351936",
+            "type": "attraction",
+            "content": "博物馆",
+            "endTime": "18:00",
+            "location": "奥斯陆",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-4-1785941837979",
+        "dayNumber": 4,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1788185272313",
+            "type": "attraction",
+            "endTime": "12:00",
+            "location": "senja",
+            "startTime": "09:00",
+            "endDayOffset": 1
+          }
+        ]
+      },
+      {
+        "id": "day-5-1785941837979",
+        "dayNumber": 5,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1788185086990",
+            "type": "entertainment",
+            "content": "极光",
+            "endTime": "02:00",
+            "location": "特罗姆瑟",
+            "startTime": "19:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-6-1785941837979",
+        "dayNumber": 6,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1787756279556",
+            "type": "entertainment",
+            "content": "城市游览",
+            "endTime": "19:00",
+            "location": "特罗姆瑟",
+            "startTime": "12:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-7-1785941837979",
+        "dayNumber": 7,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1787756296825",
+            "type": "other",
+            "location": "邮轮去罗弗敦",
+            "startTime": "23:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1788185169476",
+            "type": "other",
+            "content": "海钓",
+            "endTime": "14:00",
+            "location": "特罗姆瑟",
+            "startTime": "10:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-8-1787187629101",
+        "dayNumber": 8,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1787756336849",
+            "type": "other",
+            "location": "Svolver ",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-9-1787187629101",
+        "dayNumber": 9,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1787756349913",
+            "type": "other",
+            "location": "雷讷",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-10-1787187629101",
+        "dayNumber": 10,
+        "transport": [
+          {
+            "id": "transport-1787618719072",
+            "to": "",
+            "from": "挪威",
+            "type": "taxi",
+            "details": "",
+            "position": "departure",
+            "arrivalTime": "",
+            "departureTime": ""
+          }
+        ],
+        "activities": []
+      }
+    ],
+    "frozen": true,
+    "createdAt": "2026-08-05T14:57:17.98+00:00",
+    "updatedAt": "2026-08-05T14:57:17.98+00:00"
+  },
+  {
+    "id": "trip-plan-1789352458521",
+    "wishId": "26",
+    "destination": "潮汕",
+    "startDate": "2026-10-02",
+    "travelDays": 5,
+    "travelers": "楼宜人,韩垚",
+    "days": [
+      {
+        "id": "day-1-1789352458521",
+        "dayNumber": 1,
+        "transport": [
+          {
+            "id": "transport-1789696464063",
+            "to": "潮汕",
+            "from": "上海",
+            "type": "flight",
+            "details": "FM7201",
+            "position": "arrival",
+            "arrivalTime": "01:05",
+            "departureTime": "00:00"
+          },
+          {
+            "id": "transport-1790733058949",
+            "to": "小公园",
+            "from": "潮汕",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:30",
+            "afterActivityId": "activity-1790733052070",
+            "beforeActivityId": "arrival"
+          },
+          {
+            "id": "transport-1790733104143",
+            "to": "潮博馆",
+            "from": "小公园",
+            "type": "other",
+            "details": "轮渡",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "12:00",
+            "afterActivityId": "activity-1790733100889",
+            "beforeActivityId": "activity-1790733052070"
+          },
+          {
+            "id": "transport-1790733120124",
+            "to": "汕头澄海智选假日",
+            "from": "潮博馆",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:00",
+            "afterActivityId": "activity-1789696527098",
+            "beforeActivityId": "activity-1790733100889"
+          },
+          {
+            "id": "transport-1790949492167",
+            "to": "龙眼南美食街",
+            "from": "潮博馆",
+            "type": "bus",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:00",
+            "afterActivityId": "activity-1790949489118",
+            "beforeActivityId": "activity-1790733100889"
+          },
+          {
+            "id": "transport-1790949507411",
+            "to": "汕头澄海智选假日",
+            "from": "龙眼南美食街",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "19:00",
+            "afterActivityId": "activity-1789696527098",
+            "beforeActivityId": "activity-1790949489118"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789696527098",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "汕头澄海智选假日",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1790733052070",
+            "type": "attraction",
+            "endTime": "12:00",
+            "location": "小公园",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1790733100889",
+            "type": "attraction",
+            "endTime": "16:00",
+            "location": "潮博馆",
+            "startTime": "14:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1790949489118",
+            "type": "food",
+            "endTime": "19:00",
+            "location": "龙眼南美食街",
+            "startTime": "17:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-2-1789352458521",
+        "dayNumber": 2,
+        "transport": [
+          {
+            "id": "transport-1790733152185",
+            "to": "南澳岛",
+            "from": "汕头澄海智选假日",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:00",
+            "afterActivityId": "activity-1789697459429",
+            "beforeActivityId": "activity-1789696527098"
+          },
+          {
+            "id": "transport-1790733158771",
+            "to": "广济桥",
+            "from": "南澳岛",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "16:00",
+            "afterActivityId": "activity-1789701153897",
+            "beforeActivityId": "activity-1789697459429"
+          },
+          {
+            "id": "transport-1790733165349",
+            "to": "华怡金信酒店",
+            "from": "广济桥",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "19:00",
+            "afterActivityId": "activity-1789701209402",
+            "beforeActivityId": "activity-1789701153897"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789697459429",
+            "type": "attraction",
+            "endTime": "16:00",
+            "location": "南澳岛",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1789701153897",
+            "type": "attraction",
+            "endTime": "19:00",
+            "location": "广济桥",
+            "startTime": "18:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1789701209402",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "华怡金信酒店",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          }
+        ]
+      },
+      {
+        "id": "day-3-1789352458521",
+        "dayNumber": 3,
+        "transport": [
+          {
+            "id": "transport-1790733175743",
+            "to": "潮州古城",
+            "from": "华怡金信酒店",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:00",
+            "afterActivityId": "activity-1789701224229",
+            "beforeActivityId": "activity-1789701209402"
+          },
+          {
+            "id": "transport-1790733179035",
+            "to": "深圳湾",
+            "from": "潮州古城",
+            "type": "train",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "15:00",
+            "afterActivityId": "activity-1789706005088",
+            "beforeActivityId": "activity-1789701224229"
+          },
+          {
+            "id": "transport-1790733192714",
+            "to": "深圳好日子皇冠假日",
+            "from": "深圳湾",
+            "type": "taxi",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "20:00",
+            "afterActivityId": "activity-1789705955238",
+            "beforeActivityId": "activity-1789706005088"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789701224229",
+            "type": "attraction",
+            "endTime": "15:00",
+            "location": "潮州古城",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1789705955238",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "深圳好日子皇冠假日",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1789706005088",
+            "type": "attraction",
+            "endTime": "20:00",
+            "location": "深圳湾",
+            "startTime": "19:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-4-1789352458521",
+        "dayNumber": 4,
+        "transport": [
+          {
+            "id": "transport-1790733200447",
+            "to": "维港+天星小轮",
+            "from": "深圳好日子皇冠假日",
+            "type": "train",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "08:00",
+            "afterActivityId": "activity-1789707407131",
+            "beforeActivityId": "activity-1789705955238"
+          },
+          {
+            "id": "transport-1790733206739",
+            "to": "香港旺角智选假日",
+            "from": "维港+天星小轮",
+            "type": "train",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "15:00",
+            "afterActivityId": "activity-1789707373398",
+            "beforeActivityId": "activity-1789707407131"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789707373398",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "香港旺角智选假日",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1789707407131",
+            "type": "attraction",
+            "endTime": "15:00",
+            "location": "维港+天星小轮",
+            "startTime": "12:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-5-1789352458521",
+        "dayNumber": 5,
+        "transport": [
+          {
+            "id": "transport-1790734489214",
+            "to": "上海",
+            "from": "深圳",
+            "type": "flight",
+            "details": "",
+            "position": "departure",
+            "arrivalTime": "",
+            "departureTime": "22:10"
+          },
+          {
+            "id": "transport-1790734511187",
+            "to": "深圳",
+            "from": "麦理浩径徒步",
+            "type": "train",
+            "details": "",
+            "position": "between",
+            "arrivalTime": "",
+            "departureTime": "18:00",
+            "afterActivityId": "departure",
+            "beforeActivityId": "activity-1789707432676"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789707432676",
+            "type": "entertainment",
+            "endTime": "18:00",
+            "location": "麦理浩径徒步",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          }
+        ]
+      }
+    ],
+    "frozen": true,
+    "createdAt": "2026-09-14T02:20:58.521+00:00",
+    "updatedAt": "2026-09-14T02:20:58.521+00:00"
+  },
+  {
+    "id": "trip-plan-1789352516337",
+    "wishId": "29",
+    "destination": "九华山",
+    "startDate": "2026-09-26",
+    "travelDays": 3,
+    "travelers": "楼宜人,王一平,俞幼琪,楼近浣",
+    "days": [
+      {
+        "id": "day-1-1789352516337",
+        "dayNumber": 1,
+        "transport": [
+          {
+            "id": "transport-1789352790850",
+            "to": "九华山",
+            "from": "上海南",
+            "type": "train",
+            "details": "",
+            "position": "arrival",
+            "arrivalTime": "12:03",
+            "departureTime": "08:45"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789353022609",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "青峰隐",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1789353893777",
+            "type": "attraction",
+            "endTime": "15:00",
+            "location": "九华街（肉身宝殿-祇园寺）",
+            "startTime": "13:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1789354070914",
+            "type": "attraction",
+            "endTime": "17:00",
+            "location": "百岁宫",
+            "startTime": "15:30",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-2-1789352516337",
+        "dayNumber": 2,
+        "transport": [],
+        "activities": [
+          {
+            "id": "activity-1789353037953",
+            "type": "accommodation",
+            "endTime": "08:00",
+            "location": "九华山温泉假日",
+            "startTime": "20:00",
+            "endDayOffset": 1
+          },
+          {
+            "id": "activity-1789354388401",
+            "type": "attraction",
+            "endTime": "12:00",
+            "location": "天台",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          },
+          {
+            "id": "activity-1789367327232",
+            "type": "attraction",
+            "endTime": "14:00",
+            "location": "小天台",
+            "startTime": "13:00",
+            "endDayOffset": 0
+          }
+        ]
+      },
+      {
+        "id": "day-3-1789352516337",
+        "dayNumber": 3,
+        "transport": [
+          {
+            "id": "transport-1789352833139",
+            "to": "上海虹桥",
+            "from": "九华山",
+            "type": "train",
+            "details": "",
+            "position": "departure",
+            "arrivalTime": "19:48",
+            "departureTime": "16:05"
+          }
+        ],
+        "activities": [
+          {
+            "id": "activity-1789354158759",
+            "type": "attraction",
+            "endTime": "12:00",
+            "location": "大愿文化园",
+            "startTime": "09:00",
+            "endDayOffset": 0
+          }
+        ]
+      }
+    ],
+    "frozen": true,
+    "createdAt": "2026-09-14T02:21:56.337+00:00",
+    "updatedAt": "2026-09-14T02:21:56.337+00:00"
+  },
+  {
+    "id": "trip-plan-1790818850324",
+    "wishId": "30",
+    "destination": "党岭",
+    "startDate": "2026-10-29",
+    "travelDays": 5,
+    "travelers": "楼宜人,沈小华",
+    "days": [
+      {
+        "id": "day-1-1790818850324",
+        "dayNumber": 1,
+        "transport": [],
+        "activities": []
+      },
+      {
+        "id": "day-2-1790818850324",
+        "dayNumber": 2,
+        "transport": [],
+        "activities": []
+      },
+      {
+        "id": "day-3-1790818850324",
+        "dayNumber": 3,
+        "transport": [],
+        "activities": []
+      },
+      {
+        "id": "day-4-1790818850324",
+        "dayNumber": 4,
+        "transport": [],
+        "activities": []
+      },
+      {
+        "id": "day-5-1790818850324",
+        "dayNumber": 5,
+        "transport": [],
+        "activities": []
+      }
+    ],
+    "frozen": true,
+    "createdAt": "2026-10-01T01:40:50.324+00:00",
+    "updatedAt": "2026-10-01T01:40:50.324+00:00"
+  },
+  {
+    "id": "trip-plan-1794579787794",
+    "wishId": "17",
+    "destination": "长沙",
+    "startDate": "2026-04-18",
     "travelDays": 3,
     "travelers": "楼宜人",
     "days": [
       {
-        "id": "day-1-1780229711807",
+        "id": "day-1-1794579787794",
         "dayNumber": 1,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       },
       {
-        "id": "day-2-1780229711807",
+        "id": "day-2-1794579787794",
         "dayNumber": 2,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       },
       {
-        "id": "day-3-1780229711807",
+        "id": "day-3-1794579787794",
         "dayNumber": 3,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       }
     ],
-    "createdAt": "2026-05-31T12:15:11.807Z",
-    "updatedAt": "2026-05-31T12:15:11.807Z"
+    "frozen": true,
+    "createdAt": "2026-11-13T14:23:07.795+00:00",
+    "updatedAt": "2026-11-13T14:23:07.795+00:00"
   },
   {
-    "id": "trip-plan-1780229783972",
-    "wishId": 12,
+    "id": "trip-plan-1794579797032",
+    "wishId": "12",
     "destination": "南疆",
     "startDate": "2026-02-18",
     "travelDays": 3,
     "travelers": "楼宜人,秦瑜贲,陆丽莎,陶晓婷,王一平,陈瑾妮",
     "days": [
       {
-        "id": "day-1-1780229783972",
+        "id": "day-1-1794579797032",
         "dayNumber": 1,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       },
       {
-        "id": "day-2-1780229783972",
+        "id": "day-2-1794579797032",
         "dayNumber": 2,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       },
       {
-        "id": "day-3-1780229783972",
+        "id": "day-3-1794579797032",
         "dayNumber": 3,
-        "activities": [],
-        "transport": []
+        "transport": [],
+        "activities": []
       }
     ],
-    "createdAt": "2026-05-31T12:16:23.972Z",
-    "updatedAt": "2026-05-31T12:16:23.972Z"
+    "frozen": true,
+    "createdAt": "2026-11-13T14:23:17.032+00:00",
+    "updatedAt": "2026-11-13T14:23:17.032+00:00"
   },
   {
-    "id": "trip-plan-1780230004062",
-    "wishId": "13",
+    "id": "trip-plan-1794579803347",
+    "wishId": "15",
+    "destination": "西双版纳",
+    "startDate": "2026-01-01",
+    "travelDays": 3,
+    "travelers": "楼宜人,韩垚,秦瑜贲",
+    "days": [
+      {
+        "id": "day-1-1794579803347",
+        "dayNumber": 1,
+        "transport": [],
+        "activities": []
+      },
+      {
+        "id": "day-2-1794579803347",
+        "dayNumber": 2,
+        "transport": [],
+        "activities": []
+      },
+      {
+        "id": "day-3-1794579803347",
+        "dayNumber": 3,
+        "transport": [],
+        "activities": []
+      }
+    ],
+    "frozen": true,
+    "createdAt": "2026-11-13T14:23:23.347+00:00",
+    "updatedAt": "2026-11-13T14:23:23.347+00:00"
+  },
+  {
+    "id": "trip-plan-1795140385263",
+    "wishId": "32",
     "destination": "安吉",
-    "startDate": "2026-07-01",
-    "travelDays": 3,
-    "travelers": "tobi",
+    "startDate": "2026-12-19",
+    "travelDays": 2,
+    "travelers": "韩垚,秦瑜贲,陆丽莎,陈瑾妮",
     "days": [
       {
-        "id": "day-1-1780230004062",
+        "id": "day-1-1795140385263",
         "dayNumber": 1,
         "activities": [],
-        "transport": []
+        "transport": [
+          {
+            "id": "transport-1795330731148",
+            "type": "car",
+            "from": "上海",
+            "to": "安吉",
+            "departureTime": "",
+            "arrivalTime": "",
+            "details": "",
+            "position": "arrival"
+          }
+        ]
       },
       {
-        "id": "day-2-1780230004062",
+        "id": "day-2-1795140385263",
         "dayNumber": 2,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-3-1780230004062",
-        "dayNumber": 3,
         "activities": [],
         "transport": []
       }
     ],
-    "createdAt": "2026-05-31T12:20:04.062Z",
-    "updatedAt": "2026-05-31T12:20:04.062Z"
-  },
-  {
-    "id": "trip-plan-1780231324506",
-    "wishId": "11",
-    "destination": "坦桑尼亚",
-    "startDate": "2026-10-15",
-    "travelDays": 3,
-    "travelers": "楼宜人",
-    "days": [
-      {
-        "id": "day-1-1780231324506",
-        "dayNumber": 1,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-2-1780231324506",
-        "dayNumber": 2,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-3-1780231324506",
-        "dayNumber": 3,
-        "activities": [],
-        "transport": []
-      }
-    ],
-    "createdAt": "2026-05-31T12:42:04.506Z",
-    "updatedAt": "2026-05-31T12:42:04.506Z"
-  },
-  {
-    "id": "trip-plan-1780467480561",
-    "wishId": "test-123",
-    "destination": "测试目的地",
-    "startDate": "2026-07-01",
-    "travelDays": 3,
-    "travelers": "测试用户",
-    "days": [
-      {
-        "id": "day-1-1780467480562",
-        "dayNumber": 1,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-2-1780467480562",
-        "dayNumber": 2,
-        "activities": [],
-        "transport": []
-      },
-      {
-        "id": "day-3-1780467480562",
-        "dayNumber": 3,
-        "activities": [],
-        "transport": []
-      }
-    ],
-    "createdAt": "2026-06-03T06:18:00.587Z",
-    "updatedAt": "2026-06-03T06:18:00.587Z"
+    "frozen": false,
+    "createdAt": "2026-11-20T02:06:25.264+00:00",
+    "updatedAt": "2026-11-20T02:06:25.264+00:00"
   }
 ]

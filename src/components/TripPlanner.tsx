@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Calendar, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown, Snowflake } from 'lucide-react';
+import { Plus, Save, Car, Plane, Train, Bus, UtensilsCrossed, Coffee, Sun, Moon, BedDouble, Trash2, ArrowRight, X, Clock, Footprints, MapPin, RefreshCw, Star, ChevronUp, ChevronDown, Snowflake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -1143,9 +1143,6 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
           <CardContent className="pt-3 sm:pt-4">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-none bg-[#CEA472] flex items-center justify-center shadow-[0_4px_12px_rgba(206,164,114,0.4),inset_0_1px_0_rgba(255,255,255,0.2)]">
-                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#0a0a0f]" />
-                </div>
                 <h3 className="text-[#CEA472] font-medium text-sm sm:text-base">旅行日程表</h3>
               </div>
               {/* 折叠/展开凌晨时段按钮 */}
@@ -1641,7 +1638,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
           <div className={tabTransition.contentClassName} style={{ opacity: tabTransition.contentOpacity }}>
 
         {Array.from({ length: currentTripPlan.travelDays }, (_, i) => i + 1).map(day => (
-          <TabsContent key={day} value={String(day)} className="mt-6">
+          <TabsContent key={day} value={String(day)} className={isCurrentTripFrozen ? 'mt-3' : 'mt-6'}>
             {isCurrentTripFrozen && (
               <div className="mb-4 p-3 bg-blue-500/10   rounded-none flex items-center gap-2">
                 <Snowflake className="w-4 h-4 text-blue-400" />
@@ -2079,7 +2076,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
 </Tabs>
       )}
       
-      <div className="mt-8">
+      <div className="mt-8 flex justify-center">
         <Button
           onClick={() => {
             if (showSchedule) {
@@ -2090,7 +2087,7 @@ export default function TripPlanner({ confirmedWishes, selectedDay: selectedDayP
               setShowTripEditor(false);
             }
           }}
-          className="w-full bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
+          className="w-44 bg-[#CEA472] text-[#0a0a0f] hover:bg-[#CEA472]/80"
         >
           {showSchedule ? '编辑日程' : '生成日程表'}
         </Button>
