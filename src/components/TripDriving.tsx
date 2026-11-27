@@ -633,7 +633,7 @@ export default function TripDriving({ confirmedWishes, isAdminMode = false, subT
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={(v) => tabTransition.switchTo(v, () => setActiveTab(v))} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 gap-1 h-[48px] sm:h-[44px] bg-black/30 backdrop-blur-md rounded-none p-0">
+        <TabsList className="grid w-full grid-cols-4 gap-1 h-[48px] sm:h-[44px] bg-black/60 rounded-none p-0">
           <TabsTrigger 
             value="entry"
             className="animate-chip-in data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-[#CEA472] text-white/80 hover:text-[#CEA472] transition-colors duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] h-full flex items-center justify-center text-xs"
